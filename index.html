@@ -211,7 +211,8 @@
     }catch{toast('Datei konnte nicht gelesen werden')}e.target.value='';
   };
   syncDeviceListPages();render();applyView();
-drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};
+drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};  const renderBeforeDeviceListEmptyStateFix=render;render=function(){renderBeforeDeviceListEmptyStateFix();document.querySelector('#emptyState').style.display=pages[activeSheet]?.kind===DEVICE_LIST_KIND?'none':(model.parts.length?'none':'grid')};render();
+
 
 })();
 </script>

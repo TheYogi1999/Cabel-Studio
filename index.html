@@ -132,6 +132,14 @@
   const oldDrawPart=drawPart;drawPart=function(p){oldDrawPart(p);partsG.lastElementChild.querySelectorAll('.terminal').forEach(c=>{c.setAttribute('cx',snap(+c.getAttribute('cx')));c.setAttribute('cy',snap(+c.getAttribute('cy')))})};
   const oldApplyView=applyView;applyView=function(){oldApplyView();const cell=4*1128/297*zoom,dot=pattern.querySelector('circle');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',((pan.x*zoom)%cell+cell)%cell);pattern.setAttribute('y',((pan.y*zoom)%cell+cell)%cell);dot.setAttribute('cx',zoom);dot.setAttribute('cy',zoom);dot.setAttribute('r',.65*zoom)};
   render();applyView();
+  // A4-Papier, Raster, Rahmen, Titelblock und Schaltbild gemeinsam zoomen
+  const pageBorder=svg.querySelector('rect[stroke="#60737c"]');
+  const pageContent=el('g',{id:'pageContent'},svg);pageContent.append(paper,grid,scene,pageBorder,title);
+  scene.removeAttribute('transform');
+  const pageZoomOffset=()=>({x:pan.x+564*(1-zoom),y:pan.y+399*(1-zoom)});
+  toWorld=function(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;const p=point.matrixTransform(svg.getScreenCTM().inverse()),o=pageZoomOffset();return{x:(p.x-o.x)/zoom,y:(p.y-o.y)/zoom}};
+  applyView=function(){const o=pageZoomOffset(),cell=4*1128/297,dot=pattern.querySelector('circle');pageContent.setAttribute('transform','translate('+o.x+' '+o.y+') scale('+zoom+')');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',0);pattern.setAttribute('y',0);dot.setAttribute('cx',1);dot.setAttribute('cy',1);dot.setAttribute('r','.65');document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'};
+  render();applyView();
 })();
 </script>
 </body>

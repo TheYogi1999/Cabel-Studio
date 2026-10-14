@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <title>Leitwerk — Schaltplan-Editor</title>
+  <style>
+    :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
+    button{font:inherit;color:inherit;cursor:pointer}.app{height:100%;display:grid;grid-template-rows:60px 1fr 28px}
+    header{display:flex;align-items:center;gap:24px;padding:0 20px;background:#131e28;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px;min-width:205px}.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#09221f;display:grid;place-items:center;font-weight:900;font-size:17px}.brand strong{font-size:15px;letter-spacing:.3px}.brand span{display:block;color:var(--muted);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
+    .project-name{font-size:13px;color:#bac6cd;white-space:nowrap}.project-name b{color:#fff;font-weight:550}.tools{display:flex;align-items:center;gap:7px;margin-left:auto}.tool-button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:#d8e1e6;display:flex;align-items:center;gap:7px}.tool-button:hover{background:#243541}.tool-button.active{border-color:var(--accent);color:var(--accent);background:#16332f}.tool-button.primary{background:var(--accent);border-color:var(--accent);color:#0b2925;font-weight:700}.tool-button.danger:hover{border-color:var(--danger);color:var(--danger)}
+    main{display:grid;grid-template-columns:218px 1fr;min-height:0}.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:18px 13px;overflow:auto}.section-title{display:flex;justify-content:space-between;align-items:center;color:#a7b5bf;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:0 5px;margin:0 0 12px}.section-title small{font-size:10px;color:#6f7e88;letter-spacing:0;text-transform:none}.library{display:grid;gap:7px}.part{border:1px solid #2b3a46;border-radius:8px;background:#1b2934;min-height:58px;display:flex;align-items:center;gap:11px;padding:9px 10px;text-align:left}.part:hover{border-color:#60717d;background:#22323e}.part-icon{height:36px;width:42px;display:grid;place-items:center;color:var(--accent);background:#142c30;border-radius:6px;font-size:17px;font-weight:700}.part-name{font-size:12px;font-weight:600}.part-desc{color:#8fa0aa;font-size:10px;margin-top:2px}.hint{margin:20px 5px 0;color:#83929c;font-size:11px;line-height:1.55}.hint kbd{font:10px ui-monospace,monospace;color:#cbd5db;background:#263541;padding:2px 4px;border-radius:3px}
+    .workarea{position:relative;min-width:0;min-height:0;background:#111b24}.canvas-wrap{height:100%;overflow:hidden;position:relative;background-color:#111b24;background-image:radial-gradient(#30404b 1px,transparent 1px);background-size:24px 24px}svg#sheet{display:block;width:100%;height:100%;touch-action:none;user-select:none}.wire{fill:none;stroke:var(--wire);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.wire.selected{stroke:var(--accent);stroke-width:3.5}.part-body{fill:#17242e;stroke:#89a0aa;stroke-width:2}.terminal{fill:var(--accent);stroke:#111b24;stroke-width:2}.part-label{fill:#e4ebee;font-size:13px;font-weight:650;text-anchor:middle;pointer-events:none}.part-value{fill:#91a4ae;font-size:11px;text-anchor:middle;pointer-events:none}.symbol{fill:none;stroke:#d6e2e6;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.selected .part-body{stroke:var(--accent);stroke-width:2.5}.ghost{opacity:.45}.wire-preview{fill:none;stroke:var(--accent);stroke-dasharray:5 5;stroke-width:2}.empty-state{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}.empty-card{border:1px solid #2b3d49;background:#17232edb;backdrop-filter:blur(7px);padding:20px 24px;border-radius:12px;text-align:center;max-width:340px}.empty-card strong{font-size:15px}.empty-card p{color:#99a9b2;font-size:12px;line-height:1.55;margin:7px 0 0}.canvas-hud{position:absolute;left:16px;top:14px;color:#80919c;font-size:11px;pointer-events:none}.zoom-controls{position:absolute;bottom:16px;right:16px;display:flex;align-items:center;gap:5px;background:#192631;border:1px solid var(--line);border-radius:8px;padding:4px}.zoom-controls button{width:28px;height:26px;border:0;border-radius:5px;background:transparent;color:#dbe4e8;font-size:16px}.zoom-controls button:hover{background:#2a3a46}.zoom-label{width:48px;text-align:center;color:#aab8c1;font-size:11px}
+    footer{display:flex;align-items:center;gap:18px;padding:0 14px;background:#131e28;border-top:1px solid var(--line);color:#84949e;font-size:10px}footer .status{display:flex;align-items:center;gap:6px}footer .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}footer .right{margin-left:auto}
+    .toast{position:fixed;left:50%;bottom:45px;transform:translate(-50%,12px);opacity:0;background:#23343f;border:1px solid #3b505d;color:#e4ecef;border-radius:8px;padding:9px 14px;font-size:12px;transition:.2s;pointer-events:none;z-index:4}.toast.show{opacity:1;transform:translate(-50%,0)}
+    input.hidden{display:none}@media(max-width:740px){.app{grid-template-rows:56px 1fr 26px}.brand{min-width:auto}.brand span,.project-name{display:none}main{grid-template-columns:155px 1fr}.sidebar{padding:14px 9px}.tools{gap:4px}.tool-button{padding:0 8px;font-size:12px}.tool-button .wide{display:none}.part{padding:8px;gap:7px}.part-icon{width:32px}.hint{font-size:10px}header{padding:0 10px;gap:8px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="brand-mark">L</div><div><strong>Leitwerk</strong><span>Schaltplan Studio</span></div></div>
+    <div class="project-name">Projekt: <b id="projectTitle">Neuer Schaltplan</b></div>
+    <div class="tools">
+      <button class="tool-button" id="selectTool" title="Auswählen (V)">↖ <span class="wide">Auswahl</span></button>
+      <button class="tool-button" id="wireTool" title="Verbinden (W)">⌁ <span class="wide">Verbinden</span></button>
+      <button class="tool-button" id="saveBtn" title="Projekt als JSON speichern">↓ <span class="wide">Projekt</span></button>
+      <button class="tool-button" id="openBtn" title="Projektdatei öffnen">↑ <span class="wide">Öffnen</span></button>
+      <button class="tool-button primary" id="exportBtn" title="Zeichnung als SVG exportieren">Exportieren</button>
+      <input class="hidden" id="fileInput" type="file" accept=".json,application/json">
+    </div>
+  </header>
+  <main>
+    <aside class="sidebar">
+      <h2 class="section-title">Bauteile <small>zum Einfügen</small></h2>
+      <div class="library" id="library"></div>
+      <p class="hint">Bauteil anklicken, um es mittig zu platzieren. Im Verbindungsmodus zwei grüne Anschlüsse nacheinander anklicken.<br><br><kbd>Entf</kbd> löscht die Auswahl · <kbd>Esc</kbd> bricht ab</p>
+    </aside>
+    <section class="workarea">
+      <div class="canvas-wrap" id="canvasWrap">
+        <div class="canvas-hud" id="hud">Blatt 1 · IEC-Stil · Raster 24 px</div>
+        <svg id="sheet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" aria-label="Schaltplan Arbeitsfläche">
+          <g id="scene"><g id="wires"></g><g id="parts"></g><path id="preview" class="wire-preview" style="display:none"/></g>
+        </svg>
+        <div class="empty-state" id="emptyState"><div class="empty-card"><strong>Dein Schaltplan beginnt hier</strong><p>Wähle links ein Bauteil aus, um es auf dem Blatt zu platzieren. Anschließend kannst du die grünen Anschlüsse miteinander verbinden.</p></div></div>
+        <div class="zoom-controls"><button id="zoomOut" aria-label="Verkleinern">−</button><span class="zoom-label" id="zoomLabel">100%</span><button id="zoomIn" aria-label="Vergrößern">+</button><button id="fitBtn" title="Ansicht zurücksetzen">⌂</button></div>
+      </div>
+    </section>
+  </main>
+  <footer><span class="status"><i class="dot"></i><span id="statusText">Bereit</span></span><span id="partCount">0 Bauteile</span><span id="wireCount">0 Verbindungen</span><span class="right">Lokale Browser-App · Daten bleiben auf deinem Gerät</span></footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+  const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
+    resistor:{name:'Widerstand',desc:'R · passiv',label:'R',value:'10 kΩ',icon:'▱',terminals:[[-48,0],[48,0]],shape:'resistor'},
+    switch:{name:'Schließer',desc:'S · Schaltkontakt',label:'S',value:'Schließer',icon:'⌁',terminals:[[-48,0],[48,0]],shape:'switch'},
+    lamp:{name:'Lampe',desc:'H · Verbraucher',label:'H',value:'24 V',icon:'⊗',terminals:[[-48,0],[48,0]],shape:'lamp'},
+    coil:{name:'Spule',desc:'K · Induktivität',label:'K',value:'Spule',icon:'∿',terminals:[[-48,0],[48,0]],shape:'coil'},
+    connector:{name:'Klemme',desc:'X · Anschluss',label:'X',value:'Klemme',icon:'⊙',terminals:[[-48,0],[48,0]],shape:'connector'}
+  };
+  let model={title:'Neuer Schaltplan',parts:[],wires:[]},selected=null,mode='select',wireStart=null,zoom=1,pan={x:0,y:0},drag=null,nextId=1;
+  const svg=document.querySelector('#sheet'),scene=document.querySelector('#scene'),partsG=document.querySelector('#parts'),wiresG=document.querySelector('#wires'),preview=document.querySelector('#preview');
+  const lib=document.querySelector('#library');
+  for(const [type,d] of Object.entries(TYPES)){const b=document.createElement('button');b.className='part';b.innerHTML=`<span class="part-icon">${d.icon}</span><span><span class="part-name">${d.name}</span><span class="part-desc">${d.desc}</span></span>`;b.addEventListener('click',()=>addPart(type));lib.append(b)}
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.append(e);return e}
+  function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const midX=snap((a.x+b.x)/2);const p=el('path',{d:`M ${a.x} ${a.y} H ${midX} V ${b.y} H ${b.x}`,class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>{if(mode!=='select')return;e.stopPropagation();selected={kind:'wire',id:w.id};render()})});model.parts.forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.length?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} Bauteil${model.parts.length===1?'':'e'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} Verbindung${model.wires.length===1?'':'en'}`;document.querySelector('#statusText').textContent=mode==='wire'?(wireStart?'Zweiten Anschluss wählen':'Verbindungsmodus'):selected?'Element ausgewählt':'Bereit';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',mode==='wire')}
+  function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y})`,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;d.terminals.forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(mode==='wire'){e.stopPropagation();onTerminal(p.id,i)}else{e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(mode==='wire')return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};g.setPointerCapture?.(e.pointerId);render()});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt('Bezeichnung oder Wert ändern',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');p.label=label.trim();if(rest.length)p.value=rest.join('·').trim();render()}})}
+  function drawSymbol(g,s){if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else{el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
+  function addPart(type){const r=svg.getBoundingClientRect(),w=toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' eingefügt')}
+  function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p)return null;const [dx,dy]=TYPES[p.type].terminals[+index];return{x:p.x+dx,y:p.y+dy}}
+  function onTerminal(id,index){const key=id+':'+index;if(!wireStart){wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('Diese Anschlüsse sind bereits verbunden');wireStart=null;render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key});wireStart=null;preview.style.display='none';render();toast('Verbindung erstellt')}
+  function snap(v){return Math.round(v/GRID)*GRID}function toWorld(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left-pan.x)/zoom,y:(e.clientY-r.top-pan.y)/zoom}}
+  function applyView(){scene.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${zoom})`);document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'}
+  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(drag){const p=model.parts.find(p=>p.id===drag.id);if(p){p.x=snap(w.x+drag.dx);p.y=snap(w.y+drag.dy);render();applyView()}}if(wireStart){const a=findTerminal(wireStart);preview.setAttribute('d',`M ${a.x} ${a.y} L ${w.x} ${w.y}`)}});
+  svg.addEventListener('pointerup',()=>drag=null);svg.addEventListener('pointerdown',e=>{if(e.target===svg||e.target===scene){selected=null;wireStart=null;preview.style.display='none';render()}});
+  svg.addEventListener('wheel',e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();zoom=Math.max(.5,Math.min(2,zoom*(e.deltaY<0?1.1:.9)));applyView()},{passive:false});
+  document.querySelector('#selectTool').onclick=()=>{mode='select';wireStart=null;preview.style.display='none';render()};document.querySelector('#wireTool').onclick=()=>{mode=mode==='wire'?'select':'wire';wireStart=null;preview.style.display='none';render()};
+  document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom*1.15);applyView()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom/1.15);applyView()};document.querySelector('#fitBtn').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
+  document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schaltplan').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Projektdatei gespeichert')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
+  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Geöffneter Schaltplan',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
+  document.querySelector('#exportBtn').onclick=()=>{const clone=svg.cloneNode(true);clone.setAttribute('width','1200');clone.setAttribute('height','800');clone.querySelector('#preview')?.remove();clone.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));const source=new XMLSerializer().serializeToString(clone);download(new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${source}`],{type:'image/svg+xml'}),(model.title||'schaltplan').replace(/[^a-z0-9äöüß-]+/gi,'-')+'.svg');toast('SVG-Zeichnung exportiert')};
+  function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;if(e.key==='Escape'){wireStart=null;preview.style.display='none';mode='select';render()}if(e.key.toLowerCase()==='v'){mode='select';render()}if(e.key.toLowerCase()==='w'){mode='wire';render()}if(e.key==='Delete'||e.key==='Backspace'){if(selected?.kind==='part'){model.parts=model.parts.filter(p=>p.id!==selected.id);model.wires=model.wires.filter(w=>!w.a.startsWith(selected.id+':')&&!w.b.startsWith(selected.id+':'))}else if(selected?.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);selected=null;render()}});
+  let toastTimer;function toast(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
+  render();applyView();
+})();
+</script>
+</body>
+</html>

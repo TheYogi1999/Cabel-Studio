@@ -129,7 +129,7 @@
   function refreshSheetPanel(){let h='<div class="panelHead"><h2>Blattübersicht</h2><button id="rightAddSheet">＋ Blatt</button></div><p class="panelNote">A4 quer · 4-mm-Raster · '+pages.length+' Blätter</p>';pages.forEach((s,i)=>{h+='<button class="sheetItem '+(i===activeSheet?'active':'')+'" data-right-sheet="'+i+'"><strong>'+safe(i+1)+' · '+safe(s.title)+'</strong><small>'+s.parts.length+' Geräte · '+s.wires.length+' Verbindungen</small></button>'});sheetPanel.innerHTML=h;sheetPanel.querySelectorAll('[data-right-sheet]').forEach(b=>b.onclick=()=>setSheet(+b.dataset.rightSheet));sheetPanel.querySelector('#rightAddSheet').onclick=addSheet;const current=document.querySelector('#sheetCurrent');if(current)current.textContent=(activeSheet+1)+'/'+pages.length}
   const oldRenderRight=render;render=function(){oldRenderRight();refreshSheetPanel()};
   const oldFindTerminal=findTerminal;findTerminal=function(id){const t=oldFindTerminal(id);return t?{x:snap(t.x),y:snap(t.y)}:null};
-  const oldDrawPart=drawPart;drawPart=function(p){oldDrawPart(p);partsG.lastElementChild.querySelectorAll('.terminal').forEach(c=>{c.setAttribute('cx',snap(+c.getAttribute('cx')));c.setAttribute('cy',snap(+c.getAttribute('cy')))})};
+  
   const oldApplyView=applyView;applyView=function(){oldApplyView();const cell=4*1128/297*zoom,dot=pattern.querySelector('circle');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',((pan.x*zoom)%cell+cell)%cell);pattern.setAttribute('y',((pan.y*zoom)%cell+cell)%cell);dot.setAttribute('cx',zoom);dot.setAttribute('cy',zoom);dot.setAttribute('r',.65*zoom)};
   render();applyView();
   // A4-Papier, Raster, Rahmen, Titelblock und Schaltbild gemeinsam zoomen
@@ -140,6 +140,79 @@
   toWorld=function(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;const p=point.matrixTransform(svg.getScreenCTM().inverse()),o=pageZoomOffset();return{x:(p.x-o.x)/zoom,y:(p.y-o.y)/zoom}};
   applyView=function(){const o=pageZoomOffset(),cell=4*1128/297,dot=pattern.querySelector('circle');pageContent.setAttribute('transform','translate('+o.x+' '+o.y+') scale('+zoom+')');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',0);pattern.setAttribute('y',0);dot.setAttribute('cx',1);dot.setAttribute('cy',1);dot.setAttribute('r','.65');document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'};
   render();applyView();
+  // Automatische, echte A4-Gerätelistenblätter am Ende der Blattfolge
+  const DEVICE_LIST_KIND='device-list', DEVICE_LIST_ROWS=22;
+  const deviceListGroup=el('g',{id:'deviceListContent','font-family':'Arial,sans-serif'},svg);
+  pageContent.append(deviceListGroup);
+  const drawingPages=()=>pages.filter(s=>s.kind!==DEVICE_LIST_KIND);
+  function syncDeviceListPages(){
+    const current=pages[activeSheet], drawings=drawingPages();
+    if(current&&current.kind!==DEVICE_LIST_KIND){current.parts=model.parts;current.wires=model.wires}
+    const devices=drawings.flatMap((s,si)=>(s.parts||[]).map(p=>({sheet:si+1,p}))).sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'de'));
+    const count=Math.max(1,Math.ceil(devices.length/DEVICE_LIST_ROWS));
+    const old=pages.filter(s=>s.kind===DEVICE_LIST_KIND), lists=[];
+    for(let i=0;i<count;i++){
+      const s=old[i]||{kind:DEVICE_LIST_KIND,generatedId:'device-list-'+i,title:'Geräteliste '+(i+1),parts:[],wires:[]};
+      s.kind=DEVICE_LIST_KIND;s.generatedId='device-list-'+i;s.title='Geräteliste '+(i+1);s.parts=[];s.wires=[];
+      s.deviceEntries=devices.slice(i*DEVICE_LIST_ROWS,(i+1)*DEVICE_LIST_ROWS);lists.push(s);
+    }
+    pages.splice(0,pages.length,...drawings,...lists);
+    const next=pages.indexOf(current);activeSheet=next<0?0:next;
+    if(pages[activeSheet]){model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires}
+  }
+  function drawDeviceList(sheet){
+    deviceListGroup.replaceChildren();
+    const txt=(x,y,value,size=11,weight='normal',fill='#263943')=>{const t=el('text',{x,y,'font-size':size,'font-weight':weight,fill},deviceListGroup);t.textContent=value};
+    const line=(x1,y1,x2,y2)=>el('path',{d:'M'+x1+' '+y1+' H'+x2,stroke:'#aebbc2','stroke-width':.8},deviceListGroup);
+    txt(42,68,'Automatisches Geräteverzeichnis',22,'bold','#15252e');
+    txt(42,90,'AKS-Kennzeichen · automatisch aus allen Schaltplanblättern · '+(sheet.deviceEntries||[]).length+' Geräte auf diesem Blatt',10,'normal','#53666f');
+    const y0=128;
+    el('rect',{x:36,y:103,width:1056,height:30,rx:2,fill:'#e8eef0'},deviceListGroup);
+    txt(46,y0,'AKS-KENNZEICHEN',9,'bold');txt(285,y0,'BESCHRIFTUNG',9,'bold');txt(520,y0,'BAUTEIL',9,'bold');txt(760,y0,'WERT / TYP',9,'bold');txt(1010,y0,'BLATT',9,'bold');
+    line(36,137,1092);
+    (sheet.deviceEntries||[]).forEach((entry,i)=>{
+      const y=158+i*25,p=entry.p;
+      if(i%2===1)el('rect',{x:36,y:y-16,width:1056,height:24,fill:'#f1f4f5'},deviceListGroup);
+      txt(46,y,aks(p),10,'bold','#138b78');txt(285,y,String(p.label||p.deviceCode||''),10);txt(520,y,TYPES[p.type]?.name||p.type||'',10);txt(760,y,String(p.value||''),10);txt(1015,y,String(entry.sheet),10);
+      line(36,y+8,1092);
+    });
+    if(!(sheet.deviceEntries||[]).length)txt(46,164,'Noch keine Geräte im Schaltplan.',11,'normal','#53666f');
+    txt(42,706,'Erstellt automatisch aus den Bauteilen des Projekts.',9,'normal','#73838b');
+  }
+  const renderBeforeDeviceLists=render;
+  render=function(){
+    syncDeviceListPages();
+    renderBeforeDeviceLists();
+    const generated=pages[activeSheet]?.kind===DEVICE_LIST_KIND;
+    scene.style.display=generated?'none':'';
+    deviceListGroup.style.display=generated?'':'none';
+    if(generated)drawDeviceList(pages[activeSheet]);
+    const s=pages[activeSheet];
+    document.querySelector('#hud').textContent='Blatt '+(activeSheet+1)+'/'+pages.length+' · '+s.title+' · A4 quer · 4 mm Raster';
+    document.querySelector('#a4Sheet').textContent=s.title+' · A4 · 4 mm Raster';
+    document.querySelector('#a4Number').textContent=(activeSheet+1)+' / '+pages.length;
+    if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML='<strong>'+safe(i+1)+' · '+safe(page.title)+'</strong><small>Automatische Geräteliste · '+page.deviceEntries.length+' Geräte</small>'})}
+  };
+  const addPartBeforeDeviceList=addPart;
+  addPart=function(type){if(pages[activeSheet]?.kind===DEVICE_LIST_KIND)setSheet(drawingPages().length-1);addPartBeforeDeviceList(type)};
+  addSheet=function(){
+    const drawings=drawingPages(),name=prompt('Name des neuen A4-Blatts','Blatt '+(drawings.length+1));if(name===null)return;
+    const sheet={title:name.trim()||'Blatt '+(drawings.length+1),parts:[],wires:[]};
+    pages.splice(drawings.length,0,sheet);setSheet(drawings.length);closePanel();
+  };
+  document.querySelector('#sheetAdd').onclick=addSheet;
+  const drawPagesBeforeDeviceList=drawPages;
+  drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};drawPages=function(){drawPagesBeforeDeviceList();pages.forEach((s,i)=>{if(s.kind===DEVICE_LIST_KIND){document.querySelector('[data-rename="'+i+'"]').disabled=true;const del=document.querySelector('[data-drop="'+i+'"][data-drop="'+i+'"];');if(del)del.disabled=true}})};
+  document.querySelector('#fileInput').onchange=async e=>{
+    const f=e.target.files[0];if(!f)return;
+    try{const x=JSON.parse(await f.text());const loaded=Array.isArray(x.sheets)?x.sheets.filter(s=>s.kind!==DEVICE_LIST_KIND):[{title:'Blatt 1',parts:x.parts||[],wires:x.wires||[]}];
+      pages.splice(0,pages.length,...loaded.map((s,i)=>({title:s.title||'Blatt '+(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));
+      if(!pages.length)pages.push({title:'Blatt 1',parts:[],wires:[]});model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+pages.flatMap(s=>[...s.parts,...s.wires]).length;render();toast('Projekt geladen');
+    }catch{toast('Datei konnte nicht gelesen werden')}e.target.value='';
+  };
+  syncDeviceListPages();render();applyView();
+drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};
+
 })();
 </script>
 </body>

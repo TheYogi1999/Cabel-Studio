@@ -207,9 +207,9 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const generatedTarget = await screen(500, 300), generatedBox = await page.locator('#sheet').boundingBox();
     await page.locator('.part[data-type="lamp"]').dragTo(page.locator('#sheet'), { targetPosition: { x: generatedTarget.x - generatedBox.x, y: generatedTarget.y - generatedBox.y } });
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
-    assert.equal(drawing(await save()).parts.length, 2);
+    assert.equal(drawing(await save()).parts.filter(p=>!p.unplaced).length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.6.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.7.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -238,7 +238,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.6.0');
+    assert.equal(withText.appVersion, '1.7.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -297,7 +297,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
-    console.log('PASS v1.6.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.7.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -518,7 +518,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator('.terminal-list-link').first().click();
     assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),'p301');
     await page.locator('#selectTool').click();await page.locator('#parts > g[data-id="p302"] .part-body').click();await page.keyboard.press('Delete');
-    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').click();assert.equal(await page.locator('.terminal-list-link').count(),2);
+    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').click();assert.equal(await page.locator('.terminal-list-link').count(),4);
     await page.locator('#createTerminalStrip').click();await page.locator('#stripForm [name="count"]').fill('12');await page.locator('#stripForm [type="submit"]').click();
     await page.locator('[data-overview="sheets"]').click();assert.equal(await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').count(),2);
     const beforePdf=await save(),beforePdfId=beforePdf.activeSheetId;
@@ -539,7 +539,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const firstId=clamps[0].id,secondId=clamps[1].id;
     assert.equal(await page.locator(`.device-node[data-device-id="${stripMaster.id}"] .device-node`).count(),2);
     assert.equal(await page.locator(`.device-node[data-device-id="${firstId}"] .pin-node`).count(),4);
-    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal`).count(),4);
+    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal:not(.bridge-terminal)`).count(),4);
     await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').click();
     const terminalText=await page.locator('#deviceListContent').textContent();
     for(const text of ['LEISTE','KLEMME','X1',':1a',':1b',':2a',':2b'])assert.ok(terminalText.includes(text));
@@ -569,9 +569,9 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     // Do not silently remove an extra pin that already has a conductor attached.
     await page.locator(`#parts > g[data-id="${firstId}"] .part-body`).click({button:'right'});
     await page.locator('#componentForm [name="pinNumbers"]').fill('1a, 1b');await page.locator('#componentForm [type="submit"]').click();
-    assert.equal(await page.locator('#toast').textContent(),'Zu entfernende Pins sind noch verdrahtet');assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal`).count(),4);
+    assert.equal(await page.locator('#toast').textContent(),'Zu entfernende Pins sind noch verdrahtet');assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal:not(.bridge-terminal)`).count(),4);
     await page.locator('#componentForm [name="pinNumbers"]').fill('1a, 1b, 1c, 1d, 1e, 1f');await page.locator('#componentForm [type="submit"]').click();
-    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal`).count(),6);await assertAttached();
+    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"] .terminal:not(.bridge-terminal)`).count(),6);await assertAttached();
     await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').click();
     assert.equal(await page.locator('.terminal-list-link').count(),10);assert.ok((await page.locator('#deviceListContent').textContent()).includes('Brücke →'));
     await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click();
@@ -653,6 +653,34 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const mixedPdf=await download('#exportBtn');assert.match(mixedPdf,/^%PDF-1.4/);assert.ok(mixedPdf.includes('/Count '+mixed.sheets.length));
     await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:mixed.sheets.length}));
     console.log('PASS manufacturer/SAP header columns after Value/Type, mixed terminal types in one strip, device/terminal lists, CSV, JSON and PDF');
+
+    // Devices survive removal from a drawing; slaves can be placed independently.
+    await load(bridgeFile);await page.locator('#selectTool').click();
+    await page.locator(`#parts > g[data-id="${firstId}"] .part-body`).click();await page.keyboard.press('Delete');
+    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"]`).count(),0);
+    const unplacedFile=await save();assert.equal(drawing(unplacedFile).parts.find(p=>p.id===firstId).unplaced,true);
+    await page.reload();await load(unplacedFile);await page.locator('[data-overview="devices"]').click();
+    const unplacedNode=page.locator(`[data-device-id="${firstId}"]`);
+    assert.ok((await unplacedNode.getAttribute('class')).includes('device-unplaced'));
+    await unplacedNode.locator(':scope > summary .device-jump').click();
+    assert.equal(await page.locator(`#parts > g[data-id="${firstId}"]`).count(),1);
+    assert.ok(!(drawing(await save()).parts.find(p=>p.id===firstId).unplaced));
+    const beforeSlave=drawing(await save()).parts;const slave=beforeSlave.find(p=>p.id===firstId),master=beforeSlave.find(p=>p.id===slave.masterId);
+    await dragPart(firstId,slave.x+2*GRID,slave.y+GRID);
+    const afterSlave=drawing(await save()).parts.find(p=>p.id===master.id);near(afterSlave.x,master.x);near(afterSlave.y,master.y);
+    // Explicit bridge ports retain their own endpoint indices and routes after reload.
+    await page.locator('#bridgeTool').click();
+    await page.locator(`[data-part="${firstId}"][data-term="8"]`).click();await page.locator(`[data-part="${secondId}"][data-term="8"]`).click();
+    const separateBridge=drawing(await save()).wires.find(w=>w.a===firstId+':8'&&w.b===secondId+':8');assert.ok(separateBridge);assert.equal(separateBridge.kind,'bridge');
+    await assertAttached();await assertOrthogonal();const bridgePortsFile=await save();await page.reload();await load(bridgePortsFile);await assertAttached();
+    const labelStyle=await page.locator(`#parts > g[data-id="${firstId}"] .part-label`).evaluate(n=>({size:getComputedStyle(n).fontSize,color:getComputedStyle(n).fill}));assert.equal(labelStyle.size,'10px');assert.equal(labelStyle.color,'rgb(36, 99, 181)');
+    await page.locator('[data-overview="devices"]').click();
+    await page.locator(`[data-device-id="${master.id}"] > summary .terminal-manage`).click();
+    const addedFile=await save(),added=drawing(addedFile).parts.find(p=>!drawing(bridgePortsFile).parts.some(q=>q.id===p.id));assert.ok(added);assert.equal(added.masterId,master.id);assert.equal(added.unplaced,true);
+    await page.locator(`[data-device-id="${added.id}"] > summary .device-jump`).click();assert.equal(await page.locator(`#parts > g[data-id="${added.id}"]`).count(),1);
+    page.once('dialog',dialog=>dialog.accept());await page.locator(`[data-device-id="${added.id}"] > summary .terminal-manage`).click();
+    assert.ok(!drawing(await save()).parts.some(p=>p.id===added.id));
+    console.log('PASS persisted yellow unplaced/blue placed devices, independent slave placement/movement, separate bridge ports and routes, add/remove strip terminals, smaller blue symbol text');
 
     assert.deepEqual(errors, []);
     console.log('PASS deletion cleans attached wires, generated device lists, no browser JavaScript errors');

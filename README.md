@@ -8,9 +8,10 @@ Ein kleiner, eigenständiger Schaltplan-Editor für den Browser, umgesetzt mit H
 
 ## Funktionen
 
-- Widerstände, Schließer, Lampen, Spulen und Klemmen platzieren und verschieben
-- Anschlüsse im Verbindungsmodus verbinden
-- Bauteilkennzeichen und Werte per Doppelklick ändern
+- Bauteilbibliothek mit aufklappbaren Ordnern nach Bauteilgruppe
+- Widerstände, Schließer, Lampen, Spulen und Klemmen per Drag-and-drop platzieren und verschieben
+- Anschlüsse über frei gesetzte Rasterpunkte verbinden; die Punkte folgen angeschlossenen Bauteilen beim Verschieben
+- AKS-Kennzeichen, Beschriftung und Wert per Rechtsklick oder Doppelklick im Dialog ändern
 - Elemente auswählen und mit `Entf` löschen
 - Projekte als JSON speichern und JSON-Projekte wieder öffnen
 - Zeichnung als SVG exportieren
@@ -18,10 +19,11 @@ Ein kleiner, eigenständiger Schaltplan-Editor für den Browser, umgesetzt mit H
 
 ## Bedienung
 
-1. Bauteil links anklicken, um es in der Mitte des Blatts einzufügen.
-2. **Verbinden** auswählen und zwei grüne Anschlusspunkte anklicken.
-3. Ein Bauteil doppelt anklicken, um Kennzeichen oder Wert zu ändern.
-4. Über **Projekt** speichern oder über **Exportieren** eine SVG-Datei erstellen.
+1. Links einen Gruppenordner öffnen und ein Bauteil auf das Blatt ziehen. Ein Klick fügt es in der Blattmitte ein.
+2. **Verbinden** auswählen, den grünen Startanschluss anklicken, beliebige Rasterpunkte setzen und am Zielanschluss abschließen. `Rücktaste` entfernt den letzten gesetzten Punkt, `Esc` bricht ab. Ohne Zwischenpunkte entsteht eine direkte Verbindung.
+3. In **Auswahl** Bauteile verschieben. Zwischenpunkte bewegen sich anteilig mit beiden angeschlossenen Bauteilen; näher am Start liegende Punkte folgen stärker dem Startbauteil. Ausgewählte Verbindungen zeigen verschiebbare Punktgriffe.
+4. Rechtsklick oder Doppelklick auf ein Bauteil öffnet den Dialog für Funktion, Einbauort, Betriebsmittel, freie Beschriftung und Wert. **Übernehmen** aktualisiert auch die Gerätelisten; **Abbrechen** verwirft die Eingaben.
+5. Über **Projekt** alle Blätter einschließlich Verbindungspunkten speichern oder über **Exportieren** das aktuelle Blatt als SVG exportieren. Ältere Projektdateien ohne Zwischenpunkte bleiben lesbar.
 
 `V` aktiviert die Auswahl, `W` den Verbindungsmodus und `Esc` bricht die aktuelle Aktion ab.
 

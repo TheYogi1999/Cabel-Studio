@@ -17,6 +17,14 @@
     footer{display:flex;align-items:center;gap:18px;padding:0 14px;background:#131e28;border-top:1px solid var(--line);color:#84949e;font-size:10px}footer .status{display:flex;align-items:center;gap:6px}footer .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}footer .right{margin-left:auto}
     .toast{position:fixed;left:50%;bottom:45px;transform:translate(-50%,12px);opacity:0;background:#23343f;border:1px solid #3b505d;color:#e4ecef;border-radius:8px;padding:9px 14px;font-size:12px;transition:.2s;pointer-events:none;z-index:4}.toast.show{opacity:1;transform:translate(-50%,0)}
     input.hidden{display:none}@media(max-width:740px){.app{grid-template-rows:56px 1fr 26px}.brand{min-width:auto}.brand span,.project-name{display:none}main{grid-template-columns:155px 1fr}.sidebar{padding:14px 9px}.tools{gap:4px}.tool-button{padding:0 8px;font-size:12px}.tool-button .wide{display:none}.part{padding:8px;gap:7px}.part-icon{width:32px}.hint{font-size:10px}header{padding:0 10px;gap:8px}}
+    .library-folder{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#14212b}
+    .library-folder summary{cursor:pointer;padding:10px 8px;color:#d5e2e7;font-size:11px;font-weight:650;list-style:none;display:flex;align-items:center;gap:6px}
+    .library-folder summary::before{content:'▸';color:var(--accent)}.library-folder[open] summary::before{content:'▾'}
+    .library-folder summary::after{content:'▰';color:var(--accent);order:-1}.library-folder summary small{margin-left:auto;color:var(--muted);font-weight:400}
+    .folder-parts{display:grid;gap:6px;padding:0 6px 7px}.folder-parts .part{width:100%;cursor:grab;min-width:0}.part:active{cursor:grabbing}
+    .part-name,.part-desc{display:block}.wire{pointer-events:stroke;cursor:pointer}.wire-point{fill:#fff;stroke:#07977e;stroke-width:2;cursor:move}.draft-point{fill:#62d6bd;stroke:#138b78;stroke-width:1}
+    .wire-preview{pointer-events:none}.drop-target{outline:2px dashed var(--accent);outline-offset:-5px}.wire-form fieldset{border:1px solid #40525d;border-radius:7px;display:grid;gap:10px;padding:12px}.wire-form legend{color:#aebfc7;font-size:11px;padding:0 5px}
+    button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   </style>
 </head>
 <body>
@@ -37,7 +45,7 @@
     <aside class="sidebar">
       <h2 class="section-title">Bauteile <small>zum Einfügen</small></h2>
       <div class="library" id="library"></div>
-      <p class="hint">Bauteil anklicken, um es mittig zu platzieren. Im Verbindungsmodus zwei grüne Anschlüsse nacheinander anklicken.<br><br><kbd>Entf</kbd> löscht die Auswahl · <kbd>Esc</kbd> bricht ab</p>
+      <p class="hint">Ordner öffnen und Bauteil aufs Blatt ziehen oder zum Einfügen anklicken. Rechtsklick öffnet die Bauteildaten.<br><br>Verbinden: Startanschluss, beliebige Rasterpunkte und Zielanschluss anklicken. Rücktaste entfernt den letzten Punkt.<br><br><kbd>Entf</kbd> löscht die Auswahl · <kbd>Esc</kbd> bricht ab</p>
     </aside>
     <section class="workarea">
       <div class="canvas-wrap" id="canvasWrap">
@@ -45,7 +53,7 @@
         <svg id="sheet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" aria-label="Schaltplan Arbeitsfläche">
           <g id="scene"><g id="wires"></g><g id="parts"></g><path id="preview" class="wire-preview" style="display:none"/></g>
         </svg>
-        <div class="empty-state" id="emptyState"><div class="empty-card"><strong>Dein Schaltplan beginnt hier</strong><p>Wähle links ein Bauteil aus, um es auf dem Blatt zu platzieren. Anschließend kannst du die grünen Anschlüsse miteinander verbinden.</p></div></div>
+        <div class="empty-state" id="emptyState"><div class="empty-card"><strong>Dein Schaltplan beginnt hier</strong><p>Ziehe ein Bauteil aus einem Ordner auf das Blatt. Im Modus Verbinden legst du den Verlauf durch Klicks auf Rasterpunkte fest.</p></div></div>
         <div class="zoom-controls"><button id="zoomOut" aria-label="Verkleinern">−</button><span class="zoom-label" id="zoomLabel">100%</span><button id="zoomIn" aria-label="Vergrößern">+</button><button id="fitBtn" title="Ansicht zurücksetzen">⌂</button></div>
       </div>
     </section>
@@ -62,30 +70,170 @@
     coil:{name:'Spule',desc:'K · Induktivität',label:'K',value:'Spule',icon:'∿',terminals:[[-48,0],[48,0]],shape:'coil'},
     connector:{name:'Klemme',desc:'X · Anschluss',label:'X',value:'Klemme',icon:'⊙',terminals:[[-48,0],[48,0]],shape:'connector'}
   };
-  let model={title:'Neuer Schaltplan',parts:[],wires:[]},selected=null,mode='select',wireStart=null,zoom=1,pan={x:0,y:0},drag=null,nextId=1;
+  let model={title:'Neuer Schaltplan',parts:[],wires:[]},selected=null,mode='select',wireStart=null,draftPoints=[],wireCursor=null,pointDrag=null,zoom=1,pan={x:0,y:0},drag=null,nextId=1;
   const svg=document.querySelector('#sheet'),scene=document.querySelector('#scene'),partsG=document.querySelector('#parts'),wiresG=document.querySelector('#wires'),preview=document.querySelector('#preview');
   const lib=document.querySelector('#library');
-  for(const [type,d] of Object.entries(TYPES)){const b=document.createElement('button');b.className='part';b.innerHTML=`<span class="part-icon">${d.icon}</span><span><span class="part-name">${d.name}</span><span class="part-desc">${d.desc}</span></span>`;b.addEventListener('click',()=>addPart(type));lib.append(b)}
+  const GROUPS=[
+    {name:'Anschlüsse',types:['connector']},
+    {name:'Passive Bauteile',types:['coil','resistor']},
+    {name:'Schaltgeräte',types:['switch']},
+    {name:'Verbraucher',types:['lamp']}
+  ];
+  for(const group of GROUPS){
+    const folder=document.createElement('details');folder.className='library-folder';folder.open=true;
+    const summary=document.createElement('summary');summary.textContent=group.name;
+    const count=document.createElement('small');count.textContent=group.types.length;summary.append(count);folder.append(summary);
+    const contents=document.createElement('div');contents.className='folder-parts';folder.append(contents);
+    for(const type of [...group.types].sort((a,b)=>TYPES[a].name.localeCompare(TYPES[b].name,'de'))){
+      const d=TYPES[type],b=document.createElement('button');b.className='part';b.draggable=true;b.dataset.type=type;
+      b.title=d.name+' auf das Blatt ziehen oder zum Einfügen anklicken';
+      b.innerHTML=`<span class="part-icon">${d.icon}</span><span><span class="part-name">${d.name}</span><span class="part-desc">${d.desc}</span></span>`;
+      b.addEventListener('click',()=>addPart(type));
+      b.addEventListener('dragstart',e=>{e.dataTransfer.setData('application/x-cabel-part',type);e.dataTransfer.setData('text/plain',type);e.dataTransfer.effectAllowed='copy';cancelWire();});
+      b.addEventListener('dragend',()=>svg.classList.remove('drop-target'));
+      contents.append(b);
+    }
+    lib.append(folder);
+  }
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.append(e);return e}
-  function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const midX=snap((a.x+b.x)/2);const p=el('path',{d:`M ${a.x} ${a.y} H ${midX} V ${b.y} H ${b.x}`,class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>{if(mode!=='select')return;e.stopPropagation();selected={kind:'wire',id:w.id};render()})});model.parts.forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.length?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} Bauteil${model.parts.length===1?'':'e'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} Verbindung${model.wires.length===1?'':'en'}`;document.querySelector('#statusText').textContent=mode==='wire'?(wireStart?'Zweiten Anschluss wählen':'Verbindungsmodus'):selected?'Element ausgewählt':'Bereit';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',mode==='wire')}
-  function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y})`,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;d.terminals.forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(mode==='wire'){e.stopPropagation();onTerminal(p.id,i)}else{e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(mode==='wire')return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};g.setPointerCapture?.(e.pointerId);render()});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt('Bezeichnung oder Wert ändern',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');p.label=label.trim();if(rest.length)p.value=rest.join('·').trim();render()}})}
+  function render(){
+    partsG.replaceChildren();wiresG.replaceChildren();
+    model.wires.forEach(w=>{
+      const points=routePoints(w);if(!points)return;
+      const p=el('path',{d:routePath(points),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);
+      p.dataset.id=w.id;p.addEventListener('pointerdown',e=>{if(mode!=='select'||e.button!==0)return;e.stopPropagation();selected={kind:'wire',id:w.id};render()});
+      if(selected?.kind==='wire'&&selected.id===w.id&&Array.isArray(w.points)){
+        currentWaypoints(w).forEach((point,i)=>{
+          const handle=el('circle',{cx:point.x,cy:point.y,r:5,class:'wire-point','data-point':i},wiresG);
+          handle.addEventListener('pointerdown',e=>{
+            if(mode!=='select'||e.button!==0)return;e.preventDefault();e.stopPropagation();
+            w.points=currentWaypoints(w);w.anchors={a:findTerminal(w.a),b:findTerminal(w.b)};
+            pointDrag={id:w.id,index:i};svg.setPointerCapture(e.pointerId);
+          });
+        });
+      }
+    });
+    model.parts.forEach(p=>drawPart(p));
+    document.querySelector('#emptyState').style.display=model.parts.length?'none':'grid';
+    document.querySelector('#projectTitle').textContent=model.title;
+    document.querySelector('#partCount').textContent=`${model.parts.length} Bauteil${model.parts.length===1?'':'e'}`;
+    document.querySelector('#wireCount').textContent=`${model.wires.length} Verbindung${model.wires.length===1?'':'en'}`;
+    document.querySelector('#statusText').textContent=mode==='wire'?(wireStart?'Rasterpunkte setzen · Zielanschluss wählen · Esc bricht ab':'Startanschluss wählen'):selected?'Element ausgewählt':'Bereit';
+    document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',mode==='wire');
+    updatePreview();
+  }
+  function drawPart(p){
+    const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y})`,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);
+    g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);
+    const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.label??d.label;
+    const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;
+    d.terminals.forEach((t,i)=>{
+      const c=el('circle',{cx:snap(p.x+t[0])-p.x,cy:snap(p.y+t[1])-p.y,r:5,class:'terminal',tabindex:0,role:'button','aria-label':`${p.label??d.name} · Anschluss ${i+1}`},g);
+      c.dataset.term=String(i);c.dataset.part=p.id;
+      c.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.stopPropagation();if(mode==='wire')onTerminal(p.id,i);else{selected={kind:'part',id:p.id};render()}});
+      c.addEventListener('keydown',e=>{if(mode==='wire'&&(e.key==='Enter'||e.key===' ')){e.preventDefault();onTerminal(p.id,i)}});
+      c.addEventListener('click',e=>e.stopPropagation());
+    });
+    g.addEventListener('pointerdown',e=>{
+      if(mode==='wire'||e.button!==0)return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);
+      drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};svg.setPointerCapture(e.pointerId);render();
+    });
+    g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editPart(p)});
+    g.addEventListener('dblclick',e=>{e.stopPropagation();editPart(p)});
+  }
   function drawSymbol(g,s){if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else{el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
-  function addPart(type){const r=svg.getBoundingClientRect(),w=toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' eingefügt')}
-  function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p)return null;const [dx,dy]=TYPES[p.type].terminals[+index];return{x:p.x+dx,y:p.y+dy}}
-  function onTerminal(id,index){const key=id+':'+index;if(!wireStart){wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('Diese Anschlüsse sind bereits verbunden');wireStart=null;render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key});wireStart=null;preview.style.display='none';render();toast('Verbindung erstellt')}
+  function addPart(type,position){
+    const r=svg.getBoundingClientRect(),w=position||toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});
+    const d=TYPES[type],used=new Set(pages.flatMap(s=>s.parts).map(p=>p.deviceCode||p.label));let n=1;while(used.has(d.label+n))n++;
+    const p={id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value,functionCode:'A1',locationCode:'P1',deviceCode:d.label+n};
+    model.parts.push(p);selected={kind:'part',id:p.id};render();toast(d.name+' eingefügt');return p;
+  }
+  function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p||!TYPES[p.type]?.terminals[+index])return null;const [dx,dy]=TYPES[p.type].terminals[+index];return{x:p.x+dx,y:p.y+dy}}
+  function cancelWire(){wireStart=null;draftPoints=[];wireCursor=null;preview.style.display='none';preview.setAttribute('d','');scene.querySelectorAll('.draft-point').forEach(p=>p.remove())}
+  function onTerminal(id,index){
+    const key=id+':'+index;
+    if(!wireStart){wireStart=key;draftPoints=[];wireCursor=findTerminal(key);render();return}
+    if(wireStart===key){cancelWire();render();return}
+    if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('Diese Anschlüsse sind bereits verbunden');cancelWire();render();return}
+    const w={id:'w'+nextId++,a:wireStart,b:key,points:draftPoints.map(p=>({...p})),anchors:{a:findTerminal(wireStart),b:findTerminal(key)}};
+    model.wires.push(w);cancelWire();selected={kind:'wire',id:w.id};render();toast('Verbindung erstellt');
+  }
+  // A waypoint follows both attached components, weighted by its position in the route.
+  // Keeping the original anchors avoids cumulative rounding drift when dragging.
+  function currentWaypoints(w){
+    const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return [];
+    return (w.points||[]).map((p,i)=>{
+      const t=(i+1)/(w.points.length+1),aa=w.anchors?.a||a,bb=w.anchors?.b||b;
+      return{x:snap(p.x+(a.x-aa.x)*(1-t)+(b.x-bb.x)*t),y:snap(p.y+(a.y-aa.y)*(1-t)+(b.y-bb.y)*t)};
+    });
+  }
+  function routePoints(w){
+    const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return null;
+    if(Array.isArray(w.points))return [a,...currentWaypoints(w),b];
+    const mid=snap((a.x+b.x)/2);return [a,{x:mid,y:a.y},{x:mid,y:b.y},b];
+  }
+  function routePath(points){return points.map((p,i)=>(i?'L':'M')+' '+p.x+' '+p.y).join(' ')}
+  function updatePreview(){
+    scene.querySelectorAll('.draft-point').forEach(p=>p.remove());
+    const a=wireStart&&findTerminal(wireStart);if(!a){preview.style.display='none';return}
+    preview.style.display='';preview.setAttribute('d',routePath([a,...draftPoints,wireCursor||draftPoints.at(-1)||a]));
+    for(const p of draftPoints)el('circle',{cx:p.x,cy:p.y,r:4,class:'draft-point','pointer-events':'none'},scene);
+  }
   function snap(v){return Math.round(v/GRID)*GRID}function toWorld(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left-pan.x)/zoom,y:(e.clientY-r.top-pan.y)/zoom}}
   function applyView(){scene.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${zoom})`);document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'}
-  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(drag){const p=model.parts.find(p=>p.id===drag.id);if(p){p.x=snap(w.x+drag.dx);p.y=snap(w.y+drag.dy);render();applyView()}}if(wireStart){const a=findTerminal(wireStart);preview.setAttribute('d',`M ${a.x} ${a.y} L ${w.x} ${w.y}`)}});
-  svg.addEventListener('pointerup',()=>drag=null);svg.addEventListener('pointerdown',e=>{if(e.target===svg||e.target===scene){selected=null;wireStart=null;preview.style.display='none';render()}});
+  svg.addEventListener('pointermove',e=>{
+    const w=toWorld(e);
+    if(drag){const p=model.parts.find(p=>p.id===drag.id);if(p){p.x=snap(w.x+drag.dx);p.y=snap(w.y+drag.dy);render()}}
+    if(pointDrag){const wire=model.wires.find(w=>w.id===pointDrag.id);if(wire){wire.points[pointDrag.index]={x:snap(w.x),y:snap(w.y)};render()}}
+    if(wireStart){wireCursor={x:snap(w.x),y:snap(w.y)};updatePreview()}
+  });
+  function stopDragging(){drag=null;pointDrag=null}
+  svg.addEventListener('pointerup',stopDragging);svg.addEventListener('pointercancel',stopDragging);svg.addEventListener('lostpointercapture',stopDragging);
+  svg.addEventListener('pointerdown',e=>{
+    if(e.button!==0||e.target.closest('#parts')||e.target.closest('.newnav'))return;
+    if(mode==='wire'&&wireStart){
+      const p=toWorld(e),point={x:snap(p.x),y:snap(p.y)},last=draftPoints.at(-1)||findTerminal(wireStart);
+      if(point.x!==last.x||point.y!==last.y)draftPoints.push(point);
+      wireCursor=point;render();return;
+    }
+    selected=null;render();
+  });
+  svg.addEventListener('dragover',e=>{
+    if(!Array.from(e.dataTransfer.types).includes('application/x-cabel-part'))return;
+    e.preventDefault();e.dataTransfer.dropEffect=pages[activeSheet]?.kind===DEVICE_LIST_KIND?'none':'copy';
+    if(pages[activeSheet]?.kind!==DEVICE_LIST_KIND)svg.classList.add('drop-target');
+  });
+  svg.addEventListener('dragleave',e=>{if(!svg.contains(e.relatedTarget))svg.classList.remove('drop-target')});
+  svg.addEventListener('drop',e=>{
+    e.preventDefault();svg.classList.remove('drop-target');const type=e.dataTransfer.getData('application/x-cabel-part');
+    if(!Object.hasOwn(TYPES,type))return;
+    if(pages[activeSheet]?.kind===DEVICE_LIST_KIND){toast('Bauteile bitte auf einem Schaltplanblatt ablegen');return}
+    const p=toWorld(e);if(p.x<0||p.x>1128||p.y<0||p.y>798){toast('Bauteil innerhalb des Blatts ablegen');return}
+    cancelWire();mode='select';addPart(type,p);
+  });
   svg.addEventListener('wheel',e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();zoom=Math.max(.5,Math.min(2,zoom*(e.deltaY<0?1.1:.9)));applyView()},{passive:false});
-  document.querySelector('#selectTool').onclick=()=>{mode='select';wireStart=null;preview.style.display='none';render()};document.querySelector('#wireTool').onclick=()=>{mode=mode==='wire'?'select':'wire';wireStart=null;preview.style.display='none';render()};
+  document.querySelector('#selectTool').onclick=()=>{mode='select';cancelWire();render()};
+  document.querySelector('#wireTool').onclick=()=>{mode=mode==='wire'?'select':'wire';cancelWire();render()};
   document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom*1.15);applyView()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom/1.15);applyView()};document.querySelector('#fitBtn').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
   document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schaltplan').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Projektdatei gespeichert')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
   document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Geöffneter Schaltplan',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
-  document.querySelector('#exportBtn').onclick=()=>{const clone=svg.cloneNode(true);clone.setAttribute('width','1200');clone.setAttribute('height','800');clone.querySelector('#preview')?.remove();clone.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));const source=new XMLSerializer().serializeToString(clone);download(new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${source}`],{type:'image/svg+xml'}),(model.title||'schaltplan').replace(/[^a-z0-9äöüß-]+/gi,'-')+'.svg');toast('SVG-Zeichnung exportiert')};
+  document.querySelector('#exportBtn').onclick=()=>{const clone=svg.cloneNode(true);clone.setAttribute('width','1200');clone.setAttribute('height','800');clone.querySelector('#preview')?.remove();clone.querySelectorAll('.wire-point,.draft-point').forEach(p=>p.remove());const exportStyle=document.createElementNS(NS,'style');exportStyle.textContent=Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('\n');clone.prepend(exportStyle);clone.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));const source=new XMLSerializer().serializeToString(clone);download(new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${source}`],{type:'image/svg+xml'}),(model.title||'schaltplan').replace(/[^a-z0-9äöüß-]+/gi,'-')+'.svg');toast('SVG-Zeichnung exportiert')};
   function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-  document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;if(e.key==='Escape'){wireStart=null;preview.style.display='none';mode='select';render()}if(e.key.toLowerCase()==='v'){mode='select';render()}if(e.key.toLowerCase()==='w'){mode='wire';render()}if(e.key==='Delete'||e.key==='Backspace'){if(selected?.kind==='part'){model.parts=model.parts.filter(p=>p.id!==selected.id);model.wires=model.wires.filter(w=>!w.a.startsWith(selected.id+':')&&!w.b.startsWith(selected.id+':'))}else if(selected?.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);selected=null;render()}});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&document.querySelector('#simpleModal')?.style.display==='grid'){closePanel();return}
+    if(e.target.closest('input,textarea,select,[contenteditable="true"]')||document.querySelector('#simpleModal')?.style.display==='grid')return;
+    if(e.key==='Escape'){cancelWire();stopDragging();mode='select';render()}
+    if(e.key.toLowerCase()==='v'){cancelWire();mode='select';render()}
+    if(e.key.toLowerCase()==='w'){cancelWire();mode='wire';render()}
+    if((e.key==='Backspace'||e.key==='Delete')&&wireStart){e.preventDefault();draftPoints.pop();updatePreview();return}
+    if(e.key==='Delete'||e.key==='Backspace'){
+      if(!selected)return;e.preventDefault();
+      if(selected.kind==='part'){model.parts=model.parts.filter(p=>p.id!==selected.id);model.wires=model.wires.filter(w=>!w.a.startsWith(selected.id+':')&&!w.b.startsWith(selected.id+':'))}
+      else if(selected.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);
+      selected=null;render();
+    }
+  });
   let toastTimer;function toast(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
   render();applyView();
   // A4-Querformat mit maßstäblichem 4-mm-Raster
@@ -107,10 +255,33 @@
   const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Blatt '+(activeSheet+1)+'/'+pages.length+' · '+pages[activeSheet].title+' · A4 quer · 4 mm Raster';document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title+' · A4 · 4 mm Raster';document.querySelector('#a4Number').textContent=(activeSheet+1)+' / '+pages.length;document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Blätter')};
   const baseSnap=snap;snap=function(v){const g=4*1128/297;return Math.round(v/g)*g};
   const baseDraw=drawPart;drawPart=function(p){baseDraw(p);const t=el('text',{x:0,y:70,class:'part-aks'},partsG.lastElementChild);t.textContent='='+(p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)};
-  const baseAdd=addPart;addPart=function(type){baseAdd(type);const p=model.parts[model.parts.length-1],n=pages.flatMap(s=>s.parts).filter(x=>x.type===type).length;p.functionCode='A1';p.locationCode='P1';p.deviceCode=p.label.charAt(0)+n;render()};
   const nav=document.createElement('div');nav.className='newnav';nav.innerHTML='<button id="sheetOverview">▤ Blätter</button><button id="sheetPrev">‹</button><button id="sheetCurrent">1/1</button><button id="sheetNext">›</button><button id="sheetAdd" class="add">＋ Blatt</button><button id="autoLists">Listen</button>';document.querySelector('#canvasWrap').append(nav);
-  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel"><button class="close" id="simpleClose">Schließen</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;modal.onclick=e=>{if(e.target===modal)closePanel()};
-  function setSheet(i){activeSheet=(i+pages.length)%pages.length;model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;selected=null;wireStart=null;preview.style.display='none';render()}
+  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel" role="dialog" aria-modal="true" aria-label="Projektdialog"><button class="close" id="simpleClose">Schließen</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;modal.onclick=e=>{if(e.target===modal)closePanel()};
+  function editPart(p){
+    cancelWire();stopDragging();selected={kind:'part',id:p.id};render();
+    showPanel(`<h2 id="partDialogTitle">${safe(TYPES[p.type].name)} bearbeiten</h2>
+      <p>AKS-Kennzeichen, Beschriftung und Wert dieses Bauteils.</p>
+      <form id="partForm" class="wire-form">
+        <fieldset><legend>AKS-Kennzeichen</legend>
+          <label>Funktion (=)<input id="partFunction" required maxlength="80" value="${safe(p.functionCode||'A1')}"></label>
+          <label>Einbauort (+)<input id="partLocation" required maxlength="80" value="${safe(p.locationCode||'P1')}"></label>
+          <label>Betriebsmittel (−)<input id="partDevice" required maxlength="80" value="${safe(p.deviceCode||p.label)}"></label>
+        </fieldset>
+        <label>Beschriftung<input id="partLabel" maxlength="160" value="${safe(p.label)}"></label>
+        <label>Wert<input id="partValue" maxlength="160" value="${safe(p.value)}"></label>
+        <div class="actions"><button type="submit" id="partApply">Übernehmen</button><button type="button" id="partCancel">Abbrechen</button></div>
+      </form>`);
+    document.querySelector('#partCancel').onclick=closePanel;
+    document.querySelector('#partForm').onsubmit=e=>{
+      e.preventDefault();const read=id=>document.querySelector(id).value.trim();
+      const f=read('#partFunction'),l=read('#partLocation'),d=read('#partDevice');
+      if(!f||!l||!d){toast('Bitte alle AKS-Felder ausfüllen');return}
+      Object.assign(p,{functionCode:f,locationCode:l,deviceCode:d,label:read('#partLabel'),value:read('#partValue')});
+      render();closePanel();toast('Bauteildaten übernommen');
+    };
+    document.querySelector('#partFunction').focus();
+  }
+  function setSheet(i){activeSheet=(i+pages.length)%pages.length;model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;selected=null;cancelWire();stopDragging();render()}
   function addSheet(){const name=prompt('Name des neuen A4-Blatts','Blatt '+(pages.length+1));if(name===null)return;pages.push({title:name.trim()||'Blatt '+(pages.length+1),parts:[],wires:[]});setSheet(pages.length-1);closePanel()}
   function showPanel(html){document.querySelector('#simpleContent').innerHTML=html;modal.style.display='grid'}
   const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -118,10 +289,10 @@
   function aks(p){return '='+ (p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)}
   function endPoint(s,ref){const z=ref.split(':'),p=s.parts.find(x=>x.id===z[0]);return p?aks(p)+' · Anschluss '+(+z[1]+1):'—'}
   function dataLists(){const devices=[],bom={},cables=[];let wi=0;pages.forEach((s,si)=>{s.parts.forEach(p=>devices.push({sheet:si+1,p}));s.parts.forEach(p=>{const k=p.type+'|'+p.value;if(!bom[k])bom[k]={type:TYPES[p.type].name,value:p.value,n:0,ids:[]};bom[k].n++;bom[k].ids.push(aks(p))});s.wires.forEach(w=>cables.push({id:'W'+(++wi),from:endPoint(s,w.a),to:endPoint(s,w.b),sheet:si+1}))});return{devices,bom:Object.values(bom),cables}}
-  function drawLists(){const d=dataLists(),row=a=>a.length?a.join(''):'';let h='<h2>Automatische Projektlisten</h2><p>Inhaltsverzeichnis, AKS-Geräteverzeichnis, Stückliste und Kabelliste</p><h3>Inhaltsverzeichnis</h3><table><tr><th>Blatt</th><th>Bezeichnung</th><th>Geräte</th></tr>'+pages.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+safe(s.title)+'</td><td>'+s.parts.length+'</td></tr>').join('')+'</table><h3>Geräteverzeichnis · AKS (= Funktion, + Ort, − Betriebsmittel)</h3><table><tr><th>Blatt</th><th>Gerätekennzeichen</th><th>Typ</th><th>Wert</th><th>Aktion</th></tr>'+d.devices.map(x=>'<tr><td>'+x.sheet+'</td><td>'+safe(aks(x.p))+'</td><td>'+safe(TYPES[x.p.type].name)+'</td><td>'+safe(x.p.value)+'</td><td><button data-edit="'+safe(x.p.id)+'">AKS ändern</button></td></tr>').join('')+'</table><h3>Stückliste · automatisch gruppiert</h3><table><tr><th>Bauteil</th><th>Wert</th><th>Menge</th><th>Geräte</th></tr>'+d.bom.map(x=>'<tr><td>'+safe(x.type)+'</td><td>'+safe(x.value)+'</td><td>'+x.n+'</td><td>'+safe(x.ids.join(', '))+'</td></tr>').join('')+'</table><h3>Kabelliste · aus allen Verbindungen</h3><table><tr><th>Kabel</th><th>Von</th><th>Nach</th><th>Blatt</th></tr>'+d.cables.map(x=>'<tr><td>−'+x.id+'</td><td>'+safe(x.from)+'</td><td>'+safe(x.to)+'</td><td>'+x.sheet+'</td></tr>').join('')+'</table><button id="csvDownload">Listen als CSV speichern</button>';showPanel(h);document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=pages.flatMap(s=>s.parts).find(x=>x.id===b.dataset.edit);if(!p)return;const f=prompt('Funktionsaspekt (=)',p.functionCode||'A1');if(f===null)return;const l=prompt('Einbauort (+)',p.locationCode||'P1');if(l===null)return;const t=prompt('Betriebsmittel (−)',p.deviceCode||p.label);if(t===null)return;p.functionCode=f.trim()||'A1';p.locationCode=l.trim()||'P1';p.deviceCode=t.trim()||p.label;p.label=p.deviceCode;render();drawLists()});document.querySelector('#csvDownload').onclick=()=>{const lines=[['Blatt','Titel','Geräte'],...pages.map((s,i)=>[i+1,s.title,s.parts.length]),[],['Blatt','AKS','Bauteil','Wert'],...d.devices.map(x=>[x.sheet,aks(x.p),TYPES[x.p.type].name,x.p.value]),[],['Bauteil','Wert','Menge','Geräte'],...d.bom.map(x=>[x.type,x.value,x.n,x.ids.join(', ')]),[],['Kabel','Von','Nach','Blatt'],...d.cables.map(x=>[x.id,x.from,x.to,x.sheet])].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');download(new Blob(['\ufeff'+lines],{type:'text/csv;charset=utf-8'}),(model.title||'projekt')+'-listen.csv')}}
+  function drawLists(){const d=dataLists(),row=a=>a.length?a.join(''):'';let h='<h2>Automatische Projektlisten</h2><p>Inhaltsverzeichnis, AKS-Geräteverzeichnis, Stückliste und Kabelliste</p><h3>Inhaltsverzeichnis</h3><table><tr><th>Blatt</th><th>Bezeichnung</th><th>Geräte</th></tr>'+pages.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+safe(s.title)+'</td><td>'+s.parts.length+'</td></tr>').join('')+'</table><h3>Geräteverzeichnis · AKS (= Funktion, + Ort, − Betriebsmittel)</h3><table><tr><th>Blatt</th><th>Gerätekennzeichen</th><th>Typ</th><th>Wert</th><th>Aktion</th></tr>'+d.devices.map(x=>'<tr><td>'+x.sheet+'</td><td>'+safe(aks(x.p))+'</td><td>'+safe(TYPES[x.p.type].name)+'</td><td>'+safe(x.p.value)+'</td><td><button data-edit="'+safe(x.p.id)+'">AKS ändern</button></td></tr>').join('')+'</table><h3>Stückliste · automatisch gruppiert</h3><table><tr><th>Bauteil</th><th>Wert</th><th>Menge</th><th>Geräte</th></tr>'+d.bom.map(x=>'<tr><td>'+safe(x.type)+'</td><td>'+safe(x.value)+'</td><td>'+x.n+'</td><td>'+safe(x.ids.join(', '))+'</td></tr>').join('')+'</table><h3>Kabelliste · aus allen Verbindungen</h3><table><tr><th>Kabel</th><th>Von</th><th>Nach</th><th>Blatt</th></tr>'+d.cables.map(x=>'<tr><td>−'+x.id+'</td><td>'+safe(x.from)+'</td><td>'+safe(x.to)+'</td><td>'+x.sheet+'</td></tr>').join('')+'</table><button id="csvDownload">Listen als CSV speichern</button>';showPanel(h);document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=pages.flatMap(s=>s.parts).find(x=>x.id===b.dataset.edit);if(p)editPart(p)});document.querySelector('#csvDownload').onclick=()=>{const lines=[['Blatt','Titel','Geräte'],...pages.map((s,i)=>[i+1,s.title,s.parts.length]),[],['Blatt','AKS','Bauteil','Wert'],...d.devices.map(x=>[x.sheet,aks(x.p),TYPES[x.p.type].name,x.p.value]),[],['Bauteil','Wert','Menge','Geräte'],...d.bom.map(x=>[x.type,x.value,x.n,x.ids.join(', ')]),[],['Kabel','Von','Nach','Blatt'],...d.cables.map(x=>[x.id,x.from,x.to,x.sheet])].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');download(new Blob(['\ufeff'+lines],{type:'text/csv;charset=utf-8'}),(model.title||'projekt')+'-listen.csv')}}
   document.querySelector('#sheetOverview').onclick=drawPages;document.querySelector('#sheetPrev').onclick=()=>setSheet(activeSheet-1);document.querySelector('#sheetNext').onclick=()=>setSheet(activeSheet+1);document.querySelector('#sheetAdd').onclick=addSheet;document.querySelector('#autoLists').onclick=drawLists;
   const baseSave=document.querySelector('#saveBtn').onclick;document.querySelector('#saveBtn').onclick=()=>{pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;download(new Blob([JSON.stringify({title:model.title,sheets:pages,activeSheet},null,2)],{type:'application/json'}),(model.title||'projekt')+'.json');toast('Alle Blätter gespeichert')};
-  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());pages.splice(0,pages.length,...(Array.isArray(x.sheets)?x.sheets:[{title:'Blatt 1',parts:x.parts||[],wires:x.wires||[]}]).map((s,i)=>({title:s.title||'Blatt '+(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+pages.flatMap(s=>[...s.parts,...s.wires]).length;render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
+  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());pages.splice(0,pages.length,...(Array.isArray(x.sheets)?x.sheets:[{title:'Blatt 1',parts:x.parts||[],wires:x.wires||[]}]).map((s,i)=>({title:s.title||'Blatt '+(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(x=>Number(String(x.id).slice(1))||0));cancelWire();stopDragging();selected=null;render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
   render();applyView();
   // Rechte Blattübersicht sowie rastergenaue Zoom- und Anschlusslogik
   const sheetPanel=document.createElement('aside');sheetPanel.id='sheetPanel';sheetPanel.className='sheetPanel';document.querySelector('main').append(sheetPanel);
@@ -138,7 +309,7 @@
   scene.removeAttribute('transform');
   const pageZoomOffset=()=>({x:pan.x+564*(1-zoom),y:pan.y+399*(1-zoom)});
   toWorld=function(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;const p=point.matrixTransform(svg.getScreenCTM().inverse()),o=pageZoomOffset();return{x:(p.x-o.x)/zoom,y:(p.y-o.y)/zoom}};
-  applyView=function(){const o=pageZoomOffset(),cell=4*1128/297,dot=pattern.querySelector('circle');pageContent.setAttribute('transform','translate('+o.x+' '+o.y+') scale('+zoom+')');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',0);pattern.setAttribute('y',0);dot.setAttribute('cx',1);dot.setAttribute('cy',1);dot.setAttribute('r','.65');document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'};
+  applyView=function(){const o=pageZoomOffset(),cell=4*1128/297,dot=pattern.querySelector('circle');pageContent.setAttribute('transform','translate('+o.x+' '+o.y+') scale('+zoom+')');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',0);pattern.setAttribute('y',0);dot.setAttribute('cx',0);dot.setAttribute('cy',0);dot.setAttribute('r','.65');document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'};
   render();applyView();
   // Automatische, echte A4-Gerätelistenblätter am Ende der Blattfolge
   const DEVICE_LIST_KIND='device-list', DEVICE_LIST_ROWS=22;
@@ -194,7 +365,7 @@
     if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML='<strong>'+safe(i+1)+' · '+safe(page.title)+'</strong><small>Automatische Geräteliste · '+page.deviceEntries.length+' Geräte</small>'})}
   };
   const addPartBeforeDeviceList=addPart;
-  addPart=function(type){if(pages[activeSheet]?.kind===DEVICE_LIST_KIND)setSheet(drawingPages().length-1);addPartBeforeDeviceList(type)};
+  addPart=function(type,position){if(pages[activeSheet]?.kind===DEVICE_LIST_KIND)setSheet(drawingPages().length-1);return addPartBeforeDeviceList(type,position)};
   addSheet=function(){
     const drawings=drawingPages(),name=prompt('Name des neuen A4-Blatts','Blatt '+(drawings.length+1));if(name===null)return;
     const sheet={title:name.trim()||'Blatt '+(drawings.length+1),parts:[],wires:[]};
@@ -207,7 +378,7 @@
     const f=e.target.files[0];if(!f)return;
     try{const x=JSON.parse(await f.text());const loaded=Array.isArray(x.sheets)?x.sheets.filter(s=>s.kind!==DEVICE_LIST_KIND):[{title:'Blatt 1',parts:x.parts||[],wires:x.wires||[]}];
       pages.splice(0,pages.length,...loaded.map((s,i)=>({title:s.title||'Blatt '+(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));
-      if(!pages.length)pages.push({title:'Blatt 1',parts:[],wires:[]});model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+pages.flatMap(s=>[...s.parts,...s.wires]).length;render();toast('Projekt geladen');
+      if(!pages.length)pages.push({title:'Blatt 1',parts:[],wires:[]});model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(x=>Number(String(x.id).slice(1))||0));cancelWire();stopDragging();selected=null;render();toast('Projekt geladen');
     }catch{toast('Datei konnte nicht gelesen werden')}e.target.value='';
   };
   syncDeviceListPages();render();applyView();
@@ -217,7 +388,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   const wireColorNames={BK:'Schwarz',BN:'Braun',RD:'Rot',OG:'Orange',YE:'Gelb',GN:'Grün',BU:'Blau',VT:'Violett',GY:'Grau',WH:'Weiß',PK:'Rosa',TQ:'Türkis',GNYE:'Grün/Gelb'};
   const wireColorCodes=Object.keys(wirePalette);
   const ensureWireData=w=>{if(!w.diameter)w.diameter='1.5';if(!w.colorCode)w.colorCode='BK';if(!w.labelOrientation)w.labelOrientation='horizontal';if(!Number.isFinite(+w.labelT))w.labelT=.5};
-  const wireRoute=w=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return null;const mid=snap((a.x+b.x)/2),points=[[a.x,a.y],[mid,a.y],[mid,b.y],[b.x,b.y]],segments=[];let total=0;for(let i=1;i<points.length;i++){const p=points[i-1],q=points[i],length=Math.hypot(q[0]-p[0],q[1]-p[1]);if(length>0){segments.push({x1:p[0],y1:p[1],x2:q[0],y2:q[1],length,start:total});total+=length}}return{segments,total}};
+  const wireRoute=w=>{const points=routePoints(w),segments=[];if(!points)return null;let total=0;for(let i=1;i<points.length;i++){const p=points[i-1],q=points[i],length=Math.hypot(q.x-p.x,q.y-p.y);if(length>0){segments.push({x1:p.x,y1:p.y,x2:q.x,y2:q.y,length,start:total});total+=length}}return{segments,total}};
   const wirePointAt=(w,t)=>{const route=wireRoute(w);if(!route||!route.total)return{x:0,y:0};let d=Math.max(0,Math.min(1,t))*route.total;for(const s of route.segments){if(d<=s.length){const u=d/s.length;return{x:s.x1+(s.x2-s.x1)*u,y:s.y1+(s.y2-s.y1)*u}}d-=s.length}const s=route.segments[route.segments.length-1];return{x:s.x2,y:s.y2}};
   const nearestWireT=(w,p)=>{const route=wireRoute(w);if(!route||!route.total)return .5;let best={d:Infinity,t:.5};for(const s of route.segments){const dx=s.x2-s.x1,dy=s.y2-s.y1,u=Math.max(0,Math.min(1,((p.x-s.x1)*dx+(p.y-s.y1)*dy)/(s.length*s.length))),x=s.x1+dx*u,y=s.y1+dy*u,d=(x-p.x)*(x-p.x)+(y-p.y)*(y-p.y);if(d<best.d)best={d,t:(s.start+u*s.length)/route.total}}return best.t};
   const wireText=w=>String(w.diameter||'1.5')+String(w.colorCode||'BK');

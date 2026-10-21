@@ -206,7 +206,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.2.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.3.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -235,7 +235,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.2.0');
+    assert.equal(withText.appVersion, '1.3.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -294,7 +294,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
-    console.log('PASS v1.2.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.3.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -397,6 +397,87 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.keyboard.press('Control+v');
     assert.equal(await page.locator('#parts > g[data-id="p100"]').count(),1);
     console.log('PASS Ctrl/Cmd+C/X/V copy, cut and paste; fresh copy IDs, cut identity and dangling-wire cleanup');
+
+    const devicesProject={title:'Geräte',sheets:[{id:'dev-sheet',title:'Geräteblatt',parts:[
+      {id:'p300',type:'switch',x:10*GRID,y:12*GRID,label:'Master K1',deviceCode:'K1',locationCode:'TU001.01',functionCode:'A1',value:'Schütz'},
+      {id:'p301',type:'connector',x:14*GRID,y:12*GRID,label:'Slave 1',deviceCode:'X1.01',locationCode:'TU001.01',functionCode:'A1',masterId:'p300',value:'Klemme'},
+      {id:'p302',type:'connector',x:18*GRID,y:12*GRID,label:'Unterposition 2',deviceCode:'X1.02',locationCode:'TU001.01',functionCode:'A1',masterId:'p301',value:'Klemme'},
+    ],wires:[{id:'w400',a:'p300:1',b:'p301:0',points:[]}]},{id:'dev-other',title:'Andere Geräte',parts:[
+      {id:'p303',type:'coil',x:16*GRID,y:18*GRID,label:'Spule K2',deviceCode:'K2',locationCode:'TU002.05',functionCode:'A1',value:'24 V'},
+    ],wires:[]}],activeSheet:0};
+    await load(devicesProject);await page.locator('#selectTool').click();
+    const body=page.locator('#parts > g[data-id="p300"] .part-body');
+    const bodyStyle=await body.evaluate(n=>({fill:getComputedStyle(n).fill,stroke:getComputedStyle(n).stroke}));
+    assert.equal(bodyStyle.stroke,'none');assert.ok(bodyStyle.fill==='transparent'||bodyStyle.fill==='rgba(0, 0, 0, 0)');
+    await body.click({button:'right'});
+    const deviceForm=page.locator('#componentForm');
+    assert.equal(await deviceForm.locator('[name="masterId"] option[value="p301"]').count(),0);
+    assert.equal(await deviceForm.locator('[name="masterId"] option[value="p302"]').count(),0);
+    await deviceForm.locator('[name="manufacturerNumber"]').fill('M-00123');
+    await deviceForm.locator('[name="sapNumber"]').fill('00001234');
+    await deviceForm.locator('[name="pinNumbers"]').fill(':13, :14');
+    await deviceForm.locator('[type="submit"]').click();
+    assert.deepEqual(await page.locator('#parts > g[data-id="p300"] .pin-label').allTextContents(),[':13',':14']);
+    assert.equal(await page.locator('.wire-label rect').count(),0);
+    assert.equal(await page.locator('.wire-label text').getAttribute('font-size'),'7');
+    // Ctrl-click finds the device in nested AKS folders, including its descendants.
+    await body.click({modifiers:['Control']});
+    assert.equal(await page.locator('[data-overview="devices"]').getAttribute('aria-selected'),'true');
+    const treeMaster=page.locator('.device-node[data-device-id="p300"]');
+    assert.ok((await treeMaster.locator('summary').first().textContent()).includes('M-00123'));
+    assert.ok((await treeMaster.locator('summary').first().textContent()).includes('00001234'));
+    assert.equal(await treeMaster.locator('.device-node[data-device-id="p301"]').count(),1);
+    assert.equal(await treeMaster.locator('.device-node[data-device-id="p302"]').count(),1);
+    const folderNames=await page.locator('.aks-folder > summary').allTextContents();
+    assert.ok(folderNames.includes('+TU001'));assert.ok(folderNames.includes('01'));
+    await page.locator('.device-node[data-device-id="p303"] .device-jump').click();
+    assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),'p303');
+    assert.ok((await page.locator('#hud').textContent()).includes('0002/'));
+    await page.locator('[data-overview="sheets"]').click();
+    await page.locator('#sheetPanel .sheetItem').last().click();
+    assert.ok((await page.locator('#deviceListContent').textContent()).includes('M-00123'));
+    assert.ok((await page.locator('#deviceListContent').textContent()).includes('00001234'));
+    assert.ok((await page.locator('#deviceListContent').textContent()).includes('Slave von'));
+    await page.locator('.device-list-link[data-part-id="p300"]').click();
+    assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),'p300');
+    // Moving a master carries same-sheet descendants and preserves wire attachment.
+    const groupBefore=drawing(await save()).parts.map(p=>({...p}));
+    const groupWireBefore=(await page.locator('#wires path.wire').getAttribute('d')).match(/-?\d+(?:\.\d+)?/g).map(Number);
+    await dragPart('p300',groupBefore[0].x+2*GRID,groupBefore[0].y+GRID);
+    const groupAfter=drawing(await save()).parts;
+    groupAfter.forEach((p,i)=>{near(p.x,groupBefore[i].x+2*GRID);near(p.y,groupBefore[i].y+GRID)});
+    await assertAttached();await assertOrthogonal();
+    const groupWireAfter=(await page.locator('#wires path.wire').getAttribute('d')).match(/-?\d+(?:\.\d+)?/g).map(Number);
+    assert.equal(groupWireAfter.length,groupWireBefore.length);groupWireAfter.forEach((n,i)=>near(n,groupWireBefore[i]+(i%2?GRID:2*GRID)));
+    await page.locator('#autoLists').click();
+    assert.ok((await page.locator('#simpleContent').textContent()).includes('M-00123'));
+    assert.ok((await page.locator('#simpleContent').textContent()).includes('00001234'));
+    const csv=await download('#csvDownload');
+    assert.ok(csv.includes('Herstellernummer'));assert.ok(csv.includes('00001234'));
+    await page.locator('[data-device-go="p301"]').click();
+    assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),'p301');
+    const deviceFile=await save();await page.reload();await load(deviceFile);
+    const reopened=drawing(await save()).parts;
+    assert.equal(reopened[0].manufacturerNumber,'M-00123');assert.equal(reopened[0].sapNumber,'00001234');
+    assert.deepEqual(reopened[0].pinNumbers,['13','14']);assert.equal(reopened[1].masterId,'p300');
+    console.log('PASS invisible component hit areas, small unboxed wire labels, order numbers/pins, nested AKS folders, Ctrl-click, list/tree jumps, master/slave movement and JSON roundtrip');
+
+    await page.locator('#createTerminalStrip').click();
+    const strip=page.locator('#stripForm');
+    await strip.locator('[name="code"]').fill('X9');await strip.locator('[name="count"]').fill('3');
+    await strip.locator('[name="manufacturerNumber"]').fill('KL-3');await strip.locator('[name="sapNumber"]').fill('000099');
+    await strip.locator('[type="submit"]').click();
+    const stripProject=await save(),built=drawing(stripProject).parts.filter(p=>p.manufacturerNumber==='KL-3');
+    assert.equal(built.length,3);assert.equal(built[0].assemblyName,'X9');
+    assert.ok(built.slice(1).every(p=>p.masterId===built[0].id));
+    assert.ok(built.every(p=>p.sapNumber==='000099'&&p.type==='connector'));
+    assert.equal(await page.locator(`.device-node[data-device-id="${built[0].id}"] .device-node`).count(),2);
+    await page.locator('.device-jump').filter({hasText:'Slave 1'}).click();
+    await page.locator('#parts > g.selected .part-body').click({button:'right'});
+    await page.locator('#componentForm [name="masterId"]').selectOption('p303');
+    await page.locator('#componentForm [type="submit"]').click();
+    assert.equal(drawing(await save()).parts.find(p=>p.id==='p301').masterId,'p303');
+    console.log('PASS terminal-strip creation, master/slave subpositions, editable master assignment and cycle-safe choices');
 
     assert.deepEqual(errors, []);
     console.log('PASS deletion cleans attached wires, generated device lists, no browser JavaScript errors');

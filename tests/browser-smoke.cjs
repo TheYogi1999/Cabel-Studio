@@ -37,6 +37,19 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
       const chunks = []; for await (const chunk of stream) chunks.push(chunk);
       return Buffer.concat(chunks).toString('utf8');
     };
+    // Compare actual rendered terminal centers with the rendered wire endpoints.
+    const assertAttached = async () => {
+      const connections = await page.locator('#wires path.wire').evaluateAll(paths => paths.map(path => {
+        const numbers = path.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number);
+        const endpoints = [new DOMPoint(numbers[0], numbers[1]), new DOMPoint(numbers.at(-2), numbers.at(-1))]
+          .map(p => p.matrixTransform(path.getScreenCTM()));
+        return endpoints.map(p => Math.min(...Array.from(document.querySelectorAll('#parts .terminal'), terminal => {
+          const center = new DOMPoint(terminal.cx.baseVal.value, terminal.cy.baseVal.value).matrixTransform(terminal.getScreenCTM());
+          return Math.hypot(p.x - center.x, p.y - center.y);
+        })));
+      }));
+      for (const distances of connections) for (const distance of distances) assert.ok(distance < .001, `Wire misses rendered terminal by ${distance}px`);
+    };
     const save = async () => JSON.parse(await download('#saveBtn'));
     const drawing = project => project.sheets.find(s => s.kind !== 'device-list');
     const load = async project => {
@@ -50,7 +63,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
       await page.mouse.down(); await page.mouse.move(dest.x, dest.y, { steps: 8 }); await page.mouse.up();
     };
 
-    assert.equal(await page.locator('.component-group').count(), 4);
+    assert.equal(await page.locator('.component-group').count(), 5);
     const folder = page.locator('.component-group').filter({ hasText: 'Passive Bauteile' });
     await folder.locator('summary').click();
     assert.equal(await folder.locator('.part').first().isVisible(), false);
@@ -101,13 +114,14 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator('[data-part="p2"][data-term="0"]').click();
     assert.equal(await page.locator('#wires path.wire').count(), 1);
     project = await save(); sheet = drawing(project);
-    assert.deepEqual(sheet.wires[0].points, waypoints.map(([x, y], i) => ({ x: snap(x), y: snap(y), anchor: i < 2 ? 'a' : 'b' })));
+    assert.deepEqual(sheet.wires[0].points, waypoints.map(([x, y]) => ({ x: snap(x), y: snap(y) })));
     // Repeating an existing terminal pair must cancel without leaving a preview.
     await page.locator('[data-part="p1"][data-term="1"]').click();
     await clickWorld(400, 450);
     await page.locator('[data-part="p2"][data-term="0"]').click();
     assert.equal(await page.locator('#wires path.wire').count(), 1);
     assert.equal(await page.locator('#preview').isVisible(), false);
+    await assertAttached();
     const original = structuredClone(sheet);
     const routeBefore = await page.locator('#wires path.wire').getAttribute('d');
     await page.locator('#selectTool').click();
@@ -115,20 +129,42 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart('p2', original.parts[1].x - GRID * 2, original.parts[1].y + GRID * 3);
     project = await save(); sheet = drawing(project);
     sheet.wires[0].points.forEach((p, i) => {
-      near(p.x, original.wires[0].points[i].x + GRID * (i < 2 ? 3 : -2));
-      near(p.y, original.wires[0].points[i].y + GRID * (i < 2 ? 2 : 3));
+      near(p.x, original.wires[0].points[i].x + GRID * (i === 0 ? 3 : i === 3 ? -2 : 0));
+      near(p.y, original.wires[0].points[i].y + GRID * (i === 0 ? 2 : i === 3 ? 3 : 0));
     });
     const routeMoved = await page.locator('#wires path.wire').getAttribute('d');
     assert.notEqual(routeBefore, routeMoved);
     const vertices = routeMoved.match(/-?\d+(?:\.\d+)?/g).map(Number);
-    near(vertices[0], snap(sheet.parts[0].x + 48)); near(vertices[1], snap(sheet.parts[0].y));
-    near(vertices.at(-2), snap(sheet.parts[1].x - 48)); near(vertices.at(-1), snap(sheet.parts[1].y));
+    near(vertices[0], sheet.parts[0].x + 48); near(vertices[1], sheet.parts[0].y);
+    near(vertices.at(-2), sheet.parts[1].x - 48); near(vertices.at(-1), sheet.parts[1].y);
+    await assertAttached();
     await page.reload(); await load(project);
     assert.equal(await page.locator('#wires path.wire').getAttribute('d'), routeMoved);
     assert.deepEqual(drawing(await save()), sheet);
+    await assertAttached();
+    await page.locator('#zoomOut').click();
+    await assertAttached();
+    // Older route files may still contain anchor fields. They must not move half the route.
+    const anchored = structuredClone(project);
+    drawing(anchored).wires[0].points.forEach((p, i) => { p.anchor = i < 2 ? 'a' : 'b'; });
+    await load(anchored);
+    await dragPart('p1', sheet.parts[0].x + GRID, sheet.parts[0].y - GRID);
+    let movedAgain = drawing(await save());
+    movedAgain.wires[0].points.forEach((p, i) => {
+      near(p.x, sheet.wires[0].points[i].x + (i === 0 ? GRID : 0));
+      near(p.y, sheet.wires[0].points[i].y - (i === 0 ? GRID : 0));
+    });
+    await dragPart('p2', sheet.parts[1].x + GRID, sheet.parts[1].y + GRID);
+    movedAgain = drawing(await save());
+    movedAgain.wires[0].points.forEach((p, i) => {
+      near(p.x, sheet.wires[0].points[i].x + (i === 0 || i === 3 ? GRID : 0));
+      near(p.y, sheet.wires[0].points[i].y + (i === 0 ? -GRID : i === 3 ? GRID : 0));
+    });
+    await assertAttached();
+    await load(project);
     const svg = await download('#exportBtn');
     assert.ok(svg.includes(routeMoved)); assert.ok(svg.includes('R label &lt;&amp;&gt;'));
-    console.log('PASS arbitrary 4 mm routes, endpoint and route movement at both ends, JSON roundtrip, SVG export');
+    console.log('PASS 4 mm routes: only adjacent bends follow either component, interior bends stay fixed, exact terminal alignment, JSON roundtrip and legacy anchors, SVG export');
 
     // Old files with no route field retain their automatic route and wire metadata.
     const legacy = { title: 'Legacy', parts: [
@@ -139,6 +175,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#wires path.wire').count(), 1);
     assert.equal(await page.locator('.wire-label text').textContent(), '2.5RD');
     assert.equal(drawing(await save()).wires[0].points, undefined);
+    await assertAttached();
     await page.locator('.part[data-type="connector"]').click();
     assert.equal(await page.locator('#parts > g[data-id="p91"]').count(), 1);
     await page.locator('#wireTool').click();
@@ -163,6 +200,91 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator('.part[data-type="lamp"]').dragTo(page.locator('#sheet'), { targetPosition: { x: generatedTarget.x - generatedBox.x, y: generatedTarget.y - generatedBox.y } });
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.length, 2);
+    // Version, transformations and shortcuts must survive the normal project roundtrip.
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.1.0');
+    await load(project);
+    await page.locator('#selectTool').click();
+    await page.locator('#parts > g[data-id="p1"] .part-body').click();
+    await page.keyboard.press('r');
+    let transformed = drawing(await save());
+    assert.equal(transformed.parts[0].rotation, 90);
+    await assertAttached();
+    // Only the first bend follows the rotated start terminal.
+    near(transformed.wires[0].points[0].x, sheet.wires[0].points[0].x - 48);
+    near(transformed.wires[0].points[0].y, sheet.wires[0].points[0].y + 48);
+    assert.deepEqual(transformed.wires[0].points.slice(1), sheet.wires[0].points.slice(1));
+    await page.keyboard.press('x'); await page.keyboard.press('y');
+    transformed = drawing(await save());
+    assert.equal(transformed.parts[0].flipX, true);
+    assert.equal(transformed.parts[0].flipY, true);
+    await assertAttached();
+    await page.keyboard.press('Control+r'); // Browser shortcut must not rotate the selected object.
+    assert.equal(drawing(await save()).parts[0].rotation, 90);
+    await page.keyboard.press('c');
+    assert.ok((await page.locator('#wireTool').getAttribute('class')).includes('active'));
+    await page.keyboard.press('Escape');
+    const textDialog = page.waitForEvent('dialog').then(dialog => dialog.accept('Prüftext <&>'));
+    await page.keyboard.press('t'); await textDialog;
+    assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
+    const textId = await page.locator('.annotation-text').evaluate(t => t.parentNode.dataset.id);
+    await dragPart(textId, snap(500), snap(500));
+    await page.keyboard.press('r');
+    let withText = await save();
+    assert.equal(withText.appVersion, '1.1.0');
+    assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
+    await page.reload(); await load(withText);
+    assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
+    assert.ok((await download('#exportBtn')).includes('Prüftext &lt;&amp;&gt;'));
+    await page.locator('#sheetPanel .sheetItem').last().click();
+    assert.ok(!(await page.locator('#deviceListContent').textContent()).includes('Prüftext'));
+    // J without a reference opens a jump chooser, including generated pages.
+    await page.keyboard.press('j');
+    await page.locator('#pageJumpTarget').selectOption('0');
+    await page.locator('#pageJumpForm [type="submit"]').click();
+    assert.equal(await page.locator('#deviceListContent').isVisible(), false);
+    const addDialog = page.waitForEvent('dialog').then(dialog => dialog.accept('Zielseite'));
+    await page.locator('#sheetAdd').click(); await addDialog;
+    await page.locator('.part[data-type="resistor"]').click();
+    const targetObjectId = await page.locator('#parts > g').getAttribute('data-id');
+    await page.keyboard.press('j'); await page.locator('#pageJumpTarget').selectOption('0');
+    await page.locator('#pageJumpForm [type="submit"]').click();
+    await page.locator('.part[data-type="reference"]').click();
+    const referenceId = await page.locator('#parts > g.selected').getAttribute('data-id');
+    assert.ok((await page.locator(`#parts > g[data-id="${referenceId}"] .symbol`).getAttribute('d')).includes('L 20 0'));
+    await page.keyboard.press('c');
+    await page.locator('[data-part="p1"][data-term="0"]').click();
+    await clickWorld(400, 400);
+    await page.locator(`[data-part="${referenceId}"][data-term="0"]`).click();
+    assert.equal(await page.locator('#wires path.wire').count(), 2);
+    await assertAttached();
+    await page.keyboard.press('Escape');
+    await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click({ button: 'right' });
+    const referenceForm = page.locator('#componentForm');
+    const targetValue = await referenceForm.locator('[name="referenceTarget"] option').filter({ hasText: 'Zielseite' }).getAttribute('value');
+    await referenceForm.locator('[name="referenceTarget"]').selectOption(targetValue);
+    await referenceForm.locator('[name="value"]').fill('cyrjtx');
+    await referenceForm.locator('[type="submit"]').click();
+    const referenced = await save();
+    assert.equal(drawing(referenced).parts[0].rotation, 90);
+    assert.equal(drawing(referenced).parts.length, 4);
+    const ref = drawing(referenced).parts.find(p => p.type === 'reference');
+    assert.equal(ref.targetPartId, targetObjectId);
+    await page.keyboard.press('j');
+    assert.ok((await page.locator('#sheetPanel .sheetItem.active').textContent()).includes('Zielseite'));
+    assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'), targetObjectId);
+    await page.reload(); await load(referenced);
+    await page.locator('#selectTool').click();
+    await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
+    await page.keyboard.press('j');
+    assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'), targetObjectId);
+    // A deleted counterpart must show a useful message, not jump to a different object.
+    await page.keyboard.press('Delete');
+    await page.keyboard.press('j'); await page.locator('#pageJumpTarget').selectOption('0');
+    await page.locator('#pageJumpForm [type="submit"]').click();
+    await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
+    await page.keyboard.press('j');
+    assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
+    console.log('PASS v1.1.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     assert.deepEqual(errors, []);
     console.log('PASS deletion cleans attached wires, generated device lists, no browser JavaScript errors');
   } finally {

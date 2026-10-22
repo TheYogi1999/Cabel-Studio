@@ -174,3 +174,7 @@ Eine Klemmenleiste darf unterschiedliche **Klemmentypen** enthalten, etwa Durchg
 - Größere, kräftige dunkle Schrift verbessert die Lesbarkeit auf gelbem bzw. hellblauem Statushintergrund. Rechtsklick funktioniert auf der gesamten Gerätezeile und auf Pin-Schaltflächen; bei noch nicht separat platzierten Pins öffnet er die Eigenschaften der Klemme.
 - Im Auswahlmodus auf einer freien Blattfläche ein Rechteck ziehen: Alle platzierten Objekte, deren Mittelpunkt darin liegt, werden markiert. An einem markierten Objekt ziehen, um die Auswahl gemeinsam zu verschieben. Master/Slave-Überschneidungen werden nur einmal bewegt. Interne Leitungsrouten wandern mit; externe Anschlüsse werden angepasst. Esc oder ein Blattwechsel beendet die Mehrfachauswahl. Mittlere Maustaste verschiebt weiterhin das Blatt.
 - In den Objekteigenschaften lassen sich Beschriftung, Wert/Typ, AKS, Pin-Nummern, Seitenverweis und Freitext getrennt ein-/ausblenden. Die Texte bleiben als Daten erhalten. Das Feld `textVisibility` speichert die Sichtbarkeit je Objekt; ausgeblendete Texte bleiben nach dem Wiederöffnen und im PDF ausgeblendet.
+
+### Version 1.9.1: Textschalter am Eingabefeld
+
+Die Checkbox „Anzeigen“ steht direkt neben dem zugehörigen Eingabefeld: Beschriftung/Freitext, Wert, Betriebsmittel (gesamte AKS), Pin-Nummern und Gegenziel (Seitenverweis). Die bisherigen Sichtbarkeitswerte bleiben erhalten; das zusätzliche Sichtbarkeitsfeld am Ende des Dialogs entfällt.

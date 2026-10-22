@@ -55,7 +55,7 @@
 <div class="toast" id="toast"></div>
 <script>
 (() => {
-  const APP_VERSION='1.9.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.9.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -399,7 +399,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       .map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
       '<div class="actions"><button type="submit">Übernehmen</button><button type="button" id="componentCancel">Abbrechen</button></div></form>');
     const form=document.querySelector('#componentForm');
-    const visibility=document.createElement('fieldset');visibility.className='text-visibility';visibility.innerHTML='<legend>Texte am Objekt anzeigen</legend>'+[['label','Beschriftung'],['value','Wert / Typ'],['aks','AKS'],['pins','Pin-Nummern'],['reference','Seitenverweis'],['annotation','Freitext']].map(([key,label])=>'<label><input type="checkbox" name="show_'+key+'"'+(p.textVisibility?.[key]===false?'':' checked')+'>'+label+'</label>').join('');form.insertBefore(visibility,form.querySelector('.actions'));
+
 
     if(isReference(p)){const role=document.createElement('p');role.className='reference-role';role.textContent='Verweistyp: '+(referenceRole(p)==='source'?'Source':'Destination');form.prepend(role)}
     const reference=document.createElement('label');
@@ -407,6 +407,12 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
     form.insertBefore(reference,form.querySelector('.actions'));
     reference.querySelector('select').value=p.targetPartId?JSON.stringify([p.targetSheetId,p.targetPartId]):'';
     const master=document.createElement('label');master.innerHTML='Master / übergeordnete Komponente<select name="masterId"><option value="">Eigenständig / Master</option>'+deviceEntries().filter(e=>e.p!==p&&!wouldCycle(p.id,e.p.id)).map(e=>'<option value="'+safe(e.p.id)+'">'+safe(aks(e.p))+' · '+safe(e.p.label)+'</option>').join('')+'</select>';form.insertBefore(master,form.querySelector('.actions'));master.querySelector('select').value=p.masterId||'';
+    for(const [key,field,caption] of [['label','label','Beschriftung anzeigen'],['value','value','Wert anzeigen'],['aks','deviceCode','AKS anzeigen'],['pins','pinNumbers','Pin-Nummern anzeigen'],['reference','referenceTarget','Seitenverweis anzeigen'],['annotation','label','Freitext anzeigen']]){
+      const input=form.elements.namedItem(field);let wrapper=input.closest('.property-field');
+      if(!wrapper){const oldLabel=input.closest('label');wrapper=document.createElement('div');wrapper.className='property-field';const heading=document.createElement('label');input.id='component-'+field;heading.htmlFor=input.id;heading.textContent=oldLabel.firstChild.textContent;const row=document.createElement('div');row.className='property-input-row';oldLabel.replaceWith(wrapper);wrapper.append(heading,row);row.append(input)}
+      const toggle=document.createElement('label');toggle.className='property-visibility';toggle.hidden=key==='annotation'?p.type!=='text':key==='label'&&p.type==='text';
+      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.name='show_'+key;checkbox.checked=p.textVisibility?.[key]!==false;checkbox.setAttribute('aria-label',caption);toggle.append(checkbox,document.createTextNode('Anzeigen'));toggle.title=caption;wrapper.querySelector('.property-input-row').append(toggle);
+    }
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
     form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Bitte 2 bis 8 eindeutige Pin-Nummern eingeben');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Separat platzierte Pins zuerst entfernen');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Zu entfernende Pins sind noch verdrahtet');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('Master-Zuordnung würde einen Kreis erzeugen');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Durchgangsklemme';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
@@ -949,8 +955,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     .device-node>summary .device-jump:hover{background:#ffffff88!important}
     .device-node>summary .device-jump:focus-visible{outline:2px solid #2463b5;outline-offset:1px}
     .device-node>summary .terminal-manage{color:#123248;background:#ffffffb3;border-color:#8098ac}
-    .text-visibility{grid-column:1/-1;border:1px solid #526574;border-radius:6px;display:flex;flex-wrap:wrap;gap:10px;padding:10px}
-    .text-visibility legend{font-size:12px}.text-visibility label{display:flex;align-items:center;gap:6px;font-size:12px}.text-visibility input{width:auto!important}
+    .property-field{display:grid;gap:5px}.property-input-row{display:flex;align-items:center;gap:10px;min-width:0}
+    .property-input-row>input,.property-input-row>select{flex:1;min-width:0;width:0}
+    .wire-form .property-visibility{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:11px;cursor:pointer}
+    .wire-form .property-visibility[hidden]{display:none}.property-visibility input{width:auto!important;margin:0;accent-color:#62d6bd}
+
   `;document.head.append(overviewStyle);
   render();
   render();

@@ -91,24 +91,26 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#parts > g[data-id="p1"] .part-value').textContent(), '15 kΩ');
     await page.locator('#parts > g[data-id="p1"] .part-body').click({ button: 'right' });
     const form = page.locator('#componentForm');
-    for (const [name, value] of Object.entries({ functionCode: 'F2', locationCode: 'L3', deviceCode: 'R9', label: 'R label <&>', value: '22 kΩ' })) {
+    for (const [name, value] of Object.entries({ functionCode: 'F2', locationCode: 'L3', deviceCode: 'R9 <&>', value: '22 kΩ' })) {
       await form.locator(`[name="${name}"]`).fill(value);
     }
+    assert.equal(await form.locator('[name="label"]').count(),0);
     // Keyboard shortcuts must not delete components or change mode during editing.
     await form.locator('[name="value"]').press('Delete');
     await form.locator('[name="value"]').fill('22 kΩ');
     await form.locator('[type="submit"]').click();
-    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R label <&>');
-    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-aks').textContent(), '=F2+L3−R9');
+    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R9 <&>');
+    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-aks').textContent(), '=F2+L3−R9 <&>');
     await page.locator('#parts > g[data-id="p1"] .part-body').click({ button: 'right' });
-    await form.locator('[name="label"]').fill('discard');
+    await form.locator('[name="deviceCode"]').fill('discard');
     await page.locator('#componentCancel').click();
-    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R label <&>');
+    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R9 <&>');
     await page.locator('#parts > g[data-id="p1"] .part-body').click({ button: 'right' });
-    await form.locator('[name="label"]').fill('discard with Escape');
-    await form.locator('[name="label"]').press('Escape');
+    await form.locator('[name="deviceCode"]').fill('discard with Escape');
+    await form.locator('[name="deviceCode"]').press('Escape');
     assert.equal(await form.isVisible(), false);
-    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R label <&>');
+    assert.equal(await page.locator('#parts > g[data-id="p1"] .part-label').textContent(), 'R9 <&>');
+    const unifiedInitial=drawing(await save()).parts.find(p=>p.id==='p1');assert.equal(unifiedInitial.label,unifiedInitial.deviceCode);
     console.log('PASS double-click quick editing, right-click AKS/label/value editing, escaped text, cancel and Escape');
 
     await page.locator('#wireTool').click();
@@ -209,7 +211,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.filter(p=>!p.unplaced).length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.9.1');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.10.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -238,7 +240,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.9.1');
+    assert.equal(withText.appVersion, '1.10.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -297,7 +299,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
-    console.log('PASS v1.9.1, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.10.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -425,7 +427,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('[data-overview="devices"]').getAttribute('aria-selected'),'true');
     const treeMaster=page.locator('.device-node[data-device-id="p300"]');
     assert.equal(await treeMaster.locator(':scope > summary small').count(),0);
-    assert.ok((await treeMaster.locator(':scope > summary .device-jump').getAttribute('title')).includes('Master K1'));
+    assert.ok((await treeMaster.locator(':scope > summary .device-jump').getAttribute('title')).includes('K1'));
     assert.equal(await treeMaster.locator('.device-node[data-device-id="p301"]').count(),1);
     assert.equal(await treeMaster.locator('.device-node[data-device-id="p302"]').count(),1);
     const folderNames=await page.locator('.aks-folder > summary').allTextContents();
@@ -640,7 +642,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(mixedParts.find(p=>p.id===firstId).masterId,mixedParts.find(p=>p.id===secondId).masterId);
     await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="device-list"]').first().click();
     const cells=await page.locator('#deviceListContent text').evaluateAll(nodes=>nodes.map(n=>({text:n.textContent,x:Number(n.getAttribute('x')),y:Number(n.getAttribute('y'))})));
-    assert.deepEqual(cells.filter(n=>n.y===128).map(n=>n.text),['AKS-KENNZEICHEN','BESCHRIFTUNG','BAUTEIL','WERT / TYP','HERSTELLERNUMMER','SAP-NUMMER','BLATT']);
+    assert.deepEqual(cells.filter(n=>n.y===128).map(n=>n.text),['AKS-KENNZEICHEN','BETRIEBSMITTEL','BAUTEIL','WERT / TYP','HERSTELLERNUMMER','SAP-NUMMER','BLATT']);
     for(const [manufacturer,sap,type] of [['M-DG-004','000044','Durchgangsklemme'],['M-PE-005','000055','PE-Klemme']]){
       const article=cells.find(n=>n.text===manufacturer);assert.ok(article);near(article.x,685);
       assert.ok(cells.some(n=>n.y===article.y&&n.x===850&&n.text===sap));assert.ok(cells.some(n=>n.y===article.y&&n.x===540&&n.text===type));
@@ -707,12 +709,12 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.ok(await page.locator('.terminal-bridge').count()>0);assert.ok((await page.locator('#deviceListContent').textContent()).includes('X1'));
     await page.locator('#deviceListContent > text').first().click({button:'right'});assert.equal(await page.locator('#componentForm [name="deviceCode"]').inputValue(),'X1');await page.locator('#componentCancel').click();
     await page.locator(`.terminal-list-link[data-part-id="${firstId}"]`).first().click({button:'right'});
-    assert.equal(await page.locator('#componentForm [name="label"]').inputValue(),parentBefore.label);await page.locator('#componentForm [name="terminalType"]').fill('Testklemme');await page.locator('#componentForm [type="submit"]').click();
+    assert.equal(await page.locator('#componentForm [name="deviceCode"]').inputValue(),parentBefore.label);await page.locator('#componentForm [name="terminalType"]').fill('Testklemme');await page.locator('#componentForm [type="submit"]').click();
     assert.ok((await page.locator('#deviceListContent').textContent()).includes('Testklemme'));
     const listFile=await save();await page.reload();await load(listFile);assert.ok(await page.locator('.terminal-bridge').count()>0);
     await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').last().click();assert.ok((await page.locator('#deviceListContent').textContent()).includes('X3'));assert.equal(await page.locator('.terminal-bridge').count(),0);
     const finalPdf=await download('#exportBtn');assert.match(finalPdf,/^%PDF-1.4/);assert.ok(finalPdf.includes('/Count '+(await save()).sheets.length));await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.9.1-terminal-list.png'});
+    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.10.0-terminal-list.png'});
     console.log('PASS compact device tree, independent regular/bridge pin placement and movement with attached wires, inline terminals, one list per strip, graphical bridges, right-click edits and PDF/JSON roundtrip');
 
     const overviewFixture={title:'Mehrfachauswahl',sheets:[{id:'multi-sheet',title:'Zeichnung',parts:[
@@ -737,7 +739,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dropFromTree(unplacedButton,30*GRID,30*GRID);multi=drawing(await save());const placed=multi.parts.find(p=>p.id==='p803');assert.ok(!placed.unplaced);near(placed.x,30*GRID);near(placed.y,30*GRID);assert.equal(multi.parts.length,7);
     assert.equal(await page.locator('[data-device-id="p803"] > summary .device-jump').evaluate(n=>getComputedStyle(n).color),'rgb(18, 50, 72)');
     await dropFromTree(page.locator('[data-device-id="p803"] > summary .device-jump'),34*GRID,30*GRID);near(drawing(await save()).parts.find(p=>p.id==='p803').x,34*GRID);
-    await page.locator('[data-device-id="p803"] > summary').click({button:'right',position:{x:2,y:2}});assert.equal(await page.locator('#componentForm [name="label"]').inputValue(),'Vorrat');await page.locator('#componentCancel').click();
+    await page.locator('[data-device-id="p803"] > summary').click({button:'right',position:{x:2,y:2}});assert.equal(await page.locator('#componentForm [name="deviceCode"]').inputValue(),'K2');await page.locator('#componentCancel').click();
     await dropFromTree(page.locator('[data-pin-part="p811"][data-pin-index="0"]'),25*GRID,35*GRID);const pinDrop=drawing(await save()).parts.find(p=>p.type==='terminal-pin'&&p.masterId==='p811');assert.ok(pinDrop);near(pinDrop.x,25*GRID);near(pinDrop.y,35*GRID);
     await page.locator('[data-device-id="p801"] > summary').click({button:'right',position:{x:2,y:2}});
     for(const key of ['label','value','aks','pins','reference'])await page.locator(`#componentForm [name="show_${key}"]`).uncheck();await page.locator('#componentForm [type="submit"]').click();

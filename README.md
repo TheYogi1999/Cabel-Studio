@@ -178,3 +178,7 @@ Eine Klemmenleiste darf unterschiedliche **Klemmentypen** enthalten, etwa Durchg
 ### Version 1.9.1: Textschalter am Eingabefeld
 
 Die Checkbox „Anzeigen“ steht direkt neben dem zugehörigen Eingabefeld: Beschriftung/Freitext, Wert, Betriebsmittel (gesamte AKS), Pin-Nummern und Gegenziel (Seitenverweis). Die bisherigen Sichtbarkeitswerte bleiben erhalten; das zusätzliche Sichtbarkeitsfeld am Ende des Dialogs entfällt.
+
+### Version 1.10.0: Einheitliches Betriebsmittel
+
+Für Bauteile gibt es nur noch das Feld „Betriebsmittel“. Zeichnung, Geräteübersicht, Verweisziele und Geräteliste verwenden denselben Wert; die frühere Spalte „Beschriftung“ heißt ebenfalls „Betriebsmittel“. Auch Doppelklick und Kopieren halten den Namen einheitlich. In Projektdateien bleibt `label` als Spiegel von `deviceCode` erhalten; bei vorhandenen unterschiedlichen Werten hat `deviceCode` Vorrang. Freie Textobjekte behalten ihr separates Feld „Text“. Die Sichtbarkeit des Betriebsmittels und der vollständigen AKS lässt sich direkt am Betriebsmittel-Feld einstellen.

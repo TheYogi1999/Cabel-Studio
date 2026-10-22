@@ -211,7 +211,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.filter(p=>!p.unplaced).length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.12.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.13.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -240,7 +240,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.12.0');
+    assert.equal(withText.appVersion, '1.13.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -299,7 +299,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
-    console.log('PASS v1.12.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.13.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -642,7 +642,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(mixedParts.find(p=>p.id===firstId).masterId,mixedParts.find(p=>p.id===secondId).masterId);
     await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="device-list"]').first().click();
     const cells=await page.locator('#deviceListContent text').evaluateAll(nodes=>nodes.map(n=>({text:n.textContent,x:Number(n.getAttribute('x')),y:Number(n.getAttribute('y'))})));
-    assert.deepEqual(cells.filter(n=>n.y===128).map(n=>n.text),['AKS-KENNZEICHEN','BETRIEBSMITTEL','BAUTEIL','WERT / TYP','HERSTELLERNUMMER','SAP-NUMMER','BLATT']);
+    assert.deepEqual(cells.filter(n=>n.y===128).map(n=>n.text),['AKS-KENNZEICHEN','BETRIEBSMITTEL','BAUTEIL','WERT / TYP','HERSTELLERNUMMER','SAP-NUMMER','VERWEIS']);
     for(const [manufacturer,sap,type] of [['M-DG-004','000044','Durchgangsklemme'],['M-PE-005','000055','PE-Klemme']]){
       const article=cells.find(n=>n.text===manufacturer);assert.ok(article);near(article.x,685);
       assert.ok(cells.some(n=>n.y===article.y&&n.x===850&&n.text===sap));assert.ok(cells.some(n=>n.y===article.y&&n.x===540&&n.text===type));
@@ -689,18 +689,19 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('.device-node > summary small').count(),0);
     const pinButton=page.locator(`[data-pin-part="${firstId}"][data-pin-index="0"]`);await pinButton.click();
     let pinProject=await save(),single=drawing(pinProject).parts.find(p=>p.type==='terminal-pin'&&p.masterId===firstId&&p.pinIndex===0);assert.ok(single);
-    assert.equal(await page.locator(`[data-part="${firstId}"][data-term="0"]`).isVisible(),false);
+    assert.equal(await page.locator(`[data-part="${firstId}"][data-term="0"]`).isVisible(),true);
     const parentBefore=drawing(pinProject).parts.find(p=>p.id===firstId);
     await dragPart(single.id,single.x-3*GRID,single.y+4*GRID);const movedPin=drawing(await save()).parts.find(p=>p.id===single.id);near(movedPin.x,single.x-3*GRID);near(movedPin.y,single.y+4*GRID);
     pinProject=await save();const parentAfter=drawing(pinProject).parts.find(p=>p.id===firstId);near(parentBefore.x,parentAfter.x);near(parentBefore.y,parentAfter.y);
     await page.locator(`[data-pin-part="${firstId}"][data-pin-index="8"]`).click();
     let bridgePin=drawing(await save()).parts.find(p=>p.type==='terminal-pin'&&p.masterId===firstId&&p.pinIndex===8);assert.ok(bridgePin);
-    assert.ok(drawing(await save()).wires.some(w=>w.a===bridgePin.id+':0'||w.b===bridgePin.id+':0'));
+    assert.ok(drawing(await save()).wires.some(w=>w.a===firstId+':8'||w.b===firstId+':8'));assert.equal(await page.locator(`[data-part="${firstId}"][data-term="8"]`).isVisible(),true);
     await dragPart(bridgePin.id,bridgePin.x+GRID,bridgePin.y+3*GRID);await assertAttached();await assertOrthogonal();
     await page.locator('#selectTool').click();await page.locator(`#parts > g[data-id="${firstId}"] .part-body`).click();await page.keyboard.press('Delete');
     assert.equal(await page.locator(`#parts > g[data-id="${single.id}"]`).count(),1);assert.equal(await page.locator(`#parts > g[data-id="${bridgePin.id}"]`).count(),1);
     const independentFile=await save();await page.reload();await load(independentFile);await assertAttached();
     await page.locator('[data-overview="devices"]').click();await page.locator(`[data-device-id="${firstId}"] > summary .device-jump`).click();
+    await page.locator('#bridgeTool').click();await page.locator(`[data-part="${bridgePin.id}"][data-term="0"]`).click();await page.locator(`[data-part="${secondId}"][data-term="8"]`).click();await page.keyboard.press('Escape');
     const positions=await page.locator(`#parts > g[data-id="${secondId}"] .terminal`).evaluateAll(nodes=>nodes.map(n=>({x:Number(n.getAttribute('cx')),y:Number(n.getAttribute('cy')),bridge:n.classList.contains('bridge-terminal')})).sort((a,b)=>a.x-b.x));
     assert.ok(positions.every(p=>p.y===0));assert.deepEqual(positions.map(p=>p.bridge),[false,false,true,false,false]);
     await page.locator('#createTerminalStrip').click();await page.locator('#stripForm [name="code"]').fill('X3');await page.locator('#stripForm [name="count"]').fill('2');await page.locator('#stripForm [type="submit"]').click();
@@ -714,7 +715,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const listFile=await save();await page.reload();await load(listFile);assert.ok(await page.locator('.terminal-bridge').count()>0);
     await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').last().click();assert.ok((await page.locator('#deviceListContent').textContent()).includes('X3'));assert.equal(await page.locator('.terminal-bridge').count(),0);
     const finalPdf=await download('#exportBtn');assert.match(finalPdf,/^%PDF-1.4/);assert.ok(finalPdf.includes('/Count '+(await save()).sheets.length));await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.12.0-terminal-list.png'});
+    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.13.0-terminal-list.png'});
     console.log('PASS compact device tree, independent regular/bridge pin placement and movement with attached wires, inline terminals, one list per strip, graphical bridges, right-click edits and PDF/JSON roundtrip');
 
     const overviewFixture={title:'Mehrfachauswahl',sheets:[{id:'multi-sheet',title:'Zeichnung',parts:[
@@ -796,7 +797,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.keyboard.press('c');await page.locator(`[data-part="${relayCoil.id}"][data-term="1"]`).click();await page.locator(`[data-part="${relayContacts[0].id}"][data-term="0"]`).click();await page.keyboard.press('Escape');await assertAttached();await assertOrthogonal();
     const relaysWired=await save();await page.reload();await load(relaysWired);assert.equal(drawing(await save()).wires.length,2);assert.equal(await page.locator('.relay-symbol-link').count(),4);await assertAttached();
     await page.locator('[data-overview="devices"]').click();assert.equal(await page.locator(`[data-device-id="${relayCoil.id}"] .device-node`).count(),3);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.12.0-relay.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.13.0-relay.png'});
     const relayPdf=await download('#exportBtn');assert.match(relayPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     // Stack headers repeat only at the first terminal or a type change; other strips/columns are independent.
     const stackFixture={title:'Klemmenkopf',sheets:[{id:'stack-sheet',title:'Klemmen',parts:[
@@ -815,8 +816,38 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart('p904',18*GRID,15*GRID);assert.deepEqual(await captionState('p904'),[true,true,true]);assert.deepEqual(await captionState('p905'),[true,true,true]);
     const stackFile=await save();await page.reload();await load(stackFile);assert.deepEqual(await captionState('p903'),[true,true,true]);assert.deepEqual(await captionState('p906'),[false,false,false]);
     const stackPdf=await download('#exportBtn');assert.match(stackPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.12.0-stacked-terminals.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.13.0-stacked-terminals.png'});
     console.log('PASS relay overview, box coil, three contact slaves, linked placement/navigation, shared BMK and pins, routes/JSON/PDF; automatic 4/8 mm strip headers, type changes, gaps, movement, separate strips and AKS/BMK/type text order');
+
+    const referenceFixture={title:'Pinverweise',sheets:[{id:'pin-main',title:'Hauptsymbole',parts:[
+      {id:'p1200',type:'terminal-strip',deviceCode:'X1',label:'X1',x:5*GRID,y:8*GRID,unplaced:true},
+      {id:'p1201',type:'connector',deviceCode:'X1.1',label:'X1.1',masterId:'p1200',terminalNumber:'1',terminalType:'DG',pinNumbers:['1a','1b'],x:10*GRID,y:12*GRID},
+      {id:'p1202',type:'connector',deviceCode:'X1.2',label:'X1.2',masterId:'p1200',terminalNumber:'2',terminalType:'DG',pinNumbers:['2a','2b'],x:28*GRID,y:20*GRID},
+    ],wires:[{id:'w1300',a:'p1201:0',b:'p1202:0',points:[]}]},{id:'pin-other',title:'Einzelpins',parts:[],wires:[]}],activeSheet:0};
+    await load(referenceFixture);await page.locator('[data-overview="devices"]').click();const beforePins=await save();
+    assert.equal(drawing(beforePins).parts.find(p=>p.id==='p1201').deviceCode,'X1');assert.equal(drawing(beforePins).parts.find(p=>p.id==='p1201').terminalNumber,'1');assert.equal(await page.locator('#parts > g[data-id="p1201"] .part-label').textContent(),'X1');
+    await dropFromTree(page.locator('[data-pin-part="p1201"][data-pin-index="0"]'),24*GRID,6*GRID);
+    let referencesProject=await save(),separatePin=drawing(referencesProject).parts.find(p=>p.type==='terminal-pin');assert.ok(separatePin);
+    assert.deepEqual(drawing(referencesProject).wires,drawing(beforePins).wires);assert.equal(await page.locator('[data-part="p1201"][data-term="0"]').isVisible(),true);assert.equal(await page.locator('[data-part="p1201"][data-term="8"]').isVisible(),true);
+    const parentRef=page.locator(`#parts > g[data-id="p1201"] [data-terminal-target="${separatePin.id}"]`),backRef=page.locator(`#parts > g[data-id="${separatePin.id}"] [data-terminal-target="p1201"]`);
+    assert.equal(await parentRef.textContent(),':1a /0003.A3');assert.equal(await backRef.textContent(),'Hauptsymbol /0003.B1');
+    await parentRef.click();assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),separatePin.id);await backRef.click();assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'),'p1201');
+    await page.keyboard.press('c');await page.locator('[data-part="p1201"][data-term="1"]').click();await page.locator(`[data-part="${separatePin.id}"][data-term="0"]`).click();await page.keyboard.press('Escape');assert.equal(drawing(await save()).wires.length,2);await assertAttached();
+    await dragPart('p1201',12*GRID,12*GRID);assert.equal(await backRef.textContent(),'Hauptsymbol /0003.B2');assert.equal(await parentRef.textContent(),':1a /0003.A3');
+    await dragPart(separatePin.id,40*GRID,28*GRID);assert.equal(await parentRef.textContent(),':1a /0003.C5');await assertAttached();await assertOrthogonal();
+    await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="drawing"]').nth(1).click();await page.locator('[data-overview="devices"]').click();
+    await dropFromTree(page.locator('[data-pin-part="p1201"][data-pin-index="1"]'),24*GRID,6*GRID);referencesProject=await save();const otherPin=referencesProject.sheets.find(s=>s.id==='pin-other').parts.find(p=>p.type==='terminal-pin');assert.ok(otherPin);
+    assert.equal(await page.locator(`#parts > g[data-id="${otherPin.id}"] .terminal-cross-reference`).textContent(),'Hauptsymbol /0003.B2');
+    await page.locator(`#parts > g[data-id="${otherPin.id}"] .terminal-cross-reference`).click();assert.equal(await page.locator(`#parts > g[data-id="p1201"] [data-terminal-target="${otherPin.id}"]`).textContent(),':1b /0004.A3');assert.equal(drawing(await save()).wires.length,2);await assertAttached();
+    await page.locator('[data-overview="sheets"]').click();await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').click();const combinedList=await page.locator('#deviceListContent').textContent();assert.ok(combinedList.includes('2a'));assert.ok(combinedList.includes('/0004.A3'));
+    const persistentRefs=await save();await page.reload();await load(persistentRefs);await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click();assert.equal(await page.locator(`[data-part="p1201"][data-term="0"]`).isVisible(),true);assert.equal(await parentRef.textContent(),':1a /0003.C5');await assertAttached();
+    const sourceFixture=structuredClone(referenceFixture);sourceFixture.sheets[0].parts.push({id:'p1400',type:'reference',deviceCode:'S1',label:'S1',x:10*GRID,y:10*GRID,targetSheetId:'pin-other',targetPartId:'p1401'});sourceFixture.sheets[1].parts.push({id:'p1401',type:'destination',deviceCode:'D1',label:'D1',x:24*GRID,y:6*GRID,targetSheetId:'pin-main',targetPartId:'p1400'});
+    await load(sourceFixture);assert.equal(await page.locator('#parts > g[data-id="p1400"] .page-reference').textContent(),'/0004.A3');await page.locator('#parts > g[data-id="p1400"] .page-reference').click();assert.equal(await page.locator('#parts > g[data-id="p1401"] .page-reference').textContent(),'/0003.A1');
+    await load(relaysWired);const verticalRelay=await page.locator(`#parts > g[data-id="${relay.id}"] .relay-enclosure`).evaluate(n=>({width:+n.getAttribute('width'),height:+n.getAttribute('height')}));assert.ok(verticalRelay.height>2*verticalRelay.width);
+    const relayTerminalPositions=await page.locator(`#parts > g[data-id="${relay.id}"] .terminal`).evaluateAll(nodes=>nodes.map(n=>({x:+n.getAttribute('cx'),y:+n.getAttribute('cy')})));assert.deepEqual([...new Set(relayTerminalPositions.map(p=>p.x))],[-48,48]);assert.ok(relayTerminalPositions[0].y<relayTerminalPositions[2].y&&relayTerminalPositions[2].y<relayTerminalPositions[5].y&&relayTerminalPositions[5].y<relayTerminalPositions[8].y);await assertAttached();await assertOrthogonal();
+    for(const link of await page.locator('.relay-symbol-link,.relay-parent-link').all()){const text=await link.textContent();if(!text.includes('＋'))assert.match(text,/\/\d{4}\.[A-E][1-8]/)}
+    const finalReferencesPdf=await download('#exportBtn');assert.match(finalReferencesPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await page.screenshot({path:'/tmp/Cabel-Studio-v1.13.0-relay.png'});
+    console.log('PASS retained main terminal/bridge anchors and original wires, reciprocal live /page.zone pin references across sheets, combined connection lists, X1 main BMK, uniform source/relay references, vertical relay, JSON/PDF and route attachment');
 
     assert.deepEqual(errors, []);
     console.log('PASS deletion cleans attached wires, generated device lists, no browser JavaScript errors');

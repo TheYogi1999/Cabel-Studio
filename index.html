@@ -55,7 +55,7 @@
 <div class="toast" id="toast"></div>
 <script>
 (() => {
-  const APP_VERSION='1.8.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.9.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -399,6 +399,8 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       .map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
       '<div class="actions"><button type="submit">Übernehmen</button><button type="button" id="componentCancel">Abbrechen</button></div></form>');
     const form=document.querySelector('#componentForm');
+    const visibility=document.createElement('fieldset');visibility.className='text-visibility';visibility.innerHTML='<legend>Texte am Objekt anzeigen</legend>'+[['label','Beschriftung'],['value','Wert / Typ'],['aks','AKS'],['pins','Pin-Nummern'],['reference','Seitenverweis'],['annotation','Freitext']].map(([key,label])=>'<label><input type="checkbox" name="show_'+key+'"'+(p.textVisibility?.[key]===false?'':' checked')+'>'+label+'</label>').join('');form.insertBefore(visibility,form.querySelector('.actions'));
+
     if(isReference(p)){const role=document.createElement('p');role.className='reference-role';role.textContent='Verweistyp: '+(referenceRole(p)==='source'?'Source':'Destination');form.prepend(role)}
     const reference=document.createElement('label');
     reference.innerHTML='Gegenziel (Objekt)<select name="referenceTarget"><option value="">Kein Verweis</option>'+pages.flatMap((sheet,i)=>sheet.parts.filter(q=>q!==p&&q.type!=='text'&&(!isReference(p)||(isReference(q)&&referenceRole(q)!==referenceRole(p))||q.id===p.targetPartId)).map(q=>'<option value="'+safe(JSON.stringify([sheet.id||sheet.generatedId,q.id]))+'">Blatt '+pageNumber(i+1)+' · '+safe(sheet.title)+' — '+safe(q.label)+' ('+safe(q.id)+')</option>')).join('')+'</select>';
@@ -407,7 +409,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
     const master=document.createElement('label');master.innerHTML='Master / übergeordnete Komponente<select name="masterId"><option value="">Eigenständig / Master</option>'+deviceEntries().filter(e=>e.p!==p&&!wouldCycle(p.id,e.p.id)).map(e=>'<option value="'+safe(e.p.id)+'">'+safe(aks(e.p))+' · '+safe(e.p.label)+'</option>').join('')+'</select>';form.insertBefore(master,form.querySelector('.actions'));master.querySelector('select').value=p.masterId||'';
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
-    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Bitte 2 bis 8 eindeutige Pin-Nummern eingeben');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Separat platzierte Pins zuerst entfernen');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Zu entfernende Pins sind noch verdrahtet');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('Master-Zuordnung würde einen Kreis erzeugen');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Durchgangsklemme';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);render();closePanel()};
+    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Bitte 2 bis 8 eindeutige Pin-Nummern eingeben');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Separat platzierte Pins zuerst entfernen');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Zu entfernende Pins sind noch verdrahtet');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('Master-Zuordnung würde einen Kreis erzeugen');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Durchgangsklemme';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
     document.querySelector('#componentCancel').onclick=closePanel;
     form.querySelector('input').focus();
   }
@@ -516,12 +518,12 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
         const node=details(parent,'device:'+p.id,'','device-node');node.dataset.deviceId=p.id;node.classList.add(p.unplaced?'device-unplaced':'device-placed');
         if(treeFocusId===p.id)node.classList.add('current-device');
         const summary=node.firstElementChild,button=document.createElement('button');button.className='device-jump';button.textContent=(p.type==='terminal-strip'?'▤ ':p.type==='terminal-pin'?'○ ':p.masterId?'↳ ':'◈ ')+(p.type==='connector'?terminalOrdinal(p):p.type==='terminal-pin'?':'+p.value:aks(p));button.title=aks(p)+' · '+p.label+' · '+(p.unplaced?'Unplatziert':'Platziert');
-        button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();jumpToDevice(p.id)});button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});summary.append(button);
+        button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();jumpToDevice(p.id)});button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});summary.append(button);button.draggable=true;button.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'device',id:p.id}));e.dataTransfer.effectAllowed='move'});summary.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
         const children=entries.filter(e=>e.p.masterId===p.id);
 if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.createElement('button');manage.className='terminal-manage';manage.textContent=p.type==='terminal-strip'?'+':'×';manage.title=p.type==='terminal-strip'?'Klemme hinzufügen':'Klemme dauerhaft entfernen';manage.onclick=e=>{e.preventDefault();e.stopPropagation();if(p.type==='terminal-strip')addStripTerminal(p);else removeStripTerminal(p)};summary.append(manage)}
 
         children.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'de',{numeric:true})).forEach(child=>appendDevice(child,node));
-        if(p.type==='connector')[...partTerminals(p).map((_,i)=>i),8].filter(i=>!pinSlave(p.id,i)).forEach(i=>{const pin=document.createElement('button');pin.className='pin-node';pin.dataset.pinPart=p.id;pin.dataset.pinIndex=i;pin.textContent=(i===8?'◆ Brücke':'○ :'+pinNumber(p,i))+' ＋';pin.title='Anschluss einzeln platzieren';pin.onclick=e=>{e.stopPropagation();placePin(p,i)};node.append(pin)});
+        if(p.type==='connector')[...partTerminals(p).map((_,i)=>i),8].filter(i=>!pinSlave(p.id,i)).forEach(i=>{const pin=document.createElement('button');pin.className='pin-node';pin.dataset.pinPart=p.id;pin.dataset.pinIndex=i;pin.textContent=(i===8?'◆ Brücke':'○ :'+pinNumber(p,i))+' ＋';pin.draggable=true;pin.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'pin',id:p.id,index:i}));e.dataTransfer.effectAllowed='move'});pin.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});pin.title='Anschluss einzeln platzieren oder auf das Blatt ziehen';pin.onclick=e=>{e.stopPropagation();placePin(p,i)};node.append(pin)});
       }
       const roots=entries.filter(e=>!e.p.masterId||!byId.has(e.p.masterId));
       for(const entry of [...roots,...entries]){
@@ -872,6 +874,85 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     setSheet(pages.indexOf(target));selected={kind:'part',id:p.id};treeFocusId=p.id;mode='select';render();toast('Einzelanschluss platziert – unabhängig verschiebbar');
   }
   const compactStyle=document.createElement('style');compactStyle.textContent='.device-node{margin:2px 0!important;padding-left:7px!important}.device-node>summary{padding:3px!important;display:flex;align-items:center;gap:3px}.device-node>summary::before{content:"▸";cursor:pointer}.device-node[open]>summary::before{content:"▾"}.device-node>summary small{display:none}.device-node>summary .device-jump{font-size:11px!important;padding:2px!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.terminal-manage{padding:1px 5px!important}.pin-node{display:inline-block!important;margin:2px!important;padding:2px 5px!important;font-size:10px!important}.terminal-bridge{pointer-events:stroke}';document.head.append(compactStyle);
+
+  let areaSelection=null,selectionDrag=null;
+  const selectedParts=new Set();
+  const drawBeforeTextVisibility=drawPart;
+  drawPart=function(p){drawBeforeTextVisibility(p);const root=partsG.lastElementChild;for(const [key,selector] of Object.entries({label:'.part-label',value:'.part-value',aks:'.part-aks',pins:'.pin-label',reference:'.page-reference',annotation:'.annotation-text'}))if(p.textVisibility?.[key]===false)root.querySelectorAll(selector).forEach(n=>n.style.display='none')};
+  function clearAreaSelection(){areaSelection?.rect.remove();areaSelection=null;selectionDrag=null;selectedParts.clear()}
+  const setSheetBeforeArea=setSheet;setSheet=function(i){clearAreaSelection();setSheetBeforeArea(i)};
+  const editBeforeArea=editComponent;editComponent=function(p){clearAreaSelection();editBeforeArea(p)};
+  const renderBeforeArea=render;render=function(){renderBeforeArea();for(const root of partsG.children)if(selectedParts.has(root.dataset.id))root.classList.add('selected');if(selectedParts.size>1)document.querySelector('#statusText').textContent=selectedParts.size+' Objekte ausgewählt · gemeinsam verschieben'};
+  function selectionMembers(){
+    const ids=new Set(selectedParts);
+    for(const id of selectedParts)for(const p of descendants(id))if(p.type!=='terminal-pin'&&!p.unplaced&&model.parts.includes(p))ids.add(p.id);
+    return model.parts.filter(p=>ids.has(p.id)&&!p.unplaced);
+  }
+  svg.addEventListener('pointerdown',e=>{
+    if(e.button!==0||mode!=='select'||isGenerated(pages[activeSheet])||e.ctrlKey||e.metaKey||modal.style.display==='grid'||pdfExporting)return;
+    const root=e.target.closest('#parts > g[data-id]'),point=toWorld(e);
+    if(root){
+      if(selectedParts.size>1&&selectedParts.has(root.dataset.id)){
+        e.preventDefault();e.stopImmediatePropagation();drag=null;segmentDrag=null;wireLabelDrag=null;
+        const members=selectionMembers(),ids=new Set(members.map(p=>p.id));
+        selectionDrag={start:point,members:members.map(p=>({p,x:p.x,y:p.y})),internal:new Map(model.wires.filter(w=>ids.has(w.a.split(':')[0])&&ids.has(w.b.split(':')[0])).map(w=>[w,routePoints(w)]))};
+        svg.setPointerCapture(e.pointerId);return;
+      }
+      selectedParts.clear();return;
+    }
+    if(e.target.closest('#wires')){selectedParts.clear();return}
+    if(point.x<0||point.x>1128||point.y<0||point.y>798)return;
+    e.preventDefault();e.stopImmediatePropagation();clearAreaSelection();selected=null;drag=null;render();
+    areaSelection={start:point,rect:el('rect',{x:point.x,y:point.y,width:0,height:0,fill:'#267dc52b',stroke:'#2463b5','stroke-width':1,'stroke-dasharray':'5 3','pointer-events':'none',class:'area-selection'},scene)};svg.setPointerCapture(e.pointerId);
+  },true);
+  svg.addEventListener('pointermove',e=>{
+    if(selectionDrag){
+      e.preventDefault();e.stopImmediatePropagation();const state=selectionDrag,point=toWorld(e),dx=snap(point.x-state.start.x),dy=snap(point.y-state.start.y),ignore=new Set(state.internal.keys());
+      for(const {p,x,y} of state.members)changeComponent(p,()=>{p.x=x+dx;p.y=y+dy},ignore);
+      for(const [wire,points] of state.internal)wire.points=points.slice(1,-1).map(p=>({x:p.x+dx,y:p.y+dy}));render();return;
+    }
+    if(!areaSelection)return;e.preventDefault();e.stopImmediatePropagation();const p=toWorld(e),a=areaSelection.start,r=areaSelection.rect;
+    r.setAttribute('x',Math.min(a.x,p.x));r.setAttribute('y',Math.min(a.y,p.y));r.setAttribute('width',Math.abs(p.x-a.x));r.setAttribute('height',Math.abs(p.y-a.y));
+  },true);
+  function finishAreaSelection(e){
+    if(!areaSelection&&!selectionDrag)return;e.preventDefault();e.stopImmediatePropagation();
+    if(areaSelection){const r=areaSelection.rect,x=+r.getAttribute('x'),y=+r.getAttribute('y'),width=+r.getAttribute('width'),height=+r.getAttribute('height');
+      if(width>2&&height>2)for(const p of model.parts)if(!p.unplaced&&p.x>=x&&p.x<=x+width&&p.y>=y&&p.y<=y+height)selectedParts.add(p.id);
+      r.remove();areaSelection=null;selected=selectedParts.size?{kind:'part',id:[...selectedParts][0]}:null;
+    }
+    selectionDrag=null;if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId);render();
+  }
+  svg.addEventListener('pointerup',finishAreaSelection,true);
+  svg.addEventListener('pointercancel',e=>{if(areaSelection||selectionDrag){clearAreaSelection();drag=null;render()}},true);
+  document.addEventListener('keydown',e=>{if(editingTarget(e.target)||modal.style.display==='grid')return;if(e.key==='Escape'){clearAreaSelection();render()}},true);
+  svg.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('application/x-cabel-device')&&!isGenerated(pages[activeSheet])){e.preventDefault();e.dataTransfer.dropEffect='move'}},true);
+  svg.addEventListener('drop',e=>{
+    const raw=e.dataTransfer.getData('application/x-cabel-device');if(!raw)return;e.preventDefault();e.stopImmediatePropagation();
+    if(isGenerated(pages[activeSheet])||pdfExporting)return;const point=toWorld(e);if(point.x<0||point.x>1128||point.y<0||point.y>798)return;
+    let payload;try{payload=JSON.parse(raw)}catch{return}if(!['device','pin'].includes(payload.kind))return;
+    const target=pages[activeSheet];let entry=deviceEntries().find(e=>e.p.id===payload.id);if(!entry)return;
+    if(payload.kind==='pin'){
+      if(entry.p.type!=='connector'||![...partTerminals(entry.p).map((_,i)=>i),8].includes(payload.index))return;
+      if(entry.sheet!==target&&entry.sheet.wires.some(w=>[w.a,w.b].includes(entry.p.id+':'+payload.index))){toast('Verdrahtete Pins auf ihrem Zeichnungsblatt verschieben');return}
+      placePin(entry.p,payload.index);const pin=pinSlave(entry.p.id,payload.index);if(!pin)return;entry=deviceEntries().find(e=>e.p===pin);
+    }
+    const p=entry.p,attached=entry.sheet.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id));
+    if(entry.sheet!==target&&attached){toast('Verdrahtete Geräte auf ihrem Zeichnungsblatt verschieben');return}
+    clearAreaSelection();drag=null;segmentDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';
+    if(entry.sheet!==target){entry.sheet.parts=entry.sheet.parts.filter(q=>q!==p);target.parts.push(p);setSheet(pages.indexOf(target))}
+    if(p.unplaced){p.x=snap(point.x);p.y=snap(point.y);delete p.unplaced}else moveComponent(p,snap(point.x),snap(point.y));
+    mode='select';selected={kind:'part',id:p.id};treeFocusId=p.id;render();toast('Gerät platziert');
+  },true);
+  const overviewStyle=document.createElement('style');overviewStyle.textContent=`
+    .device-node>summary .device-jump{font-size:12px!important;font-weight:700!important;color:#123248!important;background:transparent!important;line-height:1.5;padding:3px 4px!important}
+    .device-unplaced>summary .device-jump{color:#493400!important}
+    .device-node>summary .device-jump:hover{background:#ffffff88!important}
+    .device-node>summary .device-jump:focus-visible{outline:2px solid #2463b5;outline-offset:1px}
+    .device-node>summary .terminal-manage{color:#123248;background:#ffffffb3;border-color:#8098ac}
+    .text-visibility{grid-column:1/-1;border:1px solid #526574;border-radius:6px;display:flex;flex-wrap:wrap;gap:10px;padding:10px}
+    .text-visibility legend{font-size:12px}.text-visibility label{display:flex;align-items:center;gap:6px;font-size:12px}.text-visibility input{width:auto!important}
+  `;document.head.append(overviewStyle);
+  render();
   render();
 
 

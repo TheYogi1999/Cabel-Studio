@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101923">
-  <title>Leitwerk — Schaltplan-Editor</title>
+  <title>Leitwerk — Schematic editor</title>
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -12,7 +12,7 @@
     header{display:flex;align-items:center;gap:24px;padding:0 20px;background:#131e28;border-bottom:1px solid var(--line)}
     .brand{display:flex;align-items:center;gap:10px;min-width:205px}.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#09221f;display:grid;place-items:center;font-weight:900;font-size:17px}.brand strong{font-size:15px;letter-spacing:.3px}.brand span{display:block;color:var(--muted);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
     .project-name{font-size:13px;color:#bac6cd;white-space:nowrap}.project-name b{color:#fff;font-weight:550}.tools{display:flex;align-items:center;gap:7px;margin-left:auto}.tool-button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:#d8e1e6;display:flex;align-items:center;gap:7px}.tool-button:hover{background:#243541}.tool-button.active{border-color:var(--accent);color:var(--accent);background:#16332f}.tool-button.primary{background:var(--accent);border-color:var(--accent);color:#0b2925;font-weight:700}.tool-button.danger:hover{border-color:var(--danger);color:var(--danger)}
-    main{display:grid;grid-template-columns:218px 1fr;min-height:0}.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:18px 13px;overflow:auto}.section-title{display:flex;justify-content:space-between;align-items:center;color:#a7b5bf;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:0 5px;margin:0 0 12px}.section-title small{font-size:10px;color:#6f7e88;letter-spacing:0;text-transform:none}.library{display:grid;gap:7px}.component-group summary{cursor:pointer;padding:8px 3px;color:var(--accent);font-size:12px}.group-parts{display:grid;gap:7px}.part[draggable]{cursor:grab}.annotation-text{white-space:pre}.part{border:1px solid #2b3a46;border-radius:8px;background:#1b2934;min-height:58px;display:flex;align-items:center;gap:11px;padding:9px 10px;text-align:left}.part:hover{border-color:#60717d;background:#22323e}.part-icon{height:36px;width:42px;display:grid;place-items:center;color:var(--accent);background:#142c30;border-radius:6px;font-size:17px;font-weight:700}.part-name{font-size:12px;font-weight:600}.part-desc{color:#8fa0aa;font-size:10px;margin-top:2px}.hint{margin:20px 5px 0;color:#83929c;font-size:11px;line-height:1.55}.hint kbd{font:10px ui-monospace,monospace;color:#cbd5db;background:#263541;padding:2px 4px;border-radius:3px}
+    main{display:grid;grid-template-columns:218px 1fr;min-height:0}.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:18px 13px;overflow:auto}.section-title{display:flex;justify-content:space-between;align-items:center;color:#a7b5bf;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:0 5px;margin:0 0 12px}.section-title small{font-size:10px;color:#6f7e88;letter-spacing:0;text-transform:none}.library{display:grid;gap:7px}.component-group summary{cursor:pointer;padding:8px 3px;color:var(--accent);font-size:12px}.group-parts{display:grid;gap:7px}.part[draggable]{cursor:grab}.annotation-text{white-space:pre}.part{border:1px solid #2b3a46;border-radius:8px;background:#1b2934;min-height:58px;display:flex;align-items:center;gap:11px;padding:9px 10px;text-align:left}.part:hover{border-color:#60717d;background:#22323e}.part-icon{height:36px;width:42px;display:grid;place-items:center;color:var(--accent);background:#142c30;border-radius:6px;font-size:17px;font-weight:700}.part-name{display:block;font-size:12px;font-weight:600}.part-desc{display:block;color:#8fa0aa;font-size:10px;margin-top:2px}.hint{margin:20px 5px 0;color:#83929c;font-size:11px;line-height:1.55}.hint kbd{font:10px ui-monospace,monospace;color:#cbd5db;background:#263541;padding:2px 4px;border-radius:3px}
     .workarea{position:relative;min-width:0;min-height:0;background:#111b24}.canvas-wrap{height:100%;overflow:hidden;position:relative;background-color:#111b24;background-image:radial-gradient(#30404b 1px,transparent 1px);background-size:24px 24px}svg#sheet{display:block;width:100%;height:100%;touch-action:none;user-select:none}.wire-hit{cursor:move}.wire{fill:none;stroke:var(--wire);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.wire.selected{stroke:var(--accent);stroke-width:3.5}.part-body{fill:#17242e;stroke:#89a0aa;stroke-width:2}.terminal{fill:var(--accent);stroke:#111b24;stroke-width:2}.part-label{fill:#e4ebee;font-size:13px;font-weight:650;text-anchor:middle;pointer-events:none}.part-value{fill:#91a4ae;font-size:11px;text-anchor:middle;pointer-events:none}.symbol{fill:none;stroke:#d6e2e6;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.selected .part-body{stroke:var(--accent);stroke-width:2.5}.ghost{opacity:.45}.wire-preview{pointer-events:none;fill:none;stroke:var(--accent);stroke-dasharray:5 5;stroke-width:2}.empty-state{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}.empty-card{border:1px solid #2b3d49;background:#17232edb;backdrop-filter:blur(7px);padding:20px 24px;border-radius:12px;text-align:center;max-width:340px}.empty-card strong{font-size:15px}.empty-card p{color:#99a9b2;font-size:12px;line-height:1.55;margin:7px 0 0}.canvas-hud{position:absolute;left:16px;top:14px;color:#80919c;font-size:11px;pointer-events:none}.zoom-controls{position:absolute;bottom:16px;right:16px;display:flex;align-items:center;gap:5px;background:#192631;border:1px solid var(--line);border-radius:8px;padding:4px}.zoom-controls button{width:28px;height:26px;border:0;border-radius:5px;background:transparent;color:#dbe4e8;font-size:16px}.zoom-controls button:hover{background:#2a3a46}.zoom-label{width:48px;text-align:center;color:#aab8c1;font-size:11px}
     footer{display:flex;align-items:center;gap:18px;padding:0 14px;background:#131e28;border-top:1px solid var(--line);color:#84949e;font-size:10px}footer .status{display:flex;align-items:center;gap:6px}footer .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}footer .right{margin-left:auto}
     .toast{position:fixed;left:50%;bottom:45px;transform:translate(-50%,12px);opacity:0;background:#23343f;border:1px solid #3b505d;color:#e4ecef;border-radius:8px;padding:9px 14px;font-size:12px;transition:.2s;pointer-events:none;z-index:4}.toast.show{opacity:1;transform:translate(-50%,0)}
@@ -22,65 +22,78 @@
 <body>
 <div class="app">
   <header>
-    <div class="brand"><div class="brand-mark">L</div><div><strong>Leitwerk <small id="appVersion" style="color:var(--accent);font-size:11px;white-space:nowrap"></small></strong><span>Schaltplan Studio</span></div></div>
-    <div class="project-name">Projekt: <b id="projectTitle">Neuer Schaltplan</b></div>
+    <div class="brand"><div class="brand-mark">L</div><div><strong>Leitwerk <small id="appVersion" style="color:var(--accent);font-size:11px;white-space:nowrap"></small></strong><span>Schematic Studio</span></div></div>
+    <div class="project-name">Project: <b id="projectTitle">New schematic</b></div>
     <div class="tools">
-      <button class="tool-button" id="selectTool" title="Auswählen (V)">↖ <span class="wide">Auswahl</span></button>
-      <button class="tool-button" id="wireTool" title="Verbinden (C / W)">⌁ <span class="wide">Verbinden</span></button>
-      <button class="tool-button" id="saveBtn" title="Projekt als JSON speichern">↓ <span class="wide">Projekt</span></button>
-      <button class="tool-button" id="openBtn" title="Projektdatei öffnen">↑ <span class="wide">Öffnen</span></button>
-      <button class="tool-button primary" id="exportBtn" title="Gesamtes Projekt als PDF exportieren">PDF exportieren</button>
+      <button class="tool-button" id="selectTool" title="Select (V)">↖ <span class="wide">Select</span></button>
+      <button class="tool-button" id="wireTool" title="Connect (C / W)">⌁ <span class="wide">Connect</span></button>
+      <button class="tool-button" id="saveBtn" title="Save project as JSON">↓ <span class="wide">Project</span></button>
+      <button class="tool-button" id="openBtn" title="Open project file">↑ <span class="wide">Open</span></button>
+      <button class="tool-button primary" id="exportBtn" title="Export the entire project as PDF">Export PDF</button>
       <input class="hidden" id="fileInput" type="file" accept=".json,application/json">
     </div>
   </header>
   <main>
     <aside class="sidebar">
-      <h2 class="section-title">Bauteile <small>zum Einfügen</small></h2>
+      <h2 class="section-title">Components <small>to insert</small></h2>
       <div class="library" id="library"></div>
-      <p class="hint">Bauteil anklicken oder auf das Blatt ziehen. Rechtsklick bearbeitet AKS, Betriebsmittel und Wert. Beim Verbinden: Startanschluss, beliebige Rasterpunkte, Zielanschluss.<br><br><kbd>Entf</kbd> löscht die Auswahl · <kbd>Esc</kbd> bricht ab<br><kbd>C</kbd> Verbinden · <kbd>R</kbd> 90° drehen<br><kbd>Y</kbd> vertikal / <kbd>X</kbd> horizontal spiegeln<br><kbd>Ctrl+C/X/V</kbd> Kopieren / Ausschneiden / Einfügen<br><kbd>T</kbd> Text · <kbd>J</kbd> Source / Destination / Seitenauswahl</p>
+      <p class="hint">Click a component or drag it onto the sheet. Right-click to edit its designation, equipment tag and value. To connect: choose a start terminal, grid points, then a target terminal.<br><br><kbd>Delete</kbd> removes the selection · <kbd>Esc</kbd> cancels<br><kbd>C</kbd> Connect · <kbd>R</kbd> 90° rotate<br><kbd>Y</kbd> vertically / <kbd>X</kbd> mirror horizontally<br><kbd>Ctrl+C/X/V</kbd> Copy / cut / paste<br><kbd>T</kbd> Text · <kbd>J</kbd> Source / destination / sheet navigation</p>
     </aside>
     <section class="workarea">
       <div class="canvas-wrap" id="canvasWrap">
-        <div class="canvas-hud" id="hud">Blatt 1 · IEC-Stil · Raster 24 px</div>
-        <svg id="sheet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" aria-label="Schaltplan Arbeitsfläche">
+        <div class="canvas-hud" id="hud">Sheet 1 · IEC style · grid 24 px</div>
+        <svg id="sheet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" aria-label="Schematic workspace">
           <g id="scene"><g id="wires"></g><g id="parts"></g><path id="preview" class="wire-preview" style="display:none"/></g>
         </svg>
-        <div class="empty-state" id="emptyState"><div class="empty-card"><strong>Dein Schaltplan beginnt hier</strong><p>Wähle links ein Bauteil aus, um es auf dem Blatt zu platzieren. Anschließend kannst du die grünen Anschlüsse miteinander verbinden.</p></div></div>
-        <div class="zoom-controls"><button id="zoomOut" aria-label="Verkleinern">−</button><span class="zoom-label" id="zoomLabel">100%</span><button id="zoomIn" aria-label="Vergrößern">+</button><button id="fitBtn" title="Ansicht zurücksetzen">⌂</button></div>
+        <div class="empty-state" id="emptyState"><div class="empty-card"><strong>Start your schematic here</strong><p>Choose a component on the left to place it on the sheet, then connect its green terminals.</p></div></div>
+        <div class="zoom-controls"><button id="zoomOut" aria-label="Zoom out">−</button><span class="zoom-label" id="zoomLabel">100%</span><button id="zoomIn" aria-label="Zoom in">+</button><button id="fitBtn" title="Reset view">⌂</button></div>
       </div>
     </section>
   </main>
-  <footer><span class="status"><i class="dot"></i><span id="statusText">Bereit</span></span><span id="partCount">0 Bauteile</span><span id="wireCount">0 Verbindungen</span><span class="right">Lokale Browser-App · Daten bleiben auf deinem Gerät</span></footer>
+  <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
+<script src="libraries/catalog.js"></script>
 <script>
 (() => {
-  const APP_VERSION='1.13.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.14.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
-    relay:{group:'Schaltgeräte',name:'Relais · 3 Wechsler',desc:'Gesamtsymbol, Spule und 3 Slaves',label:'K',value:'Relais · 3 Wechsler',icon:'▣',terminals:[[-48,-240],[48,-240],[-48,-96],[48,-144],[48,-48],[-48,48],[48,0],[48,96],[-48,192],[48,144],[48,240]],shape:'relay'},
-    'relay-coil':{internal:true,group:'Schaltgeräte',name:'Relais-Spule',desc:'A1 / A2',label:'K',value:'24 V DC',icon:'▭',terminals:[[-48,0],[48,0]],shape:'relay-coil'},
-    'relay-contact':{internal:true,group:'Schaltgeräte',name:'Relais-Wechsler',desc:'Wechsler-Slave',label:'K',value:'Wechsler',icon:'⑂',terminals:[[-48,0],[48,-48],[48,48]],shape:'switch-changeover'},
-    capacitor:{group:'Passive Bauteile',name:'Kondensator',desc:'C · Kapazität',label:'C',value:'100 nF',icon:'⊣⊢',terminals:[[-48,0],[48,0]],shape:'capacitor'},
-    diode:{group:'Passive Bauteile',name:'Diode',desc:'D · Gleichrichter',label:'D',value:'1N4007',icon:'▷|',terminals:[[-48,0],[48,0]],shape:'diode'},
-    led:{group:'Verbraucher',name:'LED',desc:'H · Leuchtdiode',label:'H',value:'LED',icon:'↗',terminals:[[-48,0],[48,0]],shape:'led'},
-    fuse:{group:'Passive Bauteile',name:'Sicherung',desc:'F · Überstromschutz',label:'F',value:'6 A',icon:'▭',terminals:[[-48,0],[48,0]],shape:'fuse'},
-    'switch-nc':{group:'Schaltgeräte',name:'Öffner',desc:'S · Ruhekontakt',label:'S',value:'Öffner',icon:'⌐',terminals:[[-48,0],[48,0]],shape:'switch-nc'},
-    'switch-changeover':{group:'Schaltgeräte',name:'Wechsler',desc:'S · Umschaltkontakt',label:'S',value:'Wechsler',icon:'⑂',terminals:[[-48,0],[48,-48],[48,48]],shape:'switch-changeover'},
-    motor:{group:'Verbraucher',name:'Motor',desc:'M · Antrieb',label:'M',value:'Motor',icon:'Ⓜ',terminals:[[-48,0],[48,0]],shape:'motor'},
-    resistor:{group:'Passive Bauteile',name:'Widerstand',desc:'R · passiv',label:'R',value:'10 kΩ',icon:'▱',terminals:[[-48,0],[48,0]],shape:'resistor'},
-    switch:{group:'Schaltgeräte',name:'Schließer',desc:'S · Schaltkontakt',label:'S',value:'Schließer',icon:'⌁',terminals:[[-48,0],[48,0]],shape:'switch'},
-    lamp:{group:'Verbraucher',name:'Lampe',desc:'H · Verbraucher',label:'H',value:'24 V',icon:'⊗',terminals:[[-48,0],[48,0]],shape:'lamp'},
-    coil:{group:'Passive Bauteile',name:'Spule',desc:'K · Induktivität',label:'K',value:'Spule',icon:'∿',terminals:[[-48,0],[48,0]],shape:'coil'},
-    'terminal-strip':{group:'Anschlüsse',name:'Klemmenleiste (Master)',desc:'Leiste mit Klemmen als Slaves',label:'X',value:'Klemmenleiste',icon:'▤',terminals:[],shape:'terminal-strip'},
-    'terminal-pin':{group:'Anschlüsse',name:'Einzelanschluss',desc:'Einzelner Klemmenpin',label:'Pin',value:'',icon:'○',terminals:[[0,0]],shape:'pin'},
-    connector:{group:'Anschlüsse',name:'Klemme',desc:'X · Anschluss',label:'X',value:'Klemme',icon:'⊙',terminals:[[-48,0],[48,0]],shape:'connector'},
-    reference:{group:'Anschlüsse',name:'Source-Verweis',desc:'Source → Destination · J',label:'Source',value:'',icon:'▷',terminals:[[-48,0]],shape:'reference'},
-    destination:{group:'Anschlüsse',name:'Destination-Verweis',desc:'Destination ← Source · J',label:'Destination',value:'',icon:'◁',terminals:[[-48,0]],shape:'destination'},
-    text:{group:'Beschriftungen',name:'Text',desc:'Freier Text · T',label:'Text',value:'',icon:'T',terminals:[],shape:'text'}
+    'motor-ac-1p':{group:'Loads',name:'AC motor · single phase',desc:'1~ · L / N / PE',label:'M',value:'1~ AC motor',icon:'M~',terminals:[[-48,0],[48,0],[0,48]],shape:'motor-ac-1p'},
+    'motor-ac-3p':{group:'Loads',name:'AC motor · three phase',desc:'3~ · U / V / W / PE',label:'M',value:'3~ AC motor',icon:'M3~',terminals:[[-48,-48],[0,-48],[48,-48],[0,48]],shape:'motor-ac-3p'},
+    'motor-ac-6t':{group:'Loads',name:'AC motor · six leads',desc:'3~ · U1/V1/W1/U2/V2/W2/PE',label:'M',value:'3~ AC motor · six leads',icon:'M6',terminals:[[-48,-48],[0,-48],[48,-48],[-48,48],[0,48],[48,48],[96,0]],shape:'motor-ac-6t'},
+    'mcb-1p':{internal:true,group:'Switchgear',name:'Circuit breaker · 1 pole',label:'Q',value:'MCB 1P',terminals:[[-48,0],[48,0]],shape:'mcb-1p'},
+    'mcb-2p':{internal:true,group:'Switchgear',name:'Circuit breaker · 2 poles',label:'Q',value:'MCB 2P',terminals:[[-48,-48],[48,-48],[-48,48],[48,48]],shape:'mcb-2p'},
+    'mcb-3p':{internal:true,group:'Switchgear',name:'Circuit breaker · 3 poles',label:'Q',value:'MCB 3P',terminals:[[-48,-96],[48,-96],[-48,0],[48,0],[-48,96],[48,96]],shape:'mcb-3p'},
+    'mcb-4p':{internal:true,group:'Switchgear',name:'Circuit breaker · 4 poles',label:'Q',value:'MCB 4P',terminals:[[-48,-144],[48,-144],[-48,-48],[48,-48],[-48,48],[48,48],[-48,144],[48,144]],shape:'mcb-4p'},
+    'contactor-4p':{internal:true,group:'Switchgear',name:'Four-pole contactor',label:'K',value:'4-pole contactor',terminals:[[-48,-192],[48,-192],[-48,-96],[48,-96],[-48,0],[48,0],[-48,96],[48,96],[-48,192],[48,192]],shape:'contactor-4p'},
+    'auxiliary-contact':{internal:true,group:'Switchgear',name:'Auxiliary contact',label:'K',value:'Auxiliary contact',terminals:[[-48,-48],[48,-48],[-48,48],[48,48]],shape:'auxiliary-contact'},
+    'trip-coil':{internal:true,group:'Switchgear',name:'Release coil',label:'Y',value:'Release coil',terminals:[[-48,0],[48,0]],shape:'relay-coil'},
+    busbar:{internal:true,group:'Connections',name:'Busbar / bridge accessory',label:'X',value:'Busbar',terminals:[[-48,0],[48,0]],shape:'busbar'},
+    'catalog-accessory':{internal:true,group:'Connections',name:'Mechanical accessory',label:'Z',value:'Accessory',terminals:[],shape:'catalog-accessory'},
+    relay:{group:'Switchgear',name:'Relay · 3 changeover contacts',desc:'Complete symbol, coil and 3 slaves',label:'K',value:'Relay · 3 changeover contacts',icon:'▣',terminals:[[-48,-240],[48,-240],[-48,-96],[48,-144],[48,-48],[-48,48],[48,0],[48,96],[-48,192],[48,144],[48,240]],shape:'relay'},
+    'relay-coil':{internal:true,group:'Switchgear',name:'Relay coil',desc:'A1 / A2',label:'K',value:'24 V DC',icon:'▭',terminals:[[-48,0],[48,0]],shape:'relay-coil'},
+    'relay-contact':{internal:true,group:'Switchgear',name:'Relay changeover contact',desc:'Changeover slave',label:'K',value:'Changeover contact',icon:'⑂',terminals:[[-48,0],[48,-48],[48,48]],shape:'switch-changeover'},
+    capacitor:{group:'Passive components',name:'Capacitor',desc:'C · capacitance',label:'C',value:'100 nF',icon:'⊣⊢',terminals:[[-48,0],[48,0]],shape:'capacitor'},
+    diode:{group:'Passive components',name:'Diode',desc:'D · rectifier',label:'D',value:'1N4007',icon:'▷|',terminals:[[-48,0],[48,0]],shape:'diode'},
+    led:{group:'Loads',name:'LED',desc:'H · LED',label:'H',value:'LED',icon:'↗',terminals:[[-48,0],[48,0]],shape:'led'},
+    fuse:{group:'Passive components',name:'Fuse',desc:'F · overcurrent protection',label:'F',value:'6 A',icon:'▭',terminals:[[-48,0],[48,0]],shape:'fuse'},
+    'switch-nc':{group:'Switchgear',name:'Normally closed contact',desc:'S · normally closed contact',label:'S',value:'Normally closed contact',icon:'⌐',terminals:[[-48,0],[48,0]],shape:'switch-nc'},
+    'switch-changeover':{group:'Switchgear',name:'Changeover contact',desc:'S · changeover contact',label:'S',value:'Changeover contact',icon:'⑂',terminals:[[-48,0],[48,-48],[48,48]],shape:'switch-changeover'},
+    motor:{group:'Loads',name:'Motor',desc:'M · drive',label:'M',value:'Motor',icon:'Ⓜ',terminals:[[-48,0],[48,0]],shape:'motor'},
+    resistor:{group:'Passive components',name:'Resistor',desc:'R · passive',label:'R',value:'10 kΩ',icon:'▱',terminals:[[-48,0],[48,0]],shape:'resistor'},
+    switch:{group:'Switchgear',name:'Normally open contact',desc:'S · switching contact',label:'S',value:'Normally open contact',icon:'⌁',terminals:[[-48,0],[48,0]],shape:'switch'},
+    lamp:{group:'Loads',name:'Lamp',desc:'H · Loads',label:'H',value:'24 V',icon:'⊗',terminals:[[-48,0],[48,0]],shape:'lamp'},
+    coil:{group:'Passive components',name:'Coil',desc:'K · inductance',label:'K',value:'Coil',icon:'∿',terminals:[[-48,0],[48,0]],shape:'coil'},
+    'terminal-strip':{group:'Connections',name:'Terminal strip (master)',desc:'Strip with individual terminal slaves',label:'X',value:'Terminal strip',icon:'▤',terminals:[],shape:'terminal-strip'},
+    'terminal-pin':{group:'Connections',name:'Separate pin',desc:'Separate terminal pin',label:'Pin',value:'',icon:'○',terminals:[[0,0]],shape:'pin'},
+    connector:{group:'Connections',name:'Terminal',desc:'X · terminal',label:'X',value:'Terminal',icon:'⊙',terminals:[[-48,0],[48,0]],shape:'connector'},
+    reference:{group:'Connections',name:'Source reference',desc:'Source → Destination · J',label:'Source',value:'',icon:'▷',terminals:[[-48,0]],shape:'reference'},
+    destination:{group:'Connections',name:'Destination reference',desc:'Destination ← Source · J',label:'Destination',value:'',icon:'◁',terminals:[[-48,0]],shape:'destination'},
+    text:{group:'Annotations',name:'Text',desc:'Text annotation · T',label:'Text',value:'',icon:'T',terminals:[],shape:'text'}
   };
-  let model={title:'Neuer Schaltplan',parts:[],wires:[]},selected=null,mode='select',wireStart=null,wirePoints=[],zoom=1,pan={x:0,y:0},drag=null,segmentDrag=null,appClipboard=null,pdfExporting=false,altGrid=false,gridVisible=true,nextId=1;
+  let model={title:'New schematic',parts:[],wires:[]},selected=null,mode='select',wireStart=null,wirePoints=[],zoom=1,pan={x:0,y:0},drag=null,segmentDrag=null,appClipboard=null,pdfExporting=false,altGrid=false,gridVisible=true,nextId=1;
   const svg=document.querySelector('#sheet'),scene=document.querySelector('#scene'),partsG=document.querySelector('#parts'),wiresG=document.querySelector('#wires'),preview=document.querySelector('#preview');
   const lib=document.querySelector('#library');
   const folders=new Map();
@@ -100,9 +113,19 @@
   }
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.append(e);return e}
-  function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const p=el('path',{d:routePath(routePoints(w)),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>beginSegmentDrag(w,e));const hit=el('path',{d:p.getAttribute('d'),class:'wire-hit',fill:'none',stroke:'transparent','stroke-width':12,'pointer-events':'stroke','data-id':w.id},wiresG);hit.addEventListener('pointerdown',e=>beginSegmentDrag(w,e))});model.parts.filter(p=>!p.unplaced).forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.some(p=>!p.unplaced)?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} Bauteil${model.parts.length===1?'':'e'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} Verbindung${model.wires.length===1?'':'en'}`;document.querySelector('#statusText').textContent=isConnectionMode()?(wireStart?'Rasterpunkte oder Zielanschluss wählen':'Verbindungsmodus'):selected?'Element ausgewählt':'Bereit';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',isConnectionMode())}
-  function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y}) rotate(${p.rotation||0}) scale(${p.flipX?-1:1} ${p.flipY?-1:1})`,tabindex:0,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);if(p.type==='connector')partTerminals(p).slice(2).forEach(([x,y])=>{const length=Math.hypot(x,y);el('path',{d:'M '+x/length*10+' '+y/length*10+' L '+x+' '+y,class:'symbol'},g)});if(p.type==='text'){const t=el('text',{x:0,y:5,'text-anchor':'middle',class:'annotation-text',fill:'#15252e','font-size':16,'pointer-events':'none'},g);t.textContent=p.label;g.querySelector('.part-body').setAttribute('width',Math.max(60,String(p.label).length*9));g.querySelector('.part-body').setAttribute('x',-Math.max(60,String(p.label).length*9)/2)}const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.type==='text'?'':p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;partTerminals(p).forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showPinInTree(p,i);return}if(e.button!==0)return;if(isConnectionMode()){e.stopPropagation();onTerminal(p.id,i)}else{if(p.type==='terminal-pin')return;e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showDeviceInTree(p);return}if(e.button!==0||isConnectionMode())return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};scene.querySelectorAll('.selected').forEach(node=>node.classList.remove('selected'));g.classList.add('selected');document.querySelector('#statusText').textContent='Element ausgewählt';wireDataButton.disabled=true});g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();drag=null;editComponent(p)});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt(p.type==='text'?'Text oder Wert ändern':'Betriebsmittel oder Wert ändern',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');if(p.type==='text')p.label=label.trim();else p.deviceCode=label.trim().replace(/^[−-]/,'');if(rest.length)p.value=rest.join('·').trim();render()}})}
+  function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const p=el('path',{d:routePath(routePoints(w)),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>beginSegmentDrag(w,e));const hit=el('path',{d:p.getAttribute('d'),class:'wire-hit',fill:'none',stroke:'transparent','stroke-width':12,'pointer-events':'stroke','data-id':w.id},wiresG);hit.addEventListener('pointerdown',e=>beginSegmentDrag(w,e))});model.parts.filter(p=>!p.unplaced).forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.some(p=>!p.unplaced)?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} component${model.parts.length===1?'':'s'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} connection${model.wires.length===1?'':'s'}`;document.querySelector('#statusText').textContent=isConnectionMode()?(wireStart?'Choose grid points or the target terminal':'Connection mode'):selected?'Object selected':'Ready';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',isConnectionMode())}
+  function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y}) rotate(${p.rotation||0}) scale(${p.flipX?-1:1} ${p.flipY?-1:1})`,tabindex:0,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);if(p.type==='connector')partTerminals(p).slice(2).forEach(([x,y])=>{const length=Math.hypot(x,y);el('path',{d:'M '+x/length*10+' '+y/length*10+' L '+x+' '+y,class:'symbol'},g)});if(p.type==='text'){const t=el('text',{x:0,y:5,'text-anchor':'middle',class:'annotation-text',fill:'#15252e','font-size':16,'pointer-events':'none'},g);t.textContent=p.label;g.querySelector('.part-body').setAttribute('width',Math.max(60,String(p.label).length*9));g.querySelector('.part-body').setAttribute('x',-Math.max(60,String(p.label).length*9)/2)}const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.type==='text'?'':p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;partTerminals(p).forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showPinInTree(p,i);return}if(e.button!==0)return;if(isConnectionMode()){e.stopPropagation();onTerminal(p.id,i)}else{if(p.type==='terminal-pin')return;e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showDeviceInTree(p);return}if(e.button!==0||isConnectionMode())return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};scene.querySelectorAll('.selected').forEach(node=>node.classList.remove('selected'));g.classList.add('selected');document.querySelector('#statusText').textContent='Object selected';wireDataButton.disabled=true});g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();drag=null;editComponent(p)});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt(p.type==='text'?'Change text or value':'Change equipment tag or value',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');if(p.type==='text')p.label=label.trim();else p.deviceCode=label.trim().replace(/^[−-]/,'');if(rest.length)p.value=rest.join('·').trim();render()}})}
   function drawSymbol(g,s){
+    if(s.startsWith('motor-ac-')){
+      el('circle',{cx:0,cy:0,r:22,class:'symbol'},g);el('path',{d:'M -12 7 V -10 L 0 3 L 12 -10 V 7 M -12 14 Q -6 5 0 14 T 12 14',class:'symbol'},g);
+      const terminals=TYPES[s].terminals;for(const [x,y] of terminals){const length=Math.hypot(x,y);el('path',{d:'M '+x+' '+y+' L '+x*22/length+' '+y*22/length,class:'symbol'},g)}return;
+    }
+    if(s.startsWith('mcb-')){const count=Number(s[4]);for(let i=0;i<count;i++){const y=(2*i-count+1)*48;el('path',{d:'M -48 '+y+' H -16 L 16 '+(y-16)+' M 16 '+y+' H 48 M -22 '+(y-5)+' L -10 '+(y+5)+' M -22 '+(y+5)+' L -10 '+(y-5),class:'symbol'},g)}if(count>1)el('path',{d:'M 0 '+(-(count-1)*48)+' V '+((count-1)*48),class:'symbol','stroke-dasharray':'5 5'},g);return}
+    if(s==='contactor-4p'){drawSymbol(el('g',{transform:'translate(0 -192)'},g),'relay-coil');for(const y of [-96,0,96,192])drawSymbol(el('g',{transform:'translate(0 '+y+')','data-contactor-contact':(y+96)/96},g),'switch');el('path',{d:'M 0 -168 V 192',class:'symbol','stroke-dasharray':'5 5'},g);return}
+    if(s==='auxiliary-contact'){drawSymbol(el('g',{transform:'translate(0 -48)'},g),'switch');drawSymbol(el('g',{transform:'translate(0 48)'},g),'switch-nc');return}
+    if(s==='busbar'){el('path',{d:'M -48 0 H 48',class:'symbol','stroke-width':7},g);return}
+    if(s==='catalog-accessory'){el('path',{d:'M -28 -18 H 28 V 18 H -28 Z M -18 -10 H 18 M -18 10 H 18',class:'symbol'},g);return}
+
     const shapes={capacitor:'M -48 0 H -8 M -8 -20 V 20 M 8 -20 V 20 M 8 0 H 48',diode:'M -48 0 H -16 M -16 -18 L 16 0 L -16 18 Z M 16 -20 V 20 M 16 0 H 48',led:'M -48 0 H -16 M -16 -18 L 16 0 L -16 18 Z M 16 -20 V 20 M 16 0 H 48 M 0 -25 L 15 -40 M 8 -40 H 15 V -33 M 20 -23 L 35 -38 M 28 -38 H 35 V -31',fuse:'M -48 0 H 48 M -24 -12 H 24 V 12 H -24 Z','switch-nc':'M -48 0 H -16 M 16 0 H 48 M -16 0 L 18 -5 M 16 -12 V 8','switch-changeover':'M -48 0 H -16 L 32 -36 M 32 -48 H 48 M 32 48 H 48 M 32 38 V 48 M 32 -48 V -38',motor:'M -48 0 H -22 M 22 0 H 48 M -12 10 V -10 L 0 4 L 12 -10 V 10'};
     if(s==='relay-coil'){el('path',{d:'M -48 0 H -24 M 24 0 H 48 M -24 -24 H 24 V 24 H -24 Z',class:'symbol'},g)}
     else if(s==='relay'){
@@ -110,9 +133,9 @@
       drawSymbol(el('g',{transform:'translate(0 -240)'},g),'relay-coil');for(const y of [-96,48,192])drawSymbol(el('g',{transform:'translate(0 '+y+')'},g),'switch-changeover');
       el('path',{d:'M 0 -216 V 216',class:'symbol','stroke-dasharray':'5 6'},g);
     }else if(shapes[s]){el('path',{d:shapes[s],class:'symbol'},g);if(s==='motor')el('circle',{cx:0,cy:0,r:22,class:'symbol'},g)}else if(s==='pin'){el('circle',{cx:0,cy:0,r:12,class:'symbol'},g)}else if(s==='terminal-strip'){el('path',{d:'M -48 -8 H 48 M -48 8 H 48 M -32 -14 V 14 M 0 -14 V 14 M 32 -14 V 14',class:'symbol'},g)}else if(s==='destination'){el('path',{d:'M -48 0 H -20 M 48 -16 L -20 0 L 48 16 Z',class:'symbol'},g)}else if(s==='reference'){el('path',{d:'M -48 0 H -20 M -20 -16 L 48 0 L -20 16 Z',class:'symbol'},g)}else if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else if(s!=='text'){el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
-  function addPart(type,position){const r=svg.getBoundingClientRect(),w=position||toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' eingefügt')}
+  function addPart(type,position){const r=svg.getBoundingClientRect(),w=position||toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' inserted')}
   function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p||p.unplaced)return null;const terminal=p.type==='connector'&&index==='8'?[0,0]:partTerminals(p)[+index];if(!terminal)return null;const [tx,ty]=terminal,dx=tx*SYMBOL_SCALE,dy=ty*SYMBOL_SCALE,angle=(p.rotation||0)*Math.PI/180,x=dx*(p.flipX?-1:1),y=dy*(p.flipY?-1:1);return{x:p.x+x*Math.cos(angle)-y*Math.sin(angle),y:p.y+x*Math.sin(angle)+y*Math.cos(angle)}}
-  function onTerminal(id,index){const candidate=model.parts.find(p=>p.id===id);if(mode==='wire'&&candidate?.type==='terminal-pin'&&candidate.pinIndex===8){toast('Brückenanschluss nur für Klemmenbrücken');return}const key=id+':'+index;if(mode==='wire'&&index===8){toast('Separater Anschluss nur für Klemmenbrücken');return}if(mode==='bridge'){const target=model.parts.find(p=>p.id===id);if(!['connector','terminal-pin'].includes(target?.type)){toast('Brücken verbinden nur Klemmenpins');return}if(wireStart&&!validBridge(wireStart,key)){toast('Brücken müssen innerhalb derselben Klemmenleiste liegen');return}}if(!wireStart){wirePoints=[];wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;wirePoints=[];preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('Diese Anschlüsse sind bereits verbunden');wireStart=null;wirePoints=[];preview.style.display='none';render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key,...(mode==='bridge'?{kind:'bridge',colorCode:'BN'}:{}),points:orthogonalPoints([findTerminal(wireStart),...wirePoints,findTerminal(key)]).slice(1,-1)});wireStart=null;wirePoints=[];preview.style.display='none';render();toast('Verbindung erstellt')}
+  function onTerminal(id,index){const candidate=model.parts.find(p=>p.id===id);if(mode==='wire'&&candidate?.type==='terminal-pin'&&candidate.pinIndex===8){toast('The bridge terminal is reserved for terminal bridges');return}const key=id+':'+index;if(mode==='wire'&&index===8){toast('This separate terminal is reserved for terminal bridges');return}if(mode==='bridge'){const target=model.parts.find(p=>p.id===id);if(!['connector','terminal-pin'].includes(target?.type)){toast('Bridges only connect terminal pins');return}if(wireStart&&!validBridge(wireStart,key)){toast('Bridges must stay within the same terminal strip');return}}if(!wireStart){wirePoints=[];wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;wirePoints=[];preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('These terminals are already connected');wireStart=null;wirePoints=[];preview.style.display='none';render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key,...(mode==='bridge'?{kind:'bridge',colorCode:'BN'}:{}),points:orthogonalPoints([findTerminal(wireStart),...wirePoints,findTerminal(key)]).slice(1,-1)});wireStart=null;wirePoints=[];preview.style.display='none';render();toast('Connection created')}
   function snap(v){return Math.round(v/GRID)*GRID}function toWorld(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left-pan.x)/zoom,y:(e.clientY-r.top-pan.y)/zoom}}
   function applyView(){scene.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${zoom})`);document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'}
   svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(segmentDrag){dragWireSegment(e);return}if(drag){svg.setPointerCapture?.(e.pointerId);const p=model.parts.find(p=>p.id===drag.id);if(p){moveComponent(p,snap(w.x+drag.dx),snap(w.y+drag.dy));render();applyView()}}if(wireStart){updateWirePreview({x:snap(w.x),y:snap(w.y)})}});
@@ -129,15 +152,15 @@
   svg.addEventListener('wheel',e=>{if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();zoom=Math.max(.5,Math.min(2,zoom*(e.deltaY<0?1.1:.9)));applyView()},{passive:false});
   document.querySelector('#selectTool').onclick=()=>{mode='select';wireStart=null;wirePoints=[];preview.style.display='none';render()};document.querySelector('#wireTool').onclick=()=>{mode=isConnectionMode()?'select':'wire';wireStart=null;wirePoints=[];preview.style.display='none';render()};
   document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom*1.15);applyView()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom/1.15);applyView()};document.querySelector('#fitBtn').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
-  document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schaltplan').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Projektdatei gespeichert')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
-  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Geöffneter Schaltplan',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
+  document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schematic').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Project file saved')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
+  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Opened schematic',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Project loaded')}catch{toast('Could not read the file')}e.target.value=''};
   function cloneForExport(){const clone=svg.cloneNode(true);clone.setAttribute('width','297mm');clone.setAttribute('height','210mm');clone.querySelector('#pageContent')?.removeAttribute('transform');const exportStyle=el('style',{},clone);exportStyle.textContent='.symbol{fill:none;stroke:#203844;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}.part-body{fill:transparent;stroke:none;pointer-events:all}.terminal{fill:#07977e;stroke:#fff;stroke-width:2}.part-label{fill:#15252e;font-size:13px;font-weight:650;text-anchor:middle}.part-value{fill:#586b74;font-size:11px;text-anchor:middle}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle}.wire{fill:none;stroke:#293f4c;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}';clone.querySelector('#preview')?.remove();clone.querySelectorAll('.wire-hit').forEach(node=>node.remove());clone.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));return clone;}
   function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
   document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select,[contenteditable="true"]')||modal.style.display==='grid'||e.altKey||e.repeat)return;if(e.ctrlKey||e.metaKey){if(['c','x','v'].includes(e.key.toLowerCase())){e.preventDefault();clipboardAction(e.key.toLowerCase())}return};if(e.key==='Escape'){wireStart=null;wirePoints=[];preview.style.display='none';mode='select';render()}if(e.key.toLowerCase()==='v'){mode='select';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(['w','c'].includes(e.key.toLowerCase())){mode='wire';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(e.key.toLowerCase()==='r'){e.preventDefault();transformSelected('rotate')}if(e.key.toLowerCase()==='x'){e.preventDefault();transformSelected('flipX')}if(e.key.toLowerCase()==='y'){e.preventDefault();transformSelected('flipY')}if(e.key.toLowerCase()==='t'){e.preventDefault();insertText()}if(e.key.toLowerCase()==='j'){e.preventDefault();jumpToPage()}if(e.key==='Delete'||e.key==='Backspace'){if(selected?.kind==='part'){const removed=model.parts.find(p=>p.id===selected.id);if(removed&&!['text','reference','destination'].includes(removed.type))removed.unplaced=true;else model.parts=model.parts.filter(p=>p.id!==selected.id);model.wires=model.wires.filter(w=>!w.a.startsWith(selected.id+':')&&!w.b.startsWith(selected.id+':'))}else if(selected?.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);selected=null;render()}});
   let toastTimer;function toast(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
   render();applyView();
 
-  // A4-Querformat mit maßstäblichem 4-mm-Raster
+  // A4 landscape with a true 4 mm grid
   svg.setAttribute('viewBox','0 0 1128 798');
   const defs=el('defs',{},svg),pattern=el('pattern',{id:'grid4mm',width:'15.192',height:'15.192',patternUnits:'userSpaceOnUse',overflow:'visible'},defs);
   el('circle',{cx:'1',cy:'1',r:'.65',fill:'#d7e0e2'},pattern);
@@ -148,42 +171,42 @@
   el('path',{d:'M0 0 H376 M0 28 H376 M100 0 V54 M230 0 V54 M304 0 V54',fill:'none',stroke:'#60737c'},title);
   const titleText=el('text',{x:8,y:18,'font-size':12,fill:'#263943'},title);titleText.id='a4Project';
   const sheetText=el('text',{x:8,y:45,'font-size':10,fill:'#53666f'},title);sheetText.id='a4Sheet';
-  el('text',{x:108,y:20,'font-size':9,fill:'#53666f'},title).textContent='DATUM';
+  el('text',{x:108,y:20,'font-size':9,fill:'#53666f'},title).textContent='DATE';
   const noText=el('text',{x:238,y:22,'font-size':12,'font-weight':'bold',fill:'#263943'},title);noText.id='a4Number';
   el('text',{x:314,y:22,'font-size':12,'font-weight':'bold',fill:'#138b78'},title).textContent='A4';
   const style=document.createElement('style');style.textContent='.wire{stroke:#293f4c}.part-body{fill:#fff;stroke:#3c535f}.part-label{fill:#15252e}.part-value{fill:#586b74}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle;pointer-events:none}.symbol{stroke:#203844}.terminal{fill:#07977e;stroke:#fff}.newnav{position:absolute;z-index:2;top:44px;left:50%;transform:translateX(-50%);display:flex;gap:5px}.newnav button{background:#1b2934;border:1px solid #40515b;border-radius:6px;color:#e6eef1;padding:5px 9px;font-size:11px}.newnav button:hover{border-color:#62d6bd;color:#62d6bd}.newnav .add{color:#62d6bd}.simpleModal{display:none;position:fixed;inset:0;z-index:20;background:#071017bb;place-items:center;padding:20px}.simplePanel{width:min(900px,96vw);max-height:88vh;overflow:auto;background:#17232e;border:1px solid #40525d;border-radius:12px;padding:18px;box-shadow:0 20px 70px #0009}.simplePanel h2{font-size:16px;margin:0 0 5px}.simplePanel p{font-size:11px;color:#91a0ac;margin:0 0 14px}.simplePanel table{border-collapse:collapse;width:100%;font-size:11px;margin:0 0 14px}.simplePanel th,.simplePanel td{text-align:left;padding:7px;border-bottom:1px solid #354651}.simplePanel th{color:#aebbc2;background:#1c2a36}.simplePanel button{background:#243541;border:1px solid #40525d;border-radius:6px;padding:6px 9px;color:#e8eef2;font-size:11px;margin-right:4px}.simplePanel .close{float:right}.simplePanel .page{border:1px solid #354651;border-radius:8px;padding:10px;margin:8px 0}.simplePanel .page.current{border-color:#62d6bd}';document.head.append(style);
-  const pages=[{id:crypto.randomUUID(),title:'Blatt 0001',parts:model.parts,wires:model.wires}];let activeSheet=0;
-  const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Blatt '+pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)+' · '+pages[activeSheet].title+' · A4 quer · 4 mm Raster';document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title+' · A4 · 4 mm Raster';document.querySelector('#a4Number').textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length);document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Blätter')};
+  const pages=[{id:crypto.randomUUID(),title:'Sheet 0001',parts:model.parts,wires:model.wires}];let activeSheet=0;
+  const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Sheet '+pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)+' · '+pages[activeSheet].title+' · A4 landscape · 4 mm grid';document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title+' · A4 · 4 mm grid';document.querySelector('#a4Number').textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length);document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Sheets')};
   const baseSnap=snap;snap=function(v){const g=gridSpacing();return Math.round(v/g)*g};
-  const baseDraw=drawPart;drawPart=function(p){baseDraw(p);if(p.targetSheetId){const target=pages.findIndex(s=>(s.id||s.generatedId)===p.targetSheetId),link=el('text',{x:0,y:86,fill:'#138b78','font-size':10,'text-anchor':'middle',class:'page-reference',style:'cursor:pointer'},partsG.lastElementChild);link.textContent=target<0?'Ziel fehlt':referenceAddress(pages[target],p.targetPartId?pages[target].parts.find(q=>q.id===p.targetPartId):{x:22,y:22});link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();if(e.ctrlKey||e.metaKey)showDeviceInTree(p);else followPageReference(p)})}if(['text','reference','destination'].includes(p.type))return;const t=el('text',{x:0,y:70,class:'part-aks'},partsG.lastElementChild);t.textContent='='+(p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)};
-  const baseAdd=addPart;addPart=function(type,position){baseAdd(type,position);const p=model.parts[model.parts.length-1],n=pages.flatMap(s=>s.parts).filter(x=>x.type===type).length;p.functionCode='A1';p.locationCode='P1';p.deviceCode=p.label.charAt(0)+n;render()};
-  const nav=document.createElement('div');nav.className='newnav';nav.innerHTML='<button id="sheetOverview">▤ Blätter</button><button id="sheetPrev">‹</button><button id="sheetCurrent">1/1</button><button id="sheetNext">›</button><button id="sheetAdd" class="add">＋ Blatt</button><button id="autoLists">Listen</button>';document.querySelector('#canvasWrap').append(nav);
-  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel"><button class="close" id="simpleClose">Schließen</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){if(pdfExporting)return;modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;modal.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}});modal.onclick=e=>{if(e.target===modal)closePanel()};
+  const baseDraw=drawPart;drawPart=function(p){baseDraw(p);if(p.targetSheetId){const target=pages.findIndex(s=>(s.id||s.generatedId)===p.targetSheetId),link=el('text',{x:0,y:86,fill:'#138b78','font-size':10,'text-anchor':'middle',class:'page-reference',style:'cursor:pointer'},partsG.lastElementChild);link.textContent=target<0?'Target missing':referenceAddress(pages[target],p.targetPartId?pages[target].parts.find(q=>q.id===p.targetPartId):{x:22,y:22});link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();if(e.ctrlKey||e.metaKey)showDeviceInTree(p);else followPageReference(p)})}if(['text','reference','destination'].includes(p.type))return;const t=el('text',{x:0,y:70,class:'part-aks'},partsG.lastElementChild);t.textContent='='+(p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)};
+  const baseAdd=addPart;addPart=function(type,position){baseAdd(type,position);const p=model.parts[model.parts.length-1],prefix=TYPES[type].label,used=new Set(pages.flatMap(s=>s.parts).filter(q=>q!==p).map(q=>q.deviceCode));let n=1;while(used.has(prefix+n))n++;p.functionCode='A1';p.locationCode='P1';p.deviceCode=prefix+n;render()};
+  const nav=document.createElement('div');nav.className='newnav';nav.innerHTML='<button id="sheetOverview">▤ Sheets</button><button id="sheetPrev">‹</button><button id="sheetCurrent">1/1</button><button id="sheetNext">›</button><button id="sheetAdd" class="add">＋ Sheet</button><button id="autoLists">Lists</button>';document.querySelector('#canvasWrap').append(nav);
+  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel"><button class="close" id="simpleClose">Close</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){if(pdfExporting)return;modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;modal.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}});modal.onclick=e=>{if(e.target===modal)closePanel()};
   function setSheet(i){activeSheet=(i+pages.length)%pages.length;model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;selected=null;wireStart=null;wirePoints=[];preview.style.display='none';render()}
-  function addSheet(){const name=prompt('Name des neuen A4-Blatts','Blatt '+pageNumber(pages.length+1));if(name===null)return;pages.push({title:name.trim()||'Blatt '+pageNumber(pages.length+1),parts:[],wires:[]});setSheet(pages.length-1);closePanel()}
+  function addSheet(){const name=prompt('Name of the new A4 sheet','Sheet '+pageNumber(pages.length+1));if(name===null)return;pages.push({title:name.trim()||'Sheet '+pageNumber(pages.length+1),parts:[],wires:[]});setSheet(pages.length-1);closePanel()}
   function showPanel(html){document.querySelector('#simpleContent').innerHTML=html;modal.style.display='grid'}
   const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function drawPages(){let h='<h2>Blattübersicht</h2><p>A4-Querformat · 4-mm-Raster</p>';pages.forEach((s,i)=>{h+='<div class="page '+(i===activeSheet?'current':'')+'"><b>'+pageNumber(i+1)+' · '+safe(s.title)+'</b><p>'+s.parts.length+' Geräte · '+s.wires.length+' Verbindungen</p><button data-go="'+i+'">Öffnen</button><button data-rename="'+i+'">Umbenennen</button>'+(pages.length>1?'<button data-drop="'+i+'">Löschen</button>':'')+'</div>'});h+='<button id="panelAdd">＋ Neues Blatt</button>';showPanel(h);document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{setSheet(+b.dataset.go);closePanel()});document.querySelectorAll('[data-rename]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rename,n=prompt('Blattname',pages[i].title);if(n!==null){pages[i].title=n.trim()||pages[i].title;drawPages();render()}});document.querySelectorAll('[data-drop]').forEach(b=>b.onclick=()=>{const i=+b.dataset.drop;if(confirm('Dieses Blatt löschen?')){pages.splice(i,1);setSheet(Math.max(0,Math.min(activeSheet,pages.length-1)));drawPages()}});document.querySelector('#panelAdd').onclick=addSheet}
+  function drawPages(){let h='<h2>Sheet overview</h2><p>A4 landscape · 4 mm grid</p>';pages.forEach((s,i)=>{h+='<div class="page '+(i===activeSheet?'current':'')+'"><b>'+pageNumber(i+1)+' · '+safe(s.title)+'</b><p>'+s.parts.length+' Devices · '+s.wires.length+' connections</p><button data-go="'+i+'">Open</button><button data-rename="'+i+'">Rename</button>'+(pages.length>1?'<button data-drop="'+i+'">Delete</button>':'')+'</div>'});h+='<button id="panelAdd">＋ New sheet</button>';showPanel(h);document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{setSheet(+b.dataset.go);closePanel()});document.querySelectorAll('[data-rename]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rename,n=prompt('Sheet name',pages[i].title);if(n!==null){pages[i].title=n.trim()||pages[i].title;drawPages();render()}});document.querySelectorAll('[data-drop]').forEach(b=>b.onclick=()=>{const i=+b.dataset.drop;if(confirm('Delete this sheet?')){pages.splice(i,1);setSheet(Math.max(0,Math.min(activeSheet,pages.length-1)));drawPages()}});document.querySelector('#panelAdd').onclick=addSheet}
   function aks(p){return '='+ (p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)}
-  function endPoint(s,ref){const z=ref.split(':'),p=s.parts.find(x=>x.id===z[0]);return p?aks(p)+' · Anschluss :'+pinNumber(p,+z[1]):'—'}
-  function dataLists(){const devices=[],bom={},cables=[];let wi=0;pages.forEach((s,si)=>{s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).forEach(p=>devices.push({sheet:si+1,p}));s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).forEach(p=>{const k=p.type+'|'+p.value+'|'+(p.terminalType||'')+'|'+(p.manufacturerNumber||'')+'|'+(p.sapNumber||'');if(!bom[k])bom[k]={type:p.type==='connector'?(p.terminalType||TYPES[p.type].name):TYPES[p.type].name,value:p.value,n:0,ids:[]};bom[k].n++;bom[k].ids.push(aks(p))});s.wires.forEach(w=>cables.push({id:'W'+(++wi),from:endPoint(s,w.a),to:endPoint(s,w.b),sheet:si+1}))});return{devices,bom:Object.values(bom),cables}}
-  function drawLists(){const d=dataLists(),row=a=>a.length?a.join(''):'';let h='<h2>Automatische Projektlisten</h2><p>Inhaltsverzeichnis, AKS-Geräteverzeichnis, Stückliste und Kabelliste</p><h3>Inhaltsverzeichnis</h3><table><tr><th>Blatt</th><th>Bezeichnung</th><th>Geräte</th></tr>'+pages.map((s,i)=>'<tr><td>'+pageNumber(i+1)+'</td><td>'+safe(s.title)+'</td><td>'+s.parts.length+'</td></tr>').join('')+'</table><h3>Geräteverzeichnis · AKS (= Funktion, + Ort, − Betriebsmittel)</h3><table><tr><th>Blatt</th><th>Gerätekennzeichen</th><th>Typ</th><th>Wert</th><th>Herstellernummer</th><th>SAP-Nummer</th><th>Aktion</th></tr>'+d.devices.map(x=>'<tr><td>'+pageNumber(x.sheet)+'</td><td>'+safe(aks(x.p))+'</td><td>'+safe(x.p.type==='connector'?x.p.terminalType||TYPES[x.p.type].name:TYPES[x.p.type].name)+'</td><td>'+safe(x.p.value)+'</td><td>'+safe(x.p.manufacturerNumber)+'</td><td>'+safe(x.p.sapNumber)+'</td><td><button data-edit="'+safe(x.p.id)+'">AKS ändern</button><button data-device-go="'+safe(x.p.id)+'">Zum Gerät</button></td></tr>').join('')+'</table><h3>Stückliste · automatisch gruppiert</h3><table><tr><th>Bauteil</th><th>Wert</th><th>Menge</th><th>Geräte</th></tr>'+d.bom.map(x=>'<tr><td>'+safe(x.type)+'</td><td>'+safe(x.value)+'</td><td>'+x.n+'</td><td>'+safe(x.ids.join(', '))+'</td></tr>').join('')+'</table><h3>Kabelliste · aus allen Verbindungen</h3><table><tr><th>Kabel</th><th>Von</th><th>Nach</th><th>Blatt</th></tr>'+d.cables.map(x=>'<tr><td>−'+x.id+'</td><td>'+safe(x.from)+'</td><td>'+safe(x.to)+'</td><td>'+pageNumber(x.sheet)+'</td></tr>').join('')+'</table><button id="csvDownload">Listen als CSV speichern</button>';showPanel(h);document.querySelectorAll('[data-device-go]').forEach(b=>b.onclick=()=>jumpToDevice(b.dataset.deviceGo));document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=pages.flatMap(s=>s.parts).find(x=>x.id===b.dataset.edit);if(!p)return;const f=prompt('Funktionsaspekt (=)',p.functionCode||'A1');if(f===null)return;const l=prompt('Einbauort (+)',p.locationCode||'P1');if(l===null)return;const t=prompt('Betriebsmittel (−)',p.deviceCode||p.label);if(t===null)return;p.functionCode=f.trim()||'A1';p.locationCode=l.trim()||'P1';p.deviceCode=t.trim()||p.label;p.label=p.deviceCode;render();drawLists()});document.querySelector('#csvDownload').onclick=()=>{const lines=[['Blatt','Titel','Geräte'],...pages.map((s,i)=>[pageNumber(i+1),s.title,s.parts.length]),[],['Blatt','AKS','Bauteil','Wert','Herstellernummer','SAP-Nummer'],...d.devices.map(x=>[pageNumber(x.sheet),aks(x.p),(x.p.type==='connector'?x.p.terminalType||TYPES[x.p.type].name:TYPES[x.p.type].name),x.p.value,x.p.manufacturerNumber||'',x.p.sapNumber||'']),[],['Bauteil','Wert','Menge','Geräte'],...d.bom.map(x=>[x.type,x.value,x.n,x.ids.join(', ')]),[],['Kabel','Von','Nach','Blatt'],...d.cables.map(x=>[x.id,x.from,x.to,pageNumber(x.sheet)])].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');download(new Blob(['\ufeff'+lines],{type:'text/csv;charset=utf-8'}),(model.title||'projekt')+'-listen.csv')}}
+  function endPoint(s,ref){const z=ref.split(':'),p=s.parts.find(x=>x.id===z[0]);return p?aks(p)+' · Terminal :'+pinNumber(p,+z[1]):'—'}
+  function dataLists(){const devices=[],bom={},cables=[];let wi=0;pages.forEach((s,si)=>{s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).forEach(p=>devices.push({sheet:si+1,p}));s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).filter(p=>!p.catalogAssemblyPart).forEach(p=>{const k=p.type+'|'+p.value+'|'+(p.terminalType||'')+'|'+(p.manufacturerNumber||'')+'|'+(p.sapNumber||'');if(!bom[k])bom[k]={type:p.type==='connector'?(p.terminalType||TYPES[p.type].name):TYPES[p.type].name,value:p.value,n:0,ids:[]};bom[k].n++;bom[k].ids.push(aks(p))});s.wires.forEach(w=>cables.push({id:'W'+(++wi),from:endPoint(s,w.a),to:endPoint(s,w.b),sheet:si+1}))});return{devices,bom:Object.values(bom),cables}}
+  function drawLists(){const d=dataLists(),row=a=>a.length?a.join(''):'';let h='<h2>Automatic project lists</h2><p>Table of contents, AKS-Device directory, Bill of materials and Connection list</p><h3>Table of contents</h3><table><tr><th>Sheet</th><th>Designation</th><th>Devices</th></tr>'+pages.map((s,i)=>'<tr><td>'+pageNumber(i+1)+'</td><td>'+safe(s.title)+'</td><td>'+s.parts.length+'</td></tr>').join('')+'</table><h3>Device directory · AKS (= Function, + Location, − Equipment tag)</h3><table><tr><th>Sheet</th><th>Device designation</th><th>Type</th><th>Value</th><th>Manufacturer number</th><th>SAP number</th><th>Action</th></tr>'+d.devices.map(x=>'<tr><td>'+pageNumber(x.sheet)+'</td><td>'+safe(aks(x.p))+'</td><td>'+safe(x.p.type==='connector'?x.p.terminalType||TYPES[x.p.type].name:TYPES[x.p.type].name)+'</td><td>'+safe(x.p.value)+'</td><td>'+safe(x.p.manufacturerNumber)+'</td><td>'+safe(x.p.sapNumber)+'</td><td><button data-edit="'+safe(x.p.id)+'">Edit designation</button><button data-device-go="'+safe(x.p.id)+'">Go to device</button></td></tr>').join('')+'</table><h3>Bill of materials · automatically grouped</h3><table><tr><th>Component</th><th>Value</th><th>Quantity</th><th>Devices</th></tr>'+d.bom.map(x=>'<tr><td>'+safe(x.type)+'</td><td>'+safe(x.value)+'</td><td>'+x.n+'</td><td>'+safe(x.ids.join(', '))+'</td></tr>').join('')+'</table><h3>Connection list · from all connections</h3><table><tr><th>Connection</th><th>From</th><th>To</th><th>Sheet</th></tr>'+d.cables.map(x=>'<tr><td>−'+x.id+'</td><td>'+safe(x.from)+'</td><td>'+safe(x.to)+'</td><td>'+pageNumber(x.sheet)+'</td></tr>').join('')+'</table><button id="csvDownload">Save lists as CSV</button>';showPanel(h);document.querySelectorAll('[data-device-go]').forEach(b=>b.onclick=()=>jumpToDevice(b.dataset.deviceGo));document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const p=pages.flatMap(s=>s.parts).find(x=>x.id===b.dataset.edit);if(!p)return;const f=prompt('Function (=)',p.functionCode||'A1');if(f===null)return;const l=prompt('Location (+)',p.locationCode||'P1');if(l===null)return;const t=prompt('Equipment tag (−)',p.deviceCode||p.label);if(t===null)return;p.functionCode=f.trim()||'A1';p.locationCode=l.trim()||'P1';p.deviceCode=t.trim()||p.label;p.label=p.deviceCode;render();drawLists()});document.querySelector('#csvDownload').onclick=()=>{const lines=[['Sheet','Title','Devices'],...pages.map((s,i)=>[pageNumber(i+1),s.title,s.parts.length]),[],['Sheet','AKS','Component','Value','Manufacturer number','SAP number'],...d.devices.map(x=>[pageNumber(x.sheet),aks(x.p),(x.p.type==='connector'?x.p.terminalType||TYPES[x.p.type].name:TYPES[x.p.type].name),x.p.value,x.p.manufacturerNumber||'',x.p.sapNumber||'']),[],['Component','Value','Quantity','Devices'],...d.bom.map(x=>[x.type,x.value,x.n,x.ids.join(', ')]),[],['Connection','From','To','Sheet'],...d.cables.map(x=>[x.id,x.from,x.to,pageNumber(x.sheet)])].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');download(new Blob(['\ufeff'+lines],{type:'text/csv;charset=utf-8'}),(model.title||'project')+'-lists.csv')}}
   document.querySelector('#sheetOverview').onclick=drawPages;document.querySelector('#sheetPrev').onclick=()=>setSheet(activeSheet-1);document.querySelector('#sheetNext').onclick=()=>setSheet(activeSheet+1);document.querySelector('#sheetAdd').onclick=addSheet;document.querySelector('#autoLists').onclick=drawLists;
-  const baseSave=document.querySelector('#saveBtn').onclick;document.querySelector('#saveBtn').onclick=()=>{pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;download(new Blob([JSON.stringify({appVersion:APP_VERSION,title:model.title,sheets:pages.map(serializableSheet),activeSheet},null,2)],{type:'application/json'}),(model.title||'projekt')+'.json');toast('Alle Blätter gespeichert')};
-  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());pages.splice(0,pages.length,...(Array.isArray(x.sheets)?x.sheets:[{title:'Blatt 0001',parts:x.parts||[],wires:x.wires||[]}]).map((s,i)=>({id:s.id||crypto.randomUUID(),title:s.title||'Blatt '+pageNumber(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));wireStart=null;wirePoints=[];preview.style.display='none';selected=null;drag=null;model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(item=>Number(String(item.id).slice(1))||0));render();toast('Projekt geladen')}catch{toast('Datei konnte nicht gelesen werden')}e.target.value=''};
+  const baseSave=document.querySelector('#saveBtn').onclick;document.querySelector('#saveBtn').onclick=()=>{pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;download(new Blob([JSON.stringify({appVersion:APP_VERSION,title:model.title,sheets:pages.map(serializableSheet),activeSheet},null,2)],{type:'application/json'}),(model.title||'project')+'.json');toast('All sheets saved')};
+  document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());pages.splice(0,pages.length,...(Array.isArray(x.sheets)?x.sheets:[{title:'Sheet 0001',parts:x.parts||[],wires:x.wires||[]}]).map((s,i)=>({id:s.id||crypto.randomUUID(),title:s.title||'Sheet '+pageNumber(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));wireStart=null;wirePoints=[];preview.style.display='none';selected=null;drag=null;model.title=x.title||'Opened schematic';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(item=>Number(String(item.id).slice(1))||0));render();toast('Project loaded')}catch{toast('Could not read the file')}e.target.value=''};
   render();applyView();
 
-  // Rechte Blattübersicht sowie rastergenaue Zoom- und Anschlusslogik
+  // Right-hand sheet overview and grid-aligned zoom/terminal logic
   const sheetPanel=document.createElement('aside');sheetPanel.id='sheetPanel';sheetPanel.className='sheetPanel';document.querySelector('main').append(sheetPanel);
   const panelStyle=document.createElement('style');panelStyle.textContent='main{grid-template-columns:218px minmax(0,1fr) 230px!important}.sheetPanel{min-width:0;overflow:auto;padding:16px 12px;background:var(--panel);border-left:1px solid var(--line)}.sheetPanel h2{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#a7b5bf;margin:0}.sheetPanel .panelHead{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}.sheetPanel button{font:inherit;color:#dce6e9;background:#1b2934;border:1px solid #354754;border-radius:6px;padding:6px 8px;cursor:pointer}.sheetPanel button:hover{border-color:#62d6bd;color:#62d6bd}.sheetPanel .sheetItem{width:100%;display:block;text-align:left;margin:7px 0;padding:9px}.sheetPanel .sheetItem.active{border-color:#62d6bd;background:#16332f}.sheetPanel .sheetItem strong{display:block;font-size:11px}.sheetPanel .sheetItem small{display:block;color:#9baab2;font-size:10px;margin-top:3px}.sheetPanel .panelNote{color:#83949d;font-size:10px;line-height:1.45;margin:8px 0}.newnav #sheetOverview{display:none}@media(max-width:900px){main{grid-template-columns:155px minmax(0,1fr) 190px!important}.sheetPanel{padding:12px 8px}}@media(max-width:620px){main{grid-template-columns:120px minmax(0,1fr) 150px!important}.sidebar{padding:10px 6px}.sheetPanel{padding:10px 6px}}';document.head.append(panelStyle);
-  function refreshSheetPanel(){let h='<div class="panelHead"><h2>Blattübersicht</h2><button id="rightAddSheet">＋ Blatt</button></div><p class="panelNote">A4 quer · 4-mm-Raster · '+pages.length+' Blätter</p>';pages.forEach((s,i)=>{h+='<button class="sheetItem '+(i===activeSheet?'active':'')+'" data-right-sheet="'+i+'"><strong>'+pageNumber(i+1)+' · '+safe(s.title)+'</strong><small>'+s.parts.length+' Geräte · '+s.wires.length+' Verbindungen</small></button>'});sheetPanel.innerHTML=h;sheetPanel.querySelectorAll('[data-right-sheet]').forEach(b=>b.onclick=()=>setSheet(+b.dataset.rightSheet));sheetPanel.querySelector('#rightAddSheet').onclick=addSheet;const current=document.querySelector('#sheetCurrent');if(current)current.textContent=pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)}
+  function refreshSheetPanel(){let h='<div class="panelHead"><h2>Sheet overview</h2><button id="rightAddSheet">＋ Sheet</button></div><p class="panelNote">A4 landscape · 4 mm grid · '+pages.length+' Sheets</p>';pages.forEach((s,i)=>{h+='<button class="sheetItem '+(i===activeSheet?'active':'')+'" data-right-sheet="'+i+'"><strong>'+pageNumber(i+1)+' · '+safe(s.title)+'</strong><small>'+s.parts.length+' Devices · '+s.wires.length+' connections</small></button>'});sheetPanel.innerHTML=h;sheetPanel.querySelectorAll('[data-right-sheet]').forEach(b=>b.onclick=()=>setSheet(+b.dataset.rightSheet));sheetPanel.querySelector('#rightAddSheet').onclick=addSheet;const current=document.querySelector('#sheetCurrent');if(current)current.textContent=pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)}
   const oldRenderRight=render;render=function(){oldRenderRight();refreshSheetPanel()};
   // Endpoints must match the visible terminals exactly; only placement and waypoints snap.
   
   const oldApplyView=applyView;applyView=function(){oldApplyView();const cell=4*1128/297*zoom,dot=pattern.querySelector('circle');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',((pan.x*zoom)%cell+cell)%cell);pattern.setAttribute('y',((pan.y*zoom)%cell+cell)%cell);dot.setAttribute('cx',zoom);dot.setAttribute('cy',zoom);dot.setAttribute('r',.65*zoom)};
   render();applyView();
 
-  // A4-Papier, Raster, Rahmen, Titelblock und Schaltbild gemeinsam zoomen
+  // Zoom paper, frame, title block and drawing together.
   const pageBorder=svg.querySelector('rect[stroke="#60737c"]');
   const pageContent=el('g',{id:'pageContent'},svg);pageContent.append(paper,grid,scene,pageBorder,title);
   scene.removeAttribute('transform');
@@ -192,7 +215,7 @@
   applyView=function(){const o=pageZoomOffset(),cell=gridSpacing(),dot=pattern.querySelector('circle');pageContent.setAttribute('transform','translate('+o.x+' '+o.y+') scale('+zoom+')');pattern.setAttribute('width',cell);pattern.setAttribute('height',cell);pattern.setAttribute('x',0);pattern.setAttribute('y',0);dot.setAttribute('cx',0);dot.setAttribute('cy',0);dot.setAttribute('r','.65');document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'};
   render();applyView();
 
-  // Automatische, echte A4-Gerätelistenblätter am Ende der Blattfolge
+  // Automatic A4 device-list pages after the drawings.
   const DEVICE_LIST_KIND='device-list', DEVICE_LIST_ROWS=22;
   const deviceListGroup=el('g',{id:'deviceListContent','font-family':'Arial,sans-serif'},svg);
   pageContent.append(deviceListGroup);
@@ -200,13 +223,13 @@
   function syncDeviceListPages(){
     const current=pages[activeSheet],drawings=drawingPages();
     if(current&&!isGenerated(current)){current.parts=model.parts;current.wires=model.wires}
-    if(!drawings.length)drawings.push({id:crypto.randomUUID(),title:'Blatt 0001',parts:[],wires:[]});
+    if(!drawings.length)drawings.push({id:crypto.randomUUID(),title:'Sheet 0001',parts:[],wires:[]});
     drawings.forEach(s=>{if(!s.id)s.id=crypto.randomUUID()});
     const old=new Map(pages.filter(isGenerated).map(s=>[s.generatedId,s]));
     const generated=(kind,index,title)=>{const id=kind+'-'+index,s=old.get(id)||{kind,generatedId:id,parts:[],wires:[]};s.kind=kind;s.title=title;s.parts=[];s.wires=[];return s};
     const entries=drawings.flatMap(sheet=>sheet.parts.filter(p=>!['text','reference','destination'].includes(p.type)).map(p=>({p,sheetRef:sheet})));
-    entries.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'de',{numeric:true}));
-    const terminals=entries.filter(e=>e.p.type==='connector').sort((a,b)=>(terminalStripName(a.p)+'|'+terminalOrdinal(a.p)).localeCompare(terminalStripName(b.p)+'|'+terminalOrdinal(b.p),'de',{numeric:true})).flatMap(e=>partTerminals(e.p).map((_,pin)=>({...e,pin})));
+    entries.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'en',{numeric:true}));
+    const terminals=entries.filter(e=>e.p.type==='connector').sort((a,b)=>(terminalStripName(a.p)+'|'+terminalOrdinal(a.p)).localeCompare(terminalStripName(b.p)+'|'+terminalOrdinal(b.p),'en',{numeric:true})).flatMap(e=>partTerminals(e.p).map((_,pin)=>({...e,pin})));
     const terminalGroups=new Map();
     for(const e of entries.filter(e=>e.p.type==='terminal-strip'))terminalGroups.set(e.p.id,{name:aks(e.p),rows:[]});
     for(const e of terminals){const master=stripMaster(e.p),key=master?.id||aks(e.p).split('−')[0]+'|'+terminalStripName(e.p);if(!terminalGroups.has(key))terminalGroups.set(key,{name:master?aks(master):terminalStripName(e.p),rows:[]});terminalGroups.get(key).rows.push(e)}
@@ -214,9 +237,9 @@
     if(!terminalChunks.length)terminalChunks.push({key:'empty',name:'',rows:[]});
     const deviceCount=Math.max(1,Math.ceil(entries.length/DEVICE_LIST_ROWS)),terminalCount=terminalChunks.length;
     let tocCount=1;while(Math.ceil((1+tocCount+drawings.length+deviceCount+terminalCount)/22)>tocCount)tocCount++;
-    const cover=generated('cover',0,'Titelseite'),contents=Array.from({length:tocCount},(_,i)=>generated('toc',i,'Inhaltsverzeichnis '+pageNumber(i+1)));
-    const lists=Array.from({length:deviceCount},(_,i)=>generated(DEVICE_LIST_KIND,i,'Geräteliste '+pageNumber(i+1)));
-    const clamps=Array.from({length:terminalCount},(_,i)=>generated('terminal-list',terminalChunks[i].key,'Klemmenliste '+terminalChunks[i].name+' · '+pageNumber(i+1)));
+    const cover=generated('cover',0,'Cover page'),contents=Array.from({length:tocCount},(_,i)=>generated('toc',i,'Table of contents '+pageNumber(i+1)));
+    const lists=Array.from({length:deviceCount},(_,i)=>generated(DEVICE_LIST_KIND,i,'Device list '+pageNumber(i+1)));
+    const clamps=Array.from({length:terminalCount},(_,i)=>generated('terminal-list',terminalChunks[i].key,'Terminal list '+terminalChunks[i].name+' · '+pageNumber(i+1)));
     pages.splice(0,pages.length,cover,...contents,...drawings,...lists,...clamps);
     lists.forEach((s,i)=>s.deviceEntries=entries.slice(i*DEVICE_LIST_ROWS,(i+1)*DEVICE_LIST_ROWS).map(e=>({...e,sheet:pages.indexOf(e.sheetRef)+1})));
     clamps.forEach((s,i)=>{s.terminalEntries=terminalChunks[i].rows;s.stripTitle=terminalChunks[i].name;s.stripMasterId=terminalChunks[i].masterId});
@@ -228,22 +251,22 @@
     deviceListGroup.replaceChildren();
     const txt=(x,y,value,size=11,weight='normal',fill='#263943')=>{const t=el('text',{x,y,'font-size':size,'font-weight':weight,fill},deviceListGroup);t.textContent=value};
     const line=(x1,y1,x2,y2)=>el('path',{d:'M'+x1+' '+y1+' H'+x2,stroke:'#aebbc2','stroke-width':.8},deviceListGroup);
-    txt(42,68,'Automatisches Geräteverzeichnis',22,'bold','#15252e');
-    txt(42,90,'AKS-Kennzeichen · automatisch aus allen Schaltplanblättern · '+(sheet.deviceEntries||[]).length+' Geräte auf diesem Blatt',10,'normal','#53666f');
+    txt(42,68,'Automatic device directory',22,'bold','#15252e');
+    txt(42,90,'AKS designations · generated from all drawing sheets · '+(sheet.deviceEntries||[]).length+' Devices on this sheet',10,'normal','#53666f');
     const y0=128;
     el('rect',{x:36,y:103,width:1056,height:30,rx:2,fill:'#e8eef0'},deviceListGroup);
-    [['AKS-KENNZEICHEN',46],['BETRIEBSMITTEL',250],['BAUTEIL',425],['WERT / TYP',540],['HERSTELLERNUMMER',685],['SAP-NUMMER',850],['VERWEIS',1015]].forEach(([label,x])=>txt(x,y0,label,8,'bold'));
+    [['AKS DESIGNATION',46],['EQUIPMENT TAG',250],['COMPONENT',425],['VALUE / TYPE',540],['MANUFACTURER NUMBER',685],['SAP NUMBER',850],['REFERENCE',1015]].forEach(([label,x])=>txt(x,y0,label,8,'bold'));
     line(36,137,1092);
     (sheet.deviceEntries||[]).forEach((entry,i)=>{
       const y=158+i*25,p=entry.p;
       el('rect',{x:36,y:y-16,width:1056,height:24,fill:p.unplaced?'#fff2a8':'#dcefff'},deviceListGroup);
-      txt(46,y,aks(p),8,'bold','#138b78');txt(250,y,String(p.label||p.deviceCode||''),8);txt(425,y,TYPES[p.type]?.name||p.type||'',8);txt(540,y,p.type==='connector'?(p.terminalType||p.value||'Klemme'):String(p.value||''),8);txt(685,y,p.manufacturerNumber||'—',8);txt(850,y,p.sapNumber||'—',8);txt(1015,y,referenceAddress(entry.sheetRef,p),8);
-      txt(46,y+9,(p.masterId?' · Slave von '+(deviceEntries().find(e=>e.p.id===p.masterId)?.p.label||p.masterId):descendants(p.id).length?' · Master · '+descendants(p.id).length+' Unterpositionen':''),7,'normal','#53666f');
-      const hit=el('rect',{x:36,y:y-15,width:1056,height:25,fill:'transparent',class:'device-list-link','data-part-id':p.id,tabindex:0,role:'button',style:'cursor:pointer'},deviceListGroup);hit.setAttribute('aria-label','Zum Gerät '+aks(p)+' springen');hit.addEventListener('pointerdown',e=>e.stopPropagation());hit.addEventListener('click',()=>jumpToDevice(p.id));hit.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpToDevice(p.id)}});
+      txt(46,y,aks(p),8,'bold','#138b78');txt(250,y,String(p.label||p.deviceCode||''),8);txt(425,y,TYPES[p.type]?.name||p.type||'',8);txt(540,y,p.type==='connector'?(p.terminalType||p.value||'Terminal'):String(p.value||''),8);txt(685,y,p.manufacturerNumber||'—',8);txt(850,y,p.sapNumber||'—',8);txt(1015,y,referenceAddress(entry.sheetRef,p),8);
+      txt(46,y+9,(p.masterId?' · Slave of '+(deviceEntries().find(e=>e.p.id===p.masterId)?.p.label||p.masterId):descendants(p.id).length?' · Master · '+descendants(p.id).length+' sub-items':''),7,'normal','#53666f');
+      const hit=el('rect',{x:36,y:y-15,width:1056,height:25,fill:'transparent',class:'device-list-link','data-part-id':p.id,tabindex:0,role:'button',style:'cursor:pointer'},deviceListGroup);hit.setAttribute('aria-label','Go to device '+aks(p));hit.addEventListener('pointerdown',e=>e.stopPropagation());hit.addEventListener('click',()=>jumpToDevice(p.id));hit.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpToDevice(p.id)}});
       line(36,y+12,1092);
     });
-    if(!(sheet.deviceEntries||[]).length)txt(46,164,'Noch keine Geräte im Schaltplan.',11,'normal','#53666f');
-    txt(42,706,'Erstellt automatisch aus den Bauteilen des Projekts.',9,'normal','#73838b');
+    if(!(sheet.deviceEntries||[]).length)txt(46,164,'No devices in this schematic yet.',11,'normal','#53666f');
+    txt(42,706,'Generated automatically from project components.',9,'normal','#73838b');
   }
   const renderBeforeDeviceLists=render;
   render=function(){
@@ -254,16 +277,16 @@
     deviceListGroup.style.display=generated?'':'none';
     if(generated)drawGeneratedPage(pages[activeSheet]);
     const s=pages[activeSheet];
-    document.querySelector('#hud').textContent='Blatt '+pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)+' · '+s.title+' · A4 quer · 4 mm Raster';
-    document.querySelector('#a4Sheet').textContent=s.title+' · A4 · 4 mm Raster';
+    document.querySelector('#hud').textContent='Sheet '+pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)+' · '+s.title+' · A4 landscape · 4 mm grid';
+    document.querySelector('#a4Sheet').textContent=s.title+' · A4 · 4 mm grid';
     document.querySelector('#a4Number').textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length);
-    if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML='<strong>'+pageNumber(i+1)+' · '+safe(page.title)+'</strong><small>Automatische Geräteliste · '+page.deviceEntries.length+' Geräte</small>'})}
+    if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML='<strong>'+pageNumber(i+1)+' · '+safe(page.title)+'</strong><small>Automatic device list · '+page.deviceEntries.length+' Devices</small>'})}
   };
   const addPartBeforeDeviceList=addPart;
   addPart=function(type,position){if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));addPartBeforeDeviceList(type,position)};
   addSheet=function(){
-    const drawings=drawingPages(),name=prompt('Name des neuen A4-Blatts','Blatt '+pageNumber(drawings.length+1));if(name===null)return;
-    const sheet={title:name.trim()||'Blatt '+pageNumber(drawings.length+1),parts:[],wires:[]};
+    const drawings=drawingPages(),name=prompt('Name of the new A4 sheet','Sheet '+pageNumber(drawings.length+1));if(name===null)return;
+    const sheet={title:name.trim()||'Sheet '+pageNumber(drawings.length+1),parts:[],wires:[]};
     pages.splice(drawings.length,0,sheet);setSheet(drawings.length);closePanel();
   };
   document.querySelector('#sheetAdd').onclick=addSheet;
@@ -271,30 +294,32 @@
   drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};drawPages=function(){drawPagesBeforeDeviceList();pages.forEach((s,i)=>{if(isGenerated(s)){document.querySelector('[data-rename="'+i+'"]').disabled=true;const del=document.querySelector('[data-drop="'+i+'"][data-drop="'+i+'"];');if(del)del.disabled=true}})};
   document.querySelector('#fileInput').onchange=async e=>{
     const f=e.target.files[0];if(!f)return;
-    try{const x=JSON.parse(await f.text());const loaded=Array.isArray(x.sheets)?x.sheets.filter(s=>!isGenerated(s)):[{title:'Blatt 0001',parts:x.parts||[],wires:x.wires||[]}];
-      pages.splice(0,pages.length,...loaded.map((s,i)=>({id:s.id||crypto.randomUUID(),title:s.title||'Blatt '+pageNumber(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));
-      if(!pages.length)pages.push({title:'Blatt 0001',parts:[],wires:[]});wireStart=null;wirePoints=[];preview.style.display='none';selected=null;drag=null;model.title=x.title||'Geöffneter Schaltplan';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(item=>Number(String(item.id).slice(1))||0));render();toast('Projekt geladen');
-    }catch{toast('Datei konnte nicht gelesen werden')}e.target.value='';
+    try{const x=JSON.parse(await f.text());const loaded=Array.isArray(x.sheets)?x.sheets.filter(s=>!isGenerated(s)):[{title:'Sheet 0001',parts:x.parts||[],wires:x.wires||[]}];
+      pages.splice(0,pages.length,...loaded.map((s,i)=>({id:s.id||crypto.randomUUID(),title:s.title||'Sheet '+pageNumber(i+1),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]})));
+      if(!pages.length)pages.push({title:'Sheet 0001',parts:[],wires:[]});wireStart=null;wirePoints=[];preview.style.display='none';selected=null;drag=null;model.title=x.title||'Opened schematic';activeSheet=Math.min(x.activeSheet||0,pages.length-1);model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;nextId=1+Math.max(0,...pages.flatMap(s=>[...s.parts,...s.wires]).map(item=>Number(String(item.id).slice(1))||0));render();toast('Project loaded');
+    }catch{toast('Could not read the file')}e.target.value='';
   };
   syncDeviceListPages();render();applyView();
 drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.simplePanel .page').forEach((card,i)=>{if(pages[i]?.kind===DEVICE_LIST_KIND)card.querySelectorAll('button').forEach(b=>b.disabled=true)})};  const renderBeforeDeviceListEmptyStateFix=render;render=function(){renderBeforeDeviceListEmptyStateFix();document.querySelector('#emptyState').style.display=isGenerated(pages[activeSheet])?'none':(model.parts.length?'none':'grid')};render();
-  // Drahtdaten, IEC-Farbkennzeichen und verschiebbare Beschriftungen
+  // Wire properties, IEC-Colour code and verschiebbare Annotations
   const wirePalette={BK:'#263238',BN:'#795548',RD:'#d32f2f',OG:'#ef7d24',YE:'#d2a900',GN:'#31834b',BU:'#2878b7',VT:'#8053a3',GY:'#7a858b',WH:'#eef2f3',PK:'#d95691',TQ:'#1e9c9b',GNYE:'#65a04a'};
-  const wireColorNames={BK:'Schwarz',BN:'Braun',RD:'Rot',OG:'Orange',YE:'Gelb',GN:'Grün',BU:'Blau',VT:'Violett',GY:'Grau',WH:'Weiß',PK:'Rosa',TQ:'Türkis',GNYE:'Grün/Gelb'};
+  const wireColorNames={BK:'Black',BN:'Brown',RD:'Red',OG:'Orange',YE:'Yellow',GN:'Green',BU:'Blue',VT:'Violet',GY:'Grey',WH:'White',PK:'Pink',TQ:'Turquoise',GNYE:'Green/yellow'};
   const wireColorCodes=Object.keys(wirePalette);
   const ensureWireData=w=>{if(!w.diameter)w.diameter='1.5';if(!w.colorCode)w.colorCode='BK';if(!w.labelOrientation)w.labelOrientation='auto';if(!Number.isFinite(+w.labelT))w.labelT=.5};
   const wireRoute=w=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return null;const points=routePoints(w).map(p=>[p.x,p.y]),segments=[];let total=0;for(let i=1;i<points.length;i++){const p=points[i-1],q=points[i],length=Math.hypot(q[0]-p[0],q[1]-p[1]);if(length>0){segments.push({x1:p[0],y1:p[1],x2:q[0],y2:q[1],length,start:total});total+=length}}return{segments,total}};
   const wirePointAt=(w,t)=>{const route=wireRoute(w);if(!route||!route.total)return{x:0,y:0};let d=Math.max(0,Math.min(1,t))*route.total;for(const s of route.segments){if(d<=s.length){const u=d/s.length;return{x:s.x1+(s.x2-s.x1)*u,y:s.y1+(s.y2-s.y1)*u}}d-=s.length}const s=route.segments[route.segments.length-1];return{x:s.x2,y:s.y2}};
   const nearestWireT=(w,p)=>{const route=wireRoute(w);if(!route||!route.total)return .5;let best={d:Infinity,t:.5};for(const s of route.segments){const dx=s.x2-s.x1,dy=s.y2-s.y1,u=Math.max(0,Math.min(1,((p.x-s.x1)*dx+(p.y-s.y1)*dy)/(s.length*s.length))),x=s.x1+dx*u,y=s.y1+dy*u,d=(x-p.x)*(x-p.x)+(y-p.y)*(y-p.y);if(d<best.d)best={d,t:(s.start+u*s.length)/route.total}}return best.t};
-  const wireText=w=>w.kind==='bridge'?'Brücke':String(w.diameter||'1.5')+String(w.colorCode||'BK');
-  const wireLabelPosition=(g,w)=>{const p=wireLabelAnchor(w);g.setAttribute('transform','translate('+p.x+' '+p.y+') rotate('+p.angle+')')};
+  const wireText=w=>w.kind==='bridge'?'Bridge':String(w.diameter||'1.5')+String(w.colorCode||'BK');
+  const wireLabelPosition=(g,w)=>{const p=wireLabelAnchor(w);g.setAttribute('transform','translate('+p.x+' '+p.y+') rotate('+p.angle+')');if(w.kind==='bridge'){
+    const route=wireRoute(w),text=g.querySelector('text'),required=(text?.getComputedTextLength()||28)+6;const fits=route?.segments.some(s=>{const horizontal=Math.abs(s.y1-s.y2)<.001;if(horizontal?Math.abs(p.y-s.y1)>.001:Math.abs(p.x-s.x1)>.001)return false;const pos=horizontal?p.x:p.y,lo=horizontal?Math.min(s.x1,s.x2):Math.min(s.y1,s.y2),hi=horizontal?Math.max(s.x1,s.x2):Math.max(s.y1,s.y2);return pos>=lo&&pos<=hi&&2*Math.min(pos-lo,hi-pos)>=required});g.style.display=fits?'':'none';g.dataset.labelHidden=String(!fits);
+  }};
   const drawWireLabels=()=>{wiresG.querySelectorAll('.wire-label').forEach(g=>g.remove());const active=pages[activeSheet];if(!active||active.kind===DEVICE_LIST_KIND)return;(active.wires||[]).forEach(w=>{ensureWireData(w);const path=Array.from(wiresG.querySelectorAll('path.wire')).find(p=>p.dataset.id===w.id);if(path){path.style.stroke=w.kind==='bridge'?'#795548':wirePalette[w.colorCode]||wirePalette.BK;path.style.strokeWidth=w.kind==='bridge'?'2':'1';path.dataset.wireKind=w.kind||'wire'}const label=wireText(w),width=Math.max(12,label.length*4.4+4),g=el('g',{class:'wire-label','data-wire-label':w.id,style:'cursor:grab;touch-action:none'},wiresG);el('rect',{x:-width/2,y:-12,width,height:11,fill:'#fff',stroke:'none',class:'wire-label-background'},g);const text=el('text',{x:0,y:-4,'font-size':7,'font-weight':'normal','text-anchor':'middle',fill:'#263238','pointer-events':'all'},g);text.textContent=label;wireLabelPosition(g,w);g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();return}if(e.button!==0||isConnectionMode())return;e.preventDefault();e.stopPropagation();selected={kind:'wire',id:w.id};wireLabelDrag=w.id;wireDataButton.disabled=false;g.style.cursor='grabbing'});g.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();editWire(w.id)})})};
   let wireLabelDrag=null;
-  const wireDataButton=document.createElement('button');wireDataButton.id='wireDataButton';wireDataButton.textContent='Drahtdaten';wireDataButton.disabled=true;nav.append(wireDataButton);
+  const wireDataButton=document.createElement('button');wireDataButton.id='wireDataButton';wireDataButton.textContent='Wire properties';wireDataButton.disabled=true;nav.append(wireDataButton);
   const wireUiStyle=document.createElement('style');wireUiStyle.textContent='.newnav button:disabled{opacity:.45;cursor:not-allowed}.wire-label{user-select:none}.wire-form{display:grid;gap:10px;max-width:420px}.wire-form label{display:grid;gap:5px;color:#b9c7ce;font-size:11px}.wire-form input,.wire-form select{width:100%;padding:8px;background:#101923;border:1px solid #40525d;border-radius:6px;color:#e8eef2;font:inherit}.wire-form .preview{display:inline-flex;align-items:center;gap:8px;color:#cbd5da}.wire-form .swatch{width:18px;height:18px;border:1px solid #82929a;border-radius:4px}.wire-form .actions{display:flex;gap:7px;margin-top:4px}';document.head.append(wireUiStyle);
   const findWire=id=>model.wires.find(w=>w.id===id);
-  function editWire(id){const w=findWire(id);if(!w)return;ensureWireData(w);const options=wireColorCodes.map(c=>'<option value="'+c+'"'+(w.colorCode===c?' selected':'')+'>'+c+' · '+wireColorNames[c]+'</option>').join('');showPanel('<h2>Drahtdaten</h2><p>Leiterquerschnitt und Farbkennzeichen. Beispiel: 1.5BK = 1,5 mm², Schwarz. Das Label kann danach direkt auf dem Draht verschoben werden.</p><div class="wire-form"><label>Verbindungstyp<select id="wireKind"><option value="wire"'+(w.kind!=='bridge'?' selected':'')+'>Leiter</option><option value="bridge"'+(w.kind==='bridge'?' selected':'')+'>Klemmenbrücke</option></select></label><label>Leiterquerschnitt (mm²)<input id="wireDiameter" type="number" min="0.1" step="0.1" value="'+safe(w.diameter)+'"></label><label>Farbkennzeichen<select id="wireColor">'+options+'</select></label><p>Ausrichtung und Rasterposition folgen automatisch dem Leitungsabschnitt.</p><div class="preview">Vorschau: <span class="swatch" id="wireSwatch"></span><strong id="wireLabelPreview">'+safe(wireText(w))+'</strong></div><div class="actions"><button id="wireApply">Übernehmen</button><button id="wireDelete">Verbindung löschen</button></div></div>');const diameter=document.querySelector('#wireDiameter'),color=document.querySelector('#wireColor'),preview=document.querySelector('#wireLabelPreview'),swatch=document.querySelector('#wireSwatch');const update=()=>{const bridge=document.querySelector('#wireKind').value==='bridge';preview.textContent=bridge?'Brücke':(diameter.value||'1.5')+color.value;swatch.style.background=bridge?'#795548':wirePalette[color.value]||wirePalette.BK;color.disabled=bridge;diameter.disabled=bridge};diameter.oninput=update;color.onchange=update;document.querySelector('#wireKind').onchange=update;update();document.querySelector('#wireApply').onclick=()=>{const value=parseFloat(diameter.value);if(!Number.isFinite(value)||value<=0){toast('Querschnitt muss größer als 0 sein');return}const kind=document.querySelector('#wireKind').value;if(kind==='bridge'&&!validBridge(w.a,w.b)){toast('Brücken verbinden nur Pins derselben Klemmenleiste');return}w.kind=kind;w.diameter=String(Number(value.toFixed(2)));w.colorCode=kind==='bridge'?'BN':color.value;w.labelOrientation='auto';selected={kind:'wire',id:w.id};render();closePanel();toast('Drahtdaten übernommen')};document.querySelector('#wireDelete').onclick=()=>{model.wires=model.wires.filter(x=>x.id!==w.id);selected=null;render();closePanel();toast('Verbindung gelöscht')}}
-  wireDataButton.onclick=()=>{if(selected?.kind==='wire')editWire(selected.id);else toast('Zuerst eine Verbindung anklicken')};
+  function editWire(id){const w=findWire(id);if(!w)return;ensureWireData(w);const options=wireColorCodes.map(c=>'<option value="'+c+'"'+(w.colorCode===c?' selected':'')+'>'+c+' · '+wireColorNames[c]+'</option>').join('');showPanel('<h2>Wire properties</h2><p>Conductor cross-section and colour code. Example: 1.5BK = 1.5 mm², black. Drag the label along the wire to reposition it.</p><div class="wire-form"><label>Connection type<select id="wireKind"><option value="wire"'+(w.kind!=='bridge'?' selected':'')+'>Conductor</option><option value="bridge"'+(w.kind==='bridge'?' selected':'')+'>Terminal bridge</option></select></label><label>Conductor cross-section (mm²)<input id="wireDiameter" type="number" min="0.1" step="0.1" value="'+safe(w.diameter)+'"></label><label>Colour code<select id="wireColor">'+options+'</select></label><p>Label orientation and grid position follow the wire segment.</p><div class="preview">Preview: <span class="swatch" id="wireSwatch"></span><strong id="wireLabelPreview">'+safe(wireText(w))+'</strong></div><div class="actions"><button id="wireApply">Apply</button><button id="wireDelete">Delete connection</button></div></div>');const diameter=document.querySelector('#wireDiameter'),color=document.querySelector('#wireColor'),preview=document.querySelector('#wireLabelPreview'),swatch=document.querySelector('#wireSwatch');const update=()=>{const bridge=document.querySelector('#wireKind').value==='bridge';preview.textContent=bridge?'Bridge':(diameter.value||'1.5')+color.value;swatch.style.background=bridge?'#795548':wirePalette[color.value]||wirePalette.BK;color.disabled=bridge;diameter.disabled=bridge};diameter.oninput=update;color.onchange=update;document.querySelector('#wireKind').onchange=update;update();document.querySelector('#wireApply').onclick=()=>{const value=parseFloat(diameter.value);if(!Number.isFinite(value)||value<=0){toast('Cross-section must be greater than zero');return}const kind=document.querySelector('#wireKind').value;if(kind==='bridge'&&!validBridge(w.a,w.b)){toast('Bridges only connect pins of the same terminal strip');return}w.kind=kind;w.diameter=String(Number(value.toFixed(2)));w.colorCode=kind==='bridge'?'BN':color.value;w.labelOrientation='auto';selected={kind:'wire',id:w.id};render();closePanel();toast('Wire properties applied')};document.querySelector('#wireDelete').onclick=()=>{model.wires=model.wires.filter(x=>x.id!==w.id);selected=null;render();closePanel();toast('Connection removed')}}
+  wireDataButton.onclick=()=>{if(selected?.kind==='wire')editWire(selected.id);else toast('Select a connection first')};
   const oldOnTerminalForWireData=onTerminal;onTerminal=function(id,index){const before=model.wires.length;oldOnTerminalForWireData(id,index);if(model.wires.length>before){ensureWireData(model.wires[model.wires.length-1]);render()}};
   const oldRenderForWireData=render;render=function(){oldRenderForWireData();pages.forEach(s=>(s.wires||[]).forEach(ensureWireData));model.wires.forEach(ensureWireData);drawWireLabels();wireDataButton.disabled=selected?.kind!=='wire'||!findWire(selected.id)};
   svg.addEventListener('pointermove',e=>{if(!wireLabelDrag)return;svg.setPointerCapture?.(e.pointerId);const w=findWire(wireLabelDrag);if(!w)return;const cursor=toWorld(e);w.labelT=nearestWireT(w,{x:snap(cursor.x),y:snap(cursor.y)});const g=Array.from(wiresG.querySelectorAll('.wire-label')).find(x=>x.dataset.wireLabel===w.id);if(g)wireLabelPosition(g,w)});
@@ -366,30 +391,30 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   function dragWireSegment(e){
     const state=segmentDrag,w=model.wires.find(w=>w.id===state.id);if(!w)return;
     const cursor=toWorld(e),points=state.points.map(p=>({...p})),i=state.index;
-    const horizontal=Math.abs(points[i].y-points[i+1].y)<1e-7;
-    const delta=snap(horizontal?cursor.y-state.start.y:cursor.x-state.start.x);
+    const horizontally=Math.abs(points[i].y-points[i+1].y)<1e-7;
+    const delta=snap(horizontally?cursor.y-state.start.y:cursor.x-state.start.x);
     const a={...points[i]},b={...points[i+1]};
-    if(horizontal){a.y+=delta;b.y+=delta}else{a.x+=delta;b.x+=delta}
+    if(horizontally){a.y+=delta;b.y+=delta}else{a.x+=delta;b.x+=delta}
     // Preserve real terminal endpoints even when an end segment is dragged.
     const prefix=i===0?[points[0]]:points.slice(0,i),suffix=i+1===points.length-1?[points.at(-1)]:points.slice(i+2);
     w.points=orthogonalPoints([...prefix,a,b,...suffix]).slice(1,-1);render();
   }
   function transformSelected(action){
     const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id);
-    if(!p){toast('Zuerst ein Objekt auswählen');return}
+    if(!p){toast('Select an object first');return}
     wireStart=null;wirePoints=[];preview.style.display='none';drag=null;
     changeComponent(p,()=>{if(action==='rotate')p.rotation=((p.rotation||0)+90)%360;else p[action]=!p[action]});
     render();
   }
   function insertText(){
     mode='select';wireStart=null;wirePoints=[];preview.style.display='none';
-    const text=prompt('Text einfügen','Text');if(text===null||!text.trim())return;
+    const text=prompt('Insert text','Text');if(text===null||!text.trim())return;
     addPart('text');const p=model.parts.at(-1);p.label=text.trim();render();
   }
   function followPageReference(p){
     const index=pages.findIndex(s=>(s.id||s.generatedId)===p.targetSheetId);
     const target=index<0?null:pages[index].parts.find(q=>q.id===p.targetPartId);
-    if(index<0||(p.targetPartId&&!target)){toast('Gegenziel nicht mehr vorhanden');return}
+    if(index<0||(p.targetPartId&&!target)){toast('The reference target no longer exists');return}
     setSheet(index);
     if(target){
       selected={kind:'part',id:target.id};render();
@@ -397,43 +422,43 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       const c=center.matrixTransform(svg.getScreenCTM().inverse());
       pan.x=c.x-564*(1-zoom)-target.x*zoom;pan.y=c.y-399*(1-zoom)-target.y*zoom;applyView();
       partsG.querySelector('[data-id="'+CSS.escape(target.id)+'"]')?.focus({preventScroll:true});
-      toast('Gegenziel: '+target.label);
+      toast('Reference target: '+target.label);
     }
     closePanel();
   }
   function jumpToPage(){
     const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id);
     if(p?.targetSheetId){followPageReference(p);return}
-    if(isReference(p)){toast('Zuerst per Rechtsklick ein Gegenziel festlegen');return}
-    showPanel('<h2>Zu Seite springen</h2><form id="pageJumpForm" class="wire-form"><label>Zielseite<select id="pageJumpTarget">'+pages.map((s,i)=>'<option value="'+i+'"'+(i===activeSheet?' selected':'')+'>'+pageNumber(i+1)+' · '+safe(s.title)+'</option>').join('')+'</select></label><button type="submit">Springen</button></form>');
+    if(isReference(p)){toast('Set a reference target with right-click first');return}
+    showPanel('<h2>Go to sheet</h2><form id="pageJumpForm" class="wire-form"><label>Target sheet<select id="pageJumpTarget">'+pages.map((s,i)=>'<option value="'+i+'"'+(i===activeSheet?' selected':'')+'>'+pageNumber(i+1)+' · '+safe(s.title)+'</option>').join('')+'</select></label><button type="submit">Go</button></form>');
     document.querySelector('#pageJumpForm').onsubmit=e=>{e.preventDefault();setSheet(Number(document.querySelector('#pageJumpTarget').value));closePanel()};
     document.querySelector('#pageJumpTarget').focus();
   }
   function editComponent(p){
     selected={kind:'part',id:p.id};render();
-    showPanel('<h2 id="componentHeading">Bauteil bearbeiten</h2><form id="componentForm" class="wire-form">'+
-      [['functionCode','Funktion (=)',p.functionCode||'A1'],['locationCode','Ort (+)',p.locationCode||'P1'],
-       ...(p.type==='text'?[['label','Text',p.label]]:[['deviceCode','Betriebsmittel (−)',p.deviceCode||p.label]]),['value','Wert',p.value],['terminalType','Klemmentyp (je Klemme)',p.type==='connector'?(p.terminalType||p.value||'Durchgangsklemme'):''],['manufacturerNumber','Herstellernummer',p.manufacturerNumber],['sapNumber','SAP-Nummer',p.sapNumber],['terminalNumber','Klemmennummer (z. B. 1)',p.type==='connector'?terminalOrdinal(p):''],['stripName','Klemmenleiste (z. B. X1)',p.type==='connector'?terminalStripName(p):''],['pinNumbers',p.type==='connector'?'Pin-Nummern (2–8, mit Komma trennen)':'Pin-Nummern (mit Komma trennen)',partTerminals(p).map((_,i)=>pinNumber(p,i)).join(', ')]]
+    showPanel('<h2 id="componentHeading">Edit component</h2><form id="componentForm" class="wire-form">'+
+      [['functionCode','Function (=)',p.functionCode||'A1'],['locationCode','Location (+)',p.locationCode||'P1'],
+       ...(p.type==='text'?[['label','Text',p.label]]:[['deviceCode','Equipment tag (−)',p.deviceCode||p.label]]),['value','Value',p.value],['terminalType','Terminal type (per terminal)',p.type==='connector'?(p.terminalType||p.value||'Feed-through terminal'):''],['manufacturerNumber','Manufacturer number',p.manufacturerNumber],['sapNumber','SAP number',p.sapNumber],['terminalNumber','Terminal number (e.g. 1)',p.type==='connector'?terminalOrdinal(p):''],['stripName','Terminal strip (e.g. X1)',p.type==='connector'?terminalStripName(p):''],['pinNumbers',p.type==='connector'?'Pin numbers (2–8, comma separated)':'Pin numbers (comma separated)',partTerminals(p).map((_,i)=>pinNumber(p,i)).join(', ')]]
       .map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
-      '<div class="actions"><button type="submit">Übernehmen</button><button type="button" id="componentCancel">Abbrechen</button></div></form>');
-    const form=document.querySelector('#componentForm');
+      '<div class="actions"><button type="submit">Apply</button><button type="button" id="componentCancel">Cancel</button></div></form>');
+    const form=document.querySelector('#componentForm');if(p.catalog){const origin=document.createElement('p');origin.className='catalog-origin';origin.textContent=p.catalog.manufacturer+' · '+p.catalog.model+' · '+(p.catalog.verification==='user-specified-reference'?'User-specified article':'Unverified catalogue reference');form.prepend(origin)}
 
 
-    if(isReference(p)){const role=document.createElement('p');role.className='reference-role';role.textContent='Verweistyp: '+(referenceRole(p)==='source'?'Source':'Destination');form.prepend(role)}
+    if(isReference(p)){const role=document.createElement('p');role.className='reference-role';role.textContent='Reference type: '+(referenceRole(p)==='source'?'Source':'Destination');form.prepend(role)}
     const reference=document.createElement('label');
-    reference.innerHTML='Gegenziel (Objekt)<select name="referenceTarget"><option value="">Kein Verweis</option>'+pages.flatMap((sheet,i)=>sheet.parts.filter(q=>q!==p&&q.type!=='text'&&(!isReference(p)||(isReference(q)&&referenceRole(q)!==referenceRole(p))||q.id===p.targetPartId)).map(q=>'<option value="'+safe(JSON.stringify([sheet.id||sheet.generatedId,q.id]))+'">Blatt '+pageNumber(i+1)+' · '+safe(sheet.title)+' — '+safe(q.label)+' ('+safe(q.id)+')</option>')).join('')+'</select>';
+    reference.innerHTML='Reference target (object)<select name="referenceTarget"><option value="">No reference</option>'+pages.flatMap((sheet,i)=>sheet.parts.filter(q=>q!==p&&q.type!=='text'&&(!isReference(p)||(isReference(q)&&referenceRole(q)!==referenceRole(p))||q.id===p.targetPartId)).map(q=>'<option value="'+safe(JSON.stringify([sheet.id||sheet.generatedId,q.id]))+'">Sheet '+pageNumber(i+1)+' · '+safe(sheet.title)+' — '+safe(q.label)+' ('+safe(q.id)+')</option>')).join('')+'</select>';
     form.insertBefore(reference,form.querySelector('.actions'));
     reference.querySelector('select').value=p.targetPartId?JSON.stringify([p.targetSheetId,p.targetPartId]):'';
-    const master=document.createElement('label');master.innerHTML='Master / übergeordnete Komponente<select name="masterId"><option value="">Eigenständig / Master</option>'+deviceEntries().filter(e=>e.p!==p&&!wouldCycle(p.id,e.p.id)).map(e=>'<option value="'+safe(e.p.id)+'">'+safe(aks(e.p))+' · '+safe(e.p.label)+'</option>').join('')+'</select>';form.insertBefore(master,form.querySelector('.actions'));master.querySelector('select').value=p.masterId||'';
-    for(const [key,field,caption] of [['label',p.type==='text'?'label':'deviceCode','Betriebsmittel anzeigen'],['value','value','Wert anzeigen'],['aks',p.type==='text'?'label':'deviceCode','AKS anzeigen'],['pins','pinNumbers','Pin-Nummern anzeigen'],['reference','referenceTarget','Seitenverweis anzeigen'],['annotation',p.type==='text'?'label':'deviceCode','Freitext anzeigen']]){
-      const input=form.elements.namedItem(field);if(field==='deviceCode'&&['relay-coil','relay-contact'].includes(p.type)&&relayMaster(p)){input.readOnly=true;input.title='BMK folgt automatisch dem Relais-Gesamtsymbol'}let wrapper=input.closest('.property-field');
+    const master=document.createElement('label');master.innerHTML='Master / parent component<select name="masterId"><option value="">Independent / master</option>'+deviceEntries().filter(e=>e.p!==p&&!wouldCycle(p.id,e.p.id)).map(e=>'<option value="'+safe(e.p.id)+'">'+safe(aks(e.p))+' · '+safe(e.p.label)+'</option>').join('')+'</select>';form.insertBefore(master,form.querySelector('.actions'));master.querySelector('select').value=p.masterId||'';
+    for(const [key,field,caption] of [['label',p.type==='text'?'label':'deviceCode','Show equipment tag'],['value','value','Show value'],['aks',p.type==='text'?'label':'deviceCode','Show AKS'],['pins','pinNumbers','Show pin numbers'],['reference','referenceTarget','Show cross-reference'],['annotation',p.type==='text'?'label':'deviceCode','Show text']]){
+      const input=form.elements.namedItem(field);if(field==='deviceCode'&&['relay-coil','relay-contact'].includes(p.type)&&relayMaster(p)){input.readOnly=true;input.title='The equipment tag follows the complete relay symbol automatically'}let wrapper=input.closest('.property-field');
       if(!wrapper){const oldLabel=input.closest('label');wrapper=document.createElement('div');wrapper.className='property-field';const heading=document.createElement('label');input.id='component-'+field;heading.htmlFor=input.id;heading.textContent=oldLabel.firstChild.textContent;const row=document.createElement('div');row.className='property-input-row';oldLabel.replaceWith(wrapper);wrapper.append(heading,row);row.append(input)}
       const toggle=document.createElement('label');toggle.className='property-visibility';toggle.hidden=key==='annotation'?p.type!=='text':['label','aks'].includes(key)&&p.type==='text';
-      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.name='show_'+key;checkbox.checked=p.textVisibility?.[key]!==false;checkbox.setAttribute('aria-label',caption);toggle.append(checkbox,document.createTextNode(key==='aks'?'AKS anzeigen':'Anzeigen'));toggle.title=caption;wrapper.querySelector('.property-input-row').append(toggle);
+      const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.name='show_'+key;checkbox.checked=p.textVisibility?.[key]!==false;checkbox.setAttribute('aria-label',caption);toggle.append(checkbox,document.createTextNode(key==='aks'?'Show AKS':'Show'));toggle.title=caption;wrapper.querySelector('.property-input-row').append(toggle);
     }
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
-    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Bitte 2 bis 8 eindeutige Pin-Nummern eingeben');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Separat platzierte Pins zuerst entfernen');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Zu entfernende Pins sind noch verdrahtet');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('Master-Zuordnung würde einen Kreis erzeugen');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Durchgangsklemme';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
+    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Feed-through terminal';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
     document.querySelector('#componentCancel').onclick=closePanel;
     form.querySelector('input').focus();
   }
@@ -449,7 +474,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
 
 
   function referenceAddress(sheet,p){
-    if(!sheet||!p)return 'Ziel fehlt';if(p.unplaced)return 'unplatziert';
+    if(!sheet||!p)return 'Target missing';if(p.unplaced)return 'unplaced';
     const column=Math.max(0,Math.min(7,Math.floor((p.x-22)/(1084/8)))),row=Math.max(0,Math.min(4,Math.floor((p.y-22)/(688/5))));
     return '/'+pageNumber(pages.indexOf(sheet)+1)+'.'+String.fromCharCode(65+row)+(column+1);
   }
@@ -473,20 +498,20 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   }
   function clipboardAction(action){
     if(action==='v'){
-      if(!appClipboard){toast('Zwischenablage ist leer');return}
+      if(!appClipboard){toast('Clipboard is empty');return}
       if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));
       const p=structuredClone(appClipboard.part),wasCut=appClipboard.cut;
-      if(!wasCut){p.id='p'+nextId++;if(isReference(p)){delete p.targetSheetId;delete p.targetPartId}if(!['text','reference','destination'].includes(p.type)){p.label+=' Kopie';p.deviceCode=(p.deviceCode||p.label)+'_K'+nextId}}
+      if(!wasCut){p.id='p'+nextId++;if(isReference(p)){delete p.targetSheetId;delete p.targetPartId}if(!['text','reference','destination'].includes(p.type)){p.label+=' Copy';p.deviceCode=(p.deviceCode||p.label)+'_K'+nextId}}
       appClipboard.offset+=1;p.x+=appClipboard.offset*gridSpacing();p.y+=appClipboard.offset*gridSpacing();
       model.parts.push(p);
       if(wasCut){for(const sheet of pages)for(const q of sheet.parts)if(q.targetSheetId===appClipboard.sheetId&&q.targetPartId===p.id)q.targetSheetId=pages[activeSheet].id;appClipboard={part:structuredClone(p),sheetId:pages[activeSheet].id,cut:false,offset:0}}
-      selected={kind:'part',id:p.id};mode='select';render();toast('Objekt eingefügt');return;
+      selected={kind:'part',id:p.id};mode='select';render();toast('Object pasted');return;
     }
     const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id);
-    if(!p){toast('Zuerst ein Objekt auswählen');return}
+    if(!p){toast('Select an object first');return}
     appClipboard={part:structuredClone(p),sheetId:pages[activeSheet].id,cut:action==='x',offset:0};
     if(action==='x'){model.parts=model.parts.filter(q=>q!==p);model.wires=model.wires.filter(w=>w.a.split(':')[0]!==p.id&&w.b.split(':')[0]!==p.id);selected=null;render()}
-    toast(action==='x'?'Objekt ausgeschnitten':'Objekt kopiert');
+    toast(action==='x'?'Object cut':'Object copied');
   }
   // Keep geometry and captions independent: text never inherits a reflection.
   const drawBeforeReadableCaptions=drawPart;
@@ -514,13 +539,13 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   }
   function wouldCycle(id,masterId){return id===masterId||descendants(id).some(p=>p.id===masterId)}
   function jumpToDevice(id){
-    const entry=deviceEntries().find(e=>e.p.id===id);if(!entry){toast('Gerät nicht mehr vorhanden');return}
+    const entry=deviceEntries().find(e=>e.p.id===id);if(!entry){toast('The device no longer exists');return}
     if(entry.p.unplaced){placeDevice(id);return}treeFocusId=id;followPageReference({targetSheetId:entry.sheet.id,targetPartId:id});
   }
   let sidebarMode='sheets',treeFocusId=null;
   const treeOpen=new Map();
   function showDeviceInTree(p){
-    if(!deviceEntries().some(e=>e.p===p)){toast('Dieses Objekt ist kein Gerät');return}
+    if(!deviceEntries().some(e=>e.p===p)){toast('This object is not a device');return}
     treeFocusId=p.id;sidebarMode='devices';drag=null;selected={kind:'part',id:p.id};render();
     const node=sheetPanel.querySelector('[data-device-id="'+CSS.escape(p.id)+'"]');
     if(node){let current=node;while(current&&current!==sheetPanel){if(current.tagName==='DETAILS'){current.open=true;treeOpen.set(current.dataset.treeKey,true)}current=current.parentElement}node.querySelector('.device-jump')?.focus({preventScroll:true});node.scrollIntoView({block:'nearest'})}
@@ -536,7 +561,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   refreshSheetPanel=function(){
     if(sidebarMode==='sheets')refreshBeforeDeviceTree();else{
       sheetPanel.replaceChildren();
-      const title=document.createElement('h2');title.textContent='Geräte nach AKS';sheetPanel.append(title);
+      const title=document.createElement('h2');title.textContent='Devices by AKS';sheetPanel.append(title);
       const entries=deviceEntries(),byId=new Map(entries.map(e=>[e.p.id,e])),shown=new Set(),folders=new Map();
       function details(parent,key,label,className){
         const d=document.createElement('details');d.className=className;d.dataset.treeKey=key;d.open=treeOpen.get(key)!==false;
@@ -547,13 +572,13 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
         const p=entry.p;if(shown.has(p.id))return;shown.add(p.id);
         const node=details(parent,'device:'+p.id,'','device-node');node.dataset.deviceId=p.id;node.classList.add(p.unplaced?'device-unplaced':'device-placed');
         if(treeFocusId===p.id)node.classList.add('current-device');
-        const summary=node.firstElementChild,button=document.createElement('button');button.className='device-jump';button.textContent=p.type==='relay'?'▣ '+p.deviceCode+' Gesamt':p.type==='relay-coil'?'▭ '+p.deviceCode+' Spule':p.type==='relay-contact'?'↳ '+p.deviceCode+' W'+p.relayContact:(p.type==='terminal-strip'?'▤ ':p.type==='terminal-pin'?'○ ':p.masterId?'↳ ':'◈ ')+(p.type==='connector'?terminalOrdinal(p):p.type==='terminal-pin'?p.deviceCode+' :'+p.value:aks(p));button.title=aks(p)+' · '+p.label+' · '+(p.unplaced?'Unplatziert':'Platziert');
+        const summary=node.firstElementChild,button=document.createElement('button');button.className='device-jump';button.textContent=p.type==='relay'?'▣ '+p.deviceCode+' Complete':p.type==='relay-coil'?'▭ '+p.deviceCode+' Coil':p.type==='relay-contact'?'↳ '+p.deviceCode+' C'+p.relayContact:(p.type==='terminal-strip'?'▤ ':p.type==='terminal-pin'?'○ ':p.masterId?'↳ ':'◈ ')+(p.type==='connector'?terminalOrdinal(p):p.type==='terminal-pin'?p.deviceCode+' :'+p.value:aks(p));button.title=aks(p)+' · '+p.label+' · '+(p.unplaced?'Unplaced':'Placed');
         button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();jumpToDevice(p.id)});button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});summary.append(button);button.draggable=true;button.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'device',id:p.id}));e.dataTransfer.effectAllowed='move'});summary.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
         const children=entries.filter(e=>e.p.masterId===p.id);
-if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.createElement('button');manage.className='terminal-manage';manage.textContent=p.type==='terminal-strip'?'+':'×';manage.title=p.type==='terminal-strip'?'Klemme hinzufügen':'Klemme dauerhaft entfernen';manage.onclick=e=>{e.preventDefault();e.stopPropagation();if(p.type==='terminal-strip')addStripTerminal(p);else removeStripTerminal(p)};summary.append(manage)}
+if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.createElement('button');manage.className='terminal-manage';manage.textContent=p.type==='terminal-strip'?'+':'×';manage.title=p.type==='terminal-strip'?'Add terminal':'Remove terminal permanently';manage.onclick=e=>{e.preventDefault();e.stopPropagation();if(p.type==='terminal-strip')addStripTerminal(p);else removeStripTerminal(p)};summary.append(manage)}
 
-        children.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'de',{numeric:true})).forEach(child=>appendDevice(child,node));
-        if(p.type==='connector')[...partTerminals(p).map((_,i)=>i),8].filter(i=>!pinSlave(p.id,i)).forEach(i=>{const pin=document.createElement('button');pin.className='pin-node';pin.dataset.pinPart=p.id;pin.dataset.pinIndex=i;pin.textContent=(i===8?'◆ Brücke':'○ :'+pinNumber(p,i))+' ＋';pin.draggable=true;pin.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'pin',id:p.id,index:i}));e.dataTransfer.effectAllowed='move'});pin.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});pin.title='Anschluss einzeln platzieren oder auf das Blatt ziehen';pin.onclick=e=>{e.stopPropagation();placePin(p,i)};node.append(pin)});
+        children.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'en',{numeric:true})).forEach(child=>appendDevice(child,node));
+        if(p.type==='connector')[...partTerminals(p).map((_,i)=>i),8].filter(i=>!pinSlave(p.id,i)).forEach(i=>{const pin=document.createElement('button');pin.className='pin-node';pin.dataset.pinPart=p.id;pin.dataset.pinIndex=i;pin.textContent=(i===8?'◆ Bridge':'○ :'+pinNumber(p,i))+' ＋';pin.draggable=true;pin.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'pin',id:p.id,index:i}));e.dataTransfer.effectAllowed='move'});pin.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});pin.title='Place this pin separately or drag it onto the sheet';pin.onclick=e=>{e.stopPropagation();placePin(p,i)};node.append(pin)});
       }
       const roots=entries.filter(e=>!e.p.masterId||!byId.has(e.p.masterId));
       for(const entry of [...roots,...entries]){
@@ -561,10 +586,10 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
         for(const name of aksFolders(entry.p)){key+='/'+name;if(!folders.has(key))folders.set(key,details(parent,'folder:'+key,name,'aks-folder'));parent=folders.get(key)}
         appendDevice(entry,parent);
       }
-      if(!entries.length){const empty=document.createElement('p');empty.textContent='Noch keine Geräte platziert.';sheetPanel.append(empty)}
+      if(!entries.length){const empty=document.createElement('p');empty.textContent='No devices placed yet.';sheetPanel.append(empty)}
     }
     const tabs=document.createElement('div');tabs.className='overview-tabs';tabs.setAttribute('role','tablist');
-    for(const [mode,label] of [['sheets','Blätter'],['devices','Geräte']]){const button=document.createElement('button');button.textContent=label;button.dataset.overview=mode;button.setAttribute('role','tab');button.setAttribute('aria-selected',String(sidebarMode===mode));button.onclick=()=>{sidebarMode=mode;refreshSheetPanel()};tabs.append(button)}
+    for(const [mode,label] of [['sheets','Sheets'],['devices','Devices']]){const button=document.createElement('button');button.textContent=label;button.dataset.overview=mode;button.setAttribute('role','tab');button.setAttribute('aria-selected',String(sidebarMode===mode));button.onclick=()=>{sidebarMode=mode;refreshSheetPanel()};tabs.append(button)}
     sheetPanel.prepend(tabs);
   };
   const drawBeforePins=drawPart;
@@ -576,7 +601,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     });
   };
   function createTerminalStrip(){
-    showPanel('<h2>Klemmenleiste erstellen</h2><form id="stripForm" class="wire-form"><label>Kennzeichen<input name="code" value="X1" required></label><label>Anzahl Klemmen<input name="count" type="number" min="2" max="24" value="4" required></label><label>Herstellernummer<input name="manufacturerNumber"></label><label>SAP-Nummer<input name="sapNumber"></label><button type="submit">Erstellen</button></form>');
+    showPanel('<h2>Create terminal strip</h2><form id="stripForm" class="wire-form"><label>Designation<input name="code" value="X1" required></label><label>Number of terminals<input name="count" type="number" min="2" max="24" value="4" required></label><label>Manufacturer number<input name="manufacturerNumber"></label><label>SAP number<input name="sapNumber"></label><button type="submit">Create</button></form>');
     document.querySelector('#stripForm').onsubmit=e=>{
       e.preventDefault();const data=new FormData(e.target),count=Number(data.get('count'));if(!Number.isInteger(count)||count<2||count>24)return;
       if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));
@@ -591,24 +616,24 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     };
     document.querySelector('#stripForm input').focus();
   }
-  const stripButton=document.createElement('button');stripButton.className='part';stripButton.id='createTerminalStrip';stripButton.textContent='▤ Klemmenleiste erstellen';stripButton.onclick=createTerminalStrip;folders.get('Anschlüsse').append(stripButton);
+  const stripButton=document.createElement('button');stripButton.className='part';stripButton.id='createTerminalStrip';stripButton.textContent='▤ Create terminal strip';stripButton.onclick=createTerminalStrip;folders.get('Connections').append(stripButton);
   const deviceStyle=document.createElement('style');deviceStyle.textContent='.part-body{fill:transparent!important;stroke:none!important;pointer-events:all}#parts>g{outline:none}.selected .symbol{stroke:#07977e}.overview-tabs{display:flex;gap:5px;margin-bottom:14px}.overview-tabs [aria-selected="true"]{border-color:#62d6bd;background:#16332f}.aks-folder,.device-node{margin:7px 0 7px 8px}.aks-folder>summary{cursor:pointer;color:#62d6bd;font-size:11px}.device-node>summary{cursor:pointer;list-style-position:outside}.device-node small{display:block;color:#91a0ac;font-size:9px;overflow-wrap:anywhere;margin:4px 0}.device-node .device-jump{font-size:10px;text-align:left;overflow-wrap:anywhere;max-width:100%}.device-node.current-device>summary>.device-jump{border-color:#62d6bd;color:#62d6bd}.pin-label{user-select:none}';document.head.append(deviceStyle);
   render();
 
   function serializableSheet(sheet){return isGenerated(sheet)?{kind:sheet.kind,generatedId:sheet.generatedId,title:sheet.title,parts:[],wires:[]}:sheet}
-  function documentKind(sheet){return {cover:'Titelseite',toc:'Inhaltsverzeichnis','device-list':'Geräteliste','terminal-list':'Klemmenliste'}[sheet?.kind]||'Schaltplan'}
+  function documentKind(sheet){return {cover:'Cover page',toc:'Table of contents','device-list':'Device list','terminal-list':'Terminal list'}[sheet?.kind]||'Schematic'}
   function isGenerated(sheet){return ['cover','toc','device-list','terminal-list'].includes(sheet?.kind)}
   function pinNumber(p,i){if(p.type==='terminal-pin')return p.value||p.label;if(p.type==='connector'&&i===8)return 'BR';return p.pinNumbers?.[i]?String(p.pinNumbers[i]).replace(/^:/,''):p.type==='connector'?terminalOrdinal(p)+String.fromCharCode(97+i):String(i+1)}
   function wireLabelAnchor(w){
     const route=wireRoute(w);if(!route?.segments.length)return{x:0,y:0,angle:0};
     let distance=Math.max(0,Math.min(1,Number(w.labelT)||0))*route.total,segment=route.segments.at(-1);
     for(const s of route.segments){if(distance<=s.length+1e-7){segment=s;break}distance-=s.length}
-    const horizontal=Math.abs(segment.y2-segment.y1)<1e-7,u=Math.max(0,Math.min(1,distance/segment.length));
-    const value=horizontal?segment.x1+(segment.x2-segment.x1)*u:segment.y1+(segment.y2-segment.y1)*u;
-    const low=horizontal?Math.min(segment.x1,segment.x2):Math.min(segment.y1,segment.y2),high=horizontal?Math.max(segment.x1,segment.x2):Math.max(segment.y1,segment.y2),g=gridSpacing();
+    const horizontally=Math.abs(segment.y2-segment.y1)<1e-7,u=Math.max(0,Math.min(1,distance/segment.length));
+    const value=horizontally?segment.x1+(segment.x2-segment.x1)*u:segment.y1+(segment.y2-segment.y1)*u;
+    const low=horizontally?Math.min(segment.x1,segment.x2):Math.min(segment.y1,segment.y2),high=horizontally?Math.max(segment.x1,segment.x2):Math.max(segment.y1,segment.y2),g=gridSpacing();
     const first=Math.ceil((low-1e-7)/g)*g,last=Math.floor((high+1e-7)/g)*g;
     const snapped=first<=last?Math.max(first,Math.min(last,snap(value))):Math.max(low,Math.min(high,value));
-    return horizontal?{x:snapped,y:segment.y1,angle:0}:{x:segment.x1,y:snapped,angle:-90};
+    return horizontally?{x:snapped,y:segment.y1,angle:0}:{x:segment.x1,y:snapped,angle:-90};
   }
   function showPinInTree(p,i){showDeviceInTree(p);const pin=sheetPanel.querySelector('[data-pin-part="'+CSS.escape(p.id)+'"][data-pin-index="'+i+'"]');if(pin){pin.focus({preventScroll:true});pin.scrollIntoView({block:'nearest'})}}
   function jumpToPin(id,i){const slave=pinSlave(id,i);if(slave){jumpToDevice(slave.id);return}jumpToDevice(id);const terminal=partsG.querySelector('[data-id="'+CSS.escape(id)+'"] [data-term="'+i+'"]');terminal?.classList.add('focused-pin');terminal?.focus({preventScroll:true})}
@@ -624,76 +649,76 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     deviceListGroup.replaceChildren();const g=deviceListGroup,info=model.projectInfo||{};
     if(sheet.kind==='cover'){
       generatedText(g,65,110,info.company||'LEITWERK',16,'bold','#138b78');
-      generatedText(g,65,205,'SCHALTPLANDOKUMENTATION',12,'bold','#73838b');
+      generatedText(g,65,205,'SCHEMATIC DOCUMENTATION',12,'bold','#73838b');
       generatedText(g,65,260,model.title,30,'bold');
       el('path',{d:'M65 290 H1063',stroke:'#138b78','stroke-width':3},g);
-      const fields=[['Dokumentnummer',info.documentNumber||'—'],['Revision',info.revision||'A'],['Bearbeiter',info.author||'—'],['Datum',info.date||'—'],['Umfang',pages.length+' Seiten'],['Beschreibung',info.description||'—']];
+      const fields=[['Document number',info.documentNumber||'—'],['Revision',info.revision||'A'],['Drawn by',info.author||'—'],['Date',info.date||'—'],['Page count',pages.length+' pages'],['Description',info.description||'—']];
       fields.forEach(([key,value],i)=>{generatedText(g,65,340+i*44,key,10,'bold','#73838b');generatedText(g,260,340+i*44,value,14)});
-      const edit=generatedText(g,65,655,'Projektkopf bearbeiten',11,'bold','#138b78');edit.classList.add('screen-only');edit.style.cursor='pointer';edit.addEventListener('pointerdown',e=>e.stopPropagation());edit.addEventListener('click',editProjectInfo);
+      const edit=generatedText(g,65,655,'Edit project information',11,'bold','#138b78');edit.classList.add('screen-only');edit.style.cursor='pointer';edit.addEventListener('pointerdown',e=>e.stopPropagation());edit.addEventListener('click',editProjectInfo);
     }else if(sheet.kind==='toc'){
-      generatedText(g,42,70,'Inhaltsverzeichnis',24,'bold');
-      generatedText(g,42,100,'SEITE',9,'bold');generatedText(g,150,100,'BEZEICHNUNG',9,'bold');generatedText(g,880,100,'DOKUMENTART',9,'bold');
-      (sheet.contents||[]).forEach(({page,number},i)=>{const y=134+i*24;generatedText(g,46,y,pageNumber(number),11,'bold','#138b78');generatedText(g,150,y,page.title,11);generatedText(g,880,y,documentKind(page),10);rowJump(g,y,()=>setSheet(pages.indexOf(page)),'Zu Seite '+pageNumber(number))});
+      generatedText(g,42,70,'Table of contents',24,'bold');
+      generatedText(g,42,100,'PAGE',9,'bold');generatedText(g,150,100,'TITLE',9,'bold');generatedText(g,880,100,'DOCUMENT TYPE',9,'bold');
+      (sheet.contents||[]).forEach(({page,number},i)=>{const y=134+i*24;generatedText(g,46,y,pageNumber(number),11,'bold','#138b78');generatedText(g,150,y,page.title,11);generatedText(g,880,y,documentKind(page),10);rowJump(g,y,()=>setSheet(pages.indexOf(page)),'Go to sheet '+pageNumber(number))});
     }else if(sheet.kind==='terminal-list'){
-      const heading=generatedText(g,42,70,'Klemmenliste · '+(sheet.stripTitle||''),22,'bold');heading.addEventListener('contextmenu',e=>{const master=deviceEntries().find(e=>e.p.id===sheet.stripMasterId)?.p;if(master){e.preventDefault();e.stopPropagation();editComponent(master)}});
-      [['KLEMME',46],['PIN',170],['KLEMMENTYP',270],['ANSCHLUSSZIEL',510],['BRÜCKE',900],['VERWEIS',1020]].forEach(([label,x])=>generatedText(g,x,116,label,11,'bold'));
+      const heading=generatedText(g,42,70,'Terminal list · '+(sheet.stripTitle||''),22,'bold');heading.addEventListener('contextmenu',e=>{const master=deviceEntries().find(e=>e.p.id===sheet.stripMasterId)?.p;if(master){e.preventDefault();e.stopPropagation();editComponent(master)}});
+      [['TERMINAL',46],['PIN',170],['TERMINAL TYPE',270],['CONNECTION TARGET',510],['BRIDGE',900],['REFERENCE',1020]].forEach(([label,x])=>generatedText(g,x,116,label,11,'bold'));
       const rows=sheet.terminalEntries||[],rowY=i=>146+i*26;
       rows.forEach(({p,pin,sheetRef},i)=>{
         const y=rowY(i),slave=pinSlave(p.id,pin),slaveSheet=slave?drawingPages().find(s=>s.parts.includes(slave)):null,owner=slave&&!slave.unplaced?slaveSheet:sheetRef;
         const representations=[{sheet:sheetRef,key:p.id+':'+pin},...(slave?[{sheet:slaveSheet,key:slave.id+':0'}]:[])];const targets=Array.from(new Set(representations.flatMap(r=>(r.sheet?.wires||[]).filter(w=>w.kind!=='bridge'&&(w.a===r.key||w.b===r.key)).map(w=>endPoint(r.sheet,w.a===r.key?w.b:w.a)))));
         el('rect',{x:36,y:y-17,width:1056,height:25,fill:i%2?'#edf3f6':'#fff'},g);
-        generatedText(g,46,y,terminalOrdinal(p),13,'bold');generatedText(g,170,y,':'+pinNumber(p,pin),13,'bold','#2463b5');generatedText(g,270,y,p.terminalType||p.value||'Klemme',11);const targetText=targets.join(', ')||'—';const targetLabel=generatedText(g,510,y,targetText.length>52?targetText.slice(0,49)+'…':targetText,11);el('title',{},targetLabel).textContent=targetText;generatedText(g,1020,y,referenceAddress(owner,slave&&!slave.unplaced?slave:p),8);
-        const hit=rowJump(g,y,()=>jumpToPin(p.id,pin),'Zur Klemme '+aks(p)+' Pin :'+pinNumber(p,pin));hit.setAttribute('height',25);hit.setAttribute('y',y-17);hit.classList.add('terminal-list-link');hit.dataset.partId=p.id;
+        generatedText(g,46,y,terminalOrdinal(p),13,'bold');generatedText(g,170,y,':'+pinNumber(p,pin),13,'bold','#2463b5');generatedText(g,270,y,p.terminalType||p.value||'Terminal',11);const targetText=targets.join(', ')||'—';const targetLabel=generatedText(g,510,y,targetText.length>52?targetText.slice(0,49)+'…':targetText,11);el('title',{},targetLabel).textContent=targetText;generatedText(g,1020,y,referenceAddress(owner,slave&&!slave.unplaced?slave:p),8);
+        const hit=rowJump(g,y,()=>jumpToPin(p.id,pin),'Go to terminal '+aks(p)+' Pin :'+pinNumber(p,pin));hit.setAttribute('height',25);hit.setAttribute('y',y-17);hit.classList.add('terminal-list-link');hit.dataset.partId=p.id;
         hit.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
       });
       const endpointRow=ref=>{const [id,index]=ref.split(':');return rows.findIndex(e=>(e.p.id===id&&(Number(index)===8||e.pin===Number(index)))||pinSlave(e.p.id,e.pin)?.id===id||pinSlave(e.p.id,8)?.id===id)};
       const bridges=drawingPages().flatMap(s=>s.wires.filter(w=>w.kind==='bridge'));let lane=0;
       for(const wire of bridges){const a=endpointRow(wire.a),b=endpointRow(wire.b);if(a<0&&b<0)continue;const x=910+(lane++%5)*14,ya=rowY(a<0?b:a)-5,yb=rowY(b<0?a:b)-5;
-        const path=el('path',{d:'M '+(x-8)+' '+ya+' H '+x+' V '+yb+' H '+(x-8),fill:'none',stroke:'#795548','stroke-width':3,class:'terminal-bridge'},g);el('title',{},path).textContent='Brücke → '+wire.a+' ↔ '+wire.b;path.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(rows[a<0?b:a].p)});
+        const path=el('path',{d:'M '+(x-8)+' '+ya+' H '+x+' V '+yb+' H '+(x-8),fill:'none',stroke:'#795548','stroke-width':3,class:'terminal-bridge'},g);el('title',{},path).textContent='Bridge → '+wire.a+' ↔ '+wire.b;path.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(rows[a<0?b:a].p)});
         for(const y of [ya,yb])el('circle',{cx:x-8,cy:y,r:3,fill:'#795548'},g);
         if(a<0||b<0)generatedText(g,x+4,ya-3,'↗',12,'bold','#795548');
       }
-      if(!sheet.terminalEntries?.length)generatedText(g,46,170,'Keine Klemmen in dieser Leiste.',13);
+      if(!sheet.terminalEntries?.length)generatedText(g,46,170,'No terminals in this strip.',13);
     }
   }
   function editProjectInfo(){
     const info=model.projectInfo||{};
-    showPanel('<h2>Projektkopf</h2><form id="projectInfoForm" class="wire-form">'+[['title','Projekttitel',model.title],['company','Firma',info.company],['documentNumber','Dokumentnummer',info.documentNumber],['revision','Revision',info.revision||'A'],['author','Bearbeiter',info.author],['date','Datum',info.date],['description','Beschreibung',info.description]].map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+'<button type="submit">Übernehmen</button></form>');
-    document.querySelector('#projectInfoForm').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);model.title=String(data.get('title')).trim()||'Neuer Schaltplan';model.projectInfo={};for(const key of ['company','documentNumber','revision','author','date','description'])model.projectInfo[key]=String(data.get(key)).trim();render();closePanel()};
+    showPanel('<h2>Project information</h2><form id="projectInfoForm" class="wire-form">'+[['title','Project title',model.title],['company','Company',info.company],['documentNumber','Document number',info.documentNumber],['revision','Revision',info.revision||'A'],['author','Drawn by',info.author],['date','Date',info.date],['description','Description',info.description]].map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+'<button type="submit">Apply</button></form>');
+    document.querySelector('#projectInfoForm').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);model.title=String(data.get('title')).trim()||'New schematic';model.projectInfo={};for(const key of ['company','documentNumber','revision','author','date','description'])model.projectInfo[key]=String(data.get(key)).trim();render();closePanel()};
   }
-  const projectInfoButton=document.createElement('button');projectInfoButton.id='projectInfoBtn';projectInfoButton.textContent='Projektkopf';projectInfoButton.onclick=editProjectInfo;nav.append(projectInfoButton);
+  const projectInfoButton=document.createElement('button');projectInfoButton.id='projectInfoBtn';projectInfoButton.textContent='Project information';projectInfoButton.onclick=editProjectInfo;nav.append(projectInfoButton);
   // A shared drawing frame for every document page.
   title.setAttribute('transform','translate(22 710)');title.replaceChildren();
   el('rect',{x:0,y:0,width:1084,height:66,fill:'none',stroke:'#60737c','stroke-width':1},title);
   el('path',{d:'M0 27 H1084 M0 47 H1084 M500 0 V66 M735 0 V66 M900 0 V66',stroke:'#60737c',fill:'none'},title);
-  generatedText(title,8,10,'PROJEKT',6,'bold','#73838b');generatedText(title,8,22,'',12,'bold').id='a4Project';
-  generatedText(title,508,10,'DOKUMENT / REVISION',6,'bold','#73838b');generatedText(title,508,22,'',9).id='a4Document';
-  generatedText(title,743,10,'BEARBEITER / DATUM',6,'bold','#73838b');generatedText(title,743,22,'',8).id='a4Author';
-  generatedText(title,908,10,'BLATT / GESAMT',6,'bold','#73838b');generatedText(title,908,23,'',11,'bold').id='a4Number';
+  generatedText(title,8,10,'PROJECT',6,'bold','#73838b');generatedText(title,8,22,'',12,'bold').id='a4Project';
+  generatedText(title,508,10,'DOCUMENT / REVISION',6,'bold','#73838b');generatedText(title,508,22,'',9).id='a4Document';
+  generatedText(title,743,10,'DRAWN BY / DATE',6,'bold','#73838b');generatedText(title,743,22,'',8).id='a4Author';
+  generatedText(title,908,10,'SHEET / TOTAL',6,'bold','#73838b');generatedText(title,908,23,'',11,'bold').id='a4Number';
   generatedText(title,8,40,'',10).id='a4Sheet';generatedText(title,508,40,'',9).id='a4Company';
-  generatedText(title,908,40,'A4 · 297 × 210 mm',8);generatedText(title,8,60,'LEITWERK · Schaltplandokumentation',8,'bold','#138b78');generatedText(title,743,60,'Version '+APP_VERSION,8);
+  generatedText(title,908,40,'A4 · 297 × 210 mm',8);generatedText(title,8,60,'LEITWERK · Schematic documentation',8,'bold','#138b78');generatedText(title,743,60,'Version '+APP_VERSION,8);
   const zones=el('g',{id:'frameZones'},pageContent);
   for(let i=0;i<8;i++)generatedText(zones,22+(i+.5)*1084/8,17,String(i+1),7,'normal','#73838b');
   for(let i=0;i<5;i++)generatedText(zones,10,22+(i+.5)*688/5,String.fromCharCode(65+i),7,'normal','#73838b');
   const renderBeforeDocument=render;
   render=function(){renderBeforeDocument();grid.style.display=isGenerated(pages[activeSheet])?'none':'';const info=model.projectInfo||{};document.querySelector('#a4Project').textContent=model.title;document.querySelector('#a4Document').textContent=(info.documentNumber||'—')+' / '+(info.revision||'A');document.querySelector('#a4Author').textContent=(info.author||'—')+' · '+(info.date||'—');document.querySelector('#a4Company').textContent=info.company||''};
-  addSheet=function(){const name=prompt('Name des neuen Schaltplanblatts','Blatt '+pageNumber(drawingPages().length+1));if(name===null)return;const sheet={id:crypto.randomUUID(),title:name.trim()||'Schaltplan',parts:[],wires:[]};pages.push(sheet);setSheet(pages.length-1);closePanel()};
+  addSheet=function(){const name=prompt('Name of the new drawing sheet','Sheet '+pageNumber(drawingPages().length+1));if(name===null)return;const sheet={id:crypto.randomUUID(),title:name.trim()||'Schematic',parts:[],wires:[]};pages.push(sheet);setSheet(pages.length-1);closePanel()};
   document.querySelector('#sheetAdd').onclick=addSheet;
   const refreshBeforeDocument=refreshSheetPanel;
-  refreshSheetPanel=function(){refreshBeforeDocument();sheetPanel.querySelectorAll('.sheetItem').forEach((button,i)=>{button.dataset.sheetKind=pages[i].kind||'drawing';if(isGenerated(pages[i]))button.querySelector('small').textContent='Automatisch · '+documentKind(pages[i])})};
-  document.querySelector('#saveBtn').onclick=()=>{render();download(new Blob([JSON.stringify({appVersion:APP_VERSION,title:model.title,projectInfo:model.projectInfo||{},sheets:pages.map(serializableSheet),activeSheet,activeSheetId:pages[activeSheet].id||pages[activeSheet].generatedId},null,2)],{type:'application/json'}),(model.title||'Projekt')+'.json')};
+  refreshSheetPanel=function(){refreshBeforeDocument();sheetPanel.querySelectorAll('.sheetItem').forEach((button,i)=>{button.dataset.sheetKind=pages[i].kind||'drawing';if(isGenerated(pages[i]))button.querySelector('small').textContent='Automatic · '+documentKind(pages[i])})};
+  document.querySelector('#saveBtn').onclick=()=>{render();download(new Blob([JSON.stringify({appVersion:APP_VERSION,title:model.title,projectInfo:model.projectInfo||{},sheets:pages.map(serializableSheet),activeSheet,activeSheetId:pages[activeSheet].id||pages[activeSheet].generatedId},null,2)],{type:'application/json'}),(model.title||'Project')+'.json')};
   document.querySelector('#fileInput').onchange=async e=>{
     const file=e.target.files[0];if(!file)return;
     try{
-      const data=JSON.parse(await file.text()),source=Array.isArray(data.sheets)?data.sheets:[{title:'Schaltplan',parts:data.parts||[],wires:data.wires||[]}];
+      const data=JSON.parse(await file.text()),source=Array.isArray(data.sheets)?data.sheets:[{title:'Schematic',parts:data.parts||[],wires:data.wires||[]}];
       const wanted=data.activeSheetId||source[data.activeSheet||0]?.id||source[data.activeSheet||0]?.generatedId;
       const drawings=source.filter(s=>!isGenerated(s)).map(s=>({...s,id:s.id||crypto.randomUUID(),parts:(s.parts||[]).map(p=>({...p,functionCode:p.functionCode||'A1',locationCode:p.locationCode||'P1',deviceCode:p.deviceCode||p.label})),wires:s.wires||[]}));
-      if(!drawings.length)drawings.push({id:crypto.randomUUID(),title:'Schaltplan',parts:[],wires:[]});
+      if(!drawings.length)drawings.push({id:crypto.randomUUID(),title:'Schematic',parts:[],wires:[]});
       upgradeLegacyStrips(drawings);
-      pages.splice(0,pages.length,...drawings);activeSheet=Math.max(0,drawings.findIndex(s=>s.id===wanted));model.title=data.title||'Geöffneter Schaltplan';model.projectInfo=data.projectInfo||{};model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;
+      pages.splice(0,pages.length,...drawings);activeSheet=Math.max(0,drawings.findIndex(s=>s.id===wanted));model.title=data.title||'Opened schematic';model.projectInfo=data.projectInfo||{};model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;
       nextId=1+Math.max(0,...drawings.flatMap(s=>[...s.parts,...s.wires]).map(p=>Number(String(p.id).slice(1))||0));selected=null;drag=null;segmentDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';render();
-      const target=pages.findIndex(s=>(s.id||s.generatedId)===wanted);if(target>=0)setSheet(target);toast('Projekt geladen');
-    }catch(error){toast('Datei konnte nicht gelesen werden')}e.target.value='';
+      const target=pages.findIndex(s=>(s.id||s.generatedId)===wanted);if(target>=0)setSheet(target);toast('Project loaded');
+    }catch(error){toast('Could not read the file')}e.target.value='';
   };
   let middlePan=null;
   function svgPoint(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
@@ -723,29 +748,29 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   async function exportProjectPDF(){
     const button=document.querySelector('#exportBtn');if(button.disabled)return;
     const previous={page:pages[activeSheet],selected,pan:{...pan},zoom,mode};button.disabled=true;pdfExporting=true;
-    showPanel('<h2>PDF wird erstellt</h2><p id="pdfProgress">Dokument wird vorbereitet …</p>');
+    showPanel('<h2>Creating PDF</h2><p id="pdfProgress">Preparing document …</p>');
     try{
       render();const documentPages=[...pages],images=[];
       for(let i=0;i<documentPages.length;i++){
-        setSheet(pages.indexOf(documentPages[i]));document.querySelector('#pdfProgress').textContent='Seite '+pageNumber(i+1)+' von '+pageNumber(documentPages.length);
+        setSheet(pages.indexOf(documentPages[i]));document.querySelector('#pdfProgress').textContent='Page '+pageNumber(i+1)+' of '+pageNumber(documentPages.length);
         const clone=cloneForExport();clone.querySelectorAll('.screen-only').forEach(n=>n.remove());
         const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml;charset=utf-8'}));
         const image=new Image();
-        try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Seitenbild konnte nicht geladen werden'));image.src=url});
-          const canvas=document.createElement('canvas');canvas.width=2820;canvas.height=1995;const context=canvas.getContext('2d');if(!context)throw new Error('Canvas nicht verfügbar');
+        try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Could not load the page image'));image.src=url});
+          const canvas=document.createElement('canvas');canvas.width=2820;canvas.height=1995;const context=canvas.getContext('2d');if(!context)throw new Error('Canvas is unavailable');
           context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
           const raw=atob(canvas.toDataURL('image/jpeg',.96).split(',')[1]),data=Uint8Array.from(raw,c=>c.charCodeAt(0));images.push({width:canvas.width,height:canvas.height,data});canvas.width=canvas.height=0;
         }finally{URL.revokeObjectURL(url)}
       }
-      download(buildProjectPDF(images),(model.title||'Projekt').replace(/[\\/:*?"<>|]/g,'-')+'.pdf');toast('Projekt als PDF exportiert');
-    }catch(error){toast('PDF-Export fehlgeschlagen: '+error.message)}
+      download(buildProjectPDF(images),(model.title||'Project').replace(/[\\/:*?"<>|]/g,'-')+'.pdf');toast('Project exported as PDF');
+    }catch(error){toast('PDF export failed: '+error.message)}
     finally{const index=pages.indexOf(previous.page);if(index>=0)setSheet(index);selected=previous.selected;pan=previous.pan;zoom=previous.zoom;mode=previous.mode;render();applyView();pdfExporting=false;closePanel();button.disabled=false}
   }
   document.querySelector('#exportBtn').onclick=exportProjectPDF;
 
   function isConnectionMode(){return mode==='wire'||mode==='bridge'}
   function partTerminals(p){
-    if(p.type!=='connector')return TYPES[p.type]?.terminals||[];
+    if(p.type==='relay')return TYPES.relay.terminals.slice(0,2+3*(p.relayContactCount||3)).map(([x,y])=>[x,y+relayOffset(p)]);if(p.type!=='connector')return TYPES[p.type]?.terminals||[];
     const count=Math.max(2,Math.min(8,Array.isArray(p.pinNumbers)?p.pinNumbers.length:2));
     return Array.from({length:count},(_,i)=>[(i-Math.floor(count/2)+(i>=Math.floor(count/2)?1:0))*48,0]);
   }
@@ -775,12 +800,12 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const firstMaster=stripMaster(first),lastMaster=stripMaster(last);if(firstMaster||lastMaster)return Boolean(firstMaster&&lastMaster&&firstMaster.id===lastMaster.id);
     return terminalStripName(first)===terminalStripName(last)&&(first.functionCode||'A1')===(last.functionCode||'A1')&&(first.locationCode||'P1')===(last.locationCode||'P1');
   }
-  const bridgeButton=document.createElement('button');bridgeButton.id='bridgeTool';bridgeButton.textContent='Klemmenbrücke';bridgeButton.title='Braune, dickere Verbindung innerhalb einer Klemmenleiste';
+  const bridgeButton=document.createElement('button');bridgeButton.id='bridgeTool';bridgeButton.textContent='Terminal bridge';bridgeButton.title='Thicker brown connection within a terminal strip';
   bridgeButton.onclick=()=>{mode=mode==='bridge'?'select':'bridge';wireStart=null;wirePoints=[];preview.style.display='none';render()};nav.append(bridgeButton);
   const renderBeforeBridges=render;
-  render=function(){renderBeforeBridges();bridgeButton.classList.toggle('active',mode==='bridge');bridgeButton.setAttribute('aria-pressed',String(mode==='bridge'));document.querySelector('#wireTool').classList.toggle('active',mode==='wire');preview.style.stroke=mode==='bridge'?'#795548':'';if(mode==='bridge')document.querySelector('#statusText').textContent=wireStart?'Zielpin der Klemmenbrücke wählen':'Klemmenbrücke: Startpin wählen'};
+  render=function(){renderBeforeBridges();bridgeButton.classList.toggle('active',mode==='bridge');bridgeButton.setAttribute('aria-pressed',String(mode==='bridge'));document.querySelector('#wireTool').classList.toggle('active',mode==='wire');preview.style.stroke=mode==='bridge'?'#795548':'';if(mode==='bridge')document.querySelector('#statusText').textContent=wireStart?'Choose the bridge target pin':'Terminal bridge: choose a start pin'};
   createTerminalStrip=function(){
-    showPanel('<h2>Klemmenleiste erstellen</h2><form id="stripForm" class="wire-form"><label>Leiste<input name="code" value="X1" required></label><label>Anzahl Klemmen<input name="count" type="number" min="2" max="24" value="4" required></label><label>Pins je Klemme<input name="pins" type="number" min="2" max="8" value="2" required></label><label>Klemmentyp (nachträglich je Klemme änderbar)<input name="terminalType" value="Durchgangsklemme"></label><label>Herstellernummer<input name="manufacturerNumber"></label><label>SAP-Nummer<input name="sapNumber"></label><button type="submit">Erstellen</button></form>');
+    showPanel('<h2>Create terminal strip</h2><form id="stripForm" class="wire-form"><label>Strip<input name="code" value="X1" required></label><label>Number of terminals<input name="count" type="number" min="2" max="24" value="4" required></label><label>Pins per terminal<input name="pins" type="number" min="2" max="8" value="2" required></label><label>Terminal type (editable per terminal)<input name="terminalType" value="Feed-through terminal"></label><label>Manufacturer number<input name="manufacturerNumber"></label><label>SAP number<input name="sapNumber"></label><button type="submit">Create</button></form>');
     document.querySelector('#stripForm').onsubmit=e=>{
       e.preventDefault();const data=new FormData(e.target),count=Number(data.get('count')),pins=Number(data.get('pins')),code=String(data.get('code')).trim();
       if(!code||!Number.isInteger(count)||count<2||count>24||!Number.isInteger(pins)||pins<2||pins>8)return;
@@ -790,7 +815,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const columns=Math.max(1,Math.floor(56/(pins+2)));
       for(let i=0;i<count;i++){
         addPart('connector',{x:(8+(i%columns)*(pins+2))*4*1128/297,y:(16+Math.floor(i/columns)*6)*4*1128/297});
-        const p=model.parts.at(-1);Object.assign(p,{deviceCode:code+'.'+(i+1),label:code+':'+(i+1),masterId:master.id,stripName:code,terminalNumber:String(i+1),terminalType:String(data.get('terminalType')).trim()||'Durchgangsklemme',manufacturerNumber:master.manufacturerNumber,sapNumber:master.sapNumber,pinNumbers:Array.from({length:pins},(_,pin)=>String(i+1)+String.fromCharCode(97+pin))});
+        const p=model.parts.at(-1);Object.assign(p,{deviceCode:code+'.'+(i+1),label:code+':'+(i+1),masterId:master.id,stripName:code,terminalNumber:String(i+1),terminalType:String(data.get('terminalType')).trim()||'Feed-through terminal',manufacturerNumber:master.manufacturerNumber,sapNumber:master.sapNumber,pinNumbers:Array.from({length:pins},(_,pin)=>String(i+1)+String.fromCharCode(97+pin))});
       }
       selected={kind:'part',id:master.id};render();closePanel();showDeviceInTree(master);
     };document.querySelector('#stripForm input').focus();
@@ -807,7 +832,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       if(sheet.parts.some(p=>p.id===oldMaster.masterId&&p.type==='terminal-strip'))continue;
       const group=[oldMaster],seen=new Set([oldMaster.id]);
       for(let i=0;i<group.length;i++)for(const p of sheet.parts)if(p.type==='connector'&&p.masterId===group[i].id&&!seen.has(p.id)){seen.add(p.id);group.push(p)}
-      const code=oldMaster.assemblyName,master={id:'p'+next++,type:'terminal-strip',x:oldMaster.x,y:oldMaster.y-6*4*1128/297,label:code,deviceCode:code,value:'Klemmenleiste',assemblyName:code,functionCode:oldMaster.functionCode,locationCode:oldMaster.locationCode,manufacturerNumber:oldMaster.manufacturerNumber||'',sapNumber:oldMaster.sapNumber||''};
+      const code=oldMaster.assemblyName,master={id:'p'+next++,type:'terminal-strip',x:oldMaster.x,y:oldMaster.y-6*4*1128/297,label:code,deviceCode:code,value:'Terminal strip',assemblyName:code,functionCode:oldMaster.functionCode,locationCode:oldMaster.locationCode,manufacturerNumber:oldMaster.manufacturerNumber||'',sapNumber:oldMaster.sapNumber||''};
       sheet.parts.splice(sheet.parts.indexOf(oldMaster),0,master);
       group.forEach((p,i)=>{p.masterId=master.id;p.stripName=code;p.terminalNumber=p.terminalNumber||terminalOrdinal(p)||String(i+1);if(!Array.isArray(p.pinNumbers)||(p.pinNumbers.length===2&&p.pinNumbers[0]==='1'&&p.pinNumbers[1]==='2'))p.pinNumbers=[p.terminalNumber+'a',p.terminalNumber+'b'];delete p.assemblyName});
     }
@@ -816,15 +841,15 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function gridSpacing(){return (altGrid?2:4)*1128/297}
   const gridLines=el('path',{fill:'none',stroke:'#b1c0ca','stroke-width':.35},pattern);
   pattern.insertBefore(gridLines,pattern.firstChild);
-  const gridButton=document.createElement('button');gridButton.id='gridToggle';gridButton.title='Raster ein-/ausblenden · Alt gedrückt: 2-mm-Raster';gridButton.style.cssText='width:auto;padding:0 8px;font-size:10px';
+  const gridButton=document.createElement('button');gridButton.id='gridToggle';gridButton.title='Show/hide grid · Hold Alt for the 2 mm grid';gridButton.style.cssText='width:auto;padding:0 8px;font-size:10px';
   document.querySelector('.zoom-controls').prepend(gridButton);
   function updateGridDisplay(){
     const spacing=gridSpacing(),dot=pattern.querySelector('circle');
     pattern.setAttribute('width',spacing);pattern.setAttribute('height',spacing);gridLines.setAttribute('d','M 0 '+spacing+' V 0 H '+spacing);
     dot.setAttribute('cx',0);dot.setAttribute('cy',0);dot.setAttribute('r',altGrid ? .7 : .9);dot.setAttribute('fill','#78909c');
     grid.style.display=gridVisible&&!isGenerated(pages[activeSheet])?'':'none';
-    gridButton.textContent='Raster '+(gridVisible?'ein':'aus')+' · '+(altGrid?'2':'4')+' mm';gridButton.setAttribute('aria-pressed',String(gridVisible));
-    const hud=document.querySelector('#hud');hud.textContent=hud.textContent.replace(/\d+ mm Raster/,(altGrid?'2':'4')+' mm Raster');
+    gridButton.textContent='grid '+(gridVisible?'on':'off')+' · '+(altGrid?'2':'4')+' mm';gridButton.setAttribute('aria-pressed',String(gridVisible));
+    const hud=document.querySelector('#hud');hud.textContent=hud.textContent.replace(/\d+ mm grid/,(altGrid?'2':'4')+' mm grid');
   }
   const renderBeforeGridControl=render;render=function(){renderBeforeGridControl();updateGridDisplay()};
   const applyBeforeGridControl=applyView;applyView=function(){applyBeforeGridControl();updateGridDisplay()};
@@ -851,18 +876,18 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     setSheet(pages.indexOf(target));
     const r=svg.getBoundingClientRect(),point=toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});
     p.x=snap(point.x);p.y=snap(point.y);delete p.unplaced;
-    selected={kind:'part',id};treeFocusId=id;mode='select';render();toast('Gerät platziert – zum Verschieben ziehen');
+    selected={kind:'part',id};treeFocusId=id;mode='select';render();toast('Device placed — drag to move it');
   }
   function addStripTerminal(master){
     const owner=deviceEntries().find(e=>e.p===master)?.sheet;if(!owner)return;
     const children=deviceEntries().filter(e=>e.p.masterId===master.id&&e.p.type==='connector').map(e=>e.p);
     let n=1;while(children.some(p=>terminalOrdinal(p)===String(n)))n++;
     const template=children.at(-1),code=master.deviceCode||master.label;
-    const p={id:'p'+nextId++,type:'connector',x:snap((template?.x??master.x)+((template?.pinNumbers?.length||2)+2)*gridSpacing()),y:template?.y??snap(master.y+6*gridSpacing()),label:code+':'+n,deviceCode:code+'.'+n,masterId:master.id,stripName:code,terminalNumber:String(n),value:template?.value||'Klemme',terminalType:template?.terminalType||'Durchgangsklemme',manufacturerNumber:template?.manufacturerNumber||'',sapNumber:template?.sapNumber||'',functionCode:master.functionCode,locationCode:master.locationCode,pinNumbers:Array.from({length:template?.pinNumbers?.length||2},(_,i)=>n+String.fromCharCode(97+i)),unplaced:true};
-    owner.parts.push(p);treeFocusId=p.id;render();toast('Klemme hinzugefügt – in der Geräteübersicht platzieren');
+    const p={id:'p'+nextId++,type:'connector',x:snap((template?.x??master.x)+((template?.pinNumbers?.length||2)+2)*gridSpacing()),y:template?.y??snap(master.y+6*gridSpacing()),label:code+':'+n,deviceCode:code+'.'+n,masterId:master.id,stripName:code,terminalNumber:String(n),value:template?.value||'Terminal',terminalType:template?.terminalType||'Feed-through terminal',manufacturerNumber:template?.manufacturerNumber||'',sapNumber:template?.sapNumber||'',functionCode:master.functionCode,locationCode:master.locationCode,pinNumbers:Array.from({length:template?.pinNumbers?.length||2},(_,i)=>n+String.fromCharCode(97+i)),unplaced:true};
+    owner.parts.push(p);treeFocusId=p.id;render();toast('Terminal added — place it from the device tree');
   }
   function removeStripTerminal(p){
-    if(!confirm('Klemme '+p.label+' dauerhaft aus der Leiste entfernen? Zugehörige Verbindungen werden gelöscht.'))return;
+    if(!confirm('Remove terminal '+p.label+' permanently from the strip? Its attached connections will be removed.'))return;
     const removedIds=new Set([p.id,...descendants(p.id).map(q=>q.id)]);
     for(const sheet of drawingPages()){
       sheet.parts=sheet.parts.filter(q=>!removedIds.has(q.id));sheet.wires=sheet.wires.filter(w=>![w.a,w.b].some(ref=>removedIds.has(ref.split(':')[0])));
@@ -876,8 +901,8 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const g=partsG.lastElementChild.querySelector('.part-geometry');
     g.querySelectorAll('.symbol').forEach(n=>n.remove());const positions=partTerminals(p).map(t=>t[0]);el('path',{d:'M '+Math.min(...positions)+' 0 H '+Math.max(...positions),class:'symbol'},g);
     const port=el('circle',{cx:0,cy:0,r:9,style:'fill:#795548;stroke:#fff',fill:'#795548',stroke:'#fff','stroke-width':2,'pointer-events':mode==='bridge'?'all':'none',class:'terminal bridge-terminal','data-part':p.id,'data-term':8,tabindex:0},g);
-    const caption=el('title',{},port);caption.textContent='Separater Brückenanschluss';
-    port.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(e.button!==0)return;if(mode==='bridge')onTerminal(p.id,8);else toast('Brückenanschluss: Klemmenbrücke aktivieren')});
+    const caption=el('title',{},port);caption.textContent='Separate bridge terminal';
+    port.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(e.button!==0)return;if(mode==='bridge')onTerminal(p.id,8);else toast('Bridge terminal: activate Terminal bridge')});
   };
   const placementStyle=document.createElement('style');placementStyle.textContent=`
     .device-unplaced>summary{background:#fff2a8;color:#514000;border-radius:4px}
@@ -898,7 +923,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const pos=owner===pages[activeSheet]?findTerminal(parent.id+':'+index):null;
     const p={id:'p'+nextId++,type:'terminal-pin',masterId:parent.id,pinIndex:index,label:parent.label+':'+pinNumber(parent,index),value:pinNumber(parent,index),deviceCode:(parent.deviceCode||parent.label)+'.'+pinNumber(parent,index),functionCode:parent.functionCode,locationCode:parent.locationCode,x:pos?.x??snap(parent.x),y:pos?.y??snap(parent.y),pinNumbers:[pinNumber(parent,index)]};
     target.parts.push(p);
-    setSheet(pages.indexOf(target));selected={kind:'part',id:p.id};treeFocusId=p.id;mode='select';render();toast('Einzelanschluss platziert – unabhängig verschiebbar');
+    setSheet(pages.indexOf(target));selected={kind:'part',id:p.id};treeFocusId=p.id;mode='select';render();toast('Separate pin placed — move it independently');
   }
   const compactStyle=document.createElement('style');compactStyle.textContent='.device-node{margin:2px 0!important;padding-left:7px!important}.device-node>summary{padding:3px!important;display:flex;align-items:center;gap:3px}.device-node>summary::before{content:"▸";cursor:pointer}.device-node[open]>summary::before{content:"▾"}.device-node>summary small{display:none}.device-node>summary .device-jump{font-size:11px!important;padding:2px!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.terminal-manage{padding:1px 5px!important}.pin-node{display:inline-block!important;margin:2px!important;padding:2px 5px!important;font-size:10px!important}.terminal-bridge{pointer-events:stroke}';document.head.append(compactStyle);
 
@@ -909,7 +934,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function clearAreaSelection(){areaSelection?.rect.remove();areaSelection=null;selectionDrag=null;selectedParts.clear()}
   const setSheetBeforeArea=setSheet;setSheet=function(i){clearAreaSelection();setSheetBeforeArea(i)};
   const editBeforeArea=editComponent;editComponent=function(p){if(selectedParts.size>1&&selectedParts.has(p.id)){editSelectedParts();return}clearAreaSelection();editBeforeArea(p)};
-  const renderBeforeArea=render;render=function(){renderBeforeArea();for(const root of partsG.children)if(selectedParts.has(root.dataset.id))root.classList.add('selected');if(selectedParts.size>1)document.querySelector('#statusText').textContent=selectedParts.size+' Objekte ausgewählt · gemeinsam verschieben'};
+  const renderBeforeArea=render;render=function(){renderBeforeArea();for(const root of partsG.children)if(selectedParts.has(root.dataset.id))root.classList.add('selected');if(selectedParts.size>1)document.querySelector('#statusText').textContent=selectedParts.size+' objects selected · drag to move together'};
   function selectionMembers(){
     const ids=new Set(selectedParts);
     for(const id of selectedParts)for(const p of descendants(id))if(p.type!=='terminal-pin'&&!p.unplaced&&model.parts.includes(p))ids.add(p.id);
@@ -963,11 +988,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       placePin(entry.p,payload.index);const pin=pinSlave(entry.p.id,payload.index);if(!pin)return;entry=deviceEntries().find(e=>e.p===pin);
     }
     const p=entry.p,attached=entry.sheet.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id));
-    if(entry.sheet!==target&&attached){toast('Verdrahtete Geräte auf ihrem Zeichnungsblatt verschieben');return}
+    if(entry.sheet!==target&&attached){toast('Move wired devices on their current drawing sheet');return}
     clearAreaSelection();drag=null;segmentDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';
     if(entry.sheet!==target){entry.sheet.parts=entry.sheet.parts.filter(q=>q!==p);target.parts.push(p);setSheet(pages.indexOf(target))}
     if(p.unplaced){p.x=snap(point.x);p.y=snap(point.y);delete p.unplaced}else moveComponent(p,snap(point.x),snap(point.y));
-    mode='select';selected={kind:'part',id:p.id};treeFocusId=p.id;render();toast('Gerät platziert');
+    mode='select';selected={kind:'part',id:p.id};treeFocusId=p.id;render();toast('Device placed');
   },true);
   const overviewStyle=document.createElement('style');overviewStyle.textContent=`
     .device-node>summary .device-jump{font-size:12px!important;font-weight:700!important;color:#123248!important;background:transparent!important;line-height:1.5;padding:3px 4px!important}
@@ -997,8 +1022,8 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
 
   function editSelectedParts(){
     const parts=model.parts.filter(p=>selectedParts.has(p.id)&&!p.unplaced);if(parts.length<2)return;
-    const fields=[['functionCode','Funktion (=)'],['locationCode','Ort (+)'],['deviceCode','Betriebsmittel (−)'],['value','Wert / Typ'],['manufacturerNumber','Herstellernummer'],['sapNumber','SAP-Nummer']];
-    showPanel('<h2>'+parts.length+' Objekte bearbeiten</h2><p>Nur angehakte Felder werden für alle ausgewählten Objekte übernommen.</p><form id="batchForm" class="wire-form">'+fields.map(([key,label])=>'<label><span><input type="checkbox" name="apply_'+key+'" style="width:auto"> '+label+' übernehmen</span><input name="'+key+'" value="'+safe(parts.every(p=>(p[key]||'')===(parts[0][key]||''))?parts[0][key]||'':'')+'"></label>').join('')+['label','value','aks','pins','reference','annotation'].map(key=>'<label>'+({label:'Betriebsmittel',value:'Wert',aks:'AKS',pins:'Pin-Nummern',reference:'Seitenverweis',annotation:'Freitext'}[key])+' anzeigen<select name="visibility_'+key+'"><option value="">Unverändert</option><option value="true">Ein</option><option value="false">Aus</option></select></label>').join('')+'<div class="actions"><button type="submit">Übernehmen</button><button type="button" id="batchCancel">Abbrechen</button></div></form>');
+    const fields=[['functionCode','Function (=)'],['locationCode','Location (+)'],['deviceCode','Equipment tag (−)'],['value','Value / type'],['manufacturerNumber','Manufacturer number'],['sapNumber','SAP number']];
+    showPanel('<h2>'+parts.length+' selected objects</h2><p>Only checked fields are applied to all selected objects.</p><form id="batchForm" class="wire-form">'+fields.map(([key,label])=>'<label><span><input type="checkbox" name="apply_'+key+'" style="width:auto"> '+label+' apply</span><input name="'+key+'" value="'+safe(parts.every(p=>(p[key]||'')===(parts[0][key]||''))?parts[0][key]||'':'')+'"></label>').join('')+['label','value','aks','pins','reference','annotation'].map(key=>'<label>'+({label:'Equipment tag',value:'Value',aks:'AKS',pins:'Pin numbers',reference:'Cross-reference',annotation:'Text annotation'}[key])+' visibility<select name="visibility_'+key+'"><option value="">Unchanged</option><option value="true">On</option><option value="false">Off</option></select></label>').join('')+'<div class="actions"><button type="submit">Apply</button><button type="button" id="batchCancel">Cancel</button></div></form>');
     document.querySelector('#batchCancel').onclick=closePanel;
     document.querySelector('#batchForm').onsubmit=e=>{e.preventDefault();const values=new FormData(e.target);for(const p of parts){for(const [key] of fields)if(values.has('apply_'+key))p[key]=String(values.get(key)).trim().replace(key==='deviceCode'?/^[−-]/:key==='functionCode'?/^=/:key==='locationCode'?/^\+/:/^$/,'');for(const key of ['label','value','aks','pins','reference','annotation'])if(values.get('visibility_'+key)!==''){p.textVisibility??={};p.textVisibility[key]=values.get('visibility_'+key)==='true'}}render();closePanel()};
   }
@@ -1017,7 +1042,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   function terminalCaptionInfo(p){
     const terminal=p.type==='connector'?p:p.type==='terminal-pin'?deviceEntries().find(e=>e.p.id===p.masterId)?.p:null;if(terminal?.type!=='connector')return null;
-    const master=stripMaster(terminal);return {key:master?.id||(terminal.functionCode||'A1')+'|'+(terminal.locationCode||'P1')+'|'+terminalStripName(terminal),type:terminal.terminalType||terminal.value||'Klemme'};
+    const master=stripMaster(terminal);return {key:master?.id||(terminal.functionCode||'A1')+'|'+(terminal.locationCode||'P1')+'|'+terminalStripName(terminal),type:terminal.terminalType||terminal.value||'Terminal'};
   }
   function precedingTerminal(p,info){
     const spacing=4*1128/297;return model.parts.filter(q=>q!==p&&!q.unplaced&&Math.abs(q.x-p.x)<.001&&[spacing,2*spacing].some(d=>Math.abs(p.y-q.y-d)<.001)).map(q=>({q,info:terminalCaptionInfo(q)})).filter(e=>e.info?.key===info.key).sort((a,b)=>b.q.y-a.q.y)[0]?.info;
@@ -1028,23 +1053,36 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     addBeforeRelay(type,position);const master=model.parts.at(-1),used=new Set(deviceEntries().filter(e=>e.p!==master).map(e=>e.p.deviceCode));let n=1;while(used.has('K'+n))n++;
     master.deviceCode='K'+n;master.pinNumbers=['A1','A2','11','12','14','21','22','24','31','32','34'];
     const coil={id:'p'+nextId++,type:'relay-coil',masterId:master.id,deviceCode:master.deviceCode,label:master.deviceCode,value:'24 V DC',functionCode:master.functionCode,locationCode:master.locationCode,pinNumbers:['A1','A2'],x:snap(master.x-4*4*1128/297),y:snap(master.y+10*4*1128/297),unplaced:true};model.parts.push(coil);
-    for(let i=0;i<3;i++)model.parts.push({id:'p'+nextId++,type:'relay-contact',masterId:coil.id,relayContact:i+1,deviceCode:master.deviceCode,label:master.deviceCode,value:'Wechsler '+(i+1),functionCode:master.functionCode,locationCode:master.locationCode,pinNumbers:[String((i+1)*10+1),String((i+1)*10+2),String((i+1)*10+4)],x:snap(master.x+i*8*4*1128/297),y:coil.y,unplaced:true});
-    selected={kind:'part',id:master.id};render();toast('Relais mit Spule und 3 Wechslern erstellt – Teilsymbole separat platzierbar');
+    for(let i=0;i<3;i++)model.parts.push({id:'p'+nextId++,type:'relay-contact',masterId:coil.id,relayContact:i+1,deviceCode:master.deviceCode,label:master.deviceCode,value:'Changeover contact '+(i+1),functionCode:master.functionCode,locationCode:master.locationCode,pinNumbers:[String((i+1)*10+1),String((i+1)*10+2),String((i+1)*10+4)],x:snap(master.x+i*8*4*1128/297),y:coil.y,unplaced:true});
+    selected={kind:'part',id:master.id};render();toast('Relay with a coil and three changeover contacts created — place its sub-symbols separately');
   };
   function followRelaySymbol(id){
-    const entry=deviceEntries().find(e=>e.p.id===id);if(!entry){toast('Teilsymbol nicht mehr vorhanden');return}
+    const entry=deviceEntries().find(e=>e.p.id===id);if(!entry){toast('The sub-symbol no longer exists');return}
     if(entry.p.unplaced){delete entry.p.unplaced;render()}jumpToDevice(id);
   }
+  function relayOffset(p){return p.relayContactCount===1?144:p.relayContactCount===2?96:0}
+  function relayBound(p){return p.relayContactCount===1?144:p.relayContactCount===2?192:288}
+  const drawBeforeCatalogGeometry=drawPart;drawPart=function(p){
+    drawBeforeCatalogGeometry(p);const root=partsG.lastElementChild,geometry=root.querySelector('.part-geometry');
+    if(p.type==='relay'&&p.relayContactCount&&p.relayContactCount<3){
+      for(const node of Array.from(geometry.children))if(node.classList.contains('symbol')||node.tagName.toLowerCase()==='g')node.remove();const bound=relayBound(p),offset=relayOffset(p);
+      el('rect',{x:-120,y:-bound,width:240,height:2*bound,rx:5,class:'symbol relay-enclosure','stroke-dasharray':'8 5'},geometry);
+      drawSymbol(el('g',{transform:'translate(0 '+(-240+offset)+')'},geometry),'relay-coil');for(const y of [-96,48,192].slice(0,p.relayContactCount))drawSymbol(el('g',{transform:'translate(0 '+(y+offset)+')'},geometry),'switch-changeover');
+      el('path',{d:'M 0 '+(-216+offset)+' V '+([-96,48,192][p.relayContactCount-1]+offset+24),class:'symbol','stroke-dasharray':'5 5'},geometry);
+    }
+    if(p.type==='contactor-4p'&&p.contactConfiguration==='2NO2NC')geometry.querySelectorAll('[data-contactor-contact]').forEach(node=>{if(Number(node.dataset.contactorContact)>=2){node.replaceChildren();drawSymbol(node,'switch-nc')}});
+    if(p.type.startsWith('mcb-')||['contactor-4p','auxiliary-contact'].includes(p.type)){const box=geometry.getBBox(),body=geometry.querySelector('.part-body');for(const [key,value] of Object.entries({x:box.x-8,y:box.y-8,width:box.width+16,height:box.height+16}))body.setAttribute(key,value)}
+  };
   const drawBeforeRelayReferences=drawPart;drawPart=function(p){
     drawBeforeRelayReferences(p);if(p.type==='relay'){
-      const root=partsG.lastElementChild,body=root.querySelector('.part-body');for(const [key,value] of Object.entries({x:-120,y:-288,width:240,height:576}))body.setAttribute(key,value);
+      const root=partsG.lastElementChild,body=root.querySelector('.part-body');for(const [key,value] of Object.entries({x:-120,y:-relayBound(p),width:240,height:2*relayBound(p)}))body.setAttribute(key,value);
       const coil=deviceEntries().find(e=>e.p.type==='relay-coil'&&e.p.masterId===p.id)?.p,contacts=coil?deviceEntries().filter(e=>e.p.type==='relay-contact'&&e.p.masterId===coil.id).sort((a,b)=>a.p.relayContact-b.p.relayContact).map(e=>e.p):[];
-      [coil,...contacts].forEach((part,i)=>{if(!part)return;const offset=[-240,-96,48,192][i]*SYMBOL_SCALE*(p.flipY?-1:1),angle=(p.rotation||0)*Math.PI/180,vertical=Math.abs(Math.cos(angle))>.5,x=vertical?124*SYMBOL_SCALE:-offset*Math.sin(angle),y=offset*Math.cos(angle)-(vertical?3:24);
-        const entry=deviceEntries().find(e=>e.p===part),link=el('text',{x,y,'font-size':6,'text-anchor':vertical?'start':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'relay-symbol-link','data-relay-target':part.id,tabindex:0,role:'button',style:'cursor:pointer'},root);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent=(i?'W'+i:'Spule')+' '+(part.unplaced?'＋':referenceAddress(entry.sheet,part));el('title',{},link).textContent=(i?'Wechsler '+i:'Spule')+' · '+part.pinNumbers.join('/')+' · '+(part.unplaced?'Platzieren':referenceAddress(entry.sheet,part));link.setAttribute('aria-label',(i?'Wechsler '+i:'Spule')+' öffnen');link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(part.id)});link.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();followRelaySymbol(part.id)}});
+      [coil,...contacts].forEach((part,i)=>{if(!part)return;const offset=([-240,-96,48,192][i]+relayOffset(p))*SYMBOL_SCALE*(p.flipY?-1:1),angle=(p.rotation||0)*Math.PI/180,vertical=Math.abs(Math.cos(angle))>.5,x=vertical?124*SYMBOL_SCALE:-offset*Math.sin(angle),y=offset*Math.cos(angle)-(vertical?3:24);
+        const entry=deviceEntries().find(e=>e.p===part),link=el('text',{x,y,'font-size':6,'text-anchor':vertical?'start':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'relay-symbol-link','data-relay-target':part.id,tabindex:0,role:'button',style:'cursor:pointer'},root);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent=(i?'C'+i:'Coil')+' '+(part.unplaced?'＋':referenceAddress(entry.sheet,part));el('title',{},link).textContent=(i?'Changeover contact '+i:'Coil')+' · '+part.pinNumbers.join('/')+' · '+(part.unplaced?'Place':referenceAddress(entry.sheet,part));link.setAttribute('aria-label',(i?'Changeover contact '+i:'Coil')+' open');link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(part.id)});link.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();followRelaySymbol(part.id)}});
       });
     }else if(['relay-coil','relay-contact'].includes(p.type)){
       const master=relayMaster(p);if(!master)return;const entry=deviceEntries().find(e=>e.p===master),caption=partsG.lastElementChild.querySelector('.part-caption');
-      const link=el('text',{x:0,y:-17,'font-size':7,'text-anchor':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'page-reference relay-parent-link','data-relay-target':master.id,style:'cursor:pointer'},caption);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent='Gesamt '+(master.unplaced?'＋':referenceAddress(entry.sheet,master));link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(master.id)});
+      const link=el('text',{x:0,y:-17,'font-size':7,'text-anchor':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'page-reference relay-parent-link','data-relay-target':master.id,style:'cursor:pointer'},caption);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent='Complete '+(master.unplaced?'＋':referenceAddress(entry.sheet,master));link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(master.id)});
     }
   };
   const jumpBeforeRelay=jumpToPage;jumpToPage=function(){const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id),master=p&&relayMaster(p);if(master&&master!==p){followRelaySymbol(master.id);return}jumpBeforeRelay()};
@@ -1056,7 +1094,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const link=el('text',{x:0,y:0,'font-size':6,'text-anchor':'middle',fill:'#2463b5',class:'page-reference terminal-cross-reference','data-terminal-target':target.id,'data-pin-index':index,style:'cursor:pointer'},caption);link.textContent=label+' '+referenceAddress(entry.sheet,target);if(p.textVisibility?.reference===false)link.style.display='none';link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();jumpToDevice(target.id)});
     }
     if(p.type==='connector')for(const index of [...partTerminals(p).map((_,i)=>i),8]){const slave=pinSlave(p.id,index);if(slave&&!slave.unplaced)linkTo(slave,':'+pinNumber(p,index),index)}
-    if(p.type==='terminal-pin'){const parent=deviceEntries().find(e=>e.p.id===p.masterId)?.p;if(parent)linkTo(parent,'Hauptsymbol',p.pinIndex)}
+    if(p.type==='terminal-pin'){const parent=deviceEntries().find(e=>e.p.id===p.masterId)?.p;if(parent)linkTo(parent,'Main symbol',p.pinIndex)}
   };
   const drawBeforeTopCaptions=drawPart;drawPart=function(p){
     drawBeforeTopCaptions(p);if(p.type==='text')return;const root=partsG.lastElementChild,caption=root.querySelector('.part-caption'),geometry=root.querySelector('.part-geometry');caption.setAttribute('transform','rotate(0)');
@@ -1065,6 +1103,77 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     if(terminal){const previous=precedingTerminal(p,terminal);caption.querySelector('.part-value').textContent=terminal.type;if(previous){caption.querySelector('.part-aks').style.display='none';caption.querySelector('.part-label').style.display='none';if(previous.type===terminal.type)caption.querySelector('.part-value').style.display='none'}}
     const order=['.part-aks','.part-label','.part-value','.page-reference'];const texts=order.flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent);texts.forEach((n,i)=>{n.setAttribute('x',0);n.setAttribute('y',top-4-(texts.length-i-1)*9)});
   };
+  const motorPins={'motor-ac-1p':['L','N','PE'],'motor-ac-3p':['U1','V1','W1','PE'],'motor-ac-6t':['U1','V1','W1','U2','V2','W2','PE']};
+  const addBeforeAcMotors=addPart;addPart=function(type,position){addBeforeAcMotors(type,position);if(motorPins[type]){model.parts.find(p=>p.id===selected.id).pinNumbers=[...motorPins[type]];render()}};
+  const manufacturerLibraries=[],catalogProducts=new Map();
+  const catalogSection=document.createElement('section');catalogSection.id='manufacturerLibraries';
+  const catalogHeading=document.createElement('h2');catalogHeading.textContent='Manufacturer libraries';catalogHeading.style.cssText='font-size:12px;margin:18px 0 8px';catalogSection.append(catalogHeading);
+  const catalogSearch=document.createElement('input');catalogSearch.id='catalogSearch';catalogSearch.type='search';catalogSearch.placeholder='Search manufacturer or model';catalogSearch.setAttribute('aria-label','Search manufacturer libraries');catalogSection.append(catalogSearch);
+  const catalogFolders=document.createElement('div');catalogFolders.id='catalogFolders';catalogSection.append(catalogFolders);
+  const catalogFile=document.createElement('input');catalogFile.type='file';catalogFile.accept='.json,application/json';catalogFile.id='catalogFile';catalogFile.hidden=true;
+  const catalogImport=document.createElement('button');catalogImport.id='catalogImport';catalogImport.textContent='Import manufacturer library';catalogImport.onclick=()=>catalogFile.click();catalogSection.append(catalogImport,catalogFile);lib.append(catalogSection);
+  function validateManufacturerLibrary(data){
+    const text=value=>typeof value==='string'&&value.trim().length>0;
+    if(data?.schemaVersion!==1||!text(data.manufacturer)||typeof data.id!=='string'||!/^[-a-z0-9]+$/.test(data.id)||!Array.isArray(data.families))throw new Error('Invalid manufacturer library');
+    if(data.sources!==undefined&&(!Array.isArray(data.sources)||data.sources.some(s=>!text(s?.url))))throw new Error('Invalid library sources');
+    const ids=new Set(),families=new Set();let count=0;
+    for(const f of data.families){
+      if(!text(f?.id)||families.has(f.id)||!text(f.name)||!Array.isArray(f.products))throw new Error('Invalid or duplicate product family');families.add(f.id);
+      for(const p of f.products){
+        if(++count>10000||!text(p?.id)||ids.has(p.id)||!text(p.model)||!Object.hasOwn(TYPES,p.symbol))throw new Error('Invalid or duplicate product');ids.add(p.id);
+        if(['name','manufacturerNumber','terminalType','coilValue','verification'].some(key=>p[key]!==undefined&&typeof p[key]!=='string'))throw new Error('Product text fields must be strings');
+        if(p.attributes!==undefined&&(!p.attributes||typeof p.attributes!=='object'||Array.isArray(p.attributes)))throw new Error('Invalid product attributes');
+        if(p.pinNumbers!==undefined&&(!Array.isArray(p.pinNumbers)||p.pinNumbers.some(n=>!text(n))||new Set(p.pinNumbers).size!==p.pinNumbers.length))throw new Error('Pin numbers must be unique text values');
+        if(p.symbol==='relay'&&p.relayContactCount!==undefined&&![1,2,3].includes(p.relayContactCount))throw new Error('Relay contact count must be 1–3');
+        if(p.symbol==='connector'&&p.pinNumbers&&(p.pinNumbers.length<2||p.pinNumbers.length>8))throw new Error('Terminal pin count must be 2–8');
+      }
+    }
+    return data;
+  }
+  function renderManufacturerLibraries(){
+    catalogFolders.replaceChildren();catalogProducts.clear();const query=catalogSearch.value.trim().toLowerCase();
+    for(const library of manufacturerLibraries){
+      const folder=document.createElement('details');folder.className='manufacturer-library';folder.dataset.manufacturer=library.id;folder.open=Boolean(query);const heading=document.createElement('summary');heading.textContent=library.manufacturer;folder.append(heading);
+      const note=document.createElement('p');note.className='catalog-note';note.textContent=library.coverage?.status||'Reference data — verify product specifications and ordering codes.';folder.append(note);let visible=0;
+      for(const family of library.families){const group=document.createElement('details');group.className='catalog-family';group.dataset.family=family.id;group.open=Boolean(query);const summary=document.createElement('summary');summary.textContent=family.name;group.append(summary);let matches=0;
+        for(const product of family.products){const key=library.id+':'+product.id;catalogProducts.set(key,{library,product});if(query&&!((library.manufacturer+' '+family.name+' '+product.model+' '+product.name).toLowerCase().includes(query)))continue;matches++;
+          const button=document.createElement('button');button.className='catalog-part';button.dataset.catalogProduct=key;button.draggable=true;button.title=(product.name||product.model)+' · '+(product.verification==='user-specified-reference'?'User-specified article':'Unverified catalogue reference');
+          const name=document.createElement('strong');name.textContent=product.model;const detail=document.createElement('span');detail.textContent=product.name&&product.name!==product.model?product.name.replace(product.model,'').replace(/^\s*·\s*/,''):TYPES[product.symbol].name;button.append(name,detail);
+          button.onclick=()=>placeCatalogProduct(key);button.ondragstart=e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-product',key);e.dataTransfer.effectAllowed='copy'};group.append(button);
+        }
+        if(matches){visible+=matches;folder.append(group)}
+      }
+      if(visible){const downloadButton=document.createElement('button');downloadButton.className='catalog-download';downloadButton.textContent='Download '+library.manufacturer+' library';downloadButton.onclick=()=>download(new Blob([JSON.stringify(library,null,2)],{type:'application/json'}),library.id+'.json');folder.append(downloadButton);catalogFolders.append(folder)}
+    }
+  }
+  function registerManufacturerLibrary(data){const library=validateManufacturerLibrary(data),index=manufacturerLibraries.findIndex(l=>l.id===library.id);if(index>=0)manufacturerLibraries[index]=library;else manufacturerLibraries.push(library);renderManufacturerLibraries()}
+  catalogSearch.oninput=renderManufacturerLibraries;
+  catalogFile.onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>2*1024*1024)throw new Error('Library file is too large');registerManufacturerLibrary(JSON.parse(await file.text()));toast('Manufacturer library imported')}catch(error){toast('Could not import library: '+error.message)}e.target.value=''};
+  function nextEquipmentTag(prefix,exclude=new Set()){const used=new Set(deviceEntries().filter(e=>!exclude.has(e.p.id)).map(e=>e.p.deviceCode));let n=1;while(used.has(prefix+n))n++;return prefix+n}
+  function placeCatalogProduct(key,position){
+    const entry=catalogProducts.get(key);if(!entry)return;const {library,product}=entry;const previous=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id),existingStrip=previous?.type==='terminal-strip'?previous:previous?.type==='connector'?stripMaster(previous):null;
+    if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));
+    const before=new Set(deviceEntries().map(e=>e.p.id));addPart(product.symbol,position);const p=model.parts.find(p=>p.id===selected.id);if(!p)return;
+    const created=model.parts.filter(q=>!before.has(q.id));p.value=product.model;p.manufacturerNumber=product.manufacturerNumber||'';p.sapNumber='';p.manufacturer=library.manufacturer;
+    p.catalog={libraryId:library.id,productId:product.id,manufacturer:library.manufacturer,model:product.model,verification:product.verification||'not-verified',attributes:structuredClone(product.attributes||{}),sourceUrls:(library.sources||[]).map(s=>s.url)};
+    if(product.pinNumbers)p.pinNumbers=[...product.pinNumbers];
+    if(p.type==='connector'){
+      let master=existingStrip;if(!master){const code=nextEquipmentTag('X',new Set([p.id]));master={id:'p'+nextId++,type:'terminal-strip',deviceCode:code,label:code,value:'Terminal strip',x:p.x,y:snap(p.y-6*gridSpacing()),functionCode:p.functionCode,locationCode:p.locationCode,unplaced:true};model.parts.push(master)}
+      const used=new Set(deviceEntries().filter(e=>e.p!==p&&e.p.masterId===master.id).map(e=>terminalOrdinal(e.p)));let number=1;while(used.has(String(number)))number++;
+      p.masterId=master.id;p.stripName=master.deviceCode;p.deviceCode=master.deviceCode;p.terminalNumber=String(number);p.terminalType=product.terminalType||product.model;p.pinNumbers=Array.from({length:product.pinNumbers?.length||2},(_,i)=>number+String.fromCharCode(97+i));
+    }
+    if(p.type==='relay'){
+      const count=product.relayContactCount||3;p.relayContactCount=count;p.pinNumbers=['A1','A2','11','12','14','21','22','24','31','32','34'].slice(0,2+3*count);
+      const removed=new Set(created.filter(q=>q.type==='relay-contact'&&q.relayContact>count).map(q=>q.id));model.parts=model.parts.filter(q=>!removed.has(q.id));
+      for(const sub of created.filter(q=>q!==p&&!removed.has(q.id))){sub.catalog=structuredClone(p.catalog);sub.catalogAssemblyPart=true;sub.manufacturer=library.manufacturer;sub.manufacturerNumber=p.manufacturerNumber;if(sub.type==='relay-coil')sub.value=product.coilValue||'Coil voltage to specify'}
+    }
+    if(p.type==='contactor-4p')p.contactConfiguration=product.attributes?.contactConfiguration||'4NO';
+    selected={kind:'part',id:p.id};render();toast(library.manufacturer+' '+product.model+' inserted');
+  }
+  svg.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('application/x-cabel-product')&&!isGenerated(pages[activeSheet])){e.preventDefault();e.dataTransfer.dropEffect='copy'}},true);
+  svg.addEventListener('drop',e=>{const key=e.dataTransfer.getData('application/x-cabel-product');if(!key)return;e.preventDefault();e.stopImmediatePropagation();const p=toWorld(e);if(isGenerated(pages[activeSheet])||p.x<0||p.x>1128||p.y<0||p.y>798)return;placeCatalogProduct(key,p)},true);
+  for(const library of globalThis.CABEL_CATALOGS||[])try{registerManufacturerLibrary(library)}catch(error){toast('Manufacturer library error: '+error.message)}
+  const manufacturerStyle=document.createElement('style');manufacturerStyle.textContent='#catalogSearch{width:100%;padding:7px;background:#101923;color:#e8eef2;border:1px solid #40525d;border-radius:5px;font-size:11px}.manufacturer-library>summary{font-size:12px;color:#62d6bd;padding:8px 0;cursor:pointer}.catalog-family>summary{padding:5px 0;font-size:11px;cursor:pointer}.catalog-part{display:block;width:100%;text-align:left;margin:4px 0;padding:7px;background:#1b2934;border:1px solid #40525d;border-radius:5px;cursor:grab}.catalog-part strong{display:block;font-size:11px}.catalog-part span,.catalog-note{display:block;font-size:10px;color:#b8c6ce}.catalog-note{line-height:1.4}.catalog-download,#catalogImport{font-size:10px;padding:6px;margin:5px 0;background:#243541;border:1px solid #40525d;border-radius:4px}.catalog-origin{font-size:11px;color:#b9c7ce}';document.head.append(manufacturerStyle);
   // Record document changes; one drag or synchronous action is one undo step.
   const undoStack=[],redoStack=[];let historyTimer=null,historyRestoring=false,historyReset=false,historyLoading=false;
   function historyState(){return {title:model.title,projectInfo:model.projectInfo||{},sheets:drawingPages().map(s=>({id:s.id,title:s.title,parts:s.parts,wires:s.wires})),nextId}}
@@ -1083,11 +1192,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   document.addEventListener('keydown',e=>{
     if(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())||editingTarget(e.target)||modal.style.display==='grid'||pdfExporting)return;
-    e.preventDefault();e.stopImmediatePropagation();commitHistory();const redo=e.key.toLowerCase()==='y'||e.shiftKey,source=redo?redoStack:undoStack,destination=redo?undoStack:redoStack;if(!source.length){toast(redo?'Nichts zu wiederholen':'Nichts rückgängig zu machen');return}destination.push(historyCurrent);restoreHistory(source.pop());toast(redo?'Wiederholt':'Rückgängig');
+    e.preventDefault();e.stopImmediatePropagation();commitHistory();const redo=e.key.toLowerCase()==='y'||e.shiftKey,source=redo?redoStack:undoStack,destination=redo?undoStack:redoStack;if(!source.length){toast(redo?'Nothing to redo':'Nothing to undo');return}destination.push(historyCurrent);restoreHistory(source.pop());toast(redo?'Redo':'Undo');
   },true);
   document.addEventListener('pointerup',()=>setTimeout(commitHistory,0),true);
   document.addEventListener('pointercancel',()=>setTimeout(commitHistory,0),true);
-  const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Projekt geladen')historyReset=true;commitHistory()}};
+  const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Project loaded')historyReset=true;commitHistory()}};
   render();
 
 

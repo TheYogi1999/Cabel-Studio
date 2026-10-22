@@ -1,0 +1,3119 @@
+{
+  "schemaVersion": 1,
+  "id": "abb",
+  "manufacturer": "ABB",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; current availability and ordering codes require manufacturer verification.",
+    "reason": "Manufacturer sites were blocked by the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://new.abb.com/low-voltage/products/system-pro-m/miniature-circuit-breakers",
+      "retrieved": false
+    },
+    {
+      "url": "https://new.abb.com/low-voltage/products/motor-protection/Contactors-and-contactor-relays/af-contactor-range",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "s200",
+      "name": "S200 miniature circuit breakers",
+      "scope": "Reference designations for common 1–4-pole B/C/D variants, 6–63 A; not a verified complete catalogue.",
+      "products": [
+        {
+          "id": "s201-b6",
+          "model": "S201-B6",
+          "name": "S201-B6 · 1P · 6 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b10",
+          "model": "S201-B10",
+          "name": "S201-B10 · 1P · 10 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b13",
+          "model": "S201-B13",
+          "name": "S201-B13 · 1P · 13 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b16",
+          "model": "S201-B16",
+          "name": "S201-B16 · 1P · 16 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b20",
+          "model": "S201-B20",
+          "name": "S201-B20 · 1P · 20 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b25",
+          "model": "S201-B25",
+          "name": "S201-B25 · 1P · 25 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b32",
+          "model": "S201-B32",
+          "name": "S201-B32 · 1P · 32 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b40",
+          "model": "S201-B40",
+          "name": "S201-B40 · 1P · 40 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b50",
+          "model": "S201-B50",
+          "name": "S201-B50 · 1P · 50 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-b63",
+          "model": "S201-B63",
+          "name": "S201-B63 · 1P · 63 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "B",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c6",
+          "model": "S201-C6",
+          "name": "S201-C6 · 1P · 6 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c10",
+          "model": "S201-C10",
+          "name": "S201-C10 · 1P · 10 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c13",
+          "model": "S201-C13",
+          "name": "S201-C13 · 1P · 13 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c16",
+          "model": "S201-C16",
+          "name": "S201-C16 · 1P · 16 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c20",
+          "model": "S201-C20",
+          "name": "S201-C20 · 1P · 20 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c25",
+          "model": "S201-C25",
+          "name": "S201-C25 · 1P · 25 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c32",
+          "model": "S201-C32",
+          "name": "S201-C32 · 1P · 32 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c40",
+          "model": "S201-C40",
+          "name": "S201-C40 · 1P · 40 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c50",
+          "model": "S201-C50",
+          "name": "S201-C50 · 1P · 50 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-c63",
+          "model": "S201-C63",
+          "name": "S201-C63 · 1P · 63 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "C",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d6",
+          "model": "S201-D6",
+          "name": "S201-D6 · 1P · 6 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d10",
+          "model": "S201-D10",
+          "name": "S201-D10 · 1P · 10 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d13",
+          "model": "S201-D13",
+          "name": "S201-D13 · 1P · 13 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d16",
+          "model": "S201-D16",
+          "name": "S201-D16 · 1P · 16 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d20",
+          "model": "S201-D20",
+          "name": "S201-D20 · 1P · 20 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d25",
+          "model": "S201-D25",
+          "name": "S201-D25 · 1P · 25 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d32",
+          "model": "S201-D32",
+          "name": "S201-D32 · 1P · 32 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d40",
+          "model": "S201-D40",
+          "name": "S201-D40 · 1P · 40 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d50",
+          "model": "S201-D50",
+          "name": "S201-D50 · 1P · 50 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s201-d63",
+          "model": "S201-D63",
+          "name": "S201-D63 · 1P · 63 A",
+          "symbol": "mcb-1p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "tripCurve": "D",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "id": "s202-b6",
+          "model": "S202-B6",
+          "name": "S202-B6 · 2P · 6 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b10",
+          "model": "S202-B10",
+          "name": "S202-B10 · 2P · 10 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b13",
+          "model": "S202-B13",
+          "name": "S202-B13 · 2P · 13 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b16",
+          "model": "S202-B16",
+          "name": "S202-B16 · 2P · 16 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b20",
+          "model": "S202-B20",
+          "name": "S202-B20 · 2P · 20 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b25",
+          "model": "S202-B25",
+          "name": "S202-B25 · 2P · 25 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b32",
+          "model": "S202-B32",
+          "name": "S202-B32 · 2P · 32 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b40",
+          "model": "S202-B40",
+          "name": "S202-B40 · 2P · 40 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b50",
+          "model": "S202-B50",
+          "name": "S202-B50 · 2P · 50 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-b63",
+          "model": "S202-B63",
+          "name": "S202-B63 · 2P · 63 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "B",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c6",
+          "model": "S202-C6",
+          "name": "S202-C6 · 2P · 6 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c10",
+          "model": "S202-C10",
+          "name": "S202-C10 · 2P · 10 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c13",
+          "model": "S202-C13",
+          "name": "S202-C13 · 2P · 13 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c16",
+          "model": "S202-C16",
+          "name": "S202-C16 · 2P · 16 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c20",
+          "model": "S202-C20",
+          "name": "S202-C20 · 2P · 20 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c25",
+          "model": "S202-C25",
+          "name": "S202-C25 · 2P · 25 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c32",
+          "model": "S202-C32",
+          "name": "S202-C32 · 2P · 32 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c40",
+          "model": "S202-C40",
+          "name": "S202-C40 · 2P · 40 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c50",
+          "model": "S202-C50",
+          "name": "S202-C50 · 2P · 50 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-c63",
+          "model": "S202-C63",
+          "name": "S202-C63 · 2P · 63 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "C",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d6",
+          "model": "S202-D6",
+          "name": "S202-D6 · 2P · 6 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d10",
+          "model": "S202-D10",
+          "name": "S202-D10 · 2P · 10 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d13",
+          "model": "S202-D13",
+          "name": "S202-D13 · 2P · 13 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d16",
+          "model": "S202-D16",
+          "name": "S202-D16 · 2P · 16 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d20",
+          "model": "S202-D20",
+          "name": "S202-D20 · 2P · 20 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d25",
+          "model": "S202-D25",
+          "name": "S202-D25 · 2P · 25 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d32",
+          "model": "S202-D32",
+          "name": "S202-D32 · 2P · 32 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d40",
+          "model": "S202-D40",
+          "name": "S202-D40 · 2P · 40 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d50",
+          "model": "S202-D50",
+          "name": "S202-D50 · 2P · 50 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s202-d63",
+          "model": "S202-D63",
+          "name": "S202-D63 · 2P · 63 A",
+          "symbol": "mcb-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "tripCurve": "D",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "id": "s203-b6",
+          "model": "S203-B6",
+          "name": "S203-B6 · 3P · 6 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b10",
+          "model": "S203-B10",
+          "name": "S203-B10 · 3P · 10 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b13",
+          "model": "S203-B13",
+          "name": "S203-B13 · 3P · 13 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b16",
+          "model": "S203-B16",
+          "name": "S203-B16 · 3P · 16 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b20",
+          "model": "S203-B20",
+          "name": "S203-B20 · 3P · 20 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b25",
+          "model": "S203-B25",
+          "name": "S203-B25 · 3P · 25 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b32",
+          "model": "S203-B32",
+          "name": "S203-B32 · 3P · 32 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b40",
+          "model": "S203-B40",
+          "name": "S203-B40 · 3P · 40 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b50",
+          "model": "S203-B50",
+          "name": "S203-B50 · 3P · 50 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-b63",
+          "model": "S203-B63",
+          "name": "S203-B63 · 3P · 63 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "B",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c6",
+          "model": "S203-C6",
+          "name": "S203-C6 · 3P · 6 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c10",
+          "model": "S203-C10",
+          "name": "S203-C10 · 3P · 10 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c13",
+          "model": "S203-C13",
+          "name": "S203-C13 · 3P · 13 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c16",
+          "model": "S203-C16",
+          "name": "S203-C16 · 3P · 16 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c20",
+          "model": "S203-C20",
+          "name": "S203-C20 · 3P · 20 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c25",
+          "model": "S203-C25",
+          "name": "S203-C25 · 3P · 25 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c32",
+          "model": "S203-C32",
+          "name": "S203-C32 · 3P · 32 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c40",
+          "model": "S203-C40",
+          "name": "S203-C40 · 3P · 40 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c50",
+          "model": "S203-C50",
+          "name": "S203-C50 · 3P · 50 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-c63",
+          "model": "S203-C63",
+          "name": "S203-C63 · 3P · 63 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "C",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d6",
+          "model": "S203-D6",
+          "name": "S203-D6 · 3P · 6 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d10",
+          "model": "S203-D10",
+          "name": "S203-D10 · 3P · 10 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d13",
+          "model": "S203-D13",
+          "name": "S203-D13 · 3P · 13 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d16",
+          "model": "S203-D16",
+          "name": "S203-D16 · 3P · 16 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d20",
+          "model": "S203-D20",
+          "name": "S203-D20 · 3P · 20 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d25",
+          "model": "S203-D25",
+          "name": "S203-D25 · 3P · 25 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d32",
+          "model": "S203-D32",
+          "name": "S203-D32 · 3P · 32 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d40",
+          "model": "S203-D40",
+          "name": "S203-D40 · 3P · 40 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d50",
+          "model": "S203-D50",
+          "name": "S203-D50 · 3P · 50 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s203-d63",
+          "model": "S203-D63",
+          "name": "S203-D63 · 3P · 63 A",
+          "symbol": "mcb-3p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "tripCurve": "D",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "id": "s204-b6",
+          "model": "S204-B6",
+          "name": "S204-B6 · 4P · 6 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b10",
+          "model": "S204-B10",
+          "name": "S204-B10 · 4P · 10 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b13",
+          "model": "S204-B13",
+          "name": "S204-B13 · 4P · 13 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b16",
+          "model": "S204-B16",
+          "name": "S204-B16 · 4P · 16 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b20",
+          "model": "S204-B20",
+          "name": "S204-B20 · 4P · 20 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b25",
+          "model": "S204-B25",
+          "name": "S204-B25 · 4P · 25 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b32",
+          "model": "S204-B32",
+          "name": "S204-B32 · 4P · 32 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b40",
+          "model": "S204-B40",
+          "name": "S204-B40 · 4P · 40 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b50",
+          "model": "S204-B50",
+          "name": "S204-B50 · 4P · 50 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-b63",
+          "model": "S204-B63",
+          "name": "S204-B63 · 4P · 63 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "B",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c6",
+          "model": "S204-C6",
+          "name": "S204-C6 · 4P · 6 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c10",
+          "model": "S204-C10",
+          "name": "S204-C10 · 4P · 10 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c13",
+          "model": "S204-C13",
+          "name": "S204-C13 · 4P · 13 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c16",
+          "model": "S204-C16",
+          "name": "S204-C16 · 4P · 16 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c20",
+          "model": "S204-C20",
+          "name": "S204-C20 · 4P · 20 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c25",
+          "model": "S204-C25",
+          "name": "S204-C25 · 4P · 25 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c32",
+          "model": "S204-C32",
+          "name": "S204-C32 · 4P · 32 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c40",
+          "model": "S204-C40",
+          "name": "S204-C40 · 4P · 40 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c50",
+          "model": "S204-C50",
+          "name": "S204-C50 · 4P · 50 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-c63",
+          "model": "S204-C63",
+          "name": "S204-C63 · 4P · 63 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "C",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d6",
+          "model": "S204-D6",
+          "name": "S204-D6 · 4P · 6 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 6,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d10",
+          "model": "S204-D10",
+          "name": "S204-D10 · 4P · 10 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 10,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d13",
+          "model": "S204-D13",
+          "name": "S204-D13 · 4P · 13 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 13,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d16",
+          "model": "S204-D16",
+          "name": "S204-D16 · 4P · 16 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 16,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d20",
+          "model": "S204-D20",
+          "name": "S204-D20 · 4P · 20 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 20,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d25",
+          "model": "S204-D25",
+          "name": "S204-D25 · 4P · 25 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 25,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d32",
+          "model": "S204-D32",
+          "name": "S204-D32 · 4P · 32 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 32,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d40",
+          "model": "S204-D40",
+          "name": "S204-D40 · 4P · 40 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 40,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d50",
+          "model": "S204-D50",
+          "name": "S204-D50 · 4P · 50 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 50,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "s204-d63",
+          "model": "S204-D63",
+          "name": "S204-D63 · 4P · 63 A",
+          "symbol": "mcb-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "tripCurve": "D",
+            "ratedCurrentA": 63,
+            "family": "S200",
+            "availability": "Verify the exact variant in the manufacturer catalogue."
+          },
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s200-accessories",
+      "name": "S200 accessories",
+      "scope": "Auxiliary/signal contacts, releases and busbars; exact compatibility must be checked.",
+      "products": [
+        {
+          "id": "s2c-h6r",
+          "model": "S2C-H6R",
+          "name": "S2C-H6R · Auxiliary contact",
+          "symbol": "auxiliary-contact",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "s2c-s-h6r",
+          "model": "S2C-S/H6R",
+          "name": "S2C-S/H6R · Auxiliary / signal contact",
+          "symbol": "auxiliary-contact",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "s2c-a1",
+          "model": "S2C-A1",
+          "name": "S2C-A1 · Shunt release — voltage to specify",
+          "symbol": "trip-coil",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "s2c-a2",
+          "model": "S2C-A2",
+          "name": "S2C-A2 · Shunt release — voltage to specify",
+          "symbol": "trip-coil",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "s2c-ua24ac",
+          "model": "S2C-UA24AC",
+          "name": "S2C-UA24AC · Undervoltage release — verify coil",
+          "symbol": "trip-coil",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "s2c-ua230ac",
+          "model": "S2C-UA230AC",
+          "name": "S2C-UA230AC · Undervoltage release — verify coil",
+          "symbol": "trip-coil",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "S200 accessories",
+            "compatibility": "Verify mounting side, device series and control voltage."
+          }
+        },
+        {
+          "id": "ps1-12",
+          "model": "PS1/12",
+          "name": "PS1/12 · 1-pole busbar",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 1,
+            "modulePositions": 12,
+            "compatibility": "Verify pitch, tooth type, current rating and S200 compatibility."
+          }
+        },
+        {
+          "id": "ps2-12",
+          "model": "PS2/12",
+          "name": "PS2/12 · 2-pole busbar",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 2,
+            "modulePositions": 12,
+            "compatibility": "Verify pitch, tooth type, current rating and S200 compatibility."
+          }
+        },
+        {
+          "id": "ps3-12",
+          "model": "PS3/12",
+          "name": "PS3/12 · 3-pole busbar",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 3,
+            "modulePositions": 12,
+            "compatibility": "Verify pitch, tooth type, current rating and S200 compatibility."
+          }
+        },
+        {
+          "id": "ps4-12",
+          "model": "PS4/12",
+          "name": "PS4/12 · 4-pole busbar",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "poles": 4,
+            "modulePositions": 12,
+            "compatibility": "Verify pitch, tooth type, current rating and S200 compatibility."
+          }
+        }
+      ]
+    },
+    {
+      "id": "af-four-pole",
+      "name": "AF four-pole contactors",
+      "scope": "Reference frame/contact arrangements; coil suffixes and larger frames are not a verified complete range.",
+      "products": [
+        {
+          "id": "af09-40-00",
+          "model": "AF09-40-00",
+          "name": "AF09-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF09",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af16-40-00",
+          "model": "AF16-40-00",
+          "name": "AF16-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF16",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af26-40-00",
+          "model": "AF26-40-00",
+          "name": "AF26-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF26",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af38-40-00",
+          "model": "AF38-40-00",
+          "name": "AF38-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF38",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af40-40-00",
+          "model": "AF40-40-00",
+          "name": "AF40-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF40",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af52-40-00",
+          "model": "AF52-40-00",
+          "name": "AF52-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF52",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af65-40-00",
+          "model": "AF65-40-00",
+          "name": "AF65-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF65",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af80-40-00",
+          "model": "AF80-40-00",
+          "name": "AF80-40-00 · 4 NO · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "4NO",
+            "frame": "AF80",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1L1",
+            "2T1",
+            "3L2",
+            "4T2",
+            "5L3",
+            "6T3",
+            "7L4",
+            "8T4"
+          ]
+        },
+        {
+          "id": "af09-22-00",
+          "model": "AF09-22-00",
+          "name": "AF09-22-00 · 2 NO + 2 NC · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "2NO2NC",
+            "frame": "AF09",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "af16-22-00",
+          "model": "AF16-22-00",
+          "name": "AF16-22-00 · 2 NO + 2 NC · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "2NO2NC",
+            "frame": "AF16",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "af26-22-00",
+          "model": "AF26-22-00",
+          "name": "AF26-22-00 · 2 NO + 2 NC · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "2NO2NC",
+            "frame": "AF26",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        },
+        {
+          "id": "af38-22-00",
+          "model": "AF38-22-00",
+          "name": "AF38-22-00 · 2 NO + 2 NC · coil to specify",
+          "symbol": "contactor-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "AF four-pole",
+            "contactConfiguration": "2NO2NC",
+            "frame": "AF38",
+            "coil": "Specify the full coil suffix and voltage before ordering."
+          },
+          "pinNumbers": [
+            "A1",
+            "A2",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ]
+        }
+      ]
+    }
+  ]
+}

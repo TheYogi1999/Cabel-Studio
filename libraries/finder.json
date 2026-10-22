@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "finder",
+  "manufacturer": "Finder",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; current availability and ordering codes require manufacturer verification.",
+    "reason": "Manufacturer sites were blocked by the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://www.findernet.com/en/worldwide/series/60-series-power-relays-6-10-a/",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "series-60",
+      "name": "Series 60 power relays",
+      "scope": "60.11 / 60.12 / 60.13 family templates and the user-specified 60.13.9.024.0074 article; not every coil/option suffix.",
+      "products": [
+        {
+          "id": "series-60-11",
+          "model": "60.11 · configurable family",
+          "name": "60.11 · 1 changeover contact",
+          "symbol": "relay",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "60",
+            "contactCount": 1,
+            "coil": "Specify AC/DC voltage and complete ordering suffix.",
+            "note": "Family template, not a complete orderable article."
+          },
+          "relayContactCount": 1
+        },
+        {
+          "id": "series-60-12",
+          "model": "60.12 · configurable family",
+          "name": "60.12 · 2 changeover contacts",
+          "symbol": "relay",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "60",
+            "contactCount": 2,
+            "coil": "Specify AC/DC voltage and complete ordering suffix.",
+            "note": "Family template, not a complete orderable article."
+          },
+          "relayContactCount": 2
+        },
+        {
+          "id": "series-60-13",
+          "model": "60.13 · configurable family",
+          "name": "60.13 · 3 changeover contacts",
+          "symbol": "relay",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "60",
+            "contactCount": 3,
+            "coil": "Specify AC/DC voltage and complete ordering suffix.",
+            "note": "Family template, not a complete orderable article."
+          },
+          "relayContactCount": 3
+        },
+        {
+          "id": "60-13-9-024-0074",
+          "model": "60.13.9.024.0074",
+          "name": "60.13.9.024.0074 · 24 V DC · 3 changeover contacts",
+          "symbol": "relay",
+          "manufacturerNumber": "60.13.9.024.0074",
+          "verification": "user-specified-reference",
+          "attributes": {
+            "family": "60",
+            "contactCount": 3,
+            "coilType": "DC",
+            "coilVoltageV": 24,
+            "variant": "0074",
+            "note": "Exact indicator/test-button/protection options require manufacturer confirmation."
+          },
+          "relayContactCount": 3,
+          "coilValue": "24 V DC"
+        }
+      ]
+    }
+  ]
+}

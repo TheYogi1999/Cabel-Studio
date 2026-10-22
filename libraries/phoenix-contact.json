@@ -1,0 +1,1046 @@
+{
+  "schemaVersion": 1,
+  "id": "phoenix-contact",
+  "manufacturer": "Phoenix Contact",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; current availability and ordering codes require manufacturer verification.",
+    "reason": "Manufacturer sites were blocked by the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://www.phoenixcontact.com/en-pc/products/feed-through-terminal-block-st-25-3031212",
+      "retrieved": false
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-pc/products/terminal-blocks",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "st-feed-through",
+      "name": "ST feed-through / neutral / PE",
+      "scope": "Reference size and function families; colour/article availability has not been verified.",
+      "products": [
+        {
+          "id": "st-2-5",
+          "model": "ST 2,5",
+          "name": "ST 2,5 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 2.5,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 2,5",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-2-5-bu",
+          "model": "ST 2,5 BU",
+          "name": "ST 2,5 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 2.5,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 2,5 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-2-5-pe",
+          "model": "ST 2,5 PE",
+          "name": "ST 2,5 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 2.5,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 2,5 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-4",
+          "model": "ST 4",
+          "name": "ST 4 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 4.0,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 4",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-4-bu",
+          "model": "ST 4 BU",
+          "name": "ST 4 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 4.0,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 4 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-4-pe",
+          "model": "ST 4 PE",
+          "name": "ST 4 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 4.0,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 4 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-6",
+          "model": "ST 6",
+          "name": "ST 6 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 6.0,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 6",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-6-bu",
+          "model": "ST 6 BU",
+          "name": "ST 6 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 6.0,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 6 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-6-pe",
+          "model": "ST 6 PE",
+          "name": "ST 6 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 6.0,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 6 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-10",
+          "model": "ST 10",
+          "name": "ST 10 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 10.0,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 10",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-10-bu",
+          "model": "ST 10 BU",
+          "name": "ST 10 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 10.0,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 10 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-10-pe",
+          "model": "ST 10 PE",
+          "name": "ST 10 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 10.0,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 10 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-16",
+          "model": "ST 16",
+          "name": "ST 16 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 16.0,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 16",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-16-bu",
+          "model": "ST 16 BU",
+          "name": "ST 16 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 16.0,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 16 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-16-pe",
+          "model": "ST 16 PE",
+          "name": "ST 16 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 16.0,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 16 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-35",
+          "model": "ST 35",
+          "name": "ST 35 · Feed-through",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 35.0,
+            "terminalFunction": "Feed-through",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 35",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-35-bu",
+          "model": "ST 35 BU",
+          "name": "ST 35 BU · Neutral",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 35.0,
+            "terminalFunction": "Neutral",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 35 BU",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-35-pe",
+          "model": "ST 35 PE",
+          "name": "ST 35 PE · Protective earth",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST",
+            "nominalCrossSectionMm2": 35.0,
+            "terminalFunction": "Protective earth",
+            "availability": "Verify conductor range, colour and exact article number."
+          },
+          "terminalType": "ST 35 PE",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st-multi",
+      "name": "ST multi-connection / multi-level",
+      "scope": "STTB, TWIN and QUATTRO reference models; physical level connectivity requires confirmation.",
+      "products": [
+        {
+          "id": "sttb-2-5",
+          "model": "STTB 2,5",
+          "name": "STTB 2,5",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 2,5",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "sttb-2-5-bu",
+          "model": "STTB 2,5 BU",
+          "name": "STTB 2,5 BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 2,5 BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "sttb-2-5-pe",
+          "model": "STTB 2,5 PE",
+          "name": "STTB 2,5 PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 2,5 PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "sttb-4",
+          "model": "STTB 4",
+          "name": "STTB 4",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 4",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "sttb-4-bu",
+          "model": "STTB 4 BU",
+          "name": "STTB 4 BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 4 BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "sttb-4-pe",
+          "model": "STTB 4 PE",
+          "name": "STTB 4 PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "STTB 4 PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-2-5-twin",
+          "model": "ST 2,5-TWIN",
+          "name": "ST 2,5-TWIN",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-TWIN",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-2-5-twin-bu",
+          "model": "ST 2,5-TWIN BU",
+          "name": "ST 2,5-TWIN BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-TWIN BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-2-5-twin-pe",
+          "model": "ST 2,5-TWIN PE",
+          "name": "ST 2,5-TWIN PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-TWIN PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-4-twin",
+          "model": "ST 4-TWIN",
+          "name": "ST 4-TWIN",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-TWIN",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-4-twin-bu",
+          "model": "ST 4-TWIN BU",
+          "name": "ST 4-TWIN BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-TWIN BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-4-twin-pe",
+          "model": "ST 4-TWIN PE",
+          "name": "ST 4-TWIN PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 3,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-TWIN PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c"
+          ]
+        },
+        {
+          "id": "st-2-5-quattro",
+          "model": "ST 2,5-QUATTRO",
+          "name": "ST 2,5-QUATTRO",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-QUATTRO",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-2-5-quattro-bu",
+          "model": "ST 2,5-QUATTRO BU",
+          "name": "ST 2,5-QUATTRO BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-QUATTRO BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-2-5-quattro-pe",
+          "model": "ST 2,5-QUATTRO PE",
+          "name": "ST 2,5-QUATTRO PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 2,5-QUATTRO PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-4-quattro",
+          "model": "ST 4-QUATTRO",
+          "name": "ST 4-QUATTRO",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-QUATTRO",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-4-quattro-bu",
+          "model": "ST 4-QUATTRO BU",
+          "name": "ST 4-QUATTRO BU",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-QUATTRO BU",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        },
+        {
+          "id": "st-4-quattro-pe",
+          "model": "ST 4-QUATTRO PE",
+          "name": "ST 4-QUATTRO PE",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "ST multi-connection",
+            "connectionPoints": 4,
+            "note": "Logical pin names are editor defaults; check the physical terminal diagram."
+          },
+          "terminalType": "ST 4-QUATTRO PE",
+          "pinNumbers": [
+            "1a",
+            "1b",
+            "1c",
+            "1d"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st-disconnect-fuse",
+      "name": "ST disconnect / fuse terminals",
+      "scope": "Reference terminal families; exact variants must be checked.",
+      "products": [
+        {
+          "id": "st-25-mt",
+          "model": "ST 2,5-MT",
+          "name": "ST 2,5-MT",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {},
+          "terminalType": "Disconnect terminal",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-4-mt",
+          "model": "ST 4-MT",
+          "name": "ST 4-MT",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {},
+          "terminalType": "Disconnect terminal",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        },
+        {
+          "id": "st-4-hesi",
+          "model": "ST 4-HESI (5X20)",
+          "name": "ST 4-HESI (5X20)",
+          "symbol": "connector",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {},
+          "terminalType": "Fuse terminal",
+          "pinNumbers": [
+            "1a",
+            "1b"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st-accessories",
+      "name": "ST bridges, covers and end stops",
+      "scope": "Reference accessories; no automatic compatibility guarantee.",
+      "products": [
+        {
+          "id": "fbs-2-5",
+          "model": "FBS 2-5",
+          "name": "FBS 2-5",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 2,
+            "pitchFamily": 5,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-3-5",
+          "model": "FBS 3-5",
+          "name": "FBS 3-5",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 3,
+            "pitchFamily": 5,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-4-5",
+          "model": "FBS 4-5",
+          "name": "FBS 4-5",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 4,
+            "pitchFamily": 5,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-5-5",
+          "model": "FBS 5-5",
+          "name": "FBS 5-5",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 5,
+            "pitchFamily": 5,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-10-5",
+          "model": "FBS 10-5",
+          "name": "FBS 10-5",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 10,
+            "pitchFamily": 5,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-2-6",
+          "model": "FBS 2-6",
+          "name": "FBS 2-6",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 2,
+            "pitchFamily": 6,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-3-6",
+          "model": "FBS 3-6",
+          "name": "FBS 3-6",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 3,
+            "pitchFamily": 6,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-4-6",
+          "model": "FBS 4-6",
+          "name": "FBS 4-6",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 4,
+            "pitchFamily": 6,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-5-6",
+          "model": "FBS 5-6",
+          "name": "FBS 5-6",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 5,
+            "pitchFamily": 6,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-10-6",
+          "model": "FBS 10-6",
+          "name": "FBS 10-6",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 10,
+            "pitchFamily": 6,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-2-8",
+          "model": "FBS 2-8",
+          "name": "FBS 2-8",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 2,
+            "pitchFamily": 8,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-3-8",
+          "model": "FBS 3-8",
+          "name": "FBS 3-8",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 3,
+            "pitchFamily": 8,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-4-8",
+          "model": "FBS 4-8",
+          "name": "FBS 4-8",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 4,
+            "pitchFamily": 8,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-5-8",
+          "model": "FBS 5-8",
+          "name": "FBS 5-8",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 5,
+            "pitchFamily": 8,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "fbs-10-8",
+          "model": "FBS 10-8",
+          "name": "FBS 10-8",
+          "symbol": "busbar",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "Plug-in bridge",
+            "positions": 10,
+            "pitchFamily": 8,
+            "compatibility": "Confirm bridge pitch and terminal compatibility."
+          }
+        },
+        {
+          "id": "d-st-2-5",
+          "model": "D-ST 2,5",
+          "name": "D-ST 2,5",
+          "symbol": "catalog-accessory",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "End cover / end stop",
+            "compatibility": "Verify terminal dimensions and mounting rail."
+          }
+        },
+        {
+          "id": "d-st-4",
+          "model": "D-ST 4",
+          "name": "D-ST 4",
+          "symbol": "catalog-accessory",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "End cover / end stop",
+            "compatibility": "Verify terminal dimensions and mounting rail."
+          }
+        },
+        {
+          "id": "d-st-6",
+          "model": "D-ST 6",
+          "name": "D-ST 6",
+          "symbol": "catalog-accessory",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "End cover / end stop",
+            "compatibility": "Verify terminal dimensions and mounting rail."
+          }
+        },
+        {
+          "id": "clipfix-35",
+          "model": "CLIPFIX 35",
+          "name": "CLIPFIX 35",
+          "symbol": "catalog-accessory",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "attributes": {
+            "family": "End cover / end stop",
+            "compatibility": "Verify terminal dimensions and mounting rail."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.14.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.14.1**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -11,7 +11,7 @@ Open `index.html` in a browser, or serve this directory with any static web serv
 - Expand a component folder, then click a symbol to insert it or drag it onto the sheet. Symbols and terminals follow the 4 mm grid; hold **Alt** for a temporary 2 mm grid. Toggle grid visibility with **Grid**.
 - Select **Connect**, click a terminal, choose intermediate grid points, and finish at another terminal. Routes are orthogonal. Moving a component stretches its attached sections and adjusts adjacent bends while leaving the rest of the route in place. Drag horizontal or vertical wire sections to move them perpendicular to their direction.
 - Right-click a symbol, device-tree entry or terminal-list row to edit its properties. Equipment tags, values, AKS, pins and references each have a visibility switch beside the corresponding field. Equipment tag and displayed label use the same value. Text remains upright and unmirrored above the symbol, ordered AKS → equipment tag → value/type.
-- Drag a rectangle over multiple objects to select them. Move, edit common properties, or delete the selection together. Deleting electrical devices from the drawing marks them **unplaced** in yellow in the device tree; placed devices appear in light blue. Click or drag a tree entry back onto a drawing to place it again.
+- Selected objects and active buttons are highlighted in pink. Press **Ctrl/⌘+A** to select all placed objects and visible connections on the current drawing sheet, or drag a rectangle over multiple objects to select them. Move, edit common properties, or delete the selection together. Deleting electrical devices from the drawing marks them **unplaced** in yellow in the device tree; placed devices appear in light blue. Click or drag a tree entry back onto a drawing to place it again.
 - Switch the right sidebar between sheets and devices. AKS fields use dots for nested folders, for example `+TU001.01`. Ctrl/⌘-click a symbol or terminal to reveal its device-tree position.
 - Edit manufacturer numbers, SAP numbers, pin names and master/slave relationships in properties. Device lists include article numbers and links back to symbols. Slaves can be placed independently.
 
@@ -70,6 +70,7 @@ The document automatically maintains a cover, table of contents, drawing sheets,
 | J | Jump to a reference target or choose a sheet |
 | Page Up / Page Down | Previous / next sheet |
 | Hold Alt | Temporary 2 mm grid |
+| Ctrl/⌘+A | Select all placed objects and visible connections on the current drawing sheet |
 | Ctrl/⌘+C / X / V | Copy / cut / paste selected object |
 | Ctrl/⌘+Z | Undo |
 | Ctrl/⌘+Y or Ctrl/⌘+Shift+Z | Redo |
@@ -90,4 +91,4 @@ node tests/browser-smoke.cjs
 node tests/manufacturer-smoke.cjs
 ```
 
-The main smoke check covers placement, editing, routing and segment movement, transformations, clipboard, history, multi-selection, device hierarchy, terminals/bridges, relays, cross-references, grids, generated lists, JSON roundtrips and PDF export. The manufacturer check additionally covers the JSON/bundle agreement, all AC motor variants, product drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminals, Finder contact counts, metadata persistence, library download/import validation, offline file opening, English output and fit-aware bridge labels. Screenshots and PDFs are written under `/tmp`, outside the repository. The `file://` check is explicitly skipped if Chromium administrator policy blocks local-file navigation; HTTP checks still run.
+The main smoke check covers placement, editing, routing and segment movement, transformations, clipboard, history, multi-selection, device hierarchy, terminals/bridges, relays, cross-references, grids, generated lists, JSON roundtrips and PDF export. The manufacturer check additionally covers the JSON/bundle agreement, all AC motor variants, product drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminals, Finder contact counts, metadata persistence, library download/import validation, offline file opening, English output, fit-aware bridge labels, pink selection, current-sheet Ctrl/⌘+A, S200 fixed-contact markings and relay-frame clearance. Screenshots and PDFs are written under `/tmp`, outside the repository. The `file://` check is explicitly skipped if Chromium administrator policy blocks local-file navigation; HTTP checks still run.

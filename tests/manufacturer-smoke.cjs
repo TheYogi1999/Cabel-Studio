@@ -86,7 +86,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await page.locator('[data-manufacturer="abb"] > summary').click();
     assert.deepEqual(JSON.parse((await download('[data-manufacturer="abb"] .catalog-download')).toString()), libraries[0]);
     assert.equal(await page.locator('html').getAttribute('lang'), 'en');
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.14.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.14.1');
     assert.match(await page.title(), /Schematic editor/);
     assert.match(await page.locator('.hint').textContent(), /Right-click/);
     assert.equal(await page.locator('#wireTool').getAttribute('title'), 'Connect (C / W)');
@@ -150,6 +150,13 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
       assert.equal(await page.locator(`#parts > g[data-id="${relay.id}"] .terminal`).count(), 2 + 3 * count);
       assert.equal(await page.locator(`#parts > g[data-id="${relay.id}"] .relay-symbol-link`).count(), count + 1);
       assert.equal(relay.relayContactCount, count);
+      // Keep the coil, all contact terminals and their pin text inside the complete symbol.
+      const margins = await page.locator(`#parts > g[data-id="${relay.id}"]`).evaluate(root => {
+        const box = root.querySelector('.relay-enclosure');
+        const top = +box.getAttribute('y'), bottom = top + +box.getAttribute('height');
+        return Array.from(root.querySelectorAll('.terminal'), n => Math.min(+n.getAttribute('cy') - top, bottom - +n.getAttribute('cy')));
+      });
+      assert.ok(margins.every(m => m >= 48), 'Relay terminal touches or extends beyond the frame');
     }
     assert.equal(exactRelay.manufacturerNumber, '60.13.9.024.0074');
     assert.equal(parts(project).find(p => p.type === 'relay-coil' && p.masterId === exactRelay.id).value, '24 V DC');
@@ -171,7 +178,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const pdf = await download('#exportBtn'); assert.match(pdf.toString('latin1', 0, 8), /^%PDF-1.4/);
     await fs.writeFile('/tmp/Cabel-Studio-manufacturers.pdf', pdf);
     await fs.writeFile('/tmp/Cabel-Studio-manufacturers.expected.json', JSON.stringify({ pages: (await save()).sheets.length }));
-    await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click(); await page.screenshot({ path: '/tmp/Cabel-Studio-v1.14.0-manufacturers.png' });
+    await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click(); await page.screenshot({ path: '/tmp/Cabel-Studio-v1.14.1-manufacturers.png' });
     console.log('PASS catalogue drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminal strip, Finder 1/2/3-contact assemblies, source metadata/SAP roundtrip, English lists and PDF');
 
     // The same library format can be imported; rejected files leave existing libraries intact.
@@ -231,8 +238,82 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const bridgeFile = await save(); await page.reload(); await load(bridgeFile);
     assert.equal(drawings(await save())[0].wires.length, 2);
     assert.equal(await page.locator('.wire-label[data-label-hidden="true"]').count(), 2); await assertAttached();
+
+    // Check every S200 pole count, including the side of the fixed contact's breaker mark.
+    await load({ title: 'S200 symbols', parts: [1, 2, 3, 4].map((n, i) => ({ id: 'p' + (4000 + n), type: 'mcb-' + n + 'p', deviceCode: 'Q' + n, label: 'Q' + n, value: 'S20' + n, x: (12 + 14 * i) * GRID, y: 18 * GRID })), wires: [] });
+    for (const n of [1, 2, 3, 4]) {
+      const root = page.locator(`#parts > g[data-id="p${4000 + n}"]`);
+      assert.equal(await root.locator('.terminal').count(), 2 * n);
+      const marks = await root.locator('.mcb-break-mark').evaluateAll(nodes => nodes.map(node => {
+        const box = node.getBBox(); return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+      }));
+      assert.equal(marks.length, n);
+      for (let i = 0; i < n; i++) { assert.ok(marks[i].x > 0, 'Breaker mark must be on the right fixed contact'); near(marks[i].y, (2 * i - n + 1) * 48); }
+    }
+    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.14.1-S200.png' });
+    console.log('PASS S201/S202/S203/S204 breaker marks on the fixed-contact side and complete Finder 60.11/60.12/60.13 frames with terminal clearance');
+
+    const selectAllFixture = { title: 'Selection', sheets: [{ id: 'selection-main', title: 'Current sheet', parts: [
+      { id: 'p3001', type: 'resistor', deviceCode: 'R1', label: 'R1', x: 12 * GRID, y: 12 * GRID },
+      { id: 'p3002', type: 'lamp', deviceCode: 'H1', label: 'H1', x: 30 * GRID, y: 12 * GRID },
+      { id: 'p3003', type: 'switch', deviceCode: 'S1', label: 'S1', x: 14 * GRID, y: 24 * GRID },
+      { id: 'p3004', type: 'resistor', deviceCode: 'R2', label: 'R2', x: 40 * GRID, y: 20 * GRID, unplaced: true },
+      { id: 'p3005', type: 'text', label: 'Page note', x: 40 * GRID, y: 30 * GRID },
+    ], wires: [{ id: 'w3010', a: 'p3001:1', b: 'p3002:0', colorCode: 'BK', points: [{ x: 20 * GRID, y: 12 * GRID }, { x: 20 * GRID, y: 18 * GRID }, { x: 29 * GRID, y: 18 * GRID }] }] },
+    { id: 'selection-other', title: 'Other sheet', parts: [{ id: 'p3020', type: 'coil', label: 'K1', deviceCode: 'K1', x: 20 * GRID, y: 15 * GRID }], wires: [] }], activeSheet: 0 };
+    await load(selectAllFixture);
+    const originalSelectionFile = await save(), pink = 'rgb(255, 120, 183)';
+    assert.equal(await page.locator('#selectTool').evaluate(n => getComputedStyle(n).color), pink);
+    assert.equal(await page.locator('.sheetItem.active').evaluate(n => getComputedStyle(n).borderTopColor), pink);
+    assert.equal(await page.locator('[data-overview="sheets"]').evaluate(n => getComputedStyle(n).color), pink);
+    await page.locator('.wire-label[data-wire-label="w3010"] text').dblclick();
+    assert.equal(await page.locator('#wireColor').inputValue(), 'BK'); await page.locator('#simpleClose').click();
+    assert.equal(await page.locator('#wires .wire.selected').evaluate(n => getComputedStyle(n).stroke), pink);
+    await page.locator('#bridgeTool').click(); assert.equal(await page.locator('#bridgeTool').evaluate(n => getComputedStyle(n).color), pink);
+    await page.keyboard.press('Control+a');
+    assert.equal(await page.locator('#parts > g.selected').count(), 4);
+    assert.equal(await page.locator('#wires .wire.selected').count(), 1);
+    assert.equal(await page.locator('#parts > g.selected .symbol').first().evaluate(n => getComputedStyle(n).stroke), pink);
+    assert.equal(await page.locator('#parts > g[data-id="p3005"] .annotation-text').evaluate(n => getComputedStyle(n).fill), pink);
+    assert.equal(await page.locator('#wires .wire.selected').evaluate(n => getComputedStyle(n).stroke), pink);
+    assert.equal(await page.locator('#wireTool').evaluate(n => n.classList.contains('active')), false);
+    assert.deepEqual(drawings(await save()), drawings(originalSelectionFile)); // selecting changes no document data
+    await dragPart('p3001', 14 * GRID, 15 * GRID);
+    const allMoved = await save();
+    for (const p of drawings(allMoved)[0].parts) {
+      const before = drawings(originalSelectionFile)[0].parts.find(q => q.id === p.id);
+      near(p.x, before.x + (p.unplaced ? 0 : 2 * GRID)); near(p.y, before.y + (p.unplaced ? 0 : 3 * GRID));
+    }
+    assert.deepEqual(drawings(allMoved)[1], drawings(originalSelectionFile)[1]); await assertAttached();
+    await page.locator('#parts > g[data-id="p3001"] .part-body').click({ button: 'right' });
+    assert.match(await page.locator('#simpleContent h2').textContent(), /4 selected objects/);
+    const batchInput = page.locator('#batchForm [name="manufacturerNumber"]'); await batchInput.fill('Native text selection'); await batchInput.focus(); await page.keyboard.press('Control+a');
+    assert.deepEqual(await batchInput.evaluate(n => [n.selectionStart, n.selectionEnd]), [0, 'Native text selection'.length]);
+    assert.equal(await page.locator('#parts > g.selected').count(), 4); await page.locator('#batchCancel').click();
+    await page.keyboard.press('Delete');
+    let selectionFile = await save();
+    assert.ok(drawings(selectionFile)[0].parts.every(p => p.unplaced)); assert.equal(drawings(selectionFile)[0].wires.length, 0);
+    assert.ok(!drawings(selectionFile)[0].parts.some(p => p.type === 'text'));
+    assert.deepEqual(drawings(selectionFile)[1], drawings(originalSelectionFile)[1]);
+    await page.keyboard.press('Control+z'); await assertAttached();
+    assert.deepEqual(drawings(await save()), drawings(allMoved));
+    await page.keyboard.press('Meta+a'); assert.equal(await page.locator('#parts > g.selected').count(), 4); assert.equal(await page.locator('#wires .wire.selected').count(), 1);
+    const selectedPdf = await download('#exportBtn'); assert.match(selectedPdf.toString('latin1', 0, 8), /^%PDF-1.4/);
+    assert.equal(await page.locator('#parts > g.selected').count(), 4); assert.equal(await page.locator('#wires .wire.selected').count(), 1);
+    await fs.writeFile('/tmp/Cabel-Studio-selection.pdf', selectedPdf); await fs.writeFile('/tmp/Cabel-Studio-selection.expected.json', JSON.stringify({ pages: (await save()).sheets.length }));
+    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.14.1-selection.png' });
+    await page.keyboard.press('Escape'); assert.equal(await page.locator('#parts > g.selected').count(), 0); assert.equal(await page.locator('#wires .wire.selected').count(), 0);
+    await page.locator('#catalogSearch').fill('ABB'); await page.keyboard.press('Control+a');
+    assert.deepEqual(await page.locator('#catalogSearch').evaluate(n => [n.selectionStart, n.selectionEnd]), [0, 3]); assert.equal(await page.locator('#parts > g.selected').count(), 0);
+    await page.locator('.sheetItem[data-sheet-kind="drawing"]').nth(1).click(); await page.keyboard.press('Control+a');
+    assert.equal(await page.locator('#parts > g.selected').count(), 1); assert.equal(await page.locator('#parts > g.selected').getAttribute('data-id'), 'p3020');
+    await page.locator('.sheetItem[data-sheet-kind="cover"]').click(); await page.keyboard.press('Control+a');
+    assert.equal(await page.locator('#parts > g.selected').count(), 0); assert.equal(await page.locator('#wires .wire.selected').count(), 0);
+    await load({ title: 'Empty sheet', parts: [], wires: [] }); await page.keyboard.press('Control+a');
+    assert.equal(await page.locator('#parts > g.selected').count(), 0); assert.equal(await page.locator('#wires .wire.selected').count(), 0);
     assert.deepEqual(errors, []);
     console.log('PASS fit-aware horizontal/vertical bridge labels, automatic reveal/hide after movement, persistent routes and no browser/asset errors');
+    console.log('PASS pink active buttons/symbols/wires, Ctrl/Cmd+A for the current sheet, native input guards, group movement/edit/delete/undo, unplaced/other-sheet isolation, Escape and PDF selection restoration');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

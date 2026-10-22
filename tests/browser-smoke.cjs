@@ -211,7 +211,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.filter(p=>!p.unplaced).length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.10.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.11.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -240,7 +240,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.10.0');
+    assert.equal(withText.appVersion, '1.11.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -299,7 +299,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'Gegenziel nicht mehr vorhanden');
-    console.log('PASS v1.10.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.11.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -714,7 +714,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const listFile=await save();await page.reload();await load(listFile);assert.ok(await page.locator('.terminal-bridge').count()>0);
     await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').last().click();assert.ok((await page.locator('#deviceListContent').textContent()).includes('X3'));assert.equal(await page.locator('.terminal-bridge').count(),0);
     const finalPdf=await download('#exportBtn');assert.match(finalPdf,/^%PDF-1.4/);assert.ok(finalPdf.includes('/Count '+(await save()).sheets.length));await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.10.0-terminal-list.png'});
+    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.11.0-terminal-list.png'});
     console.log('PASS compact device tree, independent regular/bridge pin placement and movement with attached wires, inline terminals, one list per strip, graphical bridges, right-click edits and PDF/JSON roundtrip');
 
     const overviewFixture={title:'Mehrfachauswahl',sheets:[{id:'multi-sheet',title:'Zeichnung',parts:[
@@ -735,7 +735,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.keyboard.press('Escape');await page.locator('[data-overview="devices"]').click();
     const dropFromTree=async(locator,x,y)=>{const pt=await screen(x,y),box=await page.locator('#sheet').boundingBox();await locator.dragTo(page.locator('#sheet'),{targetPosition:{x:pt.x-box.x,y:pt.y-box.y}})};
     const unplacedButton=page.locator('[data-device-id="p803"] > summary .device-jump');
-    const unplacedStyle=await unplacedButton.evaluate(n=>({color:getComputedStyle(n).color,size:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}));assert.equal(unplacedStyle.color,'rgb(73, 52, 0)');assert.equal(unplacedStyle.size,'12px');assert.equal(unplacedStyle.weight,'700');
+    const unplacedStyle=await unplacedButton.evaluate(n=>({color:getComputedStyle(n).color,size:getComputedStyle(n).fontSize,weight:getComputedStyle(n).fontWeight}));assert.equal(unplacedStyle.color,'rgb(73, 52, 0)');assert.equal(unplacedStyle.size,'11px');assert.equal(unplacedStyle.weight,'700');
     await dropFromTree(unplacedButton,30*GRID,30*GRID);multi=drawing(await save());const placed=multi.parts.find(p=>p.id==='p803');assert.ok(!placed.unplaced);near(placed.x,30*GRID);near(placed.y,30*GRID);assert.equal(multi.parts.length,7);
     assert.equal(await page.locator('[data-device-id="p803"] > summary .device-jump').evaluate(n=>getComputedStyle(n).color),'rgb(18, 50, 72)');
     await dropFromTree(page.locator('[data-device-id="p803"] > summary .device-jump'),34*GRID,30*GRID);near(drawing(await save()).parts.find(p=>p.id==='p803').x,34*GRID);
@@ -750,6 +750,31 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator('#parts > g[data-id="p801"] .part-body').click({button:'right'});await page.locator('#componentForm [name="show_label"]').check();await page.locator('#componentForm [type="submit"]').click();assert.equal(await page.locator('#parts > g[data-id="p801"] .part-label').isVisible(),true);assert.equal(await page.locator('#parts > g[data-id="p801"] .part-value').isVisible(),false);
     const visibilityPdf=await download('#exportBtn');assert.match(visibilityPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     console.log('PASS area selection and joint movement without double-moving slaves, internal/external wire routes, native device/pin tree drag/drop, readable status colors, summary right-click, per-object text switches and PDF/JSON roundtrip');
+
+    // Undo/redo is transactional across drags, grouped properties and deletion.
+    await load(overviewFixture);await page.locator('#selectTool').click();const undoBaseline=await save();
+    await rectangle(7*GRID,7*GRID,23*GRID,17*GRID);await dragPart('p801',13*GRID,12*GRID);
+    const movedGroup=await save();await page.keyboard.press('Control+z');let restored=drawing(await save());near(restored.parts.find(p=>p.id==='p801').x,10*GRID);near(restored.parts.find(p=>p.id==='p802').x,20*GRID);assert.deepEqual(restored.wires,drawing(undoBaseline).wires);await assertAttached();
+    await page.keyboard.press('Control+y');restored=drawing(await save());near(restored.parts.find(p=>p.id==='p801').x,13*GRID);assert.deepEqual(restored.wires,drawing(movedGroup).wires);await assertAttached();
+    await rectangle(10*GRID,8*GRID,26*GRID,18*GRID);assert.equal(await page.locator('#parts > g.selected').count(),2);
+    await page.locator('#parts > g[data-id="p801"] .part-body').click({button:'right'});assert.equal(await page.locator('#batchForm').count(),1);
+    await page.locator('#batchForm [name="apply_manufacturerNumber"]').check();await page.locator('#batchForm [name="manufacturerNumber"]').fill('COMMON-42');await page.locator('#batchForm [name="visibility_value"]').selectOption('false');await page.locator('#batchForm [type="submit"]').click();
+    restored=drawing(await save());for(const id of ['p801','p802']){const p=restored.parts.find(p=>p.id===id);assert.equal(p.manufacturerNumber,'COMMON-42');assert.equal(p.textVisibility.value,false)}assert.equal(restored.parts.find(p=>p.id==='p804').manufacturerNumber,undefined);
+    await page.keyboard.press('Control+z');assert.ok(!drawing(await save()).parts.find(p=>p.id==='p801').manufacturerNumber);await page.keyboard.press('Control+y');assert.equal(drawing(await save()).parts.find(p=>p.id==='p802').manufacturerNumber,'COMMON-42');
+    await rectangle(10*GRID,8*GRID,26*GRID,18*GRID);await page.keyboard.press('Delete');restored=drawing(await save());assert.ok(restored.parts.find(p=>p.id==='p801').unplaced);assert.ok(restored.parts.find(p=>p.id==='p802').unplaced);assert.equal(restored.wires.length,0);assert.ok(!restored.parts.find(p=>p.id==='p804').unplaced);
+    await page.keyboard.press('Control+z');assert.equal(await page.locator('#parts > g[data-id="p801"]').count(),1);await assertAttached();assert.equal(drawing(await save()).wires.length,2);
+    await page.keyboard.press('Control+Shift+z');assert.equal(await page.locator('#parts > g[data-id="p801"]').count(),0);await page.keyboard.press('Control+z');
+    await page.locator('.part[data-type="capacitor"]').click();const cap=drawing(await save()).parts.find(p=>p.type==='capacitor');assert.ok(cap);await page.keyboard.press('Control+z');assert.ok(!drawing(await save()).parts.some(p=>p.type==='capacitor'));await page.keyboard.press('Control+y');assert.ok(drawing(await save()).parts.some(p=>p.type==='capacitor'));
+    await page.keyboard.press('Control+z');await page.locator('.part[data-type="diode"]').click();await page.keyboard.press('Control+y');assert.ok(!drawing(await save()).parts.some(p=>p.type==='capacitor'));
+    for(const type of ['capacitor','led','fuse','switch-nc','switch-changeover','motor'])await page.locator(`.part[data-type="${type}"]`).click();
+    const symbolsFile=await save();await page.reload();await load(symbolsFile);assert.equal(drawing(await save()).parts.filter(p=>['capacitor','diode','led','fuse','switch-nc','switch-changeover','motor'].includes(p.type)).length,7);assert.equal(await page.locator('#parts > g[data-id="'+drawing(symbolsFile).parts.find(p=>p.type==='switch-changeover').id+'"] .terminal').count(),3);
+    // Captions stay above geometry for all transformations, never reflected.
+    for(const rotation of [0,90,180,270]){const fixture=structuredClone(engineering);Object.assign(fixture.sheets[0].parts[0],{rotation,flipX:true,flipY:true});await load(fixture);
+      const bounds=await page.locator('#parts > g[data-id="p100"]').evaluate(root=>{const geometry=root.querySelector('.part-geometry').getBoundingClientRect();return Array.from(root.querySelectorAll('.part-caption text')).filter(t=>t.textContent&&getComputedStyle(t).display!=='none').map(t=>({bottom:t.getBoundingClientRect().bottom,top:geometry.top}))});for(const b of bounds)assert.ok(b.bottom<b.top,'Caption below symbol');
+    }
+    await load(bridgePortsFile);await page.locator('[data-overview="devices"]').click();await page.locator(`[data-pin-part="${firstId}"][data-pin-index="0"]`).click();const namedPin=drawing(await save()).parts.find(p=>p.type==='terminal-pin'&&p.masterId===firstId);assert.equal(namedPin.deviceCode,'X1');assert.equal(namedPin.label,'X1');assert.equal(namedPin.value,'1a');assert.equal(await page.locator(`#parts > g[data-id="${namedPin.id}"] .part-label`).textContent(),'X1');assert.equal(await page.locator(`#parts > g[data-id="${namedPin.id}"] .pin-label`).textContent(),':1a');
+    const compactPdf=await download('#exportBtn');assert.match(compactPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
+    console.log('PASS Ctrl/Cmd undo/redo, single-step group drag/edit/delete and route restoration, redo invalidation, new component symbols, captions above rotated/reflected symbols, X1 :1a pin naming and PDF roundtrip');
 
     assert.deepEqual(errors, []);
     console.log('PASS deletion cleans attached wires, generated device lists, no browser JavaScript errors');

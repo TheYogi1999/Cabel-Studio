@@ -55,10 +55,17 @@
 <div class="toast" id="toast"></div>
 <script>
 (() => {
-  const APP_VERSION='1.10.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.11.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
+    capacitor:{group:'Passive Bauteile',name:'Kondensator',desc:'C · Kapazität',label:'C',value:'100 nF',icon:'⊣⊢',terminals:[[-48,0],[48,0]],shape:'capacitor'},
+    diode:{group:'Passive Bauteile',name:'Diode',desc:'D · Gleichrichter',label:'D',value:'1N4007',icon:'▷|',terminals:[[-48,0],[48,0]],shape:'diode'},
+    led:{group:'Verbraucher',name:'LED',desc:'H · Leuchtdiode',label:'H',value:'LED',icon:'↗',terminals:[[-48,0],[48,0]],shape:'led'},
+    fuse:{group:'Passive Bauteile',name:'Sicherung',desc:'F · Überstromschutz',label:'F',value:'6 A',icon:'▭',terminals:[[-48,0],[48,0]],shape:'fuse'},
+    'switch-nc':{group:'Schaltgeräte',name:'Öffner',desc:'S · Ruhekontakt',label:'S',value:'Öffner',icon:'⌐',terminals:[[-48,0],[48,0]],shape:'switch-nc'},
+    'switch-changeover':{group:'Schaltgeräte',name:'Wechsler',desc:'S · Umschaltkontakt',label:'S',value:'Wechsler',icon:'⑂',terminals:[[-48,0],[48,-48],[48,48]],shape:'switch-changeover'},
+    motor:{group:'Verbraucher',name:'Motor',desc:'M · Antrieb',label:'M',value:'Motor',icon:'Ⓜ',terminals:[[-48,0],[48,0]],shape:'motor'},
     resistor:{group:'Passive Bauteile',name:'Widerstand',desc:'R · passiv',label:'R',value:'10 kΩ',icon:'▱',terminals:[[-48,0],[48,0]],shape:'resistor'},
     switch:{group:'Schaltgeräte',name:'Schließer',desc:'S · Schaltkontakt',label:'S',value:'Schließer',icon:'⌁',terminals:[[-48,0],[48,0]],shape:'switch'},
     lamp:{group:'Verbraucher',name:'Lampe',desc:'H · Verbraucher',label:'H',value:'24 V',icon:'⊗',terminals:[[-48,0],[48,0]],shape:'lamp'},
@@ -91,7 +98,9 @@
   function el(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.append(e);return e}
   function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const p=el('path',{d:routePath(routePoints(w)),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>beginSegmentDrag(w,e));const hit=el('path',{d:p.getAttribute('d'),class:'wire-hit',fill:'none',stroke:'transparent','stroke-width':12,'pointer-events':'stroke','data-id':w.id},wiresG);hit.addEventListener('pointerdown',e=>beginSegmentDrag(w,e))});model.parts.filter(p=>!p.unplaced).forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.some(p=>!p.unplaced)?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} Bauteil${model.parts.length===1?'':'e'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} Verbindung${model.wires.length===1?'':'en'}`;document.querySelector('#statusText').textContent=isConnectionMode()?(wireStart?'Rasterpunkte oder Zielanschluss wählen':'Verbindungsmodus'):selected?'Element ausgewählt':'Bereit';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',isConnectionMode())}
   function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y}) rotate(${p.rotation||0}) scale(${p.flipX?-1:1} ${p.flipY?-1:1})`,tabindex:0,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);if(p.type==='connector')partTerminals(p).slice(2).forEach(([x,y])=>{const length=Math.hypot(x,y);el('path',{d:'M '+x/length*10+' '+y/length*10+' L '+x+' '+y,class:'symbol'},g)});if(p.type==='text'){const t=el('text',{x:0,y:5,'text-anchor':'middle',class:'annotation-text',fill:'#15252e','font-size':16,'pointer-events':'none'},g);t.textContent=p.label;g.querySelector('.part-body').setAttribute('width',Math.max(60,String(p.label).length*9));g.querySelector('.part-body').setAttribute('x',-Math.max(60,String(p.label).length*9)/2)}const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.type==='text'?'':p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;partTerminals(p).forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);if(pinSlave(p.id,i))c.style.display='none';c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showPinInTree(p,i);return}if(e.button!==0)return;if(isConnectionMode()){e.stopPropagation();onTerminal(p.id,i)}else{if(p.type==='terminal-pin')return;e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showDeviceInTree(p);return}if(e.button!==0||isConnectionMode())return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};scene.querySelectorAll('.selected').forEach(node=>node.classList.remove('selected'));g.classList.add('selected');document.querySelector('#statusText').textContent='Element ausgewählt';wireDataButton.disabled=true});g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();drag=null;editComponent(p)});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt(p.type==='text'?'Text oder Wert ändern':'Betriebsmittel oder Wert ändern',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');if(p.type==='text')p.label=label.trim();else p.deviceCode=label.trim().replace(/^[−-]/,'');if(rest.length)p.value=rest.join('·').trim();render()}})}
-  function drawSymbol(g,s){if(s==='pin'){el('circle',{cx:0,cy:0,r:12,class:'symbol'},g)}else if(s==='terminal-strip'){el('path',{d:'M -48 -8 H 48 M -48 8 H 48 M -32 -14 V 14 M 0 -14 V 14 M 32 -14 V 14',class:'symbol'},g)}else if(s==='destination'){el('path',{d:'M -48 0 H -20 M 48 -16 L -20 0 L 48 16 Z',class:'symbol'},g)}else if(s==='reference'){el('path',{d:'M -48 0 H -20 M -20 -16 L 48 0 L -20 16 Z',class:'symbol'},g)}else if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else if(s!=='text'){el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
+  function drawSymbol(g,s){
+    const shapes={capacitor:'M -48 0 H -8 M -8 -20 V 20 M 8 -20 V 20 M 8 0 H 48',diode:'M -48 0 H -16 M -16 -18 L 16 0 L -16 18 Z M 16 -20 V 20 M 16 0 H 48',led:'M -48 0 H -16 M -16 -18 L 16 0 L -16 18 Z M 16 -20 V 20 M 16 0 H 48 M 0 -25 L 15 -40 M 8 -40 H 15 V -33 M 20 -23 L 35 -38 M 28 -38 H 35 V -31',fuse:'M -48 0 H 48 M -24 -12 H 24 V 12 H -24 Z','switch-nc':'M -48 0 H -16 M 16 0 H 48 M -16 0 L 18 -5 M 16 -12 V 8','switch-changeover':'M -48 0 H -16 L 32 -36 M 32 -48 H 48 M 32 48 H 48 M 32 38 V 48 M 32 -48 V -38',motor:'M -48 0 H -22 M 22 0 H 48 M -12 10 V -10 L 0 4 L 12 -10 V 10'};
+    if(shapes[s]){el('path',{d:shapes[s],class:'symbol'},g);if(s==='motor')el('circle',{cx:0,cy:0,r:22,class:'symbol'},g)}else if(s==='pin'){el('circle',{cx:0,cy:0,r:12,class:'symbol'},g)}else if(s==='terminal-strip'){el('path',{d:'M -48 -8 H 48 M -48 8 H 48 M -32 -14 V 14 M 0 -14 V 14 M 32 -14 V 14',class:'symbol'},g)}else if(s==='destination'){el('path',{d:'M -48 0 H -20 M 48 -16 L -20 0 L 48 16 Z',class:'symbol'},g)}else if(s==='reference'){el('path',{d:'M -48 0 H -20 M -20 -16 L 48 0 L -20 16 Z',class:'symbol'},g)}else if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else if(s!=='text'){el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
   function addPart(type,position){const r=svg.getBoundingClientRect(),w=position||toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' eingefügt')}
   function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p||p.unplaced)return null;const terminal=p.type==='connector'&&index==='8'?[0,0]:partTerminals(p)[+index];if(!terminal)return null;const [tx,ty]=terminal,dx=tx*SYMBOL_SCALE,dy=ty*SYMBOL_SCALE,angle=(p.rotation||0)*Math.PI/180,x=dx*(p.flipX?-1:1),y=dy*(p.flipY?-1:1);return{x:p.x+x*Math.cos(angle)-y*Math.sin(angle),y:p.y+x*Math.sin(angle)+y*Math.cos(angle)}}
   function onTerminal(id,index){const candidate=model.parts.find(p=>p.id===id);if(mode==='wire'&&candidate?.type==='terminal-pin'&&candidate.pinIndex===8){toast('Brückenanschluss nur für Klemmenbrücken');return}const key=id+':'+index;if(mode==='wire'&&index===8){toast('Separater Anschluss nur für Klemmenbrücken');return}if(mode==='bridge'){const target=model.parts.find(p=>p.id===id);if(!['connector','terminal-pin'].includes(target?.type)){toast('Brücken verbinden nur Klemmenpins');return}if(wireStart&&!validBridge(wireStart,key)){toast('Brücken müssen innerhalb derselben Klemmenleiste liegen');return}}if(!wireStart){wirePoints=[];wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;wirePoints=[];preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('Diese Anschlüsse sind bereits verbunden');wireStart=null;wirePoints=[];preview.style.display='none';render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key,...(mode==='bridge'?{kind:'bridge',colorCode:'BN'}:{}),points:orthogonalPoints([findTerminal(wireStart),...wirePoints,findTerminal(key)]).slice(1,-1)});wireStart=null;wirePoints=[];preview.style.display='none';render();toast('Verbindung erstellt')}
@@ -192,7 +201,7 @@
     const terminalGroups=new Map();
     for(const e of entries.filter(e=>e.p.type==='terminal-strip'))terminalGroups.set(e.p.id,{name:aks(e.p),rows:[]});
     for(const e of terminals){const master=stripMaster(e.p),key=master?.id||aks(e.p).split('−')[0]+'|'+terminalStripName(e.p);if(!terminalGroups.has(key))terminalGroups.set(key,{name:master?aks(master):terminalStripName(e.p),rows:[]});terminalGroups.get(key).rows.push(e)}
-    const terminalChunks=[];for(const [key,group] of terminalGroups)for(let i=0;i<Math.max(1,Math.ceil(group.rows.length/16));i++)terminalChunks.push({key:key+'-'+i,masterId:key,name:group.name,rows:group.rows.slice(i*16,(i+1)*16)});
+    const terminalChunks=[];for(const [key,group] of terminalGroups)for(let i=0;i<Math.max(1,Math.ceil(group.rows.length/20));i++)terminalChunks.push({key:key+'-'+i,masterId:key,name:group.name,rows:group.rows.slice(i*20,(i+1)*20)});
     if(!terminalChunks.length)terminalChunks.push({key:'empty',name:'',rows:[]});
     const deviceCount=Math.max(1,Math.ceil(entries.length/DEVICE_LIST_ROWS)),terminalCount=terminalChunks.length;
     let tocCount=1;while(Math.ceil((1+tocCount+drawings.length+deviceCount+terminalCount)/22)>tocCount)tocCount++;
@@ -475,10 +484,10 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
     root.append(geometry,caption);
     geometry.querySelectorAll('.terminal').forEach(c=>c.setAttribute('r',9));
     if(p.type!=='text'){
-      caption.querySelector('.part-label')?.setAttribute('y',30);
-      caption.querySelector('.part-value')?.setAttribute('y',43);
-      caption.querySelector('.part-aks')?.setAttribute('y',55);
-      caption.querySelector('.page-reference')?.setAttribute('y',68);
+      caption.querySelector('.part-label')?.setAttribute('y',-44);
+      caption.querySelector('.part-value')?.setAttribute('y',-35);
+      caption.querySelector('.part-aks')?.setAttribute('y',-26);
+      caption.querySelector('.page-reference')?.setAttribute('y',-17);
     }
   };
   render();
@@ -523,7 +532,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
         const p=entry.p;if(shown.has(p.id))return;shown.add(p.id);
         const node=details(parent,'device:'+p.id,'','device-node');node.dataset.deviceId=p.id;node.classList.add(p.unplaced?'device-unplaced':'device-placed');
         if(treeFocusId===p.id)node.classList.add('current-device');
-        const summary=node.firstElementChild,button=document.createElement('button');button.className='device-jump';button.textContent=(p.type==='terminal-strip'?'▤ ':p.type==='terminal-pin'?'○ ':p.masterId?'↳ ':'◈ ')+(p.type==='connector'?terminalOrdinal(p):p.type==='terminal-pin'?':'+p.value:aks(p));button.title=aks(p)+' · '+p.label+' · '+(p.unplaced?'Unplatziert':'Platziert');
+        const summary=node.firstElementChild,button=document.createElement('button');button.className='device-jump';button.textContent=(p.type==='terminal-strip'?'▤ ':p.type==='terminal-pin'?'○ ':p.masterId?'↳ ':'◈ ')+(p.type==='connector'?terminalOrdinal(p):p.type==='terminal-pin'?p.deviceCode+' :'+p.value:aks(p));button.title=aks(p)+' · '+p.label+' · '+(p.unplaced?'Unplatziert':'Platziert');
         button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();jumpToDevice(p.id)});button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});summary.append(button);button.draggable=true;button.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'device',id:p.id}));e.dataTransfer.effectAllowed='move'});summary.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
         const children=entries.filter(e=>e.p.masterId===p.id);
 if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.createElement('button');manage.className='terminal-manage';manage.textContent=p.type==='terminal-strip'?'+':'×';manage.title=p.type==='terminal-strip'?'Klemme hinzufügen':'Klemme dauerhaft entfernen';manage.onclick=e=>{e.preventDefault();e.stopPropagation();if(p.type==='terminal-strip')addStripTerminal(p);else removeStripTerminal(p)};summary.append(manage)}
@@ -613,13 +622,13 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     }else if(sheet.kind==='terminal-list'){
       const heading=generatedText(g,42,70,'Klemmenliste · '+(sheet.stripTitle||''),22,'bold');heading.addEventListener('contextmenu',e=>{const master=deviceEntries().find(e=>e.p.id===sheet.stripMasterId)?.p;if(master){e.preventDefault();e.stopPropagation();editComponent(master)}});
       [['KLEMME',46],['PIN',170],['KLEMMENTYP',270],['ANSCHLUSSZIEL',510],['BRÜCKE',900],['BLATT',1020]].forEach(([label,x])=>generatedText(g,x,116,label,11,'bold'));
-      const rows=sheet.terminalEntries||[],rowY=i=>150+i*33;
+      const rows=sheet.terminalEntries||[],rowY=i=>146+i*26;
       rows.forEach(({p,pin,sheetRef},i)=>{
         const y=rowY(i),slave=pinSlave(p.id,pin),owner=slave?drawingPages().find(s=>s.parts.includes(slave)):sheetRef,key=slave?slave.id+':0':p.id+':'+pin;
         const targets=(owner?.wires||[]).filter(w=>w.kind!=='bridge'&&(w.a===key||w.b===key)).map(w=>endPoint(owner,w.a===key?w.b:w.a));
-        el('rect',{x:36,y:y-20,width:1056,height:32,fill:i%2?'#edf3f6':'#fff'},g);
+        el('rect',{x:36,y:y-17,width:1056,height:25,fill:i%2?'#edf3f6':'#fff'},g);
         generatedText(g,46,y,terminalOrdinal(p),13,'bold');generatedText(g,170,y,':'+pinNumber(p,pin),13,'bold','#2463b5');generatedText(g,270,y,p.terminalType||p.value||'Klemme',11);const targetText=targets.join(', ')||'—';const targetLabel=generatedText(g,510,y,targetText.length>52?targetText.slice(0,49)+'…':targetText,11);el('title',{},targetLabel).textContent=targetText;generatedText(g,1020,y,(slave||p).unplaced?'—':pageNumber(pages.indexOf(owner)+1),11);
-        const hit=rowJump(g,y,()=>jumpToPin(p.id,pin),'Zur Klemme '+aks(p)+' Pin :'+pinNumber(p,pin));hit.setAttribute('height',32);hit.setAttribute('y',y-20);hit.classList.add('terminal-list-link');hit.dataset.partId=p.id;
+        const hit=rowJump(g,y,()=>jumpToPin(p.id,pin),'Zur Klemme '+aks(p)+' Pin :'+pinNumber(p,pin));hit.setAttribute('height',25);hit.setAttribute('y',y-17);hit.classList.add('terminal-list-link');hit.dataset.partId=p.id;
         hit.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
       });
       const endpointRow=ref=>{const [id,index]=ref.split(':');return rows.findIndex(e=>(e.p.id===id&&(Number(index)===8||e.pin===Number(index)))||pinSlave(e.p.id,e.pin)?.id===id||pinSlave(e.p.id,8)?.id===id)};
@@ -887,7 +896,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   drawPart=function(p){drawBeforeTextVisibility(p);const root=partsG.lastElementChild;for(const [key,selector] of Object.entries({label:'.part-label',value:'.part-value',aks:'.part-aks',pins:'.pin-label',reference:'.page-reference',annotation:'.annotation-text'}))if(p.textVisibility?.[key]===false)root.querySelectorAll(selector).forEach(n=>n.style.display='none')};
   function clearAreaSelection(){areaSelection?.rect.remove();areaSelection=null;selectionDrag=null;selectedParts.clear()}
   const setSheetBeforeArea=setSheet;setSheet=function(i){clearAreaSelection();setSheetBeforeArea(i)};
-  const editBeforeArea=editComponent;editComponent=function(p){clearAreaSelection();editBeforeArea(p)};
+  const editBeforeArea=editComponent;editComponent=function(p){if(selectedParts.size>1&&selectedParts.has(p.id)){editSelectedParts();return}clearAreaSelection();editBeforeArea(p)};
   const renderBeforeArea=render;render=function(){renderBeforeArea();for(const root of partsG.children)if(selectedParts.has(root.dataset.id))root.classList.add('selected');if(selectedParts.size>1)document.querySelector('#statusText').textContent=selectedParts.size+' Objekte ausgewählt · gemeinsam verschieben'};
   function selectionMembers(){
     const ids=new Set(selectedParts);
@@ -965,11 +974,56 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
 
   function syncDeviceName(p){
     if(p.type==='text')return;
+    const parent=p.type==='terminal-pin'?deviceEntries().find(e=>e.p.id===p.masterId)?.p:null;
+    if(parent?.type==='connector'){p.deviceCode=terminalStripName(parent);p.value=pinNumber(parent,p.pinIndex);p.pinNumbers=[p.value]}
     const name=String(p.deviceCode||p.label||TYPES[p.type]?.label||'').trim().replace(/^[−-]/,'');
     p.deviceCode=name;p.label=name;
   }
   const renderBeforeUnifiedName=render;render=function(){for(const p of new Set([...pages.flatMap(s=>s.parts),...model.parts]))syncDeviceName(p);renderBeforeUnifiedName()};
   render();
+
+  function editSelectedParts(){
+    const parts=model.parts.filter(p=>selectedParts.has(p.id)&&!p.unplaced);if(parts.length<2)return;
+    const fields=[['functionCode','Funktion (=)'],['locationCode','Ort (+)'],['deviceCode','Betriebsmittel (−)'],['value','Wert / Typ'],['manufacturerNumber','Herstellernummer'],['sapNumber','SAP-Nummer']];
+    showPanel('<h2>'+parts.length+' Objekte bearbeiten</h2><p>Nur angehakte Felder werden für alle ausgewählten Objekte übernommen.</p><form id="batchForm" class="wire-form">'+fields.map(([key,label])=>'<label><span><input type="checkbox" name="apply_'+key+'" style="width:auto"> '+label+' übernehmen</span><input name="'+key+'" value="'+safe(parts.every(p=>(p[key]||'')===(parts[0][key]||''))?parts[0][key]||'':'')+'"></label>').join('')+['label','value','aks','pins','reference','annotation'].map(key=>'<label>'+({label:'Betriebsmittel',value:'Wert',aks:'AKS',pins:'Pin-Nummern',reference:'Seitenverweis',annotation:'Freitext'}[key])+' anzeigen<select name="visibility_'+key+'"><option value="">Unverändert</option><option value="true">Ein</option><option value="false">Aus</option></select></label>').join('')+'<div class="actions"><button type="submit">Übernehmen</button><button type="button" id="batchCancel">Abbrechen</button></div></form>');
+    document.querySelector('#batchCancel').onclick=closePanel;
+    document.querySelector('#batchForm').onsubmit=e=>{e.preventDefault();const values=new FormData(e.target);for(const p of parts){for(const [key] of fields)if(values.has('apply_'+key))p[key]=String(values.get(key)).trim().replace(key==='deviceCode'?/^[−-]/:key==='functionCode'?/^=/:key==='locationCode'?/^\+/:/^$/,'');for(const key of ['label','value','aks','pins','reference','annotation'])if(values.get('visibility_'+key)!==''){p.textVisibility??={};p.textVisibility[key]=values.get('visibility_'+key)==='true'}}render();closePanel()};
+  }
+  document.addEventListener('keydown',e=>{
+    if(editingTarget(e.target)||modal.style.display==='grid'||e.ctrlKey||e.metaKey||!['Delete','Backspace'].includes(e.key)||selectedParts.size<2)return;
+    e.preventDefault();e.stopImmediatePropagation();const ids=new Set(selectedParts);
+    for(const p of model.parts)if(ids.has(p.id)&&!['text','reference','destination'].includes(p.type))p.unplaced=true;
+    model.parts=model.parts.filter(p=>!ids.has(p.id)||!['text','reference','destination'].includes(p.type));model.wires=model.wires.filter(w=>!ids.has(w.a.split(':')[0])&&!ids.has(w.b.split(':')[0]));clearAreaSelection();selected=null;render();
+  },true);
+  const denseStyle=document.createElement('style');denseStyle.textContent='.device-node{margin:1px 0!important;padding-left:5px!important}.device-node>summary{padding:1px!important;gap:2px}.device-node>summary .device-jump{font-size:11px!important;line-height:1.2;padding:2px!important}.pin-node{font-size:10px!important;margin:1px!important;padding:1px 4px!important}#batchForm input[type=checkbox]{width:auto}';document.head.append(denseStyle);
+  const drawBeforeTopCaptions=drawPart;drawPart=function(p){
+    drawBeforeTopCaptions(p);if(p.type==='text')return;const root=partsG.lastElementChild,caption=root.querySelector('.part-caption'),geometry=root.querySelector('.part-geometry');caption.setAttribute('transform','rotate(0)');
+    const box=geometry.getBBox(),matrix=geometry.transform.baseVal.consolidate().matrix,top=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
+    const texts=Array.from(caption.querySelectorAll('text')).filter(n=>n.style.display!=='none'&&n.textContent);texts.forEach((n,i)=>{n.setAttribute('x',0);n.setAttribute('y',top-4-(texts.length-i-1)*9)});
+  };
+  // Record document changes; one drag or synchronous action is one undo step.
+  const undoStack=[],redoStack=[];let historyTimer=null,historyRestoring=false,historyReset=false,historyLoading=false;
+  function historyState(){return {title:model.title,projectInfo:model.projectInfo||{},sheets:drawingPages().map(s=>({id:s.id,title:s.title,parts:s.parts,wires:s.wires})),nextId}}
+  function historySnapshot(){return JSON.stringify(historyState())}
+  let historyCurrent=historySnapshot();
+  function commitHistory(){
+    if(historyRestoring||historyLoading||pdfExporting||drag||segmentDrag||selectionDrag||wireLabelDrag)return;
+    const state=historySnapshot();if(historyReset){historyCurrent=state;undoStack.length=0;redoStack.length=0;historyReset=false;return}if(state===historyCurrent)return;
+    undoStack.push(historyCurrent);if(undoStack.length>100)undoStack.shift();historyCurrent=state;redoStack.length=0;
+  }
+  function scheduleHistory(){clearTimeout(historyTimer);historyTimer=setTimeout(commitHistory,0)}
+  const renderBeforeHistory=render;render=function(){renderBeforeHistory();if(!historyRestoring)scheduleHistory()};
+  function restoreHistory(state){
+    const activeId=pages[activeSheet]?.id||pages[activeSheet]?.generatedId,data=JSON.parse(state);historyRestoring=true;clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;selected=null;appClipboard=null;wireStart=null;wirePoints=[];preview.style.display='none';
+    pages.splice(0,pages.length,...data.sheets);activeSheet=Math.max(0,pages.findIndex(s=>s.id===activeId));model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;model.title=data.title;model.projectInfo=data.projectInfo;nextId=data.nextId;render();const target=pages.findIndex(s=>(s.id||s.generatedId)===activeId);if(target>=0)setSheet(target);historyCurrent=historySnapshot();historyRestoring=false;
+  }
+  document.addEventListener('keydown',e=>{
+    if(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())||editingTarget(e.target)||modal.style.display==='grid'||pdfExporting)return;
+    e.preventDefault();e.stopImmediatePropagation();commitHistory();const redo=e.key.toLowerCase()==='y'||e.shiftKey,source=redo?redoStack:undoStack,destination=redo?undoStack:redoStack;if(!source.length){toast(redo?'Nichts zu wiederholen':'Nichts rückgängig zu machen');return}destination.push(historyCurrent);restoreHistory(source.pop());toast(redo?'Wiederholt':'Rückgängig');
+  },true);
+  document.addEventListener('pointerup',()=>setTimeout(commitHistory,0),true);
+  document.addEventListener('pointercancel',()=>setTimeout(commitHistory,0),true);
+  const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Projekt geladen')historyReset=true;commitHistory()}};
   render();
 
 

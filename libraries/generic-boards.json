@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "generic-boards",
+  "manufacturer": "Generic boards (vendor unspecified)",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; verify product specifications, ordering codes and pinouts.",
+    "reason": "Manufacturer documentation could not be retrieved under the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://www.espressif.com/en/products/socs/esp32",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "esp32",
+      "name": "ESP32 development board references",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "esp32-d1-mini",
+          "model": "ESP32 D1 mini · configurable ports",
+          "name": "ESP32 D1 mini · configurable ports",
+          "symbol": "controller-board",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "3V3",
+            "GND",
+            "EN",
+            "5V",
+            "GPIO0",
+            "GPIO2",
+            "GPIO4",
+            "GPIO5",
+            "GPIO12",
+            "GPIO13",
+            "GPIO14",
+            "GPIO15",
+            "GPIO16",
+            "GPIO17",
+            "GPIO18",
+            "GPIO19",
+            "GPIO21",
+            "GPIO22",
+            "GPIO23",
+            "GPIO25",
+            "GPIO26",
+            "GPIO27",
+            "GPIO32",
+            "GPIO33",
+            "GPIO34",
+            "GPIO35",
+            "GPIO36",
+            "GPIO39"
+          ],
+          "attributes": {
+            "portMapping": "Logical ESP32 signal selection, not a board-header pinout. D1 mini ESP32 board variants differ; remove unavailable pins and check voltage/power pins against your board."
+          }
+        }
+      ]
+    }
+  ]
+}

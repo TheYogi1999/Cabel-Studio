@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "id": "beckhoff",
+  "manufacturer": "Beckhoff",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; verify product specifications, ordering codes and pinouts.",
+    "reason": "Manufacturer documentation could not be retrieved under the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "ethercat",
+      "name": "EtherCAT couplers and I/O terminals",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "ek1100",
+          "model": "EK1100 · EtherCAT coupler",
+          "name": "EK1100 · EtherCAT coupler",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "PE",
+            "EtherCAT-IN",
+            "E-bus"
+          ],
+          "attributes": {
+            "portMapping": "Functional power and bus ports; Ethernet/E-bus connectors are represented as whole ports, not individual conductors."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el1008",
+          "model": "EL1008 · 8 digital inputs",
+          "name": "EL1008 · 8 digital inputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "I1",
+            "I2",
+            "I3",
+            "I4",
+            "I5",
+            "I6",
+            "I7",
+            "I8"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 8
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el2008",
+          "model": "EL2008 · 8 digital outputs",
+          "name": "EL2008 · 8 digital outputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "Q1",
+            "Q2",
+            "Q3",
+            "Q4",
+            "Q5",
+            "Q6",
+            "Q7",
+            "Q8"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 8
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el1809",
+          "model": "EL1809 · 16 digital inputs",
+          "name": "EL1809 · 16 digital inputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "I1",
+            "I2",
+            "I3",
+            "I4",
+            "I5",
+            "I6",
+            "I7",
+            "I8",
+            "I9",
+            "I10",
+            "I11",
+            "I12",
+            "I13",
+            "I14",
+            "I15",
+            "I16"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 16
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el2809",
+          "model": "EL2809 · 16 digital outputs",
+          "name": "EL2809 · 16 digital outputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "Q1",
+            "Q2",
+            "Q3",
+            "Q4",
+            "Q5",
+            "Q6",
+            "Q7",
+            "Q8",
+            "Q9",
+            "Q10",
+            "Q11",
+            "Q12",
+            "Q13",
+            "Q14",
+            "Q15",
+            "Q16"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 16
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el3062",
+          "model": "EL3062 · 2 analogue inputs",
+          "name": "EL3062 · 2 analogue inputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "AI1",
+            "AI2"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 2
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "el4002",
+          "model": "EL4002 · 2 analogue outputs",
+          "name": "EL4002 · 2 analogue outputs",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "AO1",
+            "AO2"
+          ],
+          "attributes": {
+            "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
+            "channels": 2
+          },
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        }
+      ]
+    }
+  ]
+}

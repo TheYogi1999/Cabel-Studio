@@ -57,10 +57,16 @@
 <script src="libraries/catalog.js"></script>
 <script>
 (() => {
-  const APP_VERSION='1.14.1', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.15.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
+    'power-supply':{group:'Loads',name:'AC/DC power supply',desc:'AC input / DC output',label:'G',value:'24 V DC power supply',icon:'⎓',terminals:[],shape:'power-supply',pinNumbers:['L','N','PE','+24V','0V'],portSides:['left','left','left','right','right']},
+    optocoupler:{group:'Switchgear',name:'Optocoupler',desc:'Optically isolated transistor output',label:'K',value:'Optocoupler',icon:'⇢',terminals:[[-48,-48],[-48,48],[48,-48],[48,48]],shape:'optocoupler',pinNumbers:['A','K','C','E']},
+    'rcd-2p':{group:'Switchgear',name:'RCD (FI) · 2 poles',desc:'Residual-current device · L / N',label:'F',value:'RCD · 30 mA · 2P',icon:'Δ',terminals:[[-48,-48],[48,-48],[-48,48],[48,48]],shape:'rcd-2p',pinNumbers:['1','2','N-in','N-out']},
+    'rcd-4p':{group:'Switchgear',name:'RCD (FI) · 4 poles',desc:'Residual-current device · L1/L2/L3/N',label:'F',value:'RCD · 30 mA · 4P',icon:'Δ',terminals:[[-48,-144],[48,-144],[-48,-48],[48,-48],[-48,48],[48,48],[-48,144],[48,144]],shape:'rcd-4p',pinNumbers:['1','2','3','4','5','6','N-in','N-out']},
+    'io-module':{group:'Connections',name:'I/O module',desc:'Configurable channel terminals',label:'A',value:'I/O module',icon:'I/O',terminals:[],shape:'io-module',pinNumbers:['24V','0V','I1','I2','I3','I4','I5','I6','I7','I8'],portSides:['left','left','right','right','right','right','right','right','right','right']},
+    'controller-board':{group:'Connections',name:'Controller board',desc:'Configurable power / GPIO ports',label:'A',value:'Controller board',icon:'µC',terminals:[],shape:'controller-board',pinNumbers:['3V3','GND','GPIO0','GPIO1','GPIO2','GPIO3','GPIO4','GPIO5']},
     'motor-ac-1p':{group:'Loads',name:'AC motor · single phase',desc:'1~ · L / N / PE',label:'M',value:'1~ AC motor',icon:'M~',terminals:[[-48,0],[48,0],[0,48]],shape:'motor-ac-1p'},
     'motor-ac-3p':{group:'Loads',name:'AC motor · three phase',desc:'3~ · U / V / W / PE',label:'M',value:'3~ AC motor',icon:'M3~',terminals:[[-48,-48],[0,-48],[48,-48],[0,48]],shape:'motor-ac-3p'},
     'motor-ac-6t':{group:'Loads',name:'AC motor · six leads',desc:'3~ · U1/V1/W1/U2/V2/W2/PE',label:'M',value:'3~ AC motor · six leads',icon:'M6',terminals:[[-48,-48],[0,-48],[48,-48],[-48,48],[0,48],[48,48],[96,0]],shape:'motor-ac-6t'},
@@ -117,6 +123,12 @@
   function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const p=el('path',{d:routePath(routePoints(w)),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>beginSegmentDrag(w,e));const hit=el('path',{d:p.getAttribute('d'),class:'wire-hit',fill:'none',stroke:'transparent','stroke-width':12,'pointer-events':'stroke','data-id':w.id},wiresG);hit.addEventListener('pointerdown',e=>beginSegmentDrag(w,e))});model.parts.filter(p=>!p.unplaced).forEach(p=>drawPart(p));document.querySelector('#emptyState').style.display=model.parts.some(p=>!p.unplaced)?'none':'grid';document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} component${model.parts.length===1?'':'s'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} connection${model.wires.length===1?'':'s'}`;document.querySelector('#statusText').textContent=isConnectionMode()?(wireStart?'Choose grid points or the target terminal':'Connection mode'):selected?'Object selected':'Ready';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',isConnectionMode())}
   function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y}) rotate(${p.rotation||0}) scale(${p.flipX?-1:1} ${p.flipY?-1:1})`,tabindex:0,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);if(p.type==='connector')partTerminals(p).slice(2).forEach(([x,y])=>{const length=Math.hypot(x,y);el('path',{d:'M '+x/length*10+' '+y/length*10+' L '+x+' '+y,class:'symbol'},g)});if(p.type==='text'){const t=el('text',{x:0,y:5,'text-anchor':'middle',class:'annotation-text',fill:'#15252e','font-size':16,'pointer-events':'none'},g);t.textContent=p.label;g.querySelector('.part-body').setAttribute('width',Math.max(60,String(p.label).length*9));g.querySelector('.part-body').setAttribute('x',-Math.max(60,String(p.label).length*9)/2)}const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.type==='text'?'':p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;partTerminals(p).forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showPinInTree(p,i);return}if(e.button!==0)return;if(isConnectionMode()){e.stopPropagation();onTerminal(p.id,i)}else{if(p.type==='terminal-pin')return;e.stopPropagation();selected={kind:'part',id:p.id};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showDeviceInTree(p);return}if(e.button!==0||isConnectionMode())return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};scene.querySelectorAll('.selected').forEach(node=>node.classList.remove('selected'));g.classList.add('selected');document.querySelector('#statusText').textContent='Object selected';wireDataButton.disabled=true});g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();drag=null;editComponent(p)});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt(p.type==='text'?'Change text or value':'Change equipment tag or value',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');if(p.type==='text')p.label=label.trim();else p.deviceCode=label.trim().replace(/^[−-]/,'');if(rest.length)p.value=rest.join('·').trim();render()}})}
   function drawSymbol(g,s){
+    if(['power-supply','io-module','controller-board'].includes(s))return; // Drawn from the component's configurable ports.
+    if(s==='optocoupler'){
+      el('path',{d:'M -48 -48 H -24 V -12 M -24 12 V 48 H -48 M -36 -12 H -12 L -24 12 Z M -36 12 H -12 M 48 -48 H 30 L 12 -12 M 12 -20 V 20 M 12 12 L 30 48 H 48 M 22 31 L 30 38 L 30 28 M -9 -18 L 3 -30 M -3 -30 H 3 V -24 M -9 0 L 3 -12 M -3 -12 H 3 V -6',class:'symbol'},g);
+      el('path',{d:'M 0 -54 V 54',class:'symbol','stroke-dasharray':'4 4'},g);return;
+    }
+    if(s.startsWith('rcd-')){const count=Number(s[4]),top=-(count-1)*48,bottom=(count-1)*48;for(let i=0;i<count;i++)drawSymbol(el('g',{transform:'translate(0 '+((2*i-count+1)*48)+')'},g),'switch');el('path',{d:'M 0 '+top+' V '+bottom,class:'symbol','stroke-dasharray':'5 5'},g);el('rect',{x:-40,y:top-18,width:18,height:bottom-top+36,rx:7,class:'symbol'},g);return}
     if(s.startsWith('motor-ac-')){
       el('circle',{cx:0,cy:0,r:22,class:'symbol'},g);el('path',{d:'M -12 7 V -10 L 0 3 L 12 -10 V 7 M -12 14 Q -6 5 0 14 T 12 14',class:'symbol'},g);
       const terminals=TYPES[s].terminals;for(const [x,y] of terminals){const length=Math.hypot(x,y);el('path',{d:'M '+x+' '+y+' L '+x*22/length+' '+y*22/length,class:'symbol'},g)}return;
@@ -236,13 +248,14 @@
     for(const e of terminals){const master=stripMaster(e.p),key=master?.id||aks(e.p).split('−')[0]+'|'+terminalStripName(e.p);if(!terminalGroups.has(key))terminalGroups.set(key,{name:master?aks(master):terminalStripName(e.p),rows:[]});terminalGroups.get(key).rows.push(e)}
     const terminalChunks=[];for(const [key,group] of terminalGroups)for(let i=0;i<Math.max(1,Math.ceil(group.rows.length/20));i++)terminalChunks.push({key:key+'-'+i,masterId:key,name:group.name,rows:group.rows.slice(i*20,(i+1)*20)});
     if(!terminalChunks.length)terminalChunks.push({key:'empty',name:'',rows:[]});
-    const deviceCount=Math.max(1,Math.ceil(entries.length/DEVICE_LIST_ROWS)),terminalCount=terminalChunks.length;
+    const deviceIds=new Set(entries.map(e=>e.p.id)),masters=entries.filter(e=>!deviceIds.has(e.p.masterId));
+    const deviceCount=Math.max(1,Math.ceil(masters.length/DEVICE_LIST_ROWS)),terminalCount=terminalChunks.length;
     let tocCount=1;while(Math.ceil((1+tocCount+drawings.length+deviceCount+terminalCount)/22)>tocCount)tocCount++;
     const cover=generated('cover',0,'Cover page'),contents=Array.from({length:tocCount},(_,i)=>generated('toc',i,'Table of contents '+pageNumber(i+1)));
     const lists=Array.from({length:deviceCount},(_,i)=>generated(DEVICE_LIST_KIND,i,'Device list '+pageNumber(i+1)));
     const clamps=Array.from({length:terminalCount},(_,i)=>generated('terminal-list',terminalChunks[i].key,'Terminal list '+terminalChunks[i].name+' · '+pageNumber(i+1)));
     pages.splice(0,pages.length,cover,...contents,...drawings,...lists,...clamps);
-    lists.forEach((s,i)=>s.deviceEntries=entries.slice(i*DEVICE_LIST_ROWS,(i+1)*DEVICE_LIST_ROWS).map(e=>({...e,sheet:pages.indexOf(e.sheetRef)+1})));
+    lists.forEach((s,i)=>s.deviceEntries=masters.slice(i*DEVICE_LIST_ROWS,(i+1)*DEVICE_LIST_ROWS).map(e=>({...e,sheet:pages.indexOf(e.sheetRef)+1})));
     clamps.forEach((s,i)=>{s.terminalEntries=terminalChunks[i].rows;s.stripTitle=terminalChunks[i].name;s.stripMasterId=terminalChunks[i].masterId});
     contents.forEach((s,i)=>s.contents=pages.slice(i*22,(i+1)*22).map(page=>({page,number:pages.indexOf(page)+1})));
     const next=pages.indexOf(current);activeSheet=next<0?pages.indexOf(drawings[0]):next;
@@ -253,7 +266,7 @@
     const txt=(x,y,value,size=11,weight='normal',fill='#263943')=>{const t=el('text',{x,y,'font-size':size,'font-weight':weight,fill},deviceListGroup);t.textContent=value};
     const line=(x1,y1,x2,y2)=>el('path',{d:'M'+x1+' '+y1+' H'+x2,stroke:'#aebbc2','stroke-width':.8},deviceListGroup);
     txt(42,68,'Automatic device directory',22,'bold','#15252e');
-    txt(42,90,'AKS designations · generated from all drawing sheets · '+(sheet.deviceEntries||[]).length+' Devices on this sheet',10,'normal','#53666f');
+    txt(42,90,'Master devices · generated from all drawing sheets · '+(sheet.deviceEntries||[]).length+' Devices on this sheet',10,'normal','#53666f');
     const y0=128;
     el('rect',{x:36,y:103,width:1056,height:30,rx:2,fill:'#e8eef0'},deviceListGroup);
     [['AKS DESIGNATION',46],['EQUIPMENT TAG',250],['COMPONENT',425],['VALUE / TYPE',540],['MANUFACTURER NUMBER',685],['SAP NUMBER',850],['REFERENCE',1015]].forEach(([label,x])=>txt(x,y0,label,8,'bold'));
@@ -442,7 +455,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
        ...(p.type==='text'?[['label','Text',p.label]]:[['deviceCode','Equipment tag (−)',p.deviceCode||p.label]]),['value','Value',p.value],['terminalType','Terminal type (per terminal)',p.type==='connector'?(p.terminalType||p.value||'Feed-through terminal'):''],['manufacturerNumber','Manufacturer number',p.manufacturerNumber],['sapNumber','SAP number',p.sapNumber],['terminalNumber','Terminal number (e.g. 1)',p.type==='connector'?terminalOrdinal(p):''],['stripName','Terminal strip (e.g. X1)',p.type==='connector'?terminalStripName(p):''],['pinNumbers',p.type==='connector'?'Pin numbers (2–8, comma separated)':'Pin numbers (comma separated)',partTerminals(p).map((_,i)=>pinNumber(p,i)).join(', ')]]
       .map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
       '<div class="actions"><button type="submit">Apply</button><button type="button" id="componentCancel">Cancel</button></div></form>');
-    const form=document.querySelector('#componentForm');if(p.catalog){const origin=document.createElement('p');origin.className='catalog-origin';origin.textContent=p.catalog.manufacturer+' · '+p.catalog.model+' · '+(p.catalog.verification==='user-specified-reference'?'User-specified article':'Unverified catalogue reference');form.prepend(origin)}
+    const form=document.querySelector('#componentForm');if(p.catalog){const origin=document.createElement('p');origin.className='catalog-origin';origin.textContent=p.catalog.manufacturer+' · '+p.catalog.model+' · '+(p.catalog.verification==='user-specified-reference'?'User-specified article':'Unverified catalogue reference');form.prepend(origin);if(p.catalog.attributes?.portMapping){const note=document.createElement('p');note.className='catalog-origin';note.textContent=p.catalog.attributes.portMapping;form.prepend(note)}}
 
 
     if(isReference(p)){const role=document.createElement('p');role.className='reference-role';role.textContent='Reference type: '+(referenceRole(p)==='source'?'Source':'Destination');form.prepend(role)}
@@ -459,7 +472,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
     }
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
-    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Feed-through terminal';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
+    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=String(values.get('pinNumbers')||'').split(',').map(n=>n.trim().replace(/^:/,''));if(isPortBlock(p)){if(pinValues.length<1||pinValues.length>64||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 1 to 64 unique port names');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('terminalType')).trim()||'Feed-through terminal';p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=String(values.get('stripName')).trim()||terminalStripName(p);}if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
     document.querySelector('#componentCancel').onclick=closePanel;
     form.querySelector('input').focus();
   }
@@ -577,6 +590,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
         button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();jumpToDevice(p.id)});button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});summary.append(button);button.draggable=true;button.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'device',id:p.id}));e.dataTransfer.effectAllowed='move'});summary.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
         const children=entries.filter(e=>e.p.masterId===p.id);
 if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.createElement('button');manage.className='terminal-manage';manage.textContent=p.type==='terminal-strip'?'+':'×';manage.title=p.type==='terminal-strip'?'Add terminal':'Remove terminal permanently';manage.onclick=e=>{e.preventDefault();e.stopPropagation();if(p.type==='terminal-strip')addStripTerminal(p);else removeStripTerminal(p)};summary.append(manage)}
+        if(p.type!=='connector'){const remove=document.createElement('button');remove.className='device-delete';remove.textContent='×';remove.title='Delete device permanently';remove.setAttribute('aria-label','Delete '+aks(p)+' permanently');remove.onclick=e=>{e.preventDefault();e.stopPropagation();deleteDevicePermanently(p)};summary.append(remove)}
 
         children.sort((a,b)=>aks(a.p).localeCompare(aks(b.p),'en',{numeric:true})).forEach(child=>appendDevice(child,node));
         if(p.type==='connector')[...partTerminals(p).map((_,i)=>i),8].filter(i=>!pinSlave(p.id,i)).forEach(i=>{const pin=document.createElement('button');pin.className='pin-node';pin.dataset.pinPart=p.id;pin.dataset.pinIndex=i;pin.textContent=(i===8?'◆ Bridge':'○ :'+pinNumber(p,i))+' ＋';pin.draggable=true;pin.addEventListener('dragstart',e=>{e.stopPropagation();e.dataTransfer.setData('application/x-cabel-device',JSON.stringify({kind:'pin',id:p.id,index:i}));e.dataTransfer.effectAllowed='move'});pin.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});pin.title='Place this pin separately or drag it onto the sheet';pin.onclick=e=>{e.stopPropagation();placePin(p,i)};node.append(pin)});
@@ -653,7 +667,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       generatedText(g,65,205,'SCHEMATIC DOCUMENTATION',12,'bold','#73838b');
       generatedText(g,65,260,model.title,30,'bold');
       el('path',{d:'M65 290 H1063',stroke:'#138b78','stroke-width':3},g);
-      const fields=[['Document number',info.documentNumber||'—'],['Revision',info.revision||'A'],['Drawn by',info.author||'—'],['Date',info.date||'—'],['Page count',pages.length+' pages'],['Description',info.description||'—']];
+      const fields=[['Document number',info.documentNumber||'—'],['Revision',info.revision||'A'],['Drawn by',info.issuedName||info.author||'—'],['Date',info.issuedDate||info.date||'—'],['Page count',pages.length+' pages'],['Description',info.description||'—']];
       fields.forEach(([key,value],i)=>{generatedText(g,65,340+i*44,key,10,'bold','#73838b');generatedText(g,260,340+i*44,value,14)});
       const edit=generatedText(g,65,655,'Edit project information',11,'bold','#138b78');edit.classList.add('screen-only');edit.style.cursor='pointer';edit.addEventListener('pointerdown',e=>e.stopPropagation());edit.addEventListener('click',editProjectInfo);
     }else if(sheet.kind==='toc'){
@@ -682,27 +696,30 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       if(!sheet.terminalEntries?.length)generatedText(g,46,170,'No terminals in this strip.',13);
     }
   }
+  const approvalStages=[['issued','Issued'],['check1','Check 1'],['check2','Check 2'],['release','Release']];
   function editProjectInfo(){
     const info=model.projectInfo||{};
-    showPanel('<h2>Project information</h2><form id="projectInfoForm" class="wire-form">'+[['title','Project title',model.title],['company','Company',info.company],['documentNumber','Document number',info.documentNumber],['revision','Revision',info.revision||'A'],['author','Drawn by',info.author],['date','Date',info.date],['description','Description',info.description]].map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+'<button type="submit">Apply</button></form>');
-    document.querySelector('#projectInfoForm').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);model.title=String(data.get('title')).trim()||'New schematic';model.projectInfo={};for(const key of ['company','documentNumber','revision','author','date','description'])model.projectInfo[key]=String(data.get(key)).trim();render();closePanel()};
+    showPanel('<h2>Project information</h2><form id="projectInfoForm" class="wire-form">'+[['title','Project title',model.title],['company','Company',info.company],['documentNumber','Document number',info.documentNumber],['revision','Revision',info.revision||'A'],['author','Drawn by',info.author],['date','Date',info.date],['description','Description',info.description]].map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
+      approvalStages.map(([key,label])=>'<fieldset class="approval-fields"><legend>'+label+'</legend><label>Name<input name="'+key+'Name" value="'+safe(info[key+'Name'])+'"></label><label>Date<input type="date" name="'+key+'Date" value="'+safe(info[key+'Date'])+'"></label></fieldset>').join('')+'<button type="submit">Apply</button></form>');
+    document.querySelector('#projectInfoForm').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);model.title=String(data.get('title')).trim()||'New schematic';model.projectInfo={...info};for(const key of ['company','documentNumber','revision','author','date','description',...approvalStages.flatMap(([key])=>[key+'Name',key+'Date'])])model.projectInfo[key]=String(data.get(key)).trim();render();closePanel()};
   }
   const projectInfoButton=document.createElement('button');projectInfoButton.id='projectInfoBtn';projectInfoButton.textContent='Project information';projectInfoButton.onclick=editProjectInfo;nav.append(projectInfoButton);
   // A shared drawing frame for every document page.
-  title.setAttribute('transform','translate(22 710)');title.replaceChildren();
+  title.id='drawingTitleBlock';title.setAttribute('transform','translate(22 710)');title.replaceChildren();
   el('rect',{x:0,y:0,width:1084,height:66,fill:'none',stroke:'#60737c','stroke-width':1},title);
-  el('path',{d:'M0 27 H1084 M0 47 H1084 M500 0 V66 M735 0 V66 M900 0 V66',stroke:'#60737c',fill:'none'},title);
+  el('path',{d:'M0 27 H1084 M0 61 H1084 M380 0 V27 M615 0 V27 M900 0 V27 M271 27 V61 M542 27 V61 M813 27 V61',stroke:'#60737c',fill:'none'},title);
   generatedText(title,8,10,'PROJECT',6,'bold','#73838b');generatedText(title,8,22,'',12,'bold').id='a4Project';
-  generatedText(title,508,10,'DOCUMENT / REVISION',6,'bold','#73838b');generatedText(title,508,22,'',9).id='a4Document';
-  generatedText(title,743,10,'DRAWN BY / DATE',6,'bold','#73838b');generatedText(title,743,22,'',8).id='a4Author';
+  generatedText(title,388,10,'DOCUMENT / REVISION',6,'bold','#73838b');generatedText(title,388,22,'',9).id='a4Document';
+  generatedText(title,623,10,'COMPANY',6,'bold','#73838b');generatedText(title,623,22,'',9).id='a4Company';
   generatedText(title,908,10,'SHEET / TOTAL',6,'bold','#73838b');generatedText(title,908,23,'',11,'bold').id='a4Number';
-  generatedText(title,8,40,'',10).id='a4Sheet';generatedText(title,508,40,'',9).id='a4Company';
-  generatedText(title,908,40,'A4 · 297 × 210 mm',8);generatedText(title,8,60,'LEITWERK · Schematic documentation',8,'bold','#138b78');generatedText(title,743,60,'Version '+APP_VERSION,8);
+  approvalStages.forEach(([key,label],i)=>{const x=8+i*271;generatedText(title,x,36,label,6,'bold','#73838b');generatedText(title,x,47,'',9).id='a4-'+key+'-name';generatedText(title,x,58,'',8).id='a4-'+key+'-date'});
+  generatedText(title,8,65,'',5).id='a4Sheet';generatedText(title,800,65,'A4 · 297 × 210 mm · Version '+APP_VERSION,5);
   const zones=el('g',{id:'frameZones'},pageContent);
   for(let i=0;i<8;i++)generatedText(zones,22+(i+.5)*1084/8,17,String(i+1),7,'normal','#73838b');
   for(let i=0;i<5;i++)generatedText(zones,10,22+(i+.5)*688/5,String.fromCharCode(65+i),7,'normal','#73838b');
   const renderBeforeDocument=render;
-  render=function(){renderBeforeDocument();grid.style.display=isGenerated(pages[activeSheet])?'none':'';const info=model.projectInfo||{};document.querySelector('#a4Project').textContent=model.title;document.querySelector('#a4Document').textContent=(info.documentNumber||'—')+' / '+(info.revision||'A');document.querySelector('#a4Author').textContent=(info.author||'—')+' · '+(info.date||'—');document.querySelector('#a4Company').textContent=info.company||''};
+  function fitTitleText(node,value,width){node.textContent=String(value||'—');node.removeAttribute('textLength');node.removeAttribute('lengthAdjust');if(node.getComputedTextLength()>width){node.setAttribute('textLength',width);node.setAttribute('lengthAdjust','spacingAndGlyphs')}}
+  render=function(){renderBeforeDocument();grid.style.display=isGenerated(pages[activeSheet])?'none':'';const info=model.projectInfo||{};fitTitleText(document.querySelector('#a4Project'),model.title,364);fitTitleText(document.querySelector('#a4Document'),(info.documentNumber||'—')+' / '+(info.revision||'A'),219);fitTitleText(document.querySelector('#a4Company'),info.company,269);for(const [key] of approvalStages){fitTitleText(document.querySelector('#a4-'+key+'-name'),info[key+'Name']||(key==='issued'?info.author:''),255);fitTitleText(document.querySelector('#a4-'+key+'-date'),info[key+'Date']||(key==='issued'?info.date:''),255)}};
   addSheet=function(){const name=prompt('Name of the new drawing sheet','Sheet '+pageNumber(drawingPages().length+1));if(name===null)return;const sheet={id:crypto.randomUUID(),title:name.trim()||'Schematic',parts:[],wires:[]};pages.push(sheet);setSheet(pages.length-1);closePanel()};
   document.querySelector('#sheetAdd').onclick=addSheet;
   const refreshBeforeDocument=refreshSheetPanel;
@@ -771,6 +788,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
 
   function isConnectionMode(){return mode==='wire'||mode==='bridge'}
   function partTerminals(p){
+    if(isPortBlock(p))return portBlockTerminals(p);
     if(p.type==='relay')return TYPES.relay.terminals.slice(0,2+3*(p.relayContactCount||3)).map(([x,y])=>[x,y+relayOffset(p)]);if(p.type!=='connector')return TYPES[p.type]?.terminals||[];
     const count=Math.max(2,Math.min(8,Array.isArray(p.pinNumbers)?p.pinNumbers.length:2));
     return Array.from({length:count},(_,i)=>[(i-Math.floor(count/2)+(i>=Math.floor(count/2)?1:0))*48,0]);
@@ -888,13 +906,18 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     owner.parts.push(p);treeFocusId=p.id;render();toast('Terminal added — place it from the device tree');
   }
   function removeStripTerminal(p){
-    if(!confirm('Remove terminal '+p.label+' permanently from the strip? Its attached connections will be removed.'))return;
+    deleteDevicePermanently(p);
+  }
+  function deleteDevicePermanently(p){
     const removedIds=new Set([p.id,...descendants(p.id).map(q=>q.id)]);
+    if(!confirm('Permanently delete '+aks(p)+(removedIds.size>1?' and '+(removedIds.size-1)+' sub-items':'')+' from the project? Attached connections will also be removed.'))return;
+    clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';
     for(const sheet of drawingPages()){
       sheet.parts=sheet.parts.filter(q=>!removedIds.has(q.id));sheet.wires=sheet.wires.filter(w=>![w.a,w.b].some(ref=>removedIds.has(ref.split(':')[0])));
-      for(const q of sheet.parts){if(q.masterId===p.id)delete q.masterId;if(removedIds.has(q.targetPartId)){delete q.targetPartId;delete q.targetSheetId}}
+      for(const q of sheet.parts){if(removedIds.has(q.masterId))delete q.masterId;if(removedIds.has(q.targetPartId)){delete q.targetPartId;delete q.targetSheetId}}
     }
-    model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;selected=null;render();
+    if(removedIds.has(appClipboard?.part.id))appClipboard=null;if(removedIds.has(treeFocusId))treeFocusId=null;
+    model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;if(removedIds.has(selected?.id))selected=null;render();toast('Device deleted permanently');
   }
   const drawBeforeBridgePorts=drawPart;
   drawPart=function(p){
@@ -926,7 +949,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     target.parts.push(p);
     setSheet(pages.indexOf(target));selected={kind:'part',id:p.id};treeFocusId=p.id;mode='select';render();toast('Separate pin placed — move it independently');
   }
-  const compactStyle=document.createElement('style');compactStyle.textContent='.device-node{margin:2px 0!important;padding-left:7px!important}.device-node>summary{padding:3px!important;display:flex;align-items:center;gap:3px}.device-node>summary::before{content:"▸";cursor:pointer}.device-node[open]>summary::before{content:"▾"}.device-node>summary small{display:none}.device-node>summary .device-jump{font-size:11px!important;padding:2px!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.terminal-manage{padding:1px 5px!important}.pin-node{display:inline-block!important;margin:2px!important;padding:2px 5px!important;font-size:10px!important}.terminal-bridge{pointer-events:stroke}';document.head.append(compactStyle);
+  const compactStyle=document.createElement('style');compactStyle.textContent='.device-node{margin:2px 0!important;padding-left:7px!important}.device-node>summary{padding:3px!important;display:flex;align-items:center;gap:3px}.device-node>summary::before{content:"▸";cursor:pointer}.device-node[open]>summary::before{content:"▾"}.device-node>summary small{display:none}.device-node>summary .device-jump{font-size:11px!important;padding:2px!important;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.terminal-manage,.device-delete{padding:1px 5px!important}.device-delete{flex:none;color:#f08d7f!important}.approval-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;border:1px solid #40525d;border-radius:5px;padding:10px}.approval-fields legend{color:#62d6bd;font-size:12px}.pin-node{display:inline-block!important;margin:2px!important;padding:2px 5px!important;font-size:10px!important}.terminal-bridge{pointer-events:stroke}';document.head.append(compactStyle);
 
   let areaSelection=null,selectionDrag=null;
   const selectedParts=new Set(),selectedWires=new Set();
@@ -1077,8 +1100,20 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   function relayOffset(p){return p.relayContactCount===1?144:p.relayContactCount===2?96:0}
   function relayBounds(p){const ys=partTerminals(p).map(([,y])=>y),top=Math.min(...ys)-48,bottom=Math.max(...ys)+48;return{x:-120,y:top,width:240,height:bottom-top}}
+  function isPortBlock(p){return ['power-supply','io-module','controller-board'].includes(p.type)}
+  function portBlockTerminals(p){
+    const pins=p.pinNumbers?.length?p.pinNumbers:TYPES[p.type].pinNumbers,n=Math.min(64,pins.length),sides=p.portSides?.length===n?p.portSides:TYPES[p.type].portSides?.length===n?TYPES[p.type].portSides:Array.from({length:n},(_,i)=>i%2?'right':'left');
+    const rows=Math.max(sides.filter(s=>s==='left').length,sides.filter(s=>s==='right').length),used={left:0,right:0};
+    return sides.map(side=>[side==='left'?-96:96,(used[side]++-Math.floor(rows/2))*48]);
+  }
   const drawBeforeCatalogGeometry=drawPart;drawPart=function(p){
     drawBeforeCatalogGeometry(p);const root=partsG.lastElementChild,geometry=root.querySelector('.part-geometry');
+    if(isPortBlock(p)){
+      const terminals=partTerminals(p),ys=terminals.map(t=>t[1]),top=Math.min(...ys)-24,bottom=Math.max(...ys)+24;
+      el('rect',{x:-72,y:top,width:144,height:bottom-top,class:'symbol port-block-frame'},geometry);
+      for(const [x,y] of terminals)el('path',{d:'M '+x+' '+y+' H '+(x<0?-72:72),class:'symbol'},geometry);
+      if(p.type==='power-supply')el('path',{d:'M -40 -20 L 40 20 M -45 -10 Q -35 -25 -25 -10 T -5 -10 M 8 12 H 44 M 8 22 H 44',class:'symbol'},geometry);
+    }
     if(p.type==='relay'&&p.relayContactCount&&p.relayContactCount<3){
       for(const node of Array.from(geometry.children))if(node.classList.contains('symbol')||node.tagName.toLowerCase()==='g')node.remove();const offset=relayOffset(p);
       el('rect',{...relayBounds(p),rx:5,class:'symbol relay-enclosure','stroke-dasharray':'8 5'},geometry);
@@ -1086,7 +1121,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       el('path',{d:'M 0 '+(-216+offset)+' V '+([-96,48,192][p.relayContactCount-1]+offset+24),class:'symbol','stroke-dasharray':'5 5'},geometry);
     }
     if(p.type==='contactor-4p'&&p.contactConfiguration==='2NO2NC')geometry.querySelectorAll('[data-contactor-contact]').forEach(node=>{if(Number(node.dataset.contactorContact)>=2){node.replaceChildren();drawSymbol(node,'switch-nc')}});
-    if(p.type.startsWith('mcb-')||['contactor-4p','auxiliary-contact'].includes(p.type)){const box=geometry.getBBox(),body=geometry.querySelector('.part-body');for(const [key,value] of Object.entries({x:box.x-8,y:box.y-8,width:box.width+16,height:box.height+16}))body.setAttribute(key,value)}
+    if(isPortBlock(p)||p.type.startsWith('mcb-')||p.type.startsWith('rcd-')||['optocoupler','contactor-4p','auxiliary-contact'].includes(p.type)){const box=geometry.getBBox(),body=geometry.querySelector('.part-body');for(const [key,value] of Object.entries({x:box.x-8,y:box.y-8,width:box.width+16,height:box.height+16}))body.setAttribute(key,value)}
   };
   const drawBeforeRelayReferences=drawPart;drawPart=function(p){
     drawBeforeRelayReferences(p);if(p.type==='relay'){
@@ -1119,7 +1154,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const order=['.part-aks','.part-label','.part-value','.page-reference'];const texts=order.flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent);texts.forEach((n,i)=>{n.setAttribute('x',0);n.setAttribute('y',top-4-(texts.length-i-1)*9)});
   };
   const motorPins={'motor-ac-1p':['L','N','PE'],'motor-ac-3p':['U1','V1','W1','PE'],'motor-ac-6t':['U1','V1','W1','U2','V2','W2','PE']};
-  const addBeforeAcMotors=addPart;addPart=function(type,position){addBeforeAcMotors(type,position);if(motorPins[type]){model.parts.find(p=>p.id===selected.id).pinNumbers=[...motorPins[type]];render()}};
+  const addBeforeAcMotors=addPart;addPart=function(type,position){addBeforeAcMotors(type,position);const pins=motorPins[type]||TYPES[type].pinNumbers;if(pins){const p=model.parts.find(p=>p.id===selected.id);p.pinNumbers=[...pins];if(TYPES[type].portSides)p.portSides=[...TYPES[type].portSides];render()}};
   const manufacturerLibraries=[],catalogProducts=new Map();
   const catalogSection=document.createElement('section');catalogSection.id='manufacturerLibraries';
   const catalogHeading=document.createElement('h2');catalogHeading.textContent='Manufacturer libraries';catalogHeading.style.cssText='font-size:12px;margin:18px 0 8px';catalogSection.append(catalogHeading);
@@ -1139,6 +1174,8 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
         if(['name','manufacturerNumber','terminalType','coilValue','verification'].some(key=>p[key]!==undefined&&typeof p[key]!=='string'))throw new Error('Product text fields must be strings');
         if(p.attributes!==undefined&&(!p.attributes||typeof p.attributes!=='object'||Array.isArray(p.attributes)))throw new Error('Invalid product attributes');
         if(p.pinNumbers!==undefined&&(!Array.isArray(p.pinNumbers)||p.pinNumbers.some(n=>!text(n))||new Set(p.pinNumbers).size!==p.pinNumbers.length))throw new Error('Pin numbers must be unique text values');
+        if(['power-supply','io-module','controller-board'].includes(p.symbol)&&p.pinNumbers&&(p.pinNumbers.length<1||p.pinNumbers.length>64))throw new Error('Port blocks support 1–64 pins');
+        if(p.portSides!==undefined&&(!Array.isArray(p.portSides)||p.portSides.length!==(p.pinNumbers||TYPES[p.symbol].pinNumbers||[]).length||p.portSides.some(s=>!['left','right'].includes(s))))throw new Error('Invalid port sides');
         if(p.symbol==='relay'&&p.relayContactCount!==undefined&&![1,2,3].includes(p.relayContactCount))throw new Error('Relay contact count must be 1–3');
         if(p.symbol==='connector'&&p.pinNumbers&&(p.pinNumbers.length<2||p.pinNumbers.length>8))throw new Error('Terminal pin count must be 2–8');
       }
@@ -1172,6 +1209,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const created=model.parts.filter(q=>!before.has(q.id));p.value=product.model;p.manufacturerNumber=product.manufacturerNumber||'';p.sapNumber='';p.manufacturer=library.manufacturer;
     p.catalog={libraryId:library.id,productId:product.id,manufacturer:library.manufacturer,model:product.model,verification:product.verification||'not-verified',attributes:structuredClone(product.attributes||{}),sourceUrls:(library.sources||[]).map(s=>s.url)};
     if(product.pinNumbers)p.pinNumbers=[...product.pinNumbers];
+    if(product.portSides)p.portSides=[...product.portSides];
     if(p.type==='connector'){
       let master=existingStrip;if(!master){const code=nextEquipmentTag('X',new Set([p.id]));master={id:'p'+nextId++,type:'terminal-strip',deviceCode:code,label:code,value:'Terminal strip',x:p.x,y:snap(p.y-6*gridSpacing()),functionCode:p.functionCode,locationCode:p.locationCode,unplaced:true};model.parts.push(master)}
       const used=new Set(deviceEntries().filter(e=>e.p!==p&&e.p.masterId===master.id).map(e=>terminalOrdinal(e.p)));let number=1;while(used.has(String(number)))number++;

@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const root=path.join(__dirname,'..');
-const names=['abb','phoenix-contact','finder'];
+const names=fs.readdirSync(path.join(root,'libraries')).filter(name=>name.endsWith('.json')).map(name=>name.slice(0,-5)).sort();
 const seen=new Set();
 const libraries=names.map(name=>{
   const data=JSON.parse(fs.readFileSync(path.join(root,'libraries',name+'.json'),'utf8'));

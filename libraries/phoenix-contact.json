@@ -15,6 +15,14 @@
     {
       "url": "https://www.phoenixcontact.com/en-pc/products/terminal-blocks",
       "retrieved": false
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-pc/products/power-supplies",
+      "retrieved": false
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-pc/products/relays-and-optocouplers",
+      "retrieved": false
     }
   ],
   "families": [
@@ -1038,6 +1046,200 @@
           "attributes": {
             "family": "End cover / end stop",
             "compatibility": "Verify terminal dimensions and mounting rail."
+          }
+        }
+      ]
+    },
+    {
+      "id": "power-supplies",
+      "name": "UNO / TRIO / QUINT power supplies",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "uno-24dc-60w",
+          "model": "UNO-PS/1AC/24DC/60W",
+          "name": "UNO-PS/1AC/24DC/60W",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "uno-24dc-100w",
+          "model": "UNO-PS/1AC/24DC/100W",
+          "name": "UNO-PS/1AC/24DC/100W",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "trio-24dc-5",
+          "model": "TRIO-PS-2G/1AC/24DC/5",
+          "name": "TRIO-PS-2G/1AC/24DC/5",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "trio-24dc-10",
+          "model": "TRIO-PS-2G/1AC/24DC/10",
+          "name": "TRIO-PS-2G/1AC/24DC/10",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "quint4-24dc-5",
+          "model": "QUINT4-PS/1AC/24DC/5",
+          "name": "QUINT4-PS/1AC/24DC/5",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        },
+        {
+          "id": "quint4-24dc-10",
+          "model": "QUINT4-PS/1AC/24DC/10",
+          "name": "QUINT4-PS/1AC/24DC/10",
+          "symbol": "power-supply",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "L",
+            "N",
+            "PE",
+            "+24V",
+            "0V"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "outputVoltageV": 24,
+            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+          },
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "right"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optocouplers",
+      "name": "PLC optocoupler interfaces",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "plc-osc-24dc-24dc-2",
+          "model": "PLC-OSC-24DC/24DC/2",
+          "name": "PLC-OSC-24DC/24DC/2",
+          "symbol": "optocoupler",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN-",
+            "OUT+",
+            "OUT-"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "note": "Solid-state interface reference; the drawn transistor symbol is functional, not a physical terminal diagram."
           }
         }
       ]

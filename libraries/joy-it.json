@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "joy-it",
+  "manufacturer": "Joy-it",
+  "coverage": {
+    "complete": false,
+    "status": "Reference library; verify product specifications, ordering codes and pinouts.",
+    "reason": "Manufacturer documentation could not be retrieved under the cloud outbound policy."
+  },
+  "sources": [
+    {
+      "url": "https://joy-it.net/en/products/SBC-NodeMCU",
+      "retrieved": false
+    }
+  ],
+  "families": [
+    {
+      "id": "nodemcu",
+      "name": "NodeMCU ESP8266 development boards",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "nodemcu-v2-lua",
+          "model": "NodeMCU V2 LUA · ESP8266 WiFi",
+          "name": "NodeMCU V2 LUA · ESP8266 WiFi",
+          "symbol": "controller-board",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "VIN",
+            "GND",
+            "3V3",
+            "EN",
+            "RST",
+            "A0",
+            "D0 / GPIO16",
+            "D1 / GPIO5",
+            "D2 / GPIO4",
+            "D3 / GPIO0",
+            "D4 / GPIO2",
+            "D5 / GPIO14",
+            "D6 / GPIO12",
+            "D7 / GPIO13",
+            "D8 / GPIO15",
+            "RX / GPIO3",
+            "TX / GPIO1"
+          ],
+          "attributes": {
+            "portMapping": "Logical unique power/control/GPIO ports; duplicate physical power pins and header ordering are not modelled.",
+            "description": "Joy-it NodeMCU V2 LUA development board / ESP8266 WiFi module"
+          }
+        }
+      ]
+    }
+  ]
+}

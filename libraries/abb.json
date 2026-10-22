@@ -3114,6 +3114,157 @@
           ]
         }
       ]
+    },
+    {
+      "id": "f200-rcd",
+      "name": "F200 residual-current devices (FI)",
+      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "products": [
+        {
+          "id": "f202-25-030-a",
+          "model": "F202 · 25 A · 30 mA · type A",
+          "name": "F202 · 25 A · 30 mA · type A",
+          "symbol": "rcd-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 2,
+            "ratedCurrentA": 25,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        },
+        {
+          "id": "f202-40-030-a",
+          "model": "F202 · 40 A · 30 mA · type A",
+          "name": "F202 · 40 A · 30 mA · type A",
+          "symbol": "rcd-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 2,
+            "ratedCurrentA": 40,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        },
+        {
+          "id": "f202-63-030-a",
+          "model": "F202 · 63 A · 30 mA · type A",
+          "name": "F202 · 63 A · 30 mA · type A",
+          "symbol": "rcd-2p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 2,
+            "ratedCurrentA": 63,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        },
+        {
+          "id": "f204-25-030-a",
+          "model": "F204 · 25 A · 30 mA · type A",
+          "name": "F204 · 25 A · 30 mA · type A",
+          "symbol": "rcd-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 4,
+            "ratedCurrentA": 25,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        },
+        {
+          "id": "f204-40-030-a",
+          "model": "F204 · 40 A · 30 mA · type A",
+          "name": "F204 · 40 A · 30 mA · type A",
+          "symbol": "rcd-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 4,
+            "ratedCurrentA": 40,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        },
+        {
+          "id": "f204-63-030-a",
+          "model": "F204 · 63 A · 30 mA · type A",
+          "name": "F204 · 63 A · 30 mA · type A",
+          "symbol": "rcd-4p",
+          "manufacturerNumber": "",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "N-in",
+            "N-out"
+          ],
+          "attributes": {
+            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "poles": 4,
+            "ratedCurrentA": 63,
+            "residualCurrentmA": 30,
+            "residualCurrentType": "A",
+            "note": "RCCB reference, not an overcurrent-protective RCBO."
+          }
+        }
+      ]
     }
   ]
 }

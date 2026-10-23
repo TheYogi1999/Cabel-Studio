@@ -1,0 +1,56 @@
+// A route must depend on the final position, not the intermediate pointer moves.
+const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http');
+const{chromium,devices}=require('playwright'),ROOT=path.resolve(__dirname,'..'),G=4*1128/297;
+const drawing=p=>p.sheets.find(s=>!s.kind),point=(x,y)=>({x:x*G,y:y*G}),near=(a,b)=>assert.ok(Math.abs(a-b)<1e-5,`${a} != ${b}`);
+const part=(id,x,y)=>({id,type:'resistor',label:id,deviceCode:id,value:'R',...point(x,y)});
+const fixture={title:'Stable route movement',sheets:[{id:'movement',title:'Movement',parts:[part('p1',12,16),part('p2',40,29),part('p3',16,40),part('p4',40,40),part('p5',28,25)],
+  junctions:[{id:'j1',...point(28,40),style:'dot',rootWireId:'w2'}],wires:[
+    {id:'w1',a:'p1:1',b:'p2:0',routing:'octilinear',points:[point(21,24),point(34,24)]},
+    {id:'w2',a:'p3:1',b:'@j1:0',routing:'octilinear',points:[]},
+    {id:'w3',a:'@j1:0',b:'p4:0',points:[]},
+    {id:'w4',a:'@j1:0',b:'p5:0',routing:'octilinear',points:[point(27,40)]}
+  ]}]};
+const comparable=s=>s.wires.map(w=>({id:w.id,points:w.points.map(p=>({x:Math.round(p.x*1e6)/1e6,y:Math.round(p.y*1e6)/1e6}))}));
+(async()=>{
+  const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,file=path.resolve(ROOT,'.'+(pathname==='/'?'/index.html':pathname));if(!file.startsWith(ROOT+path.sep))return res.writeHead(403).end();res.setHeader('Content-Type',file.endsWith('.html')?'text/html':file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':'application/json');res.end(await fs.readFile(file));}catch{res.writeHead(404).end();}});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));let browser;const errors=[];
+  try{
+    browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
+    async function setup(page){
+      page.setDefaultTimeout(12000);page.on('pageerror',e=>errors.push(e.message));await page.goto(`http://127.0.0.1:${server.address().port}/`);
+      const download=async id=>{const[d]=await Promise.all([page.waitForEvent('download'),page.locator('#'+id).click()]);const chunks=[];for await(const c of await d.createReadStream())chunks.push(c);return Buffer.concat(chunks);};
+      const save=async()=>JSON.parse((await download('saveBtn')).toString());
+      const load=async(data=fixture)=>{await page.locator('#fileInput').setInputFiles({name:'movement.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(data))});await page.waitForFunction(()=>document.querySelector('#toast').textContent==='Project loaded');await page.locator('#selectTool').click();await page.locator('#fitBtn').click();};
+      const screen=(x,y)=>page.locator('#pageContent').evaluate((g,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(g.getScreenCTM());return{x:q.x,y:q.y};},point(x,y));
+      async function drag(from,to,via=[],steps=1){const a=await screen(...from);await page.mouse.move(a.x,a.y);await page.mouse.down();for(const p of[...via,to]){const b=await screen(...p);await page.mouse.move(b.x,b.y,{steps});}await page.mouse.up();}
+      const pathPoints=async id=>{const d=await page.locator(`path.wire[data-id="${id}"]`).getAttribute('d'),n=d.match(/-?\d+(?:\.\d+)?(?:e[-+]?\d+)?/gi).map(Number);return Array.from({length:n.length/2},(_,i)=>({x:n[i*2],y:n[i*2+1]}));};
+      async function valid(){for(const w of drawing(await save()).wires){const p=await pathPoints(w.id);assert.ok(p.length<=6,`${w.id}: no accumulated bends (${p.length} vertices)`);for(let i=1;i<p.length;i++){const dx=Math.abs(p[i].x-p[i-1].x),dy=Math.abs(p[i].y-p[i-1].y);assert.ok(dx<1e-5||dy<1e-5||w.routing==='octilinear'&&Math.abs(dx-dy)<1e-5,`${w.id}: allowed segment angle`);}}}
+      await load();return{load,save,screen,drag,valid,pathPoints,download};
+    }
+    const page=await browser.newPage({viewport:{width:1660,height:1100}}),a=await setup(page),baseline=drawing(await a.save());
+    await a.drag([12,16],[16,19]);const direct=drawing(await a.save());await a.load();await a.drag([12,16],[16,19],[[18,22],[10,13],[17,20],[14,17]],25);const detour=drawing(await a.save());
+    console.log('Component route vertices: direct',direct.wires[0].points.length+2,'/ many moves',detour.wires[0].points.length+2);assert.deepEqual(comparable(detour),comparable(direct),'Component routes are independent of pointer detours');await a.valid();
+    assert.ok(detour.wires[0].points.length<=2,'Stretch the existing diagonal/horizontal bends without adding corners');near(detour.wires[0].points.at(-1).x,baseline.wires[0].points.at(-1).x);near(detour.wires[0].points.at(-1).y,baseline.wires[0].points.at(-1).y);
+    await page.locator('#undoBtn').click();assert.deepEqual(drawing(await a.save()),baseline);await page.locator('#redoBtn').click();assert.deepEqual(drawing(await a.save()),detour);
+    await a.load();await a.drag([12,16],[12,16],[[18,22],[10,13],[17,20]],25);assert.deepEqual(drawing(await a.save()),baseline,'Returning within a drag restores the original route');assert.ok(await page.locator('#undoBtn').isDisabled());
+    await a.load();await a.drag([28,40],[32,36]);const directNode=drawing(await a.save());await a.load();await a.drag([28,40],[32,36],[[24,35],[35,42],[26,44],[31,37]],20);const detourNode=drawing(await a.save());assert.deepEqual(comparable(detourNode),comparable(directNode),'Junction routes are independent of pointer detours');await a.valid();
+    await page.locator('#undoBtn').click();assert.deepEqual(drawing(await a.save()),baseline);await a.drag([28,40],[28,40],[[24,35],[35,42],[26,44]],20);assert.deepEqual(drawing(await a.save()),baseline,'Returning a junction restores all attached routes');
+    await a.drag([28,40],[30,38],[],20);const cancellation=await a.save(),start=await a.screen(30,38),end=await a.screen(34,35);await page.mouse.move(start.x,start.y);await page.mouse.down();await page.mouse.move(end.x,end.y,{steps:25});await page.keyboard.press('Escape');await page.mouse.up();assert.deepEqual(drawing(await a.save()),drawing(cancellation),'Escape restores exact pre-gesture node geometry');
+    console.log('PASS component/junction detours, bounded bends, preserved interior route, return to origin, one-step history and cancellation');
+    await a.load();await page.keyboard.press('Control+a');await a.drag([12,16],[15,18],[[14,20],[18,21]],20);let s=drawing(await a.save());for(const w of s.wires){const old=baseline.wires.find(q=>q.id===w.id);assert.equal(w.points.length,old.points.length);w.points.forEach((p,i)=>{near(p.x,old.points[i].x+3*G);near(p.y,old.points[i].y+2*G);});}near(s.junctions[0].x,baseline.junctions[0].x+3*G);near(s.junctions[0].y,baseline.junctions[0].y+2*G);await a.valid();await page.locator('#undoBtn').click();assert.deepEqual(drawing(await a.save()),baseline);
+    // Partial group movement exercises two external wires with a fixed node.
+    await a.load();await a.drag([12,20],[30,43]);await a.drag([16,40],[20,38]);const partial=drawing(await a.save());await a.load();await a.drag([12,20],[30,43]);await a.drag([16,40],[20,38],[[18,37],[14,43],[23,39]],20);s=drawing(await a.save());assert.deepEqual(comparable(s),comparable(partial));assert.deepEqual(s.junctions,baseline.junctions);near(s.parts.find(p=>p.id==='p5').x,32*G);near(s.parts.find(p=>p.id==='p5').y,23*G);await a.valid();
+    const roundtrip=await a.save();await page.reload();await a.load(roundtrip);assert.deepEqual(drawing(await a.save()),drawing(roundtrip));await fs.writeFile('/tmp/Cabel-Studio-routing-move.pdf',await a.download('exportBtn'));assert.deepEqual(drawing(await a.save()),drawing(roundtrip));
+    console.log('PASS complete/partial group movement, stable route data after JSON reopen and PDF export');
+    const bridges={title:'Bridge movement',sheets:[{id:'bridges',title:'Terminal bridges',parts:[{id:'p80',type:'terminal-strip',label:'X1',deviceCode:'X1',unplaced:true,...point(10,10)},...[[81,16,24],[82,44,24],[83,28,40]].map(([id,x,y])=>({id:'p'+id,type:'connector',label:'X1',deviceCode:'X1',masterId:'p80',terminalNumber:String(id-80),pinNumbers:['a','b'],...point(x,y)}))],junctions:[{id:'j1',...point(28,24),style:'root',rootWireId:'w1'}],wires:[{id:'w1',a:'p81:8',b:'@j1:0',kind:'bridge',colorCode:'BN',points:[]},{id:'w2',a:'@j1:0',b:'p82:8',kind:'bridge',colorCode:'BN',points:[]},{id:'w3',a:'@j1:0',b:'p83:8',kind:'bridge',colorCode:'BN',routing:'octilinear',points:[]}]}]};
+    await a.load(bridges);const originalBridge=drawing(await a.save());await a.drag([28,24],[31,27]);const directBridge=drawing(await a.save());await a.load(bridges);await a.drag([28,24],[31,27],[[24,26],[33,22],[26,25]],20);const movedBridge=drawing(await a.save());assert.deepEqual(comparable(movedBridge),comparable(directBridge));assert.ok(movedBridge.wires.every(w=>w.kind==='bridge'&&w.colorCode==='BN'));assert.equal(movedBridge.junctions[0].style,'root');await a.valid();await page.locator('#undoBtn').click();assert.deepEqual(drawing(await a.save()),originalBridge);
+    console.log('PASS branched brown bridges and 45° root movement retain topology and properties without extra bends');
+    const context=await browser.newContext(devices['iPad Pro 11 landscape']),tablet=await context.newPage(),t=await setup(tablet),client=await context.newCDPSession(tablet);
+    const touch=(type,points)=>client.send('Input.dispatchTouchEvent',{type,touchPoints:points.map((p,i)=>({...p,id:i+1}))});
+    async function finger(from,to,via=[]){await touch('touchStart',[await t.screen(...from)]);for(const p of[...via,to])await touch('touchMove',[await t.screen(...p)]);await touch('touchEnd',[]);}
+    await finger([12,16],[16,19],[[18,22],[10,13],[17,20],[14,17]]);assert.deepEqual(comparable(drawing(await t.save())),comparable(direct));await t.valid();await t.load();await finger([28,40],[32,36],[[24,35],[35,42],[26,44],[31,37]]);assert.deepEqual(comparable(drawing(await t.save())),comparable(directNode));await t.valid();
+    const checkpoint=await t.save(),p=await t.screen(32,36);await touch('touchStart',[p]);await touch('touchMove',[await t.screen(34,34)]);await touch('touchStart',[await t.screen(34,34),{x:p.x+70,y:p.y}]);await touch('touchMove',[{x:p.x-20,y:p.y},{x:p.x+95,y:p.y+10}]);await touch('touchEnd',[]);assert.deepEqual(drawing(await t.save()),drawing(checkpoint),'Pinch cancels an unfinished node move');
+    await t.load();const penStart=await t.screen(12,16),penEnd=await t.screen(16,19);await client.send('Input.dispatchMouseEvent',{type:'mousePressed',...penStart,pointerType:'pen',button:'left',buttons:1,force:.6});for(const p of[[18,22],[10,13],[17,20],[16,19]])await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',...await t.screen(...p),pointerType:'pen',button:'none',buttons:1,force:.6});await client.send('Input.dispatchMouseEvent',{type:'mouseReleased',...penEnd,pointerType:'pen',button:'left',buttons:0});assert.deepEqual(comparable(drawing(await t.save())),comparable(direct));await t.valid();
+    assert.deepEqual(errors,[]);console.log('PASS native tablet finger/Pencil component/junction edits and pinch rollback with stable routes');
+  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}
+})().catch(e=>{console.error(e);process.exitCode=1;});

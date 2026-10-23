@@ -10,6 +10,29 @@ globalThis.CabelConnections = (() => {
   function octilinear(points){
     const out=[];for(const p of points){if(!p)continue;const a=out.at(-1);if(a){const dx=p.x-a.x,dy=p.y-a.y,d=Math.min(Math.abs(dx),Math.abs(dy));if(d>EPS&&Math.abs(Math.abs(dx)-Math.abs(dy))>EPS)out.push({x:a.x+Math.sign(dx)*d,y:a.y+Math.sign(dy)*d});}out.push({...p});}return clean(out);
   }
+  function stretchStart(points,start){
+    if(distance(points[0],start)<EPS)return points;
+    if(points.length<2)return octilinear([start,points[0]]);
+    if(points.length===2){
+      const [old,end]=points,diagonal=Math.abs(old.x-end.x)>EPS&&Math.abs(old.y-end.y)>EPS;
+      return diagonal?octilinear([end,start]).reverse():octilinear([start,end]);
+    }
+    const [old,corner,anchor]=points,u={x:corner.x-old.x,y:corner.y-old.y},v={x:anchor.x-corner.x,y:anchor.y-corner.y},cross=u.x*v.y-u.y*v.x;
+    if(Math.abs(cross)>EPS){
+      const t=((anchor.x-start.x)*v.y-(anchor.y-start.y)*v.x)/cross,next={x:start.x+t*u.x,y:start.y+t*u.y};
+      if(Number.isFinite(next.x)&&Number.isFinite(next.y)&&t>=-EPS&&((anchor.x-next.x)*v.x+(anchor.y-next.y)*v.y)>=-EPS)return clean([start,next,...points.slice(2)]);
+    }
+    // A bend that has moved behind an endpoint no longer needs to be kept.
+    // Reconnect to the next fixed vertex with at most one replacement bend.
+    return clean([...octilinear([start,anchor]),...points.slice(3)]);
+  }
+  function stretch(points,a,b){
+    if(points.length<2)return[];
+    const dx=a.x-points[0].x,dy=a.y-points[0].y,last=points.at(-1);
+    if(Math.abs(b.x-last.x-dx)<EPS&&Math.abs(b.y-last.y-dy)<EPS)return points.map(p=>({x:p.x+dx,y:p.y+dy}));
+    const first=stretchStart(points.map(p=>({...p})),a);
+    return stretchStart(first.reverse(),b).reverse();
+  }
   function projection(points,p){
     let best=null,total=0;for(let i=1;i<points.length;i++){const a=points[i-1],b=points[i],dx=b.x-a.x,dy=b.y-a.y,length=distance(a,b),u=length?Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(length*length))):0,q={x:a.x+dx*u,y:a.y+dy*u},d=distance(p,q);if(!best||d<best.distance)best={point:q,index:i-1,distance:d,along:total+u*length};total+=length;}return best&&{...best,total};
   }
@@ -117,20 +140,20 @@ globalThis.CabelConnections = (() => {
       if(e.button!==0||api.blocked())return;
       if(api.connecting()){if(e.target.closest('.terminal'))return;if(e.target.closest('#wires')&&connectAt({x:e.clientX,y:e.clientY},e.pointerType)){e.preventDefault();e.stopImmediatePropagation();}return;}
       const id=e.target.closest('[data-junction-id]')?.dataset.junctionId;if(!id||api.mode()!=='select')return;
-      e.preventDefault();e.stopImmediatePropagation();const n=nodes().find(n=>n.id===id);api.commit();api.clearSelection();api.select({kind:'junction',id});nodeDrag={n,start:api.world(e),x:n.x,y:n.y};api.capture(e.pointerId);api.render();
+      e.preventDefault();e.stopImmediatePropagation();const n=nodes().find(n=>n.id===id);api.commit();api.clearSelection();api.select({kind:'junction',id});nodeDrag={n,start:api.world(e),x:n.x,y:n.y,routes:api.captureRoutes()};api.capture(e.pointerId);api.render();
     },true);
-    api.svg.addEventListener('pointermove',e=>{if(!nodeDrag)return;e.preventDefault();e.stopImmediatePropagation();const p=api.world(e),state=nodeDrag;api.moveNode(state.n,state.x+api.snap(p.x-state.start.x),state.y+api.snap(p.y-state.start.y));api.render();},true);
+    api.svg.addEventListener('pointermove',e=>{if(!nodeDrag)return;e.preventDefault();e.stopImmediatePropagation();const p=api.world(e),state=nodeDrag;api.moveNode(state.n,state.x+api.snap(p.x-state.start.x),state.y+api.snap(p.y-state.start.y),state.routes);api.render();},true);
     api.svg.addEventListener('pointerup',e=>{if(!nodeDrag)return;e.preventDefault();e.stopImmediatePropagation();nodeDrag=null;api.render();},true);
-    api.svg.addEventListener('pointercancel',()=>{if(nodeDrag){api.moveNode(nodeDrag.n,nodeDrag.x,nodeDrag.y);nodeDrag=null;api.render();}},true);
+    api.svg.addEventListener('pointercancel',()=>{if(nodeDrag){api.moveNode(nodeDrag.n,nodeDrag.x,nodeDrag.y,nodeDrag.routes);nodeDrag=null;api.render();}},true);
     document.addEventListener('keydown',e=>{
       if(e.key==='Shift'){shift=true;if(lastCursor)api.updatePreview(lastCursor);return;}
       if(e.target.closest('input,textarea,select,[contenteditable="true"]')||api.blocked())return;
-      if(e.key==='Escape'&&nodeDrag){e.preventDefault();e.stopImmediatePropagation();api.moveNode(nodeDrag.n,nodeDrag.x,nodeDrag.y);nodeDrag=null;api.render();}
+      if(e.key==='Escape'&&nodeDrag){e.preventDefault();e.stopImmediatePropagation();api.moveNode(nodeDrag.n,nodeDrag.x,nodeDrag.y,nodeDrag.routes);nodeDrag=null;api.render();}
       if(['Delete','Backspace'].includes(e.key)&&api.selected()?.kind==='junction'){e.preventDefault();e.stopImmediatePropagation();remove(api.selected().id);}
     },true);
     document.addEventListener('keyup',e=>{if(e.key==='Shift'){shift=false;if(lastCursor)api.updatePreview(lastCursor);}});
     window.addEventListener('blur',()=>{shift=false;});
     return{position,bridge,validBridge,conflictingKind,begin,waypoint,preview,complete,connectAt,displayRoute,prune,enclosed,edit,remove,draw,cancel,busy:()=>Boolean(nodeDrag),angle:()=>locked,toggleAngle:()=>{locked=!locked;if(lastCursor)api.updatePreview(lastCursor);api.refresh();},terminals,nodeId};
   }
-  return{init,clean,octilinear};
+  return{init,clean,octilinear,stretch};
 })();

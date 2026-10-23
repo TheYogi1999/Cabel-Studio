@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.21.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.21.1**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -30,6 +30,8 @@ With a finger or Pencil, drag components from the generic/product libraries or d
 Start or finish a connection on an existing wire/bridge to insert a junction. A junction can have several branches, and each branch can have further junctions. A crossing by itself does not join connections. Starting on a line and cancelling leaves the line untouched; completing a branch splits it into electrically connected sections in one undo step. Main-line sections share their conductor properties and show one label; new branches have their own properties. Ordinary ports and brown bridge ports cannot be mixed, and bridges remain within their terminal strip.
 
 Junctions normally show a visible **dot**. In Select mode, select a junction and choose **Properties**, right-click/double-click it, or hold it on a tablet. Choose **45° root** and a **Root connection**: that section stays straight and perpendicular branches enter it diagonally. Selecting the other main-line section reverses the entry direction. Already diagonal/non-perpendicular entries keep their route. Wire properties also link to their endpoint junctions, including when a dot is hidden. Drag a junction to move it and stretch the attached ends. Deleting one branch preserves the remaining connections; deleting a junction explicitly removes its attached sections. Undo restores either operation.
+
+While dragging a component, group or junction, route adjustments always use the geometry captured at the start of the gesture. Intermediate finger/Pencil/mouse positions cannot accumulate bends. Diagonal routes stretch their adjacent bends; when a bend falls behind the moved endpoint, a short replacement connects to the next fixed vertex. Returning to the starting position restores the route.
 
 Drawing sheets optionally store `junctions: [{id, x, y, style: "dot" | "root", rootWireId}]`. Wire endpoints remain strings: normal ports use `partId:pinIndex`, junctions use `@junctionId:0`. Split main-line sections share `runId`; `labelHidden` suppresses repeated labels. `routing: "octilinear"` enables 45° segments in the existing ordered `points` array. Older projects need no migration. These fields survive movement, JSON save/open and undo/redo; PDF exports contain the rendered dots/entries without editing targets. Terminal and connection lists resolve junctions to connected ports.
 
@@ -141,6 +143,7 @@ node tests/tablet-input-smoke.cjs
 node tests/workspace-view-smoke.cjs
 node tests/red-pen-smoke.cjs
 node tests/connection-branch-smoke.cjs
+node tests/routing-move-smoke.cjs
 ```
 
 The main smoke check covers placement, editing, routing and segment movement, transformations, clipboard, history, multi-selection, device hierarchy, terminals/bridges, relays, cross-references, grids, generated lists, JSON roundtrips and PDF export. The manufacturer check additionally covers the JSON/bundle agreement, new hardware ports/routes, permanent deletion across sheets and undo/redo, master-only pagination, approval names/dates, all AC motor variants, product drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminals, Finder contact counts, metadata persistence, library download/import validation, Generic/Products switching, wildcard name/number searches, offline file opening, English output, fit-aware bridge labels, pink selection, current-sheet Ctrl/⌘+A, S200 fixed-contact markings and relay-frame clearance. The symbol/page check covers the separate editor, proposal validation/placement/serialization, upright custom text, legacy supply-port upgrades and routes, page/field AKS precedence, explicit assignment, hiding, field movement/resizing on both grids, drawing bounds, single-step history, cancellation, context menus, headings inside fields, modal backdrop persistence, JSON roundtrips and PDF output. Screenshots and PDFs are written under `/tmp`, outside the repository. The `file://` check is explicitly skipped if Chromium administrator policy blocks local-file navigation; HTTP checks still run.
@@ -152,3 +155,5 @@ The connection/branch check covers deferred splitting, multiple/nested branches,
 The workspace view check verifies actual painted terminal pixels in screenshots, an unchanged document, and a stable drawing centre/zoom through desktop fullscreen, viewport resizing, browser exit, resume and explicit exit. It requires no corrective zoom or Fit between these steps. `CHROMIUM_PATH` can point to Brave; `PLAYWRIGHT_HEADED=1` runs it with a display server instead of headless Chromium.
 
 The red pen check covers mouse/finger/Pencil freehand strokes, whole-stroke erasing including fast crossings, individual/group selection, movement, uniform handle/button scaling, cancellation, single-action history, electrical-object isolation, per-sheet JSON/PDF persistence, selection restoration after export, palm rejection and pinch rollback. It also verifies that a single finger selects in Select and connects in Connect without changing the view. Tablet checks use Chromium emulation, not physical iPad/Pencil hardware.
+
+The routing-movement check reproduces route growth from pointer detours, then compares direct movement against many intermediate moves for components, junctions, complete/partial groups and branched bridges. It checks bounded bend counts, preserved interior geometry, return/cancellation, history, JSON/PDF and native tablet finger/Pencil input including pinch rollback.

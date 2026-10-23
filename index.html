@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.21.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.21.1">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -61,12 +61,12 @@
 <div class="toast" id="toast"></div>
 <script src="libraries/catalog.js"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/red-pen.js?v=1.21.0"></script>
-<script src="scripts/connection-graph.js?v=1.21.0"></script>
-<script src="scripts/workspace-ui.js?v=1.21.0"></script>
+<script src="scripts/red-pen.js?v=1.21.1"></script>
+<script src="scripts/connection-graph.js?v=1.21.1"></script>
+<script src="scripts/workspace-ui.js?v=1.21.1"></script>
 <script>
 (() => {
-  const APP_VERSION='1.21.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.21.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -176,7 +176,7 @@
   }
   function snap(v){return Math.round(v/GRID)*GRID}function toWorld(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left-pan.x)/zoom,y:(e.clientY-r.top-pan.y)/zoom}}
   function applyView(){scene.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${zoom})`);document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'}
-  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(segmentDrag){dragWireSegment(e);return}if(drag){captureSheetPointer(e.pointerId);const p=model.parts.find(p=>p.id===drag.id);if(p){moveComponent(p,snap(w.x+drag.dx),snap(w.y+drag.dy));render();applyView()}}if(wireStart){updateWirePreview({x:snap(w.x),y:snap(w.y)})}});
+  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(segmentDrag){dragWireSegment(e);return}if(drag){captureSheetPointer(e.pointerId);const p=model.parts.find(p=>p.id===drag.id);if(p){moveComponent(p,snap(w.x+drag.dx),snap(w.y+drag.dy),drag.routes||=captureWireRoutes());render();applyView()}}if(wireStart){updateWirePreview({x:snap(w.x),y:snap(w.y)})}});
   svg.addEventListener('pointercancel',()=>{drag=null;segmentDrag=null;wireLabelDrag=null});
   svg.addEventListener('pointerup',()=>{drag=null;segmentDrag=null});svg.addEventListener('pointerdown',e=>{
     if(e.button!==0)return;
@@ -390,13 +390,15 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   function updateWirePreview(cursor){
     const a=findTerminal(wireStart);if(a)preview.setAttribute('d',routePath(connectionGraph?connectionGraph.preview(cursor):orthogonalPoints([a,...wirePoints,cursor])));
   }
-  function changeComponent(p,change,ignoreWires=new Set()){
+  function captureWireRoutes(){return new Map(model.wires.map(w=>[w,routePoints(w)]));}
+  function changeComponent(p,change,ignoreWires=new Set(),routes=null){
     const attached=model.wires.filter(w=>!ignoreWires.has(w)&&(w.a.split(':')[0]===p.id||w.b.split(':')[0]===p.id));
-    const before=new Map(attached.map(w=>[w,routePoints(w)]));change();
+    const before=new Map(attached.map(w=>[w,routes?.get(w)||routePoints(w)]));change();
     for(const w of attached){
       let points=before.get(w).map(q=>({...q}));if(points.length<2)continue;
       const oldA=points[0],oldB=points.at(-1),a=findTerminal(w.a),b=findTerminal(w.b);
-      if(w.routing==='octilinear'){points[0]=a;points[points.length-1]=b;w.points=CabelConnections.octilinear(points).slice(1,-1);continue;}
+      if(!a||!b)continue;
+      if(w.routing==='octilinear'){w.points=CabelConnections.stretch(points,a,b).slice(1,-1);continue;}
       if(points.length===2){
         // A straight wire needs a dogleg only when its endpoints move out of alignment.
         if(Math.abs(oldA.y-oldB.y)<1e-7){const x=(oldA.x+oldB.x)/2;points=[a,{x,y:a.y},{x,y:b.y},b]}
@@ -411,12 +413,12 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       w.points=orthogonalPoints(points).slice(1,-1);
     }
   }
-  function moveComponent(p,x,y){
+  function moveComponent(p,x,y,routes=null){
     const dx=x-p.x,dy=y-p.y,members=[p,...descendants(p.id).filter(q=>model.parts.includes(q)&&!q.unplaced&&q.type!=='terminal-pin')],ids=new Set(members.map(q=>q.id));
     const junctions=connectionGraph?.enclosed(ids)||[];junctions.forEach(n=>ids.add('@'+n.id));
     const internal=new Map(model.wires.filter(w=>ids.has(w.a.split(':')[0])&&ids.has(w.b.split(':')[0])).map(w=>[w,routePoints(w)]));
     const ignore=new Set(internal.keys());
-    for(const member of members)changeComponent(member,()=>{member.x+=dx;member.y+=dy},ignore);
+    for(const member of members)changeComponent(member,()=>{member.x+=dx;member.y+=dy},ignore,routes);
     junctions.forEach(n=>{n.x+=dx;n.y+=dy});
     for(const [wire,points] of internal)wire.points=points.slice(1,-1).map(point=>({x:point.x+dx,y:point.y+dy}));
   }
@@ -1137,7 +1139,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       if((selectedParts.size>1||selectedWires.size>0)&&selectedParts.has(root.dataset.id)){
         e.preventDefault();e.stopImmediatePropagation();drag=null;segmentDrag=null;wireLabelDrag=null;
         const members=selectionMembers(),ids=new Set(members.map(p=>p.id)),junctions=connectionGraph?.enclosed(ids)||[];junctions.forEach(n=>ids.add('@'+n.id));
-        selectionDrag={start:point,members:members.map(p=>({p,x:p.x,y:p.y})),junctions:junctions.map(n=>({n,x:n.x,y:n.y})),internal:new Map(model.wires.filter(w=>ids.has(w.a.split(':')[0])&&ids.has(w.b.split(':')[0])).map(w=>[w,routePoints(w)]))};
+        selectionDrag={start:point,routes:captureWireRoutes(),members:members.map(p=>({p,x:p.x,y:p.y})),junctions:junctions.map(n=>({n,x:n.x,y:n.y})),internal:new Map(model.wires.filter(w=>ids.has(w.a.split(':')[0])&&ids.has(w.b.split(':')[0])).map(w=>[w,routePoints(w)]))};
         captureSheetPointer(e.pointerId);return;
       }
       selectedParts.clear();selectedWires.clear();return;
@@ -1150,7 +1152,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   svg.addEventListener('pointermove',e=>{
     if(selectionDrag){
       e.preventDefault();e.stopImmediatePropagation();const state=selectionDrag,point=toWorld(e),dx=snap(point.x-state.start.x),dy=snap(point.y-state.start.y),ignore=new Set(state.internal.keys());
-      for(const {p,x,y} of state.members)changeComponent(p,()=>{p.x=x+dx;p.y=y+dy},ignore);
+      for(const {p,x,y} of state.members)changeComponent(p,()=>{p.x=x+dx;p.y=y+dy},ignore,state.routes);
       for(const {n,x,y}of state.junctions||[]){n.x=x+dx;n.y=y+dy;}
       for(const [wire,points] of state.internal)wire.points=points.slice(1,-1).map(p=>({x:p.x+dx,y:p.y+dy}));render();return;
     }
@@ -1522,7 +1524,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     svg,content:pageContent,layer:wiresG,sheet:()=>pages[activeSheet],sheets:drawingPages,wires:()=>model.wires,position:findTerminal,route:routePoints,orthogonal:orthogonalPoints,snap,grid:gridSpacing,world:toWorld,
     pending:()=>({start:wireStart,points:wirePoints}),selected:()=>selected,select:value=>{selected=value},mode:()=>mode,connecting:isConnectionMode,blocked:()=>pdfExporting||modal.style.display==='grid'||redPen.active()||isGenerated(pages[activeSheet]),
     connect:ref=>{const[id,index]=ref.split(':');onTerminal(id,Number(index))},id:prefix=>prefix+nextId++,removeWires:predicate=>{model.wires=model.wires.filter(w=>!predicate(w));pages[activeSheet].wires=model.wires},
-    moveNode:(n,x,y)=>changeComponent({id:'@'+n.id},()=>{n.x=x;n.y=y}),clearSelection:clearAreaSelection,capture:captureSheetPointer,commit:commitHistory,render:()=>render(),refresh:()=>workspaceUI?.refresh(),updatePreview:updateWirePreview,
+    captureRoutes:captureWireRoutes,moveNode:(n,x,y,routes)=>changeComponent({id:'@'+n.id},()=>{n.x=x;n.y=y},new Set(),routes),clearSelection:clearAreaSelection,capture:captureSheetPointer,commit:commitHistory,render:()=>render(),refresh:()=>workspaceUI?.refresh(),updatePreview:updateWirePreview,
     el,safe,endpoint:endPoint,panel:showPanel,close:closePanel
   });
   const editWireBeforeJunctions=editWire;editWire=function(id){editWireBeforeJunctions(id);const w=findWire(id),form=document.querySelector('#simpleContent .wire-form');if(!w||!form)return;const ids=[...new Set([w.a,w.b].map(ref=>connectionGraph.nodeId(ref)).filter(Boolean))];for(const id of ids){const button=document.createElement('button');button.type='button';button.textContent='Junction properties · '+id;button.onclick=()=>connectionGraph.edit(id);form.append(button)}};

@@ -4,7 +4,7 @@ globalThis.CabelWorkspaceUI = {
   init(api) {
     const $=s=>document.querySelector(s),svg=api.svg,app=$('.app'),header=$('header');
     let hand=false,placement=null,focusRequested=false,nativeAvailable=true;
-    let finger=null,pen=null,holdTimer=null,sourceHold=null,ghost=null;
+    let finger=null,pen=null,holdTimer=null,sourceHold=null,ghost=null,viewRefreshFrame=null;
     let suppressCanvasClickUntil=0,suppressSource=null,controlContact=null;
     const ignoredTouches=new Set(),pendingControls=new WeakMap(),fallbackClicks=new WeakMap();
     // Safari keeps a Touch's original DOM target for its whole lifetime. Keep
@@ -60,20 +60,28 @@ globalThis.CabelWorkspaceUI = {
 
     function fullscreenElement(){return document.fullscreenElement||document.webkitFullscreenElement;}
     function isStandalone(){return navigator.standalone===true||matchMedia('(display-mode:standalone)').matches;}
+    // Native fullscreen and viewport changes can finish after the initial
+    // layout. Reapply the same camera on the next paint, without resetting it.
+    function refreshViewport(){
+      cancelAnimationFrame(viewRefreshFrame);
+      viewRefreshFrame=requestAnimationFrame(()=>{viewRefreshFrame=null;if(!api.state().exporting)api.refreshView();});
+    }
     async function enterFullscreen(){
       focusRequested=true;app.classList.add('focus-mode');refresh();
       const enter=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;
       if(!fullscreenElement()&&!isStandalone()&&enter){try{await enter.call(document.documentElement);}catch{nativeAvailable=false;}}
       else if(!enter)nativeAvailable=false;
-      refresh();
+      refresh();refreshViewport();
     }
     async function leaveFullscreen(){
       focusRequested=false;app.classList.remove('focus-mode');const exit=document.exitFullscreen||document.webkitExitFullscreen;
-      if(fullscreenElement()&&exit){try{await exit.call(document);}catch{/* Keep the normal workspace usable. */}}refresh();
+      if(fullscreenElement()&&exit){try{await exit.call(document);}catch{/* Keep the normal workspace usable. */}}refresh();refreshViewport();
     }
     // A system gesture can exit Safari fullscreen. Preserve the workspace;
     // re-entry requires a fresh user action under the browser's own rules.
-    for(const name of['fullscreenchange','webkitfullscreenchange'])document.addEventListener(name,()=>{app.classList.toggle('focus-mode',focusRequested);refresh();});
+    for(const name of['fullscreenchange','webkitfullscreenchange'])document.addEventListener(name,()=>{app.classList.toggle('focus-mode',focusRequested);refresh();refreshViewport();});
+    window.addEventListener('resize',refreshViewport);
+    if(globalThis.ResizeObserver)new ResizeObserver(refreshViewport).observe(svg);
 
     const point=e=>({x:e.clientX,y:e.clientY}),stop=e=>{if(e.cancelable)e.preventDefault();e.stopImmediatePropagation();};
     const inCanvas=n=>n instanceof Element&&Boolean(n.closest('#sheet'));
@@ -118,7 +126,12 @@ globalThis.CabelWorkspaceUI = {
       const s={id,type,kind,target,start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
       if(kind==='edit')forward('pointerdown',target,p,id,type);return s;
     }
-    function center(contacts){const points=[...contacts.values()],p={x:points.reduce((n,v)=>n+v.x,0)/points.length,y:points.reduce((n,v)=>n+v.y,0)/points.length},q=api.svgPoint({clientX:p.x,clientY:p.y});return{...q,distance:points[1]?Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y):0};}
+    function center(contacts){
+      const points=[...contacts.values()],p={x:points.reduce((n,v)=>n+v.x,0)/points.length,y:points.reduce((n,v)=>n+v.y,0)/points.length},q=api.svgPoint({clientX:p.x,clientY:p.y});
+      // SVGPoint/DOMPoint coordinates are inherited accessors; object spread
+      // drops them and would turn pan/zoom anchors into NaN.
+      return{x:q.x,y:q.y,distance:points[1]?Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y):0};
+    }
     function rebase(session,contacts){const c=center(contacts),v=api.view();session.navigation={zoom:v.zoom,distance:c.distance,anchor:{x:(c.x-v.pan.x-564*(1-v.zoom))/v.zoom,y:(c.y-v.pan.y-399*(1-v.zoom))/v.zoom}};}
     function navigate(session,contacts){const c=center(contacts),n=session.navigation;if(!n)return;const z=Math.max(.5,Math.min(4,n.zoom*(n.distance&&c.distance?c.distance/n.distance:1)));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-n.anchor.x*z,y:c.y-399*(1-z)-n.anchor.y*z}});}
     function zoomAt(p,factor){const c=api.svgPoint({clientX:p.x,clientY:p.y}),v=api.view(),w=api.world({clientX:p.x,clientY:p.y}),z=Math.max(.5,Math.min(4,v.zoom*factor));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-w.x*z,y:c.y-399*(1-z)-w.y*z}});}

@@ -21,6 +21,7 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     const view=()=>page.locator('#pageContent').getAttribute('transform');
     const tapControl=async id=>{await page.locator('#'+id).tap();await page.waitForTimeout(110);};
     const targetPoint=async locator=>{const r=await locator.boundingBox();assert.ok(r,'Target is visible');return{x:r.x+r.width/2,y:r.y+r.height/2};};
+    const symbolBox=()=>page.locator('#parts > g[data-id="p1"] .part-geometry').boundingBox();
     const apiTouch=async(type,points)=>page.evaluate(({type,points})=>{
       window.testTouchTargets??=new Map();window.testTouchPoints??=new Map();
       const before=window.testTouchPoints,current=new Map(points.map((p,i)=>[p.id??i+1,p]));
@@ -55,13 +56,32 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
       {id:'p3',type:'coil',deviceCode:'K1',label:'K1',x:25*GRID,y:25*GRID,unplaced:true}
     ],wires:[],aksAreas:[{id:'ipad-field',title:'Control',x:6*GRID,y:6*GRID,width:5*GRID,height:4*GRID,functionCode:'F1'}]}]};
     await load(fixture);await assertLayout();const untouched=await save();
-    let a=await screen(15*GRID,30*GRID),b={x:a.x+55,y:a.y+25},oldView=await view();
-    await fingerDrag(a,b);assert.notEqual(await view(),oldView);assert.deepEqual(await save(),untouched);assert.equal(await page.locator('#undoBtn').isEnabled(),false);
+    let a=await screen(15*GRID,30*GRID),b={x:a.x+55,y:a.y+25},oldView=await view(),beforeBox=await symbolBox();
+    await fingerDrag(a,b);assert.notEqual(await view(),oldView);let afterBox=await symbolBox();near(afterBox.x-beforeBox.x,55,.3);near(afterBox.y-beforeBox.y,25,.3);assert.deepEqual(await save(),untouched);assert.equal(await page.locator('#undoBtn').isEnabled(),false);
     await page.locator('#fitBtn').click();const center=await screen(30*GRID,22*GRID);
     const worldAt=p=>page.locator('#pageContent').evaluate((g,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(g.getScreenCTM().inverse());return{x:q.x,y:q.y};},p),anchor=await worldAt(center);
-    await touch('touchStart',[{x:center.x-45,y:center.y},{x:center.x+45,y:center.y}]);
+    beforeBox=await symbolBox();await touch('touchStart',[{x:center.x-45,y:center.y},{x:center.x+45,y:center.y}]);
     await touch('touchMove',[{x:center.x-80,y:center.y},{x:center.x+80,y:center.y}]);await touch('touchEnd',[]);
-    assert.ok(parseInt(await page.locator('#zoomLabel').textContent())>160);const afterAnchor=await worldAt(center);near(anchor.x,afterAnchor.x,.3);near(anchor.y,afterAnchor.y,.3);assert.deepEqual(await save(),untouched);
+    assert.ok(parseInt(await page.locator('#zoomLabel').textContent())>160);afterBox=await symbolBox();near(afterBox.width/beforeBox.width,160/90,.01);near(afterBox.height/beforeBox.height,160/90,.01);assert.doesNotMatch(await view(),/NaN|Infinity/);const afterAnchor=await worldAt(center);near(anchor.x,afterAnchor.x,.3);near(anchor.y,afterAnchor.y,.3);assert.deepEqual(await save(),untouched);
+    // Check pixels and placement in the SAME view: an invalid gesture transform
+    // used to change only the percentage, then silently reject every drop.
+    beforeBox=await symbolBox();await tapControl('zoomIn');afterBox=await symbolBox();near(afterBox.width/beforeBox.width,1.15,.01);
+    await tapControl('zoomOut');near((await symbolBox()).width/beforeBox.width,1,.01);
+    {
+      await page.locator('#catalogSearch').fill('Resistor');const source=page.locator('.part[data-type="resistor"]');
+      a=await targetPoint(source);b=await screen(27*GRID,25*GRID);
+      await touch('touchStart',[a]);await touch('touchMove',[{x:a.x+24,y:a.y}]);await touch('touchMove',[b]);assert.equal(await page.locator('#sheet').getAttribute('data-drop-valid'),'true');await touch('touchEnd',[]);
+      let saved=await save(),added=drawings(saved)[0].parts.find(p=>!['p1','p2','p3'].includes(p.id));assert.ok(added,'Finger drop after pinch creates a component');near(added.x,27*GRID);near(added.y,25*GRID);
+      let visible=await targetPoint(page.locator(`#parts > g[data-id="${added.id}"] .part-body`));near(visible.x,b.x,.3);near(visible.y,b.y,.3);
+      await tapControl('undoBtn');assert.deepEqual(await save(),untouched);await tapControl('redoBtn');assert.deepEqual(await save(),saved);await tapControl('undoBtn');
+      // Pencil Pan must visibly move the paper; dropping afterwards uses that
+      // new position rather than stale or non-finite document coordinates.
+      await tapControl('panTool');beforeBox=await symbolBox();a=await screen(30*GRID,28*GRID);b={x:a.x+20,y:a.y-12};await penDrag(a,b);afterBox=await symbolBox();near(afterBox.x-beforeBox.x,20,.3);near(afterBox.y-beforeBox.y,-12,.3);
+      await tapControl('selectTool');a=await targetPoint(source);b=await screen(25*GRID,23*GRID);await penDrag(a,b);
+      saved=await save();added=drawings(saved)[0].parts.find(p=>!['p1','p2','p3'].includes(p.id));assert.ok(added,'Pencil drop after pinch and pan creates a component');near(added.x,25*GRID);near(added.y,23*GRID);
+      visible=await targetPoint(page.locator(`#parts > g[data-id="${added.id}"] .part-body`));near(visible.x,b.x,.3);near(visible.y,b.y,.3);await tapControl('undoBtn');assert.deepEqual(await save(),untouched);
+    }
+    console.log('PASS visible symbol scaling/translation, +/- controls and actual finger/Pencil drops after pinch and pan without Fit/reload, exact placement and undo/redo');
     await page.locator('#fitBtn').click();await tapControl('panTool');oldView=await view();
     await penDrag(await screen(20*GRID,20*GRID),await screen(24*GRID,23*GRID));assert.notEqual(await view(),oldView);assert.deepEqual(await save(),untouched);await tapControl('selectTool');await page.locator('#fitBtn').click();
     console.log('PASS permanently visible panels, stable mirror SVGs, single-finger pan, anchored pinch and Pencil Pan without changing the document');
@@ -136,8 +156,8 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     await tapControl('fullscreenBtn');assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');assert.equal(await page.locator('#fullscreenKeep').isVisible(),true);await page.locator('#fullscreenKeep').tap();assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');await page.locator('#fullscreenLeave').tap();await page.waitForFunction(()=>!document.querySelector('.app.focus-mode'));
-    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.0-ipad-portrait.png'});
-    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.0-ipad-landscape.png'});
+    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.1-ipad-portrait.png'});
+    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.1-ipad-landscape.png'});
     project=await save();const pdf=await download('#exportBtn');assert.match(pdf.toString('latin1',0,8),/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-tablet.pdf',pdf);await fs.writeFile('/tmp/Cabel-Studio-tablet.expected.json',JSON.stringify({pages:project.sheets.length}));
     await page.reload();await load(project);assert.deepEqual(drawings(await save()),drawings(project));
     const manifest=await(await page.request.get(url+'manifest.webmanifest')).json();assert.equal(manifest.display,'standalone');assert.equal(await page.locator('meta[name="apple-mobile-web-app-capable"]').getAttribute('content'),'yes');

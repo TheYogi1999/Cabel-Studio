@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.15.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.16.0**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -16,6 +16,24 @@ Open `index.html` in a browser, or serve this directory with any static web serv
 - Edit manufacturer numbers, SAP numbers, pin names and master/slave relationships in properties. Device lists include article numbers and links back to symbols. Slaves can be placed independently.
 
 Generic symbols include passive components, diodes/LEDs, NO/NC/changeover contacts, relays, optocouplers, AC/DC power supplies, I/O modules, controller boards, 2-/4-pole RCDs (FI) and motors. AC motors are available as single-phase **L/N/PE**, three-phase **U1/V1/W1/PE**, and six-lead **U1/V1/W1/U2/V2/W2/PE** variants.
+
+## Page properties and AKS areas
+
+Use **Page properties** for the current drawing sheet, or right-click a drawing in the sheet overview to edit its title and optional **Function (=)** / **Location (+)** AKS context. The page context is printed near the top of the sheet. **Hide matching AKS aspects on symbols** suppresses only matching aspects; differing aspects remain visible. When both match, the AKS caption disappears and the equipment tag stays visible. Complete identifiers remain in properties, the device tree and project lists. Individual text-visibility switches still apply.
+
+Choose **AKS area**, then drag a rectangle and assign its title and AKS. Areas align to the drawing grid. Edit an area by right-clicking its border/heading or through the area's **Edit** action in Page properties. Smaller overlapping areas take precedence for their assigned aspects and inherit unspecified aspects from enclosing areas/the page. Delete an area in Page properties; Undo restores it.
+
+New components inherit the function/location at their placement point. Existing identifiers stay unchanged by default. Check **Assign to existing components in this context** to explicitly apply assigned aspects to existing components on the page or inside the rectangle; linked slaves continue to follow their master. Moving a component into/out of an area changes its displayed caption without renaming it. Cancel/Esc discards an unfinished area.
+
+Page contexts and rectangles are optional `aks` and `aksAreas` fields on drawing sheets. They are preserved by save/open, undo/redo and PDF export. Old projects without these fields keep their explicit AKS captions.
+
+## Symbol proposals
+
+Open **Custom symbol proposals → Open symbol editor**, or open [`symbol-editor.html`](symbol-editor.html) directly. This separate local editor supports lines, rectangles, circles, text, named terminals, selection/movement, exact numeric properties, deletion and undo/redo. Geometry uses a selectable 1/2/4 mm drawing grid; terminals always use the 4 mm grid. Canvas dimensions are editable, and a local browser draft is retained.
+
+**Download JSON** saves an editable `.cabel-symbol.json` proposal that can be shared for review. **Download SVG** creates a preview; schematic export in the main app remains PDF. **Open JSON** reopens proposals. In the main app, **Import symbol JSON** adds a click/drag-placeable library entry. Placed symbols retain their definition in the project, so reopening does not require reimporting the library. Their terminals support ordinary routing, rotation and reflection; text stays readable. Properties can download a placed symbol's original proposal again.
+
+The shared format in [`scripts/symbol-format.js`](scripts/symbol-format.js) uses `kind: "cabel-symbol"`, `schemaVersion: 1`, `units: "mm"`, a stable ID/name/group/equipment prefix, canvas dimensions, structured `geometry` primitives and `terminals`. Coordinates are relative to the symbol origin. Imports validate known shapes, finite dimensions, unique terminal names and 4 mm terminal positions; raw SVG/HTML/scripts are not imported. Geometry text remains literal text. Limits are 256 shapes and 64 terminals.
 
 ## Terminals, relays and cross-references
 
@@ -41,11 +59,11 @@ Each manufacturer's editable source is a separate JSON file:
 | [`libraries/joy-it.json`](libraries/joy-it.json) | 1: Joy-it NodeMCU V2 LUA / ESP8266 WiFi logical port template |
 | [`libraries/finder.json`](libraries/finder.json) | 4: Series 60.11 / 60.12 / 60.13 templates and the supplied **60.13.9.024.0074**, with a 24 V DC coil and three changeover contacts |
 
-**These are reference libraries, not verified complete manufacturer catalogues.** Manufacturer websites were blocked by the cloud outbound policy during implementation. Source URLs, incomplete coverage and verification status are recorded in the files and shown in the library UI. Variant availability, coil suffixes, ratings, physical pin diagrams and accessory compatibility require manufacturer confirmation. Unknown ordering numbers remain blank; only the user-specified Finder article has its exact manufacturer number filled in. SAP numbers remain project-specific.
+**These are reference libraries, not verified complete manufacturer catalogues.** Manufacturer websites were blocked by the cloud outbound policy during implementation. Source URLs, incomplete coverage and verification status are recorded in the files and shown in the library UI. Variant availability, coil suffixes, ratings, physical pin diagrams and accessory compatibility require manufacturer confirmation. Power-supply entries now include family-specific functional templates: duplicate DC outputs on UNO, DC OK contacts on TRIO, and additional configurable signal IN/OUT ports on QUINT4. These do not claim verified physical terminal designations for every variant. Unknown ordering numbers remain blank; only the user-specified Finder article has its exact manufacturer number filled in. SAP numbers remain project-specific.
 
 Expand **Manufacturer libraries** or search by manufacturer/model, then click or drag a product onto the drawing. Placed entries retain manufacturer, model, attributes, source URLs and verification status in the project. Phoenix terminals are added to the selected terminal/strip's master; otherwise a new unplaced strip master is created. Finder family templates create the appropriate number of contact slaves. Relay sub-symbols appear in the device tree but do not duplicate the purchased assembly in the bill of materials.
 
-Power supplies, I/O modules and controller boards have editable port names and up to 64 grid-aligned anchors. Optional `portSides` keeps input/output ports on the chosen sides. New generic symbols provide sensible defaults; catalogue entries retain their configured ports. Wired ports cannot be removed in properties. These are functional schematic representations: Beckhoff bus/channel ports and ESP32/NodeMCU ports do not claim to reproduce physical connector counts or header layouts. Port-mapping notes appear in properties.
+Power supplies, I/O modules and controller boards have editable port names and up to 64 grid-aligned anchors. Optional `portSides` keeps input/output ports on the chosen sides. The power-supply drawing uses an AC/DC divider, AC wave and DC mark fitted to its enclosure. For an older placed supply, use **Add missing outputs / signals** in properties and then **Apply** to append template ports while preserving existing terminal indices. Port sides are editable as one L/R value per pin. New generic symbols provide sensible defaults; catalogue entries retain their configured ports. Wired ports cannot be removed in properties. These are functional schematic representations: Beckhoff bus/channel ports and ESP32/NodeMCU ports do not claim to reproduce physical connector counts or header layouts. Port-mapping notes appear in properties.
 
 Each folder can download its JSON source. **Import manufacturer library** accepts the same format and replaces a library with the same ID for the current browser session. Imported libraries do not modify the repository; placed components retain their data after saving and reopening even without that library being loaded.
 
@@ -95,6 +113,7 @@ Node.js, the `playwright` module and Chromium are required for browser checks. C
 node scripts/build-libraries.cjs --check
 node tests/browser-smoke.cjs
 node tests/manufacturer-smoke.cjs
+node tests/symbol-page-smoke.cjs
 ```
 
-The main smoke check covers placement, editing, routing and segment movement, transformations, clipboard, history, multi-selection, device hierarchy, terminals/bridges, relays, cross-references, grids, generated lists, JSON roundtrips and PDF export. The manufacturer check additionally covers the JSON/bundle agreement, new hardware ports/routes, permanent deletion across sheets and undo/redo, master-only pagination, approval names/dates, all AC motor variants, product drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminals, Finder contact counts, metadata persistence, library download/import validation, offline file opening, English output, fit-aware bridge labels, pink selection, current-sheet Ctrl/⌘+A, S200 fixed-contact markings and relay-frame clearance. Screenshots and PDFs are written under `/tmp`, outside the repository. The `file://` check is explicitly skipped if Chromium administrator policy blocks local-file navigation; HTTP checks still run.
+The main smoke check covers placement, editing, routing and segment movement, transformations, clipboard, history, multi-selection, device hierarchy, terminals/bridges, relays, cross-references, grids, generated lists, JSON roundtrips and PDF export. The manufacturer check additionally covers the JSON/bundle agreement, new hardware ports/routes, permanent deletion across sheets and undo/redo, master-only pagination, approval names/dates, all AC motor variants, product drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminals, Finder contact counts, metadata persistence, library download/import validation, offline file opening, English output, fit-aware bridge labels, pink selection, current-sheet Ctrl/⌘+A, S200 fixed-contact markings and relay-frame clearance. The symbol/page check covers the separate editor, proposal validation/placement/serialization, upright custom text, legacy supply-port upgrades and routes, page/area AKS precedence, explicit assignment, hiding, area editing/cancellation, history and PDF output. Screenshots and PDFs are written under `/tmp`, outside the repository. The `file://` check is explicitly skipped if Chromium administrator policy blocks local-file navigation; HTTP checks still run.

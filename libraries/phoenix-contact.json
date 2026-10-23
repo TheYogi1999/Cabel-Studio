@@ -1053,7 +1053,7 @@
     {
       "id": "power-supplies",
       "name": "UNO / TRIO / QUINT power supplies",
-      "scope": "Selected reference models; specifications, availability and pinouts have not been verified.",
+      "scope": "Selected functional reference models. Duplicate DC outputs and family-specific signal templates are included; confirm the exact device terminal diagram.",
       "products": [
         {
           "id": "uno-24dc-60w",
@@ -1067,17 +1067,21 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
             "left",
+            "right",
+            "right",
             "right",
             "right"
           ]
@@ -1094,17 +1098,21 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
             "left",
+            "right",
+            "right",
             "right",
             "right"
           ]
@@ -1121,17 +1129,25 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2",
+            "DC OK 13",
+            "DC OK 14"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
             "left",
+            "right",
+            "right",
+            "right",
+            "right",
             "right",
             "right"
           ]
@@ -1148,17 +1164,25 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2",
+            "DC OK 13",
+            "DC OK 14"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
             "left",
+            "right",
+            "right",
+            "right",
+            "right",
             "right",
             "right"
           ]
@@ -1175,16 +1199,30 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2",
+            "DC OK 13",
+            "DC OK 14",
+            "Signal IN",
+            "Signal OUT1",
+            "Signal OUT2"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
             "left",
             "right",
             "right"
@@ -1202,16 +1240,30 @@
             "N",
             "PE",
             "+24V",
-            "0V"
+            "0V",
+            "+24V.2",
+            "0V.2",
+            "DC OK 13",
+            "DC OK 14",
+            "Signal IN",
+            "Signal OUT1",
+            "Signal OUT2"
           ],
           "attributes": {
-            "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
+            "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "Logical input/output ports; duplicate physical output terminals and optional signalling are not modelled."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
           },
           "portSides": [
             "left",
             "left",
+            "left",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
+            "right",
             "left",
             "right",
             "right"

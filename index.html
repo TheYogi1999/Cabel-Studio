@@ -4,8 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101923">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Leitwerk">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.19.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -56,10 +61,10 @@
 <div class="toast" id="toast"></div>
 <script src="libraries/catalog.js"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/workspace-ui.js"></script>
+<script src="scripts/workspace-ui.js?v=1.19.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.18.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.19.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -105,6 +110,7 @@
   };
   let model={title:'New schematic',parts:[],wires:[]},selected=null,mode='select',wireStart=null,wirePoints=[],zoom=1,pan={x:0,y:0},drag=null,segmentDrag=null,appClipboard=null,pdfExporting=false,altGrid=false,gridVisible=true,nextId=1;
   const svg=document.querySelector('#sheet'),scene=document.querySelector('#scene'),partsG=document.querySelector('#parts'),wiresG=document.querySelector('#wires'),preview=document.querySelector('#preview');
+  function captureSheetPointer(id){try{svg.setPointerCapture?.(id)}catch{/* Touch Events use a stable virtual pointer instead of Safari pointer capture. */}}
   const lib=document.querySelector('#library');
   const folders=new Map();
   for(const [type,d] of Object.entries(TYPES)){
@@ -151,10 +157,23 @@
     }else if(shapes[s]){el('path',{d:shapes[s],class:'symbol'},g);if(s==='motor')el('circle',{cx:0,cy:0,r:22,class:'symbol'},g)}else if(s==='pin'){el('circle',{cx:0,cy:0,r:12,class:'symbol'},g)}else if(s==='terminal-strip'){el('path',{d:'M -48 -8 H 48 M -48 8 H 48 M -32 -14 V 14 M 0 -14 V 14 M 32 -14 V 14',class:'symbol'},g)}else if(s==='destination'){el('path',{d:'M -48 0 H -20 M 48 -16 L -20 0 L 48 16 Z',class:'symbol'},g)}else if(s==='reference'){el('path',{d:'M -48 0 H -20 M -20 -16 L 48 0 L -20 16 Z',class:'symbol'},g)}else if(s==='resistor'){el('path',{d:'M -48 0 H -27 L -21 -12 L -11 12 L -1 -12 L 9 12 L 19 -12 L 25 0 H 48',class:'symbol'},g)}else if(s==='lamp'){el('circle',{cx:0,cy:0,r:17,class:'symbol'},g);el('path',{d:'M -11 -11 L 11 11 M 11 -11 L -11 11',class:'symbol'},g)}else if(s==='switch'){el('path',{d:'M -48 0 H -14 M 14 0 H 48 M -14 0 L 12 -15',class:'symbol'},g);el('circle',{cx:-14,cy:0,r:2.5,fill:'#d6e2e6'},g);el('circle',{cx:14,cy:0,r:2.5,fill:'#d6e2e6'},g)}else if(s==='coil'){el('path',{d:'M -48 0 H -24 C -24 -20 -4 -20 -4 0 C -4 -20 16 -20 16 0 C 16 -20 36 -20 36 0 H 48',class:'symbol'},g)}else if(s!=='text'){el('path',{d:'M -48 0 H -10 M 10 0 H 48',class:'symbol'},g);el('circle',{cx:0,cy:0,r:10,class:'symbol'},g)}}
   function addPart(type,position){const r=svg.getBoundingClientRect(),w=position||toWorld({clientX:r.left+r.width/2,clientY:r.top+r.height/2});const d=TYPES[type],n=model.parts.filter(p=>p.type===type).length+1;model.parts.push({id:'p'+nextId++,type,x:snap(w.x),y:snap(w.y),label:d.label+n,value:d.value});selected={kind:'part',id:model.parts.at(-1).id};render();toast(d.name+' inserted')}
   function findTerminal(id){const [partId,index]=id.split(':');const p=model.parts.find(q=>q.id===partId);if(!p||p.unplaced)return null;const terminal=p.type==='connector'&&index==='8'?[0,0]:partTerminals(p)[+index];if(!terminal)return null;const [tx,ty]=terminal,dx=tx*SYMBOL_SCALE,dy=ty*SYMBOL_SCALE,angle=(p.rotation||0)*Math.PI/180,x=dx*(p.flipX?-1:1),y=dy*(p.flipY?-1:1);return{x:p.x+x*Math.cos(angle)-y*Math.sin(angle),y:p.y+x*Math.sin(angle)+y*Math.cos(angle)}}
-  function onTerminal(id,index){const candidate=model.parts.find(p=>p.id===id);if(mode==='wire'&&candidate?.type==='terminal-pin'&&candidate.pinIndex===8){toast('The bridge terminal is reserved for terminal bridges');return}const key=id+':'+index;if(mode==='wire'&&index===8){toast('This separate terminal is reserved for terminal bridges');return}if(mode==='bridge'){const target=model.parts.find(p=>p.id===id);if(!['connector','terminal-pin'].includes(target?.type)){toast('Bridges only connect terminal pins');return}if(wireStart&&!validBridge(wireStart,key)){toast('Bridges must stay within the same terminal strip');return}}if(!wireStart){wirePoints=[];wireStart=key;preview.style.display='block';const a=findTerminal(key);preview.setAttribute('d',`M ${a.x} ${a.y} L ${a.x} ${a.y}`);render();return}if(wireStart===key){wireStart=null;wirePoints=[];preview.style.display='none';render();return}if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('These terminals are already connected');wireStart=null;wirePoints=[];preview.style.display='none';render();return}model.wires.push({id:'w'+nextId++,a:wireStart,b:key,...(mode==='bridge'?{kind:'bridge',colorCode:'BN'}:{}),points:orthogonalPoints([findTerminal(wireStart),...wirePoints,findTerminal(key)]).slice(1,-1)});wireStart=null;wirePoints=[];preview.style.display='none';render();toast('Connection created')}
+  function isBridgeEndpoint(ref){const [id,index]=ref.split(':'),p=model.parts.find(p=>p.id===id);return p?.type==='connector'&&Number(index)===8||p?.type==='terminal-pin'&&p.pinIndex===8}
+  function onTerminal(id,index){
+    if(!isConnectionMode())return;
+    const key=id+':'+index,point=findTerminal(key);if(!point)return;
+    const bridge=isBridgeEndpoint(key);
+    if(wireStart&&isBridgeEndpoint(wireStart)!==bridge){toast('Connect wire ports to wire ports, or brown bridge ports to brown bridge ports');return}
+    mode=bridge?'bridge':'wire';
+    if(bridge&&wireStart&&!validBridge(wireStart,key)){toast('Bridges must stay within the same terminal strip');return}
+    if(!wireStart){wirePoints=[];wireStart=key;preview.style.display='block';preview.setAttribute('d',`M ${point.x} ${point.y} L ${point.x} ${point.y}`);render();return}
+    if(wireStart===key){wireStart=null;wirePoints=[];preview.style.display='none';mode='wire';render();return}
+    if(model.wires.some(w=>(w.a===wireStart&&w.b===key)||(w.b===wireStart&&w.a===key))){toast('These terminals are already connected');wireStart=null;wirePoints=[];preview.style.display='none';mode='wire';render();return}
+    model.wires.push({id:'w'+nextId++,a:wireStart,b:key,...(bridge?{kind:'bridge',colorCode:'BN'}:{}),points:orthogonalPoints([findTerminal(wireStart),...wirePoints,point]).slice(1,-1)});
+    wireStart=null;wirePoints=[];preview.style.display='none';mode='wire';render();toast(bridge?'Bridge created':'Connection created');
+  }
   function snap(v){return Math.round(v/GRID)*GRID}function toWorld(e){const r=svg.getBoundingClientRect();return{x:(e.clientX-r.left-pan.x)/zoom,y:(e.clientY-r.top-pan.y)/zoom}}
   function applyView(){scene.setAttribute('transform',`translate(${pan.x} ${pan.y}) scale(${zoom})`);document.querySelector('#zoomLabel').textContent=Math.round(zoom*100)+'%'}
-  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(segmentDrag){dragWireSegment(e);return}if(drag){svg.setPointerCapture?.(e.pointerId);const p=model.parts.find(p=>p.id===drag.id);if(p){moveComponent(p,snap(w.x+drag.dx),snap(w.y+drag.dy));render();applyView()}}if(wireStart){updateWirePreview({x:snap(w.x),y:snap(w.y)})}});
+  svg.addEventListener('pointermove',e=>{const w=toWorld(e);if(segmentDrag){dragWireSegment(e);return}if(drag){captureSheetPointer(e.pointerId);const p=model.parts.find(p=>p.id===drag.id);if(p){moveComponent(p,snap(w.x+drag.dx),snap(w.y+drag.dy));render();applyView()}}if(wireStart){updateWirePreview({x:snap(w.x),y:snap(w.y)})}});
   svg.addEventListener('pointercancel',()=>{drag=null;segmentDrag=null;wireLabelDrag=null});
   svg.addEventListener('pointerup',()=>{drag=null;segmentDrag=null});svg.addEventListener('pointerdown',e=>{
     if(e.button!==0)return;
@@ -340,7 +359,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   wireDataButton.onclick=()=>{if(selected?.kind==='wire')editWire(selected.id);else toast('Select a connection first')};
   const oldOnTerminalForWireData=onTerminal;onTerminal=function(id,index){const before=model.wires.length;oldOnTerminalForWireData(id,index);if(model.wires.length>before){ensureWireData(model.wires[model.wires.length-1]);render()}};
   const oldRenderForWireData=render;render=function(){oldRenderForWireData();pages.forEach(s=>(s.wires||[]).forEach(ensureWireData));model.wires.forEach(ensureWireData);drawWireLabels();wireDataButton.disabled=selected?.kind!=='wire'||!findWire(selected.id)};
-  svg.addEventListener('pointermove',e=>{if(!wireLabelDrag)return;svg.setPointerCapture?.(e.pointerId);const w=findWire(wireLabelDrag);if(!w)return;const cursor=toWorld(e);w.labelT=nearestWireT(w,{x:snap(cursor.x),y:snap(cursor.y)});const g=Array.from(wiresG.querySelectorAll('.wire-label')).find(x=>x.dataset.wireLabel===w.id);if(g)wireLabelPosition(g,w)});
+  svg.addEventListener('pointermove',e=>{if(!wireLabelDrag)return;captureSheetPointer(e.pointerId);const w=findWire(wireLabelDrag);if(!w)return;const cursor=toWorld(e);w.labelT=nearestWireT(w,{x:snap(cursor.x),y:snap(cursor.y)});const g=Array.from(wiresG.querySelectorAll('.wire-label')).find(x=>x.dataset.wireLabel===w.id);if(g)wireLabelPosition(g,w)});
   svg.addEventListener('pointerup',()=>{const wasDragging=Boolean(wireLabelDrag);wireLabelDrag=null;wiresG.querySelectorAll('.wire-label').forEach(g=>g.style.cursor='grab');if(wasDragging){partsG.querySelectorAll('.selected').forEach(g=>g.classList.remove('selected'));wiresG.querySelectorAll('.wire').forEach(p=>p.classList.toggle('selected',selected?.kind==='wire'&&selected.id===p.dataset.id));document.querySelector('#statusText').textContent='Object selected'}});
   render();
 
@@ -404,7 +423,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       if(distance<best){best=distance;index=i}
     }
     selected={kind:'wire',id:w.id};segmentDrag={id:w.id,index,points,start:cursor};drag=null;
-    svg.setPointerCapture?.(e.pointerId);render();
+    captureSheetPointer(e.pointerId);render();
   }
   function dragWireSegment(e){
     const state=segmentDrag,w=model.wires.find(w=>w.id===state.id);if(!w)return;
@@ -788,7 +807,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function cancelAksAreaDrawing(){if(aksAreaGesture){aksAreaGesture.preview.remove();if(svg.hasPointerCapture(aksAreaGesture.pointerId))svg.releasePointerCapture(aksAreaGesture.pointerId)}aksAreaGesture=null;aksAreaDrawing=false;aksAreaButton.classList.remove('active')}
   aksAreaButton.onclick=()=>{if(isGenerated(pages[activeSheet]))return;const enable=!aksAreaDrawing;finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();selected=null;drag=null;segmentDrag=null;wireLabelDrag=null;mode='select';wireStart=null;wirePoints=[];preview.style.display='none';aksAreaDrawing=enable;render()};
   const aksAreaPoint=e=>{const p=toWorld(e);return{x:Math.max(0,Math.min(snap(1128-gridSpacing()),snap(p.x))),y:Math.max(0,Math.min(snap(710-gridSpacing()),snap(p.y)))}};
-  svg.addEventListener('pointerdown',e=>{if(!aksAreaDrawing||e.button!==0||pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet]))return;e.preventDefault();e.stopImmediatePropagation();const p=aksAreaPoint(e);aksAreaGesture={start:p,sheet:pages[activeSheet],pointerId:e.pointerId,preview:el('rect',{x:p.x,y:p.y,width:0,height:0,fill:'#ff78b71a',stroke:'#ff78b7','stroke-dasharray':'5 3','pointer-events':'none',class:'aks-area-preview'},pageContent)};svg.setPointerCapture(e.pointerId)},true);
+  svg.addEventListener('pointerdown',e=>{if(!aksAreaDrawing||e.button!==0||pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet]))return;e.preventDefault();e.stopImmediatePropagation();const p=aksAreaPoint(e);aksAreaGesture={start:p,sheet:pages[activeSheet],pointerId:e.pointerId,preview:el('rect',{x:p.x,y:p.y,width:0,height:0,fill:'#ff78b71a',stroke:'#ff78b7','stroke-dasharray':'5 3','pointer-events':'none',class:'aks-area-preview'},pageContent)};captureSheetPointer(e.pointerId)},true);
   svg.addEventListener('pointermove',e=>{if(!aksAreaGesture)return;e.preventDefault();e.stopImmediatePropagation();const p=aksAreaPoint(e),s=aksAreaGesture.start,r=aksAreaGesture.preview;for(const [key,value]of Object.entries({x:Math.min(s.x,p.x),y:Math.min(s.y,p.y),width:Math.abs(s.x-p.x),height:Math.abs(s.y-p.y)}))r.setAttribute(key,value)},true);
   svg.addEventListener('pointerup',e=>{if(!aksAreaGesture)return;e.preventDefault();e.stopImmediatePropagation();const g=aksAreaGesture,r=g.preview,box=Object.fromEntries(['x','y','width','height'].map(key=>[key,+r.getAttribute(key)]));cancelAksAreaDrawing();render();if(box.width>=gridSpacing()&&box.height>=gridSpacing())editAksArea(g.sheet,{id:crypto.randomUUID(),title:'AKS field',...g.sheet.aks,...box},true)},true);
   svg.addEventListener('pointercancel',()=>{if(aksAreaGesture){cancelAksAreaDrawing();render()}},true);
@@ -807,7 +826,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const field=validAksAreas(pages[activeSheet]).find(a=>a.id===e.target.closest('[data-aks-area]')?.dataset.aksArea);if(!field)return;
     e.preventDefault();e.stopImmediatePropagation();commitHistory();
     const operation=e.target.closest('[data-field-resize]')?.dataset.fieldResize||'move';
-    aksFieldDrag={field,x:field.x,y:field.y,width:field.width,height:field.height,operation,start:toWorld(e),pointerId:e.pointerId,moved:false};svg.setPointerCapture(e.pointerId);svg.style.cursor=operation==='move'?'grabbing':operation+'-resize';
+    aksFieldDrag={field,x:field.x,y:field.y,width:field.width,height:field.height,operation,start:toWorld(e),pointerId:e.pointerId,moved:false};captureSheetPointer(e.pointerId);svg.style.cursor=operation==='move'?'grabbing':operation+'-resize';
   },true);
   svg.addEventListener('pointermove',e=>{
     if(!aksFieldDrag||e.pointerId!==aksFieldDrag.pointerId)return;
@@ -874,7 +893,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
 
   let middlePan=null;
   function svgPoint(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
-  svg.addEventListener('pointerdown',e=>{if(e.button!==1)return;e.preventDefault();e.stopImmediatePropagation();const p=svgPoint(e);middlePan={point:p,pan:{...pan}};svg.setPointerCapture(e.pointerId);svg.style.cursor='grabbing'},true);
+  svg.addEventListener('pointerdown',e=>{if(e.button!==1)return;e.preventDefault();e.stopImmediatePropagation();const p=svgPoint(e);middlePan={point:p,pan:{...pan}};captureSheetPointer(e.pointerId);svg.style.cursor='grabbing'},true);
   svg.addEventListener('pointermove',e=>{if(!middlePan)return;e.preventDefault();e.stopImmediatePropagation();const p=svgPoint(e);pan.x=middlePan.pan.x+p.x-middlePan.point.x;pan.y=middlePan.pan.y+p.y-middlePan.point.y;applyView()},true);
   const stopMiddle=e=>{if(!middlePan)return;e.preventDefault();e.stopImmediatePropagation();middlePan=null;svg.style.cursor='';if(svg.hasPointerCapture(e.pointerId))svg.releasePointerCapture(e.pointerId)};
   svg.addEventListener('pointerup',stopMiddle,true);svg.addEventListener('pointercancel',stopMiddle,true);svg.addEventListener('lostpointercapture',()=>{middlePan=null;svg.style.cursor=''});svg.addEventListener('auxclick',e=>{if(e.button===1)e.preventDefault()});
@@ -1059,9 +1078,9 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     drawBeforeBridgePorts(p);if(p.type==='terminal-pin'&&p.pinIndex===8)partsG.lastElementChild.querySelector('.terminal')?.setAttribute('style','fill:#795548;stroke:#fff');if(p.type!=='connector')return;
     const g=partsG.lastElementChild.querySelector('.part-geometry');
     g.querySelectorAll('.symbol').forEach(n=>n.remove());const positions=partTerminals(p).map(t=>t[0]);el('path',{d:'M '+Math.min(...positions)+' 0 H '+Math.max(...positions),class:'symbol'},g);
-    const port=el('circle',{cx:0,cy:0,r:9,style:'fill:#795548;stroke:#fff',fill:'#795548',stroke:'#fff','stroke-width':2,'pointer-events':mode==='bridge'?'all':'none',class:'terminal bridge-terminal','data-part':p.id,'data-term':8,tabindex:0},g);
+    const port=el('circle',{cx:0,cy:0,r:9,style:'fill:#795548;stroke:#fff',fill:'#795548',stroke:'#fff','stroke-width':2,'pointer-events':isConnectionMode()?'all':'none',class:'terminal bridge-terminal','data-part':p.id,'data-term':8,tabindex:0},g);
     const caption=el('title',{},port);caption.textContent='Separate bridge terminal';
-    port.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(e.button!==0)return;if(mode==='bridge')onTerminal(p.id,8);else toast('Bridge terminal: activate Terminal bridge')});
+    port.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(e.button!==0)return;if(isConnectionMode())onTerminal(p.id,8);else toast('Choose Connect to use this bridge port')});
   };
   const placementStyle=document.createElement('style');placementStyle.textContent=`
     .device-unplaced>summary{background:#fff2a8;color:#514000;border-radius:4px}
@@ -1108,14 +1127,14 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
         e.preventDefault();e.stopImmediatePropagation();drag=null;segmentDrag=null;wireLabelDrag=null;
         const members=selectionMembers(),ids=new Set(members.map(p=>p.id));
         selectionDrag={start:point,members:members.map(p=>({p,x:p.x,y:p.y})),internal:new Map(model.wires.filter(w=>ids.has(w.a.split(':')[0])&&ids.has(w.b.split(':')[0])).map(w=>[w,routePoints(w)]))};
-        svg.setPointerCapture(e.pointerId);return;
+        captureSheetPointer(e.pointerId);return;
       }
       selectedParts.clear();selectedWires.clear();return;
     }
     if(e.target.closest('#wires')){selectedParts.clear();selectedWires.clear();return}
     if(point.x<0||point.x>1128||point.y<0||point.y>798)return;
     e.preventDefault();e.stopImmediatePropagation();clearAreaSelection();selected=null;drag=null;render();
-    areaSelection={start:point,rect:el('rect',{x:point.x,y:point.y,width:0,height:0,fill:'#ff78b733',stroke:'var(--selection)','stroke-width':1,'stroke-dasharray':'5 3','pointer-events':'none',class:'area-selection'},scene)};svg.setPointerCapture(e.pointerId);
+    areaSelection={start:point,rect:el('rect',{x:point.x,y:point.y,width:0,height:0,fill:'#ff78b733',stroke:'var(--selection)','stroke-width':1,'stroke-dasharray':'5 3','pointer-events':'none',class:'area-selection'},scene)};captureSheetPointer(e.pointerId);
   },true);
   svg.addEventListener('pointermove',e=>{
     if(selectionDrag){
@@ -1453,15 +1472,30 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Project loaded')historyReset=true;commitHistory()}};
   render();
 
+  function placeWorkspacePayload(source,point){
+    if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));
+    if(source.kind==='component'){addPart(source.type,point);return}
+    if(source.kind==='product'){placeCatalogProduct(source.key,point);return}
+    if(source.kind==='symbol'){placeCustomSymbol(source.id,point);return}
+    let entry=deviceEntries().find(e=>e.p.id===source.id);if(!entry)return;
+    if(source.kind==='pin'){placePin(entry.p,source.index);const pin=pinSlave(source.id,source.index);entry=deviceEntries().find(e=>e.p===pin);if(!entry)return}
+    const target=pages[activeSheet],p=entry.p;
+    if(entry.sheet!==target&&entry.sheet.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id))){toast('Move wired devices on their current drawing sheet');return}
+    clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';
+    if(entry.sheet!==target){entry.sheet.parts=entry.sheet.parts.filter(q=>q!==p);target.parts.push(p);setSheet(pages.indexOf(target))}
+    if(p.unplaced){p.x=snap(point.x);p.y=snap(point.y);delete p.unplaced}else moveComponent(p,snap(point.x),snap(point.y));
+    selected={kind:'part',id:p.id};mode='select';treeFocusId=p.id;render();toast('Device placed');
+  }
   // Keep responsive controls and pointer navigation separate from document data.
   workspaceUI=CabelWorkspaceUI.init({
     svg,nav,
     state:()=>({mode,generated:isGenerated(pages[activeSheet]),selected,partSelected:selected?.kind==='part',hasSelection:Boolean(selected||selectedParts.size||selectedWires.size),canUndo:undoStack.length>0,canRedo:redoStack.length>0,canPaste:Boolean(appClipboard),connecting:Boolean(wireStart),fieldDrawing:aksAreaDrawing,modalOpen:modal.style.display==='grid',exporting:pdfExporting}),
     world:toWorld,svgPoint,
     preparePlacement:()=>{if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)))},
+    confirmFullscreenExit:leave=>{showPanel('<h2>Leave full screen?</h2><p>Keep working to stay in the drawing. On iPad, Safari → Share → Add to Home Screen opens Leitwerk without Safari\'s fullscreen controls.</p><div class="actions"><button id="fullscreenKeep">Keep working</button><button id="fullscreenLeave">Exit full screen</button></div>');document.querySelector('#fullscreenKeep').onclick=closePanel;document.querySelector('#fullscreenLeave').onclick=()=>{closePanel();leave()};document.querySelector('#fullscreenKeep').focus({preventScroll:true})},
     view:()=>({zoom,pan:{...pan}}),
     setView:value=>{zoom=Math.max(.5,Math.min(4,value.zoom));pan={...value.pan};applyView()},
-    place:(button,position)=>{if(button.dataset.type)addPart(button.dataset.type,position);else if(button.dataset.catalogProduct)placeCatalogProduct(button.dataset.catalogProduct,position);else if(button.dataset.customSymbol)placeCustomSymbol(button.dataset.customSymbol,position)},
+    place:placeWorkspacePayload,
     cancel:()=>{finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';mode='select';render()},
     editSelection:()=>{if(selectedParts.size>1)editSelectedParts();else if(selected?.kind==='part'){const p=model.parts.find(p=>p.id===selected.id);if(p)editComponent(p)}else if(selected?.kind==='wire')editWire(selected.id);else showPageProperties()},
     editTarget:target=>{
@@ -1471,11 +1505,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       else if(wire)editWire(wire.dataset.id||wire.dataset.wireLabel);
       else if(sheet)showPageProperties(pages[+sheet.dataset.rightSheet]);else showPageProperties();
     },
-    terminal:node=>{const p=model.parts.find(p=>p.id===node.dataset.part),i=Number(node.dataset.term);if(!p||mode==='wire'&&(i===8||p.type==='terminal-pin'&&p.pinIndex===8))return false;if(mode==='bridge'&&!['connector','terminal-pin'].includes(p.type))return false;return true},
+    terminal:node=>Boolean(findTerminal(node.dataset.part+':'+node.dataset.term)),
     connect:node=>onTerminal(node.dataset.part,Number(node.dataset.term)),
     action:name=>{if(name==='undo'||name==='redo')documentHistoryAction(name==='redo');else if(['rotate','flipX','flipY'].includes(name))transformSelected(name);else if(['copy','cut','paste'].includes(name)){clipboardAction({copy:'c',cut:'x',paste:'v'}[name]);workspaceUI?.refresh()}else if(name==='text')insertText();else if(name==='delete')svg.dispatchEvent(new KeyboardEvent('keydown',{key:'Delete',bubbles:true,cancelable:true}))},
-    checkpoint:()=>{commitHistory();return{document:historySnapshot(),undo:[...undoStack],redo:[...redoStack],clipboard:appClipboard}},
-    cancelPointer:checkpoint=>{finishAksFieldDrag(true);cancelAksAreaDrawing();drag=null;segmentDrag=null;wireLabelDrag=null;clearAreaSelection();if(checkpoint&&historySnapshot()!==checkpoint.document){restoreHistory(checkpoint.document);undoStack.splice(0,undoStack.length,...checkpoint.undo);redoStack.splice(0,redoStack.length,...checkpoint.redo);appClipboard=checkpoint.clipboard}render()},
+    checkpoint:()=>{commitHistory();return{document:historySnapshot(),undo:[...undoStack],redo:[...redoStack],clipboard:appClipboard,mode,fieldDrawing:aksAreaDrawing,wireStart,wirePoints:structuredClone(wirePoints),preview:preview.getAttribute('d')}},
+    cancelPointer:(checkpoint,keepTool=false)=>{finishAksFieldDrag(true);cancelAksAreaDrawing();drag=null;segmentDrag=null;wireLabelDrag=null;clearAreaSelection();if(checkpoint&&historySnapshot()!==checkpoint.document){restoreHistory(checkpoint.document);undoStack.splice(0,undoStack.length,...checkpoint.undo);redoStack.splice(0,redoStack.length,...checkpoint.redo);appClipboard=checkpoint.clipboard}if(keepTool&&checkpoint){mode=checkpoint.mode;aksAreaDrawing=checkpoint.fieldDrawing;wireStart=checkpoint.wireStart;wirePoints=checkpoint.wirePoints;preview.setAttribute('d',checkpoint.preview||'');preview.style.display=wireStart?'block':'none'}render()},
     status:message=>document.querySelector('#statusText').textContent=message
   });
   const renderBeforeWorkspace=render;render=function(){renderBeforeWorkspace();workspaceUI.refresh()};

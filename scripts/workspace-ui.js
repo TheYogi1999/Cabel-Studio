@@ -111,9 +111,9 @@ globalThis.CabelWorkspaceUI = {
       holdTimer=setTimeout(()=>{if(session!==finger&&session!==pen)return;session.kind='handled';api.cancelPointer(session.checkpoint);api.editTarget(session.target);suppressCanvasClickUntil=performance.now()+1000;release(session.id);},550);
     }
     function sourceAt(target){
-      const node=target.closest?.('.part[data-type],.catalog-part[data-catalog-product],.part[data-custom-symbol],.device-jump,.pin-node');if(!node)return null;
+      const node=target.closest?.('.part[data-type],.catalog-part[data-catalog-product],.part[data-custom-symbol],.device-jump,.pin-node,.cable-core[data-cable-id]');if(!node)return null;
       let payload;if(node.dataset.type)payload={kind:'component',type:node.dataset.type};else if(node.dataset.catalogProduct)payload={kind:'product',key:node.dataset.catalogProduct};
-      else if(node.dataset.customSymbol)payload={kind:'symbol',id:node.dataset.customSymbol};else if(node.dataset.pinPart)payload={kind:'pin',id:node.dataset.pinPart,index:Number(node.dataset.pinIndex)};
+      else if(node.dataset.customSymbol)payload={kind:'symbol',id:node.dataset.customSymbol};else if(node.dataset.coreId)payload={kind:'cable-core',cableId:node.dataset.cableId,coreId:node.dataset.coreId};else if(node.dataset.pinPart)payload={kind:'pin',id:node.dataset.pinPart,index:Number(node.dataset.pinIndex)};
       else payload={kind:'device',id:node.closest('[data-device-id]')?.dataset.deviceId};
       return{node,payload,label:node.querySelector('.part-name,strong')?.textContent||node.textContent.trim()};
     }

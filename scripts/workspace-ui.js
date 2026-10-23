@@ -39,6 +39,8 @@ globalThis.CabelWorkspaceUI = {
     const redo=button('redoBtn','Redo','Redo last change',history,()=>api.action('redo'));
     const modes=group('Drawing tools');modes.append($('#selectTool'),$('#wireTool'),$('#aksAreaTool'));
     for(const node of modes.children)node.classList.add('tool-button');
+    const diagonal=button('diagonalTool','45°','Draw at 45°; also available while holding Shift',modes,()=>api.action('diagonal'));
+    $('#wireTool').after(diagonal);
     $('#bridgeTool').hidden=true;labelButton($('#selectTool'),'Select','select');labelButton($('#aksAreaTool'),'Field');
     const handButton=button('panTool','Pan','Drag to pan with a finger, Pencil or mouse',modes,()=>{ink.setTool(null);hand=!hand;placement=null;api.cancel();refresh();},'pan');
     const redButton=button('redPenTool','Red pen','Freehand annotations: draw, erase or select strokes',modes,()=>{const enable=!ink.active();ink.setTool(null);hand=false;placement=null;api.cancel();ink.setTool(enable?'draw':null);refresh();},'pen');
@@ -57,7 +59,7 @@ globalThis.CabelWorkspaceUI = {
     ])button(id,label,title,editing,()=>api.action(action),icon);
     const cancel=button('cancelActionBtn','Cancel','Cancel placement or drawing tool',editing,()=>{ink.setTool(null);placement=null;hand=false;clearHold();removeGhost();api.cancel();refresh();});
     for(const id of['pagePropertiesBtn','gridToggle']){const node=$('#'+id);node.classList.add('tool-button');editing.append(node);}
-    const info=$('#projectInfoBtn'),lists=$('#autoLists');info.classList.add('tool-button');lists.classList.add('tool-button');labelButton(info,'Project info');info.title='Project information';info.setAttribute('aria-label','Project information');lists.setAttribute('aria-label','Project lists');$('#saveBtn').after(info,lists);
+    const info=$('#projectInfoBtn'),lists=$('#autoLists');info.classList.add('tool-button');lists.classList.add('tool-button');labelButton(info,'Project info');info.title='Project information';info.setAttribute('aria-label','Project information');lists.setAttribute('aria-label','Project lists');$('#saveBtn').before(info,lists);
     $('#sheetAdd').remove();$('#canvasWrap').append(api.nav,$('.zoom-controls'));
     api.nav.setAttribute('role','group');api.nav.setAttribute('aria-label','Sheet navigation');$('.zoom-controls').setAttribute('role','group');$('.zoom-controls').setAttribute('aria-label','Drawing zoom');
     labelButton($('#fitBtn'),'','fit');
@@ -132,7 +134,7 @@ globalThis.CabelWorkspaceUI = {
       let best=null,distance=type==='touch'?22:14;
       for(const n of svg.querySelectorAll('.terminal')){if(!api.terminal(n))continue;const matrix=n.getScreenCTM();if(!matrix)continue;const q=new DOMPoint(n.cx.baseVal.value,n.cy.baseVal.value).matrixTransform(matrix),d=Math.hypot(q.x-p.x,q.y-p.y);if(d<=distance){best=n;distance=d;}}return best;
     }
-    function connectAt(p,type){const terminal=nearbyTerminal(p,type);if(terminal)api.connect(terminal);else{forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);}}
+    function connectAt(p,type){const terminal=nearbyTerminal(p,type);if(terminal)api.connect(terminal);else if(!api.branchAt(p,type)){forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);}}
     function makeSession(id,p,target,type,options={}){
       const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':state.mode==='wire'||state.mode==='bridge'?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
       const s={id,type,kind,target,start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
@@ -275,6 +277,7 @@ globalThis.CabelWorkspaceUI = {
       $('#selectTool').setAttribute('aria-pressed',String(state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking));$('#selectTool').classList.toggle('active',state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking);
       const wire=$('#wireTool'),label=state.mode==='bridge'?'Bridge':state.connecting?'Wire':'Connect';if(wire.textContent!==label)labelButton(wire,label);
       wire.setAttribute('aria-label','Connect; automatically choose a wire or terminal bridge');wire.setAttribute('aria-pressed',String(connecting));wire.classList.toggle('active',connecting);wire.dataset.connectionKind=state.mode==='bridge'?'bridge':'wire';
+      diagonal.hidden=!connecting;diagonal.setAttribute('aria-pressed',String(state.diagonal));
       $('#aksAreaTool').setAttribute('aria-pressed',String(state.fieldDrawing));svg.dataset.hand=String(hand);svg.dataset.placement=String(Boolean(placement));
       for(const id of['rotateBtn','mirrorXBtn','mirrorYBtn','copyBtn','cutBtn'])$('#'+id).disabled=!state.partSelected||state.exporting;
       $('#deleteBtn').disabled=!state.hasSelection||state.exporting;$('#pasteBtn').disabled=!state.canPaste||state.exporting;

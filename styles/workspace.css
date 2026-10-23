@@ -20,13 +20,14 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-toolbar .tool-group+.tool-group{padding-left:12px;border-left:1px solid #40525d}
 .workspace-toolbar.red-pen-mode{flex-wrap:wrap}
 .workspace-toolbar.red-pen-mode #redPenTools{flex:1 0 100%;max-width:100%;min-width:0;padding-left:0;border-left:0;overflow-x:auto}
-.workspace-ready .newnav,.workspace-ready .zoom-controls{position:absolute;z-index:4;display:flex;align-items:center;gap:5px;padding:5px;border:1px solid #40525d;border-radius:10px;background:#17232ef2;box-shadow:0 4px 16px #0004;max-width:calc(100% - 24px);touch-action:manipulation}
-.workspace-ready .newnav{top:12px;left:50%;transform:translateX(-50%)}
-.workspace-ready .newnav button{height:40px;min-width:40px;font-size:11px;padding:0 10px}
-.workspace-ready .newnav #sheetCurrent{min-width:100px}
-.workspace-ready .zoom-controls{right:12px;bottom:12px;gap:4px}
-.workspace-ready .zoom-controls button{display:flex;align-items:center;justify-content:center;height:40px;min-width:40px;padding:0 9px}
-.workspace-ready .zoom-label{font-size:11px;width:43px}
+.workspace-ready .newnav,.workspace-ready .zoom-controls{position:absolute;z-index:4;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid #40525d;border-radius:8px;background:#17232ef2;box-shadow:0 3px 12px #0004;max-width:calc(100% - 20px);touch-action:manipulation}
+.workspace-ready .newnav{top:10px;left:50%;transform:translateX(-50%)}
+.workspace-ready .newnav button{height:32px;min-width:32px;font-size:10px;padding:0 8px}
+.workspace-ready .newnav #sheetCurrent{min-width:88px}
+.workspace-ready .zoom-controls{right:10px;bottom:10px;gap:3px}
+.workspace-ready .zoom-controls button{display:flex;align-items:center;justify-content:center;height:32px;min-width:32px;padding:0 7px}
+.workspace-ready .zoom-controls .control-icon{width:15px;height:15px}
+.workspace-ready .zoom-label{font-size:10px;width:38px}
 .workspace-ready #wireDataButton,.workspace-ready #hud{display:none}
 .workspace-ready .tool-button[aria-pressed="true"],.workspace-ready .newnav button[aria-pressed="true"]{border-color:var(--selection);background:var(--selection-bg);color:var(--selection)}
 .workspace-ready #cancelActionBtn{color:var(--yellow)}
@@ -48,12 +49,15 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-ready .library-controls{padding-top:2px}
 .workspace-ready #catalogSearch{min-height:40px;font-size:13px}
 .workspace-ready .library-modes button{min-height:36px}
-.workspace-ready .sheetPanel .sheetItem{display:flex;align-items:center;gap:9px;padding:9px 8px;min-height:44px}
+.workspace-ready .sheetPanel .sheetItem{display:flex;align-items:center;gap:7px;padding:6px;min-height:36px;margin:5px 0}
 .workspace-ready .sheet-number{flex:none;min-width:35px;padding:3px 4px;border:1px solid #40525d;border-radius:4px;font:10px ui-monospace,monospace;color:var(--muted);text-align:center}
 .workspace-ready .sheetItem.active .sheet-number{color:var(--selection);border-color:var(--selection)}
 .workspace-ready .sheet-copy{min-width:0;flex:1}
 .workspace-ready .sheet-copy strong{overflow-wrap:anywhere;font-size:12px}
 .workspace-ready .overview-tabs button{flex:1;min-height:38px}
+.workspace-ready .overview-tabs{gap:4px;margin-bottom:10px}
+.workspace-ready .overview-tabs .overview-add{flex:0 0 30px;min-width:30px;padding:0;font-size:18px}
+.workspace-ready .sheetPanel .panelHead{margin-bottom:5px}
 .workspace-ready .simpleModal{padding:12px;overscroll-behavior:contain;z-index:60}
 .workspace-ready .simplePanel{max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain;scroll-padding:60px 0 20px}
 .workspace-ready .simplePanel>.close{position:sticky;top:0;z-index:2;min-height:38px;background:#243541}
@@ -75,7 +79,7 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-ready [hidden]{display:none!important}
 @media (max-width:1279px),(pointer:coarse){
   .workspace-ready .sidebar,.workspace-ready .sheetPanel{padding:9px 7px}
-  .workspace-ready .sheetPanel .sheetItem{gap:5px;padding:8px 5px}
+  .workspace-ready .sheetPanel .sheetItem{gap:5px;padding:6px 5px}
   .workspace-ready .sheet-number{min-width:30px;font-size:9px;padding:3px 2px}
   .workspace-ready .sheet-copy strong{font-size:11px}
   .workspace-ready .workspace-appbar{gap:8px;padding:6px 10px}
@@ -86,7 +90,10 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 }
 @media (any-pointer:coarse){
   .workspace-ready .tool-button,.workspace-ready .newnav button,.workspace-ready .zoom-controls button{height:44px;min-width:44px}
-  .workspace-ready .library-modes button,.workspace-ready .overview-tabs button,.workspace-ready .simplePanel button,.workspace-ready .sheetPanel .panelHead button{min-height:44px}
+  .workspace-ready .newnav button,.workspace-ready .zoom-controls button{height:36px;min-width:36px}
+  .workspace-ready .sheetPanel .sheetItem{min-height:40px}
+  .workspace-ready .overview-tabs button{min-height:38px}
+  .workspace-ready .library-modes button,.workspace-ready .simplePanel button,.workspace-ready .sheetPanel .panelHead button{min-height:44px}
   .workspace-ready .component-group>summary,.workspace-ready .manufacturer-library>summary,.workspace-ready .catalog-family>summary,.workspace-ready .proposal-library>summary{min-height:44px;display:flex;align-items:center}
   .workspace-ready .component-group>summary::before,.workspace-ready .manufacturer-library>summary::before,.workspace-ready .catalog-family>summary::before,.workspace-ready .proposal-library>summary::before{content:'▸';margin-right:8px}
   .workspace-ready details[open]>summary::before{content:'▾'}

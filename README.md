@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.20.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.20.1**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -8,7 +8,7 @@ Open `index.html` in a browser, or serve this directory with any static web serv
 
 ## Drawing and editing
 
-The workspace keeps drawing tools, selection actions, undo/redo, sheet navigation and zoom in the top bar. The component library and sheet/device overview stay visible beside the drawing on iPad and desktop, including portrait orientation and full screen. Buttons and property fields use larger touch targets. Mirror buttons use SVG arrows, avoiding platform-dependent emoji glyphs.
+The top bar keeps drawing tools, selection actions and undo/redo. **Project info** and **Lists** sit beside **Save** in the top row; **Page properties** and **Grid** stay in the editing toolbar. Previous/current/next sheet controls float at the top centre of the drawing, while zoom out, the percentage, zoom in and fit/centre float at the bottom right. Add a sheet with **+ Sheet** in the overview. Sheet entries show only their four-digit number and name. The component library and sheet/device overview stay visible beside the drawing on iPad and desktop, including portrait orientation and full screen. Buttons and property fields use larger touch targets. Mirror and fit buttons use SVG icons.
 
 With a finger or Pencil, drag components from the generic/product libraries or device overview onto the paper. Start sideways to drag immediately; hold briefly before a vertical drag so vertical library scrolling still works. A preview follows the contact and an invalid/outside drop changes nothing. You can also tap a library entry and then tap the paper. In **Select**, drag a symbol, wire section, label or Field handle to edit it directly. Hold an object to open its properties, or choose **Properties**. There is no separate Touch edit switch. Mouse click placement, HTML drag-and-drop, right-click, blank-paper area selection and keyboard shortcuts continue to work.
 

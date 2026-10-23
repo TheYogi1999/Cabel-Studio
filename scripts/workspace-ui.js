@@ -17,7 +17,7 @@ globalThis.CabelWorkspaceUI = {
     const appbar=document.createElement('div');appbar.className='workspace-appbar';appbar.append(...header.children);header.append(appbar);
     const toolbar=document.createElement('div');toolbar.id='workspaceToolbar';toolbar.className='workspace-toolbar';
     toolbar.setAttribute('role','toolbar');toolbar.setAttribute('aria-label','Drawing and editing');
-    const utility=document.createElement('div');utility.className='workspace-utility';header.append(toolbar,utility);
+    header.append(toolbar);
     const group=label=>{const n=document.createElement('div');n.className='tool-group';n.setAttribute('role','group');n.setAttribute('aria-label',label);toolbar.append(n);return n;};
     const icons={
       select:'M4 3v16l4-5 4 7 3-2-4-6 7-1z',
@@ -25,7 +25,8 @@ globalThis.CabelWorkspaceUI = {
       horizontal:'M2 12h20M6 8l-4 4 4 4M18 8l4 4-4 4M12 3v3M12 18v3',
       vertical:'M12 2v20M8 6l4-4 4 4M8 18l4 4 4-4M3 12h3M18 12h3',
       fullscreen:'M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6',
-      pen:'M4 17l-1 4 4-1L21 6l-3-3zM15 6l3 3'
+      pen:'M4 17l-1 4 4-1L21 6l-3-3zM15 6l3 3',
+      fit:'M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5M8 12h8M12 8v8'
     };
     function labelButton(node,label,icon){
       node.replaceChildren();
@@ -55,8 +56,12 @@ globalThis.CabelWorkspaceUI = {
       ['deleteBtn','Delete','Remove selection from the drawing','delete'],['textBtn','Text','Insert text annotation','text']
     ])button(id,label,title,editing,()=>api.action(action),icon);
     const cancel=button('cancelActionBtn','Cancel','Cancel placement or drawing tool',editing,()=>{ink.setTool(null);placement=null;hand=false;clearHold();removeGhost();api.cancel();refresh();});
-    api.nav.append($('#pagePropertiesBtn'),$('#projectInfoBtn'),$('#autoLists'));utility.append(api.nav,$('.zoom-controls'));
-    for(const[id,title]of[['sheetPrev','Previous sheet'],['sheetNext','Next sheet'],['sheetCurrent','Show sheets'],['fitBtn','Fit the whole page']]){$('#'+id).title=title;$('#'+id).setAttribute('aria-label',title);}
+    for(const id of['pagePropertiesBtn','gridToggle']){const node=$('#'+id);node.classList.add('tool-button');editing.append(node);}
+    const info=$('#projectInfoBtn'),lists=$('#autoLists');info.classList.add('tool-button');lists.classList.add('tool-button');labelButton(info,'Project info');info.title='Project information';info.setAttribute('aria-label','Project information');lists.setAttribute('aria-label','Project lists');$('#saveBtn').after(info,lists);
+    $('#sheetAdd').remove();$('#canvasWrap').append(api.nav,$('.zoom-controls'));
+    api.nav.setAttribute('role','group');api.nav.setAttribute('aria-label','Sheet navigation');$('.zoom-controls').setAttribute('role','group');$('.zoom-controls').setAttribute('aria-label','Drawing zoom');
+    labelButton($('#fitBtn'),'','fit');
+    for(const[id,title]of[['sheetPrev','Previous sheet'],['sheetNext','Next sheet'],['sheetCurrent','Show sheets'],['fitBtn','Fit and centre the page']]){$('#'+id).title=title;$('#'+id).setAttribute('aria-label',title);}
     $('#saveBtn .wide').textContent='Save';$('.sidebar').id='componentSidebar';app.dataset.libraryOpen=app.dataset.overviewOpen='true';
     const tools=$('.tools');
     const fullscreenButton=button('fullscreenBtn','Full screen','Enter or restore full screen',tools,enterFullscreen,'fullscreen');

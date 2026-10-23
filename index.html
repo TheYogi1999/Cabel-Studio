@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.20.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.20.1">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -61,11 +61,11 @@
 <div class="toast" id="toast"></div>
 <script src="libraries/catalog.js"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/red-pen.js?v=1.20.0"></script>
-<script src="scripts/workspace-ui.js?v=1.20.0"></script>
+<script src="scripts/red-pen.js?v=1.20.1"></script>
+<script src="scripts/workspace-ui.js?v=1.20.1"></script>
 <script>
 (() => {
-  const APP_VERSION='1.20.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.20.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -235,8 +235,8 @@
   // Right-hand sheet overview and grid-aligned zoom/terminal logic
   const sheetPanel=document.createElement('aside');sheetPanel.id='sheetPanel';sheetPanel.className='sheetPanel';document.querySelector('main').append(sheetPanel);
   const panelStyle=document.createElement('style');panelStyle.textContent='main{grid-template-columns:218px minmax(0,1fr) 230px!important}.sheetPanel{min-width:0;overflow:auto;padding:16px 12px;background:var(--panel);border-left:1px solid var(--line)}.sheetPanel h2{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#a7b5bf;margin:0}.sheetPanel .panelHead{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}.sheetPanel button{font:inherit;color:#dce6e9;background:#1b2934;border:1px solid #354754;border-radius:6px;padding:6px 8px;cursor:pointer}.sheetPanel button:hover{border-color:#62d6bd;color:#62d6bd}.sheetPanel .sheetItem{width:100%;display:block;text-align:left;margin:7px 0;padding:9px}.sheetPanel .sheetItem.active{border-color:var(--selection);background:var(--selection-bg);color:var(--selection)}.sheetPanel .sheetItem strong{display:block;font-size:11px}.sheetPanel .sheetItem small{display:block;color:#9baab2;font-size:10px;margin-top:3px}.sheetPanel .panelNote{color:#83949d;font-size:10px;line-height:1.45;margin:8px 0}.newnav #sheetOverview{display:none}@media(max-width:900px){main{grid-template-columns:155px minmax(0,1fr) 190px!important}.sheetPanel{padding:12px 8px}}@media(max-width:620px){main{grid-template-columns:120px minmax(0,1fr) 150px!important}.sidebar{padding:10px 6px}.sheetPanel{padding:10px 6px}}';document.head.append(panelStyle);
-  function sheetButtonContent(s,i,note){return '<span class="sheet-number">'+pageNumber(i+1)+'</span><span class="sheet-copy"><strong>'+safe(s.title||'Schematic')+'</strong><small>'+safe(note||s.parts.length+' Devices · '+s.wires.length+' connections')+'</small></span>'}
-  function refreshSheetPanel(){let h='<div class="panelHead"><h2>Sheet overview</h2><button id="rightAddSheet">＋ Sheet</button></div><p class="panelNote">A4 landscape · 4 mm grid · '+pages.length+' Sheets</p>';pages.forEach((s,i)=>{h+='<button class="sheetItem '+(i===activeSheet?'active':'')+'" data-right-sheet="'+i+'"'+(i===activeSheet?' aria-current="page"':'')+'>'+sheetButtonContent(s,i)+'</button>'});sheetPanel.innerHTML=h;sheetPanel.querySelectorAll('[data-right-sheet]').forEach(b=>b.onclick=()=>setSheet(+b.dataset.rightSheet));sheetPanel.querySelector('#rightAddSheet').onclick=addSheet;const current=document.querySelector('#sheetCurrent');if(current)current.textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length)}
+  function sheetButtonContent(s,i){return '<span class="sheet-number">'+pageNumber(i+1)+'</span><span class="sheet-copy"><strong>'+safe(s.title||'Schematic')+'</strong></span>'}
+  function refreshSheetPanel(){let h='<div class="panelHead"><h2>Sheet overview</h2><button id="rightAddSheet">＋ Sheet</button></div>';pages.forEach((s,i)=>{h+='<button class="sheetItem '+(i===activeSheet?'active':'')+'" data-right-sheet="'+i+'"'+(i===activeSheet?' aria-current="page"':'')+'>'+sheetButtonContent(s,i)+'</button>'});sheetPanel.innerHTML=h;sheetPanel.querySelectorAll('[data-right-sheet]').forEach(b=>b.onclick=()=>setSheet(+b.dataset.rightSheet));sheetPanel.querySelector('#rightAddSheet').onclick=addSheet;const current=document.querySelector('#sheetCurrent');if(current)current.textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length)}
   const oldRenderRight=render;render=function(){oldRenderRight();refreshSheetPanel()};
   // Endpoints must match the visible terminals exactly; only placement and waypoints snap.
   
@@ -318,7 +318,7 @@
     document.querySelector('#hud').textContent='Sheet '+pageNumber(activeSheet+1)+'/'+pageNumber(pages.length)+' · '+s.title+' · A4 landscape · 4 mm grid';
     document.querySelector('#a4Sheet').textContent=s.title||'Schematic';
     document.querySelector('#a4Number').textContent=pageNumber(activeSheet+1)+' / '+pageNumber(pages.length);
-    if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML=sheetButtonContent(page,i,'Automatic device list · '+page.deviceEntries.length+' Devices')})}
+    if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML=sheetButtonContent(page,i)})}
   };
   const addPartBeforeDeviceList=addPart;
   addPart=function(type,position){if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));addPartBeforeDeviceList(type,position)};
@@ -754,7 +754,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   addSheet=function(){const name=prompt('Name of the new drawing sheet','Schematic');if(name===null)return;const sheet={id:crypto.randomUUID(),title:name.trim()||'Schematic',parts:[],wires:[]};pages.push(sheet);setSheet(pages.length-1);closePanel()};
   document.querySelector('#sheetAdd').onclick=addSheet;
   const refreshBeforeDocument=refreshSheetPanel;
-  refreshSheetPanel=function(){refreshBeforeDocument();sheetPanel.querySelectorAll('.sheetItem').forEach((button,i)=>{button.dataset.sheetKind=pages[i].kind||'drawing';if(isGenerated(pages[i]))button.querySelector('small').textContent='Automatic · '+documentKind(pages[i])})};
+  refreshSheetPanel=function(){refreshBeforeDocument();sheetPanel.querySelectorAll('.sheetItem').forEach((button,i)=>{button.dataset.sheetKind=pages[i].kind||'drawing'})};
   document.querySelector('#saveBtn').onclick=()=>{render();download(new Blob([JSON.stringify({appVersion:APP_VERSION,title:model.title,projectInfo:model.projectInfo||{},sheets:pages.map(serializableSheet),activeSheet,activeSheetId:pages[activeSheet].id||pages[activeSheet].generatedId},null,2)],{type:'application/json'}),(model.title||'Project')+'.json')};
   document.querySelector('#fileInput').onchange=async e=>{
     const file=e.target.files[0];if(!file)return;

@@ -18,6 +18,8 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-toolbar{background:var(--panel);scroll-padding-inline:14px}
 .workspace-toolbar .tool-group{display:flex;align-items:center;gap:5px;flex:none}
 .workspace-toolbar .tool-group+.tool-group{padding-left:12px;border-left:1px solid #40525d}
+.workspace-toolbar.red-pen-mode{flex-wrap:wrap}
+.workspace-toolbar.red-pen-mode #redPenTools{flex:1 0 100%;max-width:100%;min-width:0;padding-left:0;border-left:0;overflow-x:auto}
 .workspace-utility{justify-content:space-between;gap:20px;padding-top:4px;padding-bottom:4px;background:#131e28}
 .workspace-ready .newnav{position:static;transform:none;display:flex;align-items:center;gap:5px;flex:none}
 .workspace-ready .newnav button{height:34px;min-width:34px;font-size:11px;padding:0 10px}
@@ -38,6 +40,8 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-ready #sheet[data-drop-valid="true"]{outline:2px solid var(--selection);outline-offset:-3px}
 .workspace-ready #sheet[data-hand="true"]{cursor:grab}
 .workspace-ready #sheet[data-placement="true"]{cursor:crosshair}
+.workspace-ready #redPenTool:not([aria-pressed="true"]){color:#f48e8e}
+.workspace-ready #sheet[data-red-pen="draw"],.workspace-ready #sheet[data-red-pen="erase"]{cursor:crosshair}
 .workspace-ready .section-title{align-items:center;margin-bottom:10px}
 .workspace-ready .section-title small{display:none}
 .workspace-ready .library-controls{padding-top:2px}

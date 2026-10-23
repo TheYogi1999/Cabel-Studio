@@ -57,8 +57,9 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     ],wires:[],aksAreas:[{id:'ipad-field',title:'Control',x:6*GRID,y:6*GRID,width:5*GRID,height:4*GRID,functionCode:'F1'}]}]};
     await load(fixture);await assertLayout();const untouched=await save();
     let a=await screen(15*GRID,30*GRID),b={x:a.x+55,y:a.y+25},oldView=await view(),beforeBox=await symbolBox();
+    await tapControl('panTool');
     await fingerDrag(a,b);assert.notEqual(await view(),oldView);let afterBox=await symbolBox();near(afterBox.x-beforeBox.x,55,.3);near(afterBox.y-beforeBox.y,25,.3);assert.deepEqual(await save(),untouched);assert.equal(await page.locator('#undoBtn').isEnabled(),false);
-    await page.locator('#fitBtn').click();const center=await screen(30*GRID,22*GRID);
+    await tapControl('selectTool');await page.locator('#fitBtn').click();const center=await screen(30*GRID,22*GRID);
     const worldAt=p=>page.locator('#pageContent').evaluate((g,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(g.getScreenCTM().inverse());return{x:q.x,y:q.y};},p),anchor=await worldAt(center);
     beforeBox=await symbolBox();await touch('touchStart',[{x:center.x-45,y:center.y},{x:center.x+45,y:center.y}]);
     await touch('touchMove',[{x:center.x-80,y:center.y},{x:center.x+80,y:center.y}]);await touch('touchEnd',[]);
@@ -156,8 +157,8 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     await tapControl('fullscreenBtn');assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');assert.equal(await page.locator('#fullscreenKeep').isVisible(),true);await page.locator('#fullscreenKeep').tap();assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');await page.locator('#fullscreenLeave').tap();await page.waitForFunction(()=>!document.querySelector('.app.focus-mode'));
-    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.1-ipad-portrait.png'});
-    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.19.1-ipad-landscape.png'});
+    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.20.0-ipad-portrait.png'});
+    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.20.0-ipad-landscape.png'});
     project=await save();const pdf=await download('#exportBtn');assert.match(pdf.toString('latin1',0,8),/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-tablet.pdf',pdf);await fs.writeFile('/tmp/Cabel-Studio-tablet.expected.json',JSON.stringify({pages:project.sheets.length}));
     await page.reload();await load(project);assert.deepEqual(drawings(await save()),drawings(project));
     const manifest=await(await page.request.get(url+'manifest.webmanifest')).json();assert.equal(manifest.display,'standalone');assert.equal(await page.locator('meta[name="apple-mobile-web-app-capable"]').getAttribute('content'),'yes');

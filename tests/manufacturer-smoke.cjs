@@ -15,7 +15,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
       const name = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
       const file = path.resolve(ROOT, '.' + (name === '/' ? '/index.html' : name));
       if (!file.startsWith(ROOT + path.sep)) return res.writeHead(403).end();
-      res.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : file.endsWith('.js') ? 'application/javascript' : 'application/json');
+      res.setHeader('Content-Type', file.endsWith('.html') ? 'text/html' : file.endsWith('.css') ? 'text/css' : file.endsWith('.js') ? 'application/javascript' : 'application/json');
       res.end(await fs.readFile(file));
     } catch { res.writeHead(404).end(); }
   });
@@ -113,7 +113,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await page.locator('[data-manufacturer="abb"] > summary').click();
     assert.deepEqual(JSON.parse((await download('[data-manufacturer="abb"] .catalog-download')).toString()), libraries[0]);
     assert.equal(await page.locator('html').getAttribute('lang'), 'en');
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.17.0');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.18.0');
     assert.match(await page.title(), /Schematic editor/);
     assert.match(await page.locator('.hint').textContent(), /Right-click/);
     assert.equal(await page.locator('#wireTool').getAttribute('title'), 'Connect (C / W)');
@@ -205,7 +205,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const pdf = await download('#exportBtn'); assert.match(pdf.toString('latin1', 0, 8), /^%PDF-1.4/);
     await fs.writeFile('/tmp/Cabel-Studio-manufacturers.pdf', pdf);
     await fs.writeFile('/tmp/Cabel-Studio-manufacturers.expected.json', JSON.stringify({ pages: (await save()).sheets.length }));
-    await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click(); await page.screenshot({ path: '/tmp/Cabel-Studio-v1.17.0-manufacturers.png' });
+    await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click(); await page.screenshot({ path: '/tmp/Cabel-Studio-v1.18.0-manufacturers.png' });
     console.log('PASS catalogue drag/drop at zoom, ABB pole/contact geometry, mixed Phoenix terminal strip, Finder 1/2/3-contact assemblies, source metadata/SAP roundtrip, English lists and PDF');
 
     // The same library format can be imported; rejected files leave existing libraries intact.
@@ -258,7 +258,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const hiddenBridgePoint = await page.locator('#wires .wire[data-id="w2010"]').evaluate(p => {
       const q = p.getPointAtLength(p.getTotalLength() / 2).matrixTransform(p.getScreenCTM()); return { x: q.x, y: q.y };
     });
-    await page.mouse.click(hiddenBridgePoint.x, hiddenBridgePoint.y); await page.locator('#wireDataButton').click();
+    await page.mouse.click(hiddenBridgePoint.x, hiddenBridgePoint.y); await page.locator('#propertiesBtn').click();
     assert.equal(await page.locator('#wireKind').inputValue(), 'bridge'); await page.locator('#simpleClose').click();
     await dragPart('p2002', 20 * GRID, 12 * GRID); await dragPart('p2004', 32 * GRID, 23 * GRID);
     for (const id of ['w2010', 'w2011']) assert.equal(await page.locator(`.wire-label[data-wire-label="${id}"]`).isVisible(), true);
@@ -280,7 +280,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
       assert.equal(marks.length, n);
       for (let i = 0; i < n; i++) { assert.ok(marks[i].x > 0, 'Breaker mark must be on the right fixed contact'); near(marks[i].y, (2 * i - n + 1) * 48); }
     }
-    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.17.0-S200.png' });
+    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.18.0-S200.png' });
     console.log('PASS S201/S202/S203/S204 breaker marks on the fixed-contact side and complete Finder 60.11/60.12/60.13 frames with terminal clearance');
 
     const selectAllFixture = { title: 'Selection', sheets: [{ id: 'selection-main', title: 'Current sheet', parts: [
@@ -331,7 +331,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const selectedPdf = await download('#exportBtn'); assert.match(selectedPdf.toString('latin1', 0, 8), /^%PDF-1.4/);
     assert.equal(await page.locator('#parts > g.selected').count(), 4); assert.equal(await page.locator('#wires .wire.selected').count(), 1);
     await fs.writeFile('/tmp/Cabel-Studio-selection.pdf', selectedPdf); await fs.writeFile('/tmp/Cabel-Studio-selection.expected.json', JSON.stringify({ pages: (await save()).sheets.length }));
-    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.17.0-selection.png' });
+    await page.screenshot({ path: '/tmp/Cabel-Studio-v1.18.0-selection.png' });
     await page.keyboard.press('Escape'); assert.equal(await page.locator('#parts > g.selected').count(), 0); assert.equal(await page.locator('#wires .wire.selected').count(), 0);
     await page.locator('#catalogSearch').fill('ABB'); await page.keyboard.press('Control+a');
     assert.deepEqual(await page.locator('#catalogSearch').evaluate(n => [n.selectionStart, n.selectionEnd]), [0, 3]); assert.equal(await page.locator('#parts > g.selected').count(), 0);
@@ -373,7 +373,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
       const stored=parts(await save()).find(q=>q.id===p.id);
       assert.deepEqual(stored.pinNumbers,p.pinNumbers);assert.deepEqual(stored.portSides,p.portSides);assert.deepEqual(stored.catalog,p.catalog);
     }
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.17.0-automation.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.18.0-automation.png'});
     console.log('PASS Phoenix supplies/optocouplers, Beckhoff I/O, Raspberry Pi, ESP32 D1 mini, Joy-it NodeMCU and FI/RCD: pin counts, 4 mm anchors, port sides, routes, movement/rotation and JSON');
 
     // Four approval stages appear on every document page and survive editing/export/reopening.
@@ -391,14 +391,14 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const stagesBounds=await page.locator('#drawingTitleBlock').evaluate(g=>['issued','check1','check2','release'].map(stage=>{
       const a=g.querySelector('#a4-'+stage+'-name').getBBox(),b=g.querySelector('#a4-'+stage+'-date').getBBox();return{right:Math.max(a.x+a.width,b.x+b.width),bottom:Math.max(a.y+a.height,b.y+b.height)};
     }));
-    for(let i=0;i<4;i++){assert.ok(stagesBounds[i].right<(i+1)*271);assert.ok(stagesBounds[i].bottom<=61)}
+    for(let i=0;i<4;i++){assert.ok(stagesBounds[i].right<490+(i+1)*148.5);assert.ok(stagesBounds[i].bottom<=61)}
     await page.locator('[data-overview="sheets"]').click();
     for(const kind of ['cover','toc','device-list','terminal-list','drawing']){
       await page.locator(`.sheetItem[data-sheet-kind="${kind}"]`).first().click();
       for(const stage of ['issued','check1','check2','release'])assert.equal(await page.locator(`#a4-${stage}-name`).textContent(),approvals[stage+'Name']);
     }
     const approvalsPdf=await download('#exportBtn');await fs.writeFile('/tmp/Cabel-Studio-approvals.pdf',approvalsPdf);await fs.writeFile('/tmp/Cabel-Studio-approvals.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.17.0-approvals.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.18.0-approvals.png'});
     const finalApprovalFile=await save();await page.reload();await load(finalApprovalFile);
     for(const [key,value] of Object.entries(approvals))assert.equal((await save()).projectInfo[key],value);
     console.log('PASS Issued / Check 1 / Check 2 / Release names and ISO dates on all page types, fitted drawing-head cells, preserved custom metadata, JSON and full PDF');

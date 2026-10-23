@@ -76,7 +76,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const assertOrthogonal=async()=>{for(const values of await page.locator('#wires .wire').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number))))for(let i=2;i<values.length;i+=2)assert.ok(Math.abs(values[i]-values[i-2])<1e-5||Math.abs(values[i+1]-values[i-1])<1e-5)};
     const editor=await browser.newPage({viewport:{width:1600,height:1100}});editor.setDefaultTimeout(10000);editor.on('pageerror',e=>errors.push(e.message));
     await editor.goto(`http://127.0.0.1:${server.address().port}/symbol-editor.html`);
-    assert.equal(await editor.locator('#editorVersion').textContent(),'v1.16.0');
+    assert.equal(await editor.locator('#editorVersion').textContent(),'v1.16.1');
     const editorPoint=(x,y)=>editor.locator('#editorCanvas').evaluate((svg,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(svg.getScreenCTM());return{x:q.x,y:q.y}},{x,y});
     const draw=async(tool,a,b)=>{await editor.locator(`[data-tool="${tool}"]`).click();const p=await editorPoint(...a);await editor.mouse.move(p.x,p.y);await editor.mouse.down();if(b){const q=await editorPoint(...b);await editor.mouse.move(q.x,q.y,{steps:6})}await editor.mouse.up()};
     const editorDownload=async selector=>{const [file]=await Promise.all([editor.waitForEvent('download'),editor.locator(selector).click()]);const chunks=[];for await(const chunk of await file.createReadStream())chunks.push(chunk);return{name:file.suggestedFilename(),text:Buffer.concat(chunks).toString()}};
@@ -92,7 +92,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await editor.locator('#clearSymbol').click();assert.equal(await editor.locator('#objectList .object').count(),0);
     await editor.locator('#proposalFile').setInputFiles({name:json.name,mimeType:'application/json',buffer:Buffer.from(json.text)});await editor.waitForFunction(()=>document.querySelector('#editorStatus').textContent==='Symbol proposal opened');assert.equal(await editor.locator('#objectList .object').count(),7);
     const bad=structuredClone(proposal);bad.geometry.push({id:'bad',type:'script',text:'alert(1)'});await editor.locator('#proposalFile').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await editor.waitForFunction(()=>document.querySelector('#editorStatus').textContent.includes('Invalid shape'));assert.equal(await editor.locator('#objectList .object').count(),7);
-    await editor.locator('[data-tool="select"]').click();await editor.screenshot({path:'/tmp/Cabel-Studio-v1.16.0-symbol-editor.png'});await editor.close();
+    await editor.locator('[data-tool="select"]').click();await editor.screenshot({path:'/tmp/Cabel-Studio-v1.16.1-symbol-editor.png'});await editor.close();
     console.log('PASS separate symbol editor: drawing, 4 mm terminals, exact properties, undo/redo, safe JSON/SVG export, reopening and invalid-input preservation');
 
     await load({title:'Custom proposals',parts:[],wires:[]});
@@ -118,7 +118,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const glyphs=await page.locator('#parts > g[data-id="p8000"]').evaluate(root=>{const f=root.querySelector('.port-block-frame').getBBox();return Array.from(root.querySelectorAll('.supply-divider,.supply-ac,.supply-dc'),n=>{const b=n.getBBox();return b.x>=f.x-.001&&b.y>=f.y-.001&&b.x+b.width<=f.x+f.width+.001&&b.y+b.height<=f.y+f.height+.001})});assert.deepEqual(glyphs,[true,true,true]);
     await page.keyboard.press('Control+z');assert.equal(parts(await save()).find(p=>p.id==='p8000').pinNumbers.length,5);await assertAttached();await page.keyboard.press('Control+y');assert.equal(parts(await save()).find(p=>p.id==='p8000').pinNumbers.length,12);await assertAttached();
     for(const [i,[key,count]]of [['uno-24dc-60w',7],['trio-24dc-5',9],['quint4-24dc-10',12]].entries()){const p=await placeProduct('phoenix-contact:'+key,(40+12*i)*GRID,30*GRID);assert.equal(p.pinNumbers.length,count)}
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.16.0-power-supplies.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.16.1-power-supplies.png'});
     console.log('PASS AC/DC divider/wave/DC glyphs fit frame, UNO/TRIO/QUINT output/signal variants, explicit legacy port upgrade preserving terminal indices, route adjustment and undo/redo');
 
     const fixture={title:'AKS contexts',sheets:[{id:'scope-main',title:'Original title',parts:[{id:'p9000',type:'resistor',deviceCode:'R1',label:'R1',functionCode:'F1',locationCode:'TU001',x:12*GRID,y:12*GRID},{id:'p9001',type:'lamp',deviceCode:'H1',label:'H1',functionCode:'F1',locationCode:'TU002',x:35*GRID,y:14*GRID},{id:'p9002',type:'coil',deviceCode:'K1',label:'K1',functionCode:'F2',locationCode:'TU001',x:46*GRID,y:14*GRID}],wires:[]},{id:'scope-other',title:'Other page',parts:[],wires:[]}],activeSheet:0};
@@ -145,7 +145,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await page.locator('#aksAreaTool').click();await page.keyboard.press('Control+a');assert.equal(await page.locator('#aksAreaTool').getAttribute('aria-pressed'),'false');await page.keyboard.press('Escape');
     await page.locator('.sheetItem[data-sheet-kind="drawing"]').nth(1).click({button:'right'});await page.locator('#pagePropertiesForm [name="title"]').fill('Auxiliary page');await page.locator('#pagePropertiesForm [type="submit"]').click();assert.equal(drawings(await save())[1].title,'Auxiliary page');assert.equal((await save()).activeSheetId,'scope-main');
     const pageFile=await save();await page.reload();await load(pageFile);assert.deepEqual(drawings(await save()),drawings(pageFile));assert.equal(await page.locator('.aks-area-border').count(),2);assert.equal(await caption(areaPart.id).isVisible(),false);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.16.0-aks-areas.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.16.1-aks-areas.png'});
     const scopesPdf=await download('#exportBtn');await fs.writeFile('/tmp/Cabel-Studio-aks-scopes.pdf',scopesPdf);await fs.writeFile('/tmp/Cabel-Studio-aks-scopes.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     assert.equal(await page.locator('.aks-area-border').count(),2);assert.equal(await caption(areaPart.id).isVisible(),false);
     await page.locator('[data-overview="devices"]').click();assert.match(await page.locator(`.device-node[data-device-id="${areaPart.id}"] > summary .device-jump`).getAttribute('title'),/=F4\+TU001.01/);
@@ -153,8 +153,66 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const boundaryFile=await save();drawings(boundaryFile)[0].aksAreas=[{id:'boundary',title:'Top terminal',functionCode:'F1',locationCode:'TU001',hideMatching:true,x:18*GRID,y:10*GRID,width:4*GRID,height:2*GRID}];await load(boundaryFile);
     assert.equal(await caption('p9101').isVisible(),false);assert.equal(await caption('p9102').isVisible(),true);
     console.log('PASS terminal-stack headers restart across an AKS-context boundary');
+    console.log('PASS page title/AKS properties, selective aspect hiding, explicit identifiers, new-part inheritance, rectangular and overlapping AKS fields, moving in/out, explicit reassignment, right-click page edits, cancellation, undo/redo, full tree tags, JSON and PDF');
+
+    await load({title:'Movable fields',sheets:[{id:'field-main',title:'Field drawing',aks:{functionCode:'F1',locationCode:'TU001',hideMatching:true},aksAreas:[
+      {id:'small-field',title:'A long heading that must stay inside its small field',locationCode:'SMALL',x:20*GRID,y:20*GRID,width:2*GRID,height:GRID},
+      {id:'micro-field',title:'A 2 mm field',locationCode:'SMALL',x:40*GRID,y:30*GRID,width:GRID/2,height:GRID/2},
+      {id:'move-field',title:'Control field',functionCode:'F1',locationCode:'TU001.01',hideMatching:true,x:8*GRID,y:10*GRID,width:16*GRID,height:14*GRID}
+    ],parts:[
+      {id:'p9200',type:'resistor',deviceCode:'R1',label:'R1',functionCode:'F1',locationCode:'TU001.01',x:12*GRID,y:12*GRID},
+      {id:'p9201',type:'lamp',deviceCode:'H1',label:'H1',functionCode:'F1',locationCode:'TU001',x:26*GRID,y:18*GRID}
+    ],wires:[{id:'w9202',a:'p9200:1',b:'p9201:0',points:[{x:20*GRID,y:12*GRID},{x:20*GRID,y:18*GRID}]}]}],activeSheet:0});
+    assert.equal(await page.locator('#aksAreaTool').textContent(),'AKS field');
+    const originalFields=await save(),fieldIn=project=>drawings(project)[0].aksAreas.find(a=>a.id==='move-field');
+    const fieldRect=page.locator('[data-aks-area="move-field"] .aks-area-border');
+    const assertHeadingsInside=async()=>{
+      for(const {text,box}of await page.locator('[data-aks-area]').evaluateAll(nodes=>nodes.map(g=>{const bounds=n=>{const {x,y,width,height}=n.getBBox();return{x,y,width,height}};return{text:bounds(g.querySelector('.aks-area-label')),box:bounds(g.querySelector('.aks-area-border'))}}))){
+        assert.ok(text.x>=box.x&&text.y>=box.y&&text.x+text.width<=box.x+box.width+.01&&text.y+text.height<=box.y+box.height+.01,JSON.stringify({text,box}));
+      }
+    };
+    const dragWorld=async(from,to,finish='release')=>{
+      const a=await screen(from[0]*GRID,from[1]*GRID),b=await screen(to[0]*GRID,to[1]*GRID);
+      await page.mouse.move(a.x,a.y);await page.mouse.down();await page.mouse.move(b.x,b.y,{steps:8});
+      if(finish==='escape')await page.keyboard.press('Escape');
+      if(finish==='cancel')await page.locator('#sheet').dispatchEvent('pointercancel',{pointerId:1,pointerType:'mouse',bubbles:true});
+      await page.mouse.up();
+    };
+    await assertHeadingsInside();assert.match(await page.locator('[data-aks-area="small-field"] .aks-area-label').evaluate(n=>n.firstChild.textContent),/…$/);
+    assert.equal(await caption('p9200').isVisible(),false);
+    await dragWorld([8,20],[14,24]);
+    const movedFields=await save();near(fieldIn(movedFields).x,14*GRID);near(fieldIn(movedFields).y,14*GRID);
+    assert.deepEqual(drawings(movedFields)[0].parts,drawings(originalFields)[0].parts);assert.deepEqual(drawings(movedFields)[0].wires,drawings(originalFields)[0].wires);await assertAttached();
+    assert.equal(await caption('p9200').textContent(),'+TU001.01−R1');
+    await page.keyboard.press('Control+z');assert.deepEqual(fieldIn(await save()),fieldIn(originalFields));assert.equal(await caption('p9200').isVisible(),false);
+    await page.keyboard.press('Control+y');assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));
+    await dragWorld([14,24],[20,30],'escape');assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));
+    await dragWorld([14,24],[20,30],'cancel');assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));
+    await page.keyboard.press('Control+z');assert.deepEqual(fieldIn(await save()),fieldIn(originalFields));await page.keyboard.press('Control+y');
+
+    const heading=await page.locator('[data-aks-area="move-field"] .aks-area-label').boundingBox(),headingTarget=await screen(3*GRID,2*GRID),zero=await screen(0,0);
+    await page.mouse.move(heading.x+heading.width/2,heading.y+heading.height/2);await page.mouse.down();await page.mouse.move(heading.x+heading.width/2+headingTarget.x-zero.x,heading.y+heading.height/2+headingTarget.y-zero.y,{steps:6});await page.mouse.up();
+    near(fieldIn(await save()).x,17*GRID);near(fieldIn(await save()).y,16*GRID);await page.keyboard.press('Control+z');
+    await page.keyboard.down('Alt');await dragWorld([14,24],[14.5,24.5]);await page.keyboard.up('Alt');near(fieldIn(await save()).x,14.5*GRID);near(fieldIn(await save()).y,14.5*GRID);await page.keyboard.press('Control+z');
+    await dragWorld([14,24],[0,0]);near(+await fieldRect.getAttribute('x'),0);near(+await fieldRect.getAttribute('y'),0);
+    await dragWorld([0,10],[1128/GRID,710/GRID]);near(+await fieldRect.getAttribute('x'),Math.floor((1128-16*GRID)/GRID)*GRID);near(+await fieldRect.getAttribute('y'),Math.floor((710-14*GRID)/GRID)*GRID);
+    await page.keyboard.press('Control+z');await page.keyboard.press('Control+z');assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));
+    console.log('PASS field border/heading dragging, 4/2 mm grid, drawing bounds, stable devices/routes, live AKS captions, single-step undo/redo, Escape and pointer cancellation');
+
+    const outsideKeeps=async form=>{await page.mouse.click(8,8);assert.equal(await page.locator(form).isVisible(),true)};
+    const rightWorld=async(x,y)=>{const p=await screen(x*GRID,y*GRID);await page.mouse.click(p.x,p.y,{button:'right'})};
+    await rightWorld(21,20.5);assert.equal(await page.locator('#aksAreaForm [name="title"]').inputValue(),'A long heading that must stay inside its small field');await page.locator('#aksAreaCancel').click();
+    await rightWorld(22,25);assert.equal(await page.locator('#simpleContent h2').textContent(),'AKS field properties');await page.locator('#aksAreaForm [name="title"]').fill('Unsaved field title');await outsideKeeps('#aksAreaForm');assert.equal(await page.locator('#aksAreaForm [name="title"]').inputValue(),'Unsaved field title');await page.locator('#aksAreaCancel').click();assert.equal(fieldIn(await save()).title,'Control field');
+    await rightWorld(14,24);assert.equal(await page.locator('#aksAreaForm [name="title"]').inputValue(),'Control field');await page.keyboard.press('Escape');
+    await page.locator('[data-aks-area="move-field"] .aks-area-label').click({button:'right'});assert.equal(await page.locator('#aksAreaForm [name="title"]').inputValue(),'Control field');await page.locator('#simpleClose').click();
+    await page.locator('[data-aks-area="move-field"] .aks-area-label').dblclick();assert.equal(await page.locator('#aksAreaForm').isVisible(),true);await page.locator('#aksAreaCancel').click();
+    await page.locator('#parts > g[data-id="p9201"] .part-body').click({button:'right'});assert.equal(await page.locator('#componentForm').isVisible(),true);await page.locator('#componentForm [name="value"]').fill('Unsaved lamp value');await outsideKeeps('#componentForm');assert.equal(await page.locator('#componentForm [name="value"]').inputValue(),'Unsaved lamp value');await page.locator('#componentCancel').click();
+    await rightWorld(50,8);assert.equal(await page.locator('#pagePropertiesForm').isVisible(),true);assert.equal(await page.locator('#simpleContent h3').textContent(),'AKS fields');await page.locator('#pagePropertiesForm [name="title"]').fill('Field property smoke');await outsideKeeps('#pagePropertiesForm');assert.equal(await page.locator('#pagePropertiesForm [name="title"]').inputValue(),'Field property smoke');await page.locator('#pagePropertiesForm [type="submit"]').click();assert.equal(drawings(await save())[0].title,'Field property smoke');
+    await dragWorld([24,16],[28,20]);assert.equal(await page.locator('#parts > g[data-id="p9201"]').getAttribute('class').then(s=>s.includes('selected')),true);assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));await page.keyboard.press('Escape');
+    const fieldsFile=await save();await page.reload();await load(fieldsFile);assert.deepEqual(drawings(await save()),drawings(fieldsFile));await assertHeadingsInside();await assertAttached();
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.16.1-fields.png'});await fs.writeFile('/tmp/Cabel-Studio-fields.pdf',await download('#exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-fields.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await assertHeadingsInside();
     assert.deepEqual(errors,[]);
-    console.log('PASS page title/AKS properties, selective aspect hiding, explicit identifiers, new-part inheritance, rectangular and overlapping AKS areas, moving in/out, explicit reassignment, right-click page edits, cancellation, undo/redo, full tree tags, JSON and PDF');
+    console.log('PASS Fields terminology, headings inside small/large rectangles, field border/heading/interior context menus and double-click, component precedence, blank-sheet properties, modal draft persistence after backdrop clicks, interior multi-selection, JSON roundtrip and PDF');
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

@@ -58,7 +58,7 @@
 <script src="scripts/symbol-format.js"></script>
 <script>
 (() => {
-  const APP_VERSION='1.16.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.16.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -196,7 +196,7 @@
   const baseDraw=drawPart;drawPart=function(p){baseDraw(p);if(p.targetSheetId){const target=pages.findIndex(s=>(s.id||s.generatedId)===p.targetSheetId),link=el('text',{x:0,y:86,fill:'#138b78','font-size':10,'text-anchor':'middle',class:'page-reference',style:'cursor:pointer'},partsG.lastElementChild);link.textContent=target<0?'Target missing':referenceAddress(pages[target],p.targetPartId?pages[target].parts.find(q=>q.id===p.targetPartId):{x:22,y:22});link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();if(e.ctrlKey||e.metaKey)showDeviceInTree(p);else followPageReference(p)})}if(['text','reference','destination'].includes(p.type))return;const t=el('text',{x:0,y:70,class:'part-aks'},partsG.lastElementChild);t.textContent='='+(p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)};
   const baseAdd=addPart;addPart=function(type,position){baseAdd(type,position);const p=model.parts[model.parts.length-1],prefix=TYPES[type].label,used=new Set(pages.flatMap(s=>s.parts).filter(q=>q!==p).map(q=>q.deviceCode));let n=1;while(used.has(prefix+n))n++;const context=effectiveAksScope(p);p.functionCode=context.functionCode||'A1';p.locationCode=context.locationCode||'P1';p.deviceCode=prefix+n;render()};
   const nav=document.createElement('div');nav.className='newnav';nav.innerHTML='<button id="sheetOverview">▤ Sheets</button><button id="sheetPrev">‹</button><button id="sheetCurrent">1/1</button><button id="sheetNext">›</button><button id="sheetAdd" class="add">＋ Sheet</button><button id="autoLists">Lists</button>';document.querySelector('#canvasWrap').append(nav);
-  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel"><button class="close" id="simpleClose">Close</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){if(pdfExporting)return;modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;modal.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}});modal.onclick=e=>{if(e.target===modal)closePanel()};
+  const modal=document.createElement('div');modal.className='simpleModal';modal.id='simpleModal';modal.innerHTML='<div class="simplePanel"><button class="close" id="simpleClose">Close</button><div id="simpleContent"></div></div>';document.body.append(modal);function closePanel(){if(pdfExporting)return;modal.style.display='none'}document.querySelector('#simpleClose').onclick=closePanel;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.style.display==='grid'){e.preventDefault();e.stopImmediatePropagation();closePanel()}},true);
   function setSheet(i){activeSheet=(i+pages.length)%pages.length;model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;selected=null;wireStart=null;wirePoints=[];preview.style.display='none';render()}
   function addSheet(){const name=prompt('Name of the new A4 sheet','Sheet '+pageNumber(pages.length+1));if(name===null)return;pages.push({title:name.trim()||'Sheet '+pageNumber(pages.length+1),parts:[],wires:[]});setSheet(pages.length-1);closePanel()}
   function showPanel(html){document.querySelector('#simpleContent').innerHTML=html;modal.style.display='grid'}
@@ -746,11 +746,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const target=pages.findIndex(s=>(s.id||s.generatedId)===wanted);if(target>=0)setSheet(target);toast('Project loaded');
     }catch(error){toast('Could not read the file')}e.target.value='';
   };
-  // Page and rectangular AKS contexts affect display/defaults, never silently rename existing devices.
+  // AKS fields keep the existing aksAreas project format. Contexts affect display/defaults, never silently rename devices.
   const aksAreaGroup=el('g',{id:'aksAreas'},pageContent);pageContent.insertBefore(aksAreaGroup,scene);
-  let aksAreaDrawing=false,aksAreaGesture=null;
+  let aksAreaDrawing=false,aksAreaGesture=null,aksFieldDrag=null;
   const pagePropertiesButton=document.createElement('button');pagePropertiesButton.id='pagePropertiesBtn';pagePropertiesButton.textContent='Page properties';nav.append(pagePropertiesButton);
-  const aksAreaButton=document.createElement('button');aksAreaButton.id='aksAreaTool';aksAreaButton.textContent='AKS area';aksAreaButton.title='Draw a rectangular AKS context';nav.append(aksAreaButton);
+  const aksAreaButton=document.createElement('button');aksAreaButton.id='aksAreaTool';aksAreaButton.textContent='AKS field';aksAreaButton.title='Draw an AKS field; drag its border or heading to move it';nav.append(aksAreaButton);
   const cleanAspect=(value,prefix)=>String(value||'').trim().replace(prefix,'');
   const scopeLabel=s=>(s?.functionCode?'='+s.functionCode:'')+(s?.locationCode?'+'+s.locationCode:'');
   function validAksAreas(sheet){return Array.isArray(sheet?.aksAreas)?sheet.aksAreas.filter(a=>a&&[a.x,a.y,a.width,a.height].every(Number.isFinite)&&a.width>0&&a.height>0):[]}
@@ -770,35 +770,85 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function aksScopeFields(scope={}){return '<label>Function (=)<input name="functionCode" value="'+safe(scope.functionCode)+'"></label><label>Location (+)<input name="locationCode" value="'+safe(scope.locationCode)+'"></label><label class="scope-check"><input type="checkbox" name="hideMatching"'+(scope.hideMatching!==false?' checked':'')+'> Hide matching AKS aspects on symbols</label><label class="scope-check"><input type="checkbox" name="assignExisting"> Assign to existing components in this context</label>'}
   function readAksScope(form){const data=new FormData(form);return{functionCode:cleanAspect(data.get('functionCode'),/^=/),locationCode:cleanAspect(data.get('locationCode'),/^\+/),hideMatching:data.has('hideMatching')}}
   function showPageProperties(sheet=pages[activeSheet]){
-    if(!sheet||isGenerated(sheet)){toast('Choose a drawing sheet');return}cancelAksAreaDrawing();
-    showPanel('<h2>Page properties · '+pageNumber(pages.indexOf(sheet)+1)+'</h2><form id="pagePropertiesForm" class="wire-form"><label>Page title<input name="title" value="'+safe(sheet.title)+'" maxlength="200" required></label>'+aksScopeFields(sheet.aks)+'<p>Blank aspects remain explicit on symbols. New components inherit the context at their placement point. Linked slaves continue to follow their master.</p><div class="actions"><button type="submit">Apply</button><button type="button" id="pagePropertiesCancel">Cancel</button></div></form><h3>AKS areas</h3><div id="aksAreaList"></div>');
+    if(!sheet||isGenerated(sheet)){toast('Choose a drawing sheet');return}finishAksFieldDrag(true);cancelAksAreaDrawing();
+    showPanel('<h2>Page properties · '+pageNumber(pages.indexOf(sheet)+1)+'</h2><form id="pagePropertiesForm" class="wire-form"><label>Page title<input name="title" value="'+safe(sheet.title)+'" maxlength="200" required></label>'+aksScopeFields(sheet.aks)+'<p>Blank aspects remain explicit on symbols. New components inherit the context at their placement point. Linked slaves continue to follow their master.</p><div class="actions"><button type="submit">Apply</button><button type="button" id="pagePropertiesCancel">Cancel</button></div></form><h3>AKS fields</h3><div id="aksAreaList"></div>');
     const form=document.querySelector('#pagePropertiesForm');form.onsubmit=e=>{e.preventDefault();const scope=readAksScope(form);sheet.title=String(new FormData(form).get('title')).trim()||'Schematic';if(scope.functionCode||scope.locationCode)sheet.aks=scope;else delete sheet.aks;if(form.elements.assignExisting.checked)assignAksIn(sheet,scope);render();closePanel()};document.querySelector('#pagePropertiesCancel').onclick=closePanel;
-    const list=document.querySelector('#aksAreaList');for(const a of validAksAreas(sheet)){const row=document.createElement('div');row.className='scope-area-row';const name=document.createElement('span');name.textContent=(a.title||'AKS area')+' · '+scopeLabel(a);const edit=document.createElement('button');edit.textContent='Edit';edit.dataset.editAksArea=a.id;edit.onclick=()=>editAksArea(sheet,a);const remove=document.createElement('button');remove.textContent='Delete';remove.dataset.deleteAksArea=a.id;remove.onclick=()=>{sheet.aksAreas=sheet.aksAreas.filter(item=>item!==a);render();showPageProperties(sheet)};row.append(name,edit,remove);list.append(row)}
-    if(!list.childElementCount)list.textContent='No AKS areas. Use AKS area to draw one.';
+    const list=document.querySelector('#aksAreaList');for(const a of validAksAreas(sheet)){const row=document.createElement('div');row.className='scope-area-row';const name=document.createElement('span');name.textContent=(a.title||'AKS field')+' · '+scopeLabel(a);const edit=document.createElement('button');edit.textContent='Edit';edit.dataset.editAksArea=a.id;edit.onclick=()=>editAksArea(sheet,a);const remove=document.createElement('button');remove.textContent='Delete';remove.dataset.deleteAksArea=a.id;remove.onclick=()=>{sheet.aksAreas=sheet.aksAreas.filter(item=>item!==a);render();showPageProperties(sheet)};row.append(name,edit,remove);list.append(row)}
+    if(!list.childElementCount)list.textContent='No AKS fields. Use AKS field to draw one.';
   }
   pagePropertiesButton.onclick=()=>showPageProperties();
   function editAksArea(sheet,area,isNew=false){
-    const scale=1128/297;
-    showPanel('<h2>AKS area properties</h2><form id="aksAreaForm" class="wire-form"><label>Area title<input name="title" value="'+safe(area.title||'AKS area')+'" maxlength="120"></label>'+aksScopeFields(area)+'<div class="scope-dimensions">'+['x','y','width','height'].map(key=>'<label>'+key+' (mm)<input type="number" step="0.1" name="'+key+'" value="'+(area[key]/scale).toFixed(3)+'"></label>').join('')+'</div><p>Dimensions snap to the current grid. Smaller overlapping areas take precedence for their assigned AKS aspects.</p><div class="actions"><button type="submit">Apply</button><button type="button" id="aksAreaCancel">Cancel</button></div></form>');
-    const form=document.querySelector('#aksAreaForm');form.onsubmit=e=>{e.preventDefault();const scope=readAksScope(form),data=new FormData(form),box=Object.fromEntries(['x','y','width','height'].map(key=>[key,snap(Number(data.get(key))*scale)]));if(!scope.functionCode&&!scope.locationCode){toast('Assign a function or location to this area');return}if(Object.values(box).some(n=>!Number.isFinite(n))||box.x<0||box.y<0||box.width<gridSpacing()||box.height<gridSpacing()||box.x+box.width>1128+.001||box.y+box.height>710+.001){toast('Place the area inside the drawing frame');return}Object.assign(area,box,scope,{title:String(data.get('title')).trim()||'AKS area'});if(isNew){sheet.aksAreas??=[];sheet.aksAreas.push(area)}if(form.elements.assignExisting.checked)assignAksIn(sheet,scope,area);render();closePanel()};document.querySelector('#aksAreaCancel').onclick=closePanel;
+    finishAksFieldDrag(true);const scale=1128/297;
+    showPanel('<h2>AKS field properties</h2><form id="aksAreaForm" class="wire-form"><label>Field title<input name="title" value="'+safe(area.title||'AKS field')+'" maxlength="120"></label>'+aksScopeFields(area)+'<div class="scope-dimensions">'+['x','y','width','height'].map(key=>'<label>'+key+' (mm)<input type="number" step="0.1" name="'+key+'" value="'+(area[key]/scale).toFixed(3)+'"></label>').join('')+'</div><p>Drag the border or heading to move a field. Dimensions snap to the current grid. Smaller overlapping fields take precedence for their assigned AKS aspects.</p><div class="actions"><button type="submit">Apply</button><button type="button" id="aksAreaCancel">Cancel</button></div></form>');
+    const form=document.querySelector('#aksAreaForm');form.onsubmit=e=>{e.preventDefault();const scope=readAksScope(form),data=new FormData(form),box=Object.fromEntries(['x','y','width','height'].map(key=>[key,snap(Number(data.get(key))*scale)]));if(!scope.functionCode&&!scope.locationCode){toast('Assign a function or location to this field');return}if(Object.values(box).some(n=>!Number.isFinite(n))||box.x<0||box.y<0||box.width<gridSpacing()||box.height<gridSpacing()||box.x+box.width>1128+.001||box.y+box.height>710+.001){toast('Place the field inside the drawing frame');return}Object.assign(area,box,scope,{title:String(data.get('title')).trim()||'AKS field'});if(isNew){sheet.aksAreas??=[];sheet.aksAreas.push(area)}if(form.elements.assignExisting.checked)assignAksIn(sheet,scope,area);render();closePanel()};document.querySelector('#aksAreaCancel').onclick=closePanel;
   }
   function cancelAksAreaDrawing(){if(aksAreaGesture){aksAreaGesture.preview.remove();if(svg.hasPointerCapture(aksAreaGesture.pointerId))svg.releasePointerCapture(aksAreaGesture.pointerId)}aksAreaGesture=null;aksAreaDrawing=false;aksAreaButton.classList.remove('active')}
-  aksAreaButton.onclick=()=>{if(isGenerated(pages[activeSheet]))return;const enable=!aksAreaDrawing;cancelAksAreaDrawing();clearAreaSelection();selected=null;drag=null;segmentDrag=null;wireLabelDrag=null;mode='select';wireStart=null;wirePoints=[];preview.style.display='none';aksAreaDrawing=enable;render()};
+  aksAreaButton.onclick=()=>{if(isGenerated(pages[activeSheet]))return;const enable=!aksAreaDrawing;finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();selected=null;drag=null;segmentDrag=null;wireLabelDrag=null;mode='select';wireStart=null;wirePoints=[];preview.style.display='none';aksAreaDrawing=enable;render()};
   const aksAreaPoint=e=>{const p=toWorld(e);return{x:Math.max(0,Math.min(snap(1128-gridSpacing()),snap(p.x))),y:Math.max(0,Math.min(snap(710-gridSpacing()),snap(p.y)))}};
   svg.addEventListener('pointerdown',e=>{if(!aksAreaDrawing||e.button!==0||pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet]))return;e.preventDefault();e.stopImmediatePropagation();const p=aksAreaPoint(e);aksAreaGesture={start:p,sheet:pages[activeSheet],pointerId:e.pointerId,preview:el('rect',{x:p.x,y:p.y,width:0,height:0,fill:'#ff78b71a',stroke:'#ff78b7','stroke-dasharray':'5 3','pointer-events':'none',class:'aks-area-preview'},pageContent)};svg.setPointerCapture(e.pointerId)},true);
   svg.addEventListener('pointermove',e=>{if(!aksAreaGesture)return;e.preventDefault();e.stopImmediatePropagation();const p=aksAreaPoint(e),s=aksAreaGesture.start,r=aksAreaGesture.preview;for(const [key,value]of Object.entries({x:Math.min(s.x,p.x),y:Math.min(s.y,p.y),width:Math.abs(s.x-p.x),height:Math.abs(s.y-p.y)}))r.setAttribute(key,value)},true);
-  svg.addEventListener('pointerup',e=>{if(!aksAreaGesture)return;e.preventDefault();e.stopImmediatePropagation();const g=aksAreaGesture,r=g.preview,box=Object.fromEntries(['x','y','width','height'].map(key=>[key,+r.getAttribute(key)]));cancelAksAreaDrawing();render();if(box.width>=gridSpacing()&&box.height>=gridSpacing())editAksArea(g.sheet,{id:crypto.randomUUID(),title:'AKS area',...g.sheet.aks,...box},true)},true);
+  svg.addEventListener('pointerup',e=>{if(!aksAreaGesture)return;e.preventDefault();e.stopImmediatePropagation();const g=aksAreaGesture,r=g.preview,box=Object.fromEntries(['x','y','width','height'].map(key=>[key,+r.getAttribute(key)]));cancelAksAreaDrawing();render();if(box.width>=gridSpacing()&&box.height>=gridSpacing())editAksArea(g.sheet,{id:crypto.randomUUID(),title:'AKS field',...g.sheet.aks,...box},true)},true);
   svg.addEventListener('pointercancel',()=>{if(aksAreaGesture){cancelAksAreaDrawing();render()}},true);
   document.addEventListener('keydown',e=>{if(!aksAreaDrawing||editingTarget(e.target)||modal.style.display==='grid')return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();cancelAksAreaDrawing();render()}else if(['v','c','w','t'].includes(e.key.toLowerCase()))cancelAksAreaDrawing()},true);
   document.addEventListener('click',e=>{if(aksAreaDrawing&&e.target.closest('#selectTool,#wireTool,#bridgeTool,.part,.catalog-part,.device-jump')){cancelAksAreaDrawing();render()}},true);
   svg.addEventListener('drop',()=>cancelAksAreaDrawing(),true);
-  const setSheetBeforeAks=setSheet;setSheet=function(i){cancelAksAreaDrawing();setSheetBeforeAks(i)};
-  const refreshBeforeAksProperties=refreshSheetPanel;refreshSheetPanel=function(){refreshBeforeAksProperties();sheetPanel.querySelectorAll('.sheetItem').forEach(button=>{const sheet=pages[+button.dataset.rightSheet];if(sheet&&!isGenerated(sheet))button.addEventListener('contextmenu',e=>{e.preventDefault();showPageProperties(sheet)})})};
+  function finishAksFieldDrag(cancel=false){
+    if(!aksFieldDrag)return;
+    const state=aksFieldDrag;aksFieldDrag=null;
+    if(cancel){state.field.x=state.x;state.field.y=state.y}
+    if(svg.hasPointerCapture(state.pointerId))svg.releasePointerCapture(state.pointerId);
+    svg.style.cursor='';if(state.moved)render();
+  }
+  svg.addEventListener('pointerdown',e=>{
+    if(aksAreaDrawing||e.button!==0||mode!=='select'||e.ctrlKey||e.metaKey||pdfExporting||modal.style.display==='grid'||!e.target.closest('.aks-field-handle'))return;
+    const field=validAksAreas(pages[activeSheet]).find(a=>a.id===e.target.closest('[data-aks-area]')?.dataset.aksArea);if(!field)return;
+    e.preventDefault();e.stopImmediatePropagation();commitHistory();
+    aksFieldDrag={field,x:field.x,y:field.y,start:toWorld(e),pointerId:e.pointerId,moved:false};svg.setPointerCapture(e.pointerId);svg.style.cursor='grabbing';
+  },true);
+  svg.addEventListener('pointermove',e=>{
+    if(!aksFieldDrag||e.pointerId!==aksFieldDrag.pointerId)return;
+    e.preventDefault();e.stopImmediatePropagation();const state=aksFieldDrag,p=toWorld(e),step=gridSpacing();
+    const maxX=Math.max(0,Math.floor((1128-state.field.width)/step+1e-7)*step),maxY=Math.max(0,Math.floor((710-state.field.height)/step+1e-7)*step);
+    const x=Math.max(0,Math.min(maxX,state.x+snap(p.x-state.start.x))),y=Math.max(0,Math.min(maxY,state.y+snap(p.y-state.start.y)));
+    if(x===state.field.x&&y===state.field.y)return;
+    if(!state.moved){clearAreaSelection();selected=null;drag=null;segmentDrag=null;wireLabelDrag=null;state.moved=true}
+    state.field.x=x;state.field.y=y;render();
+  },true);
+  svg.addEventListener('pointerup',e=>{if(aksFieldDrag&&e.pointerId===aksFieldDrag.pointerId){e.preventDefault();e.stopImmediatePropagation();finishAksFieldDrag()}},true);
+  svg.addEventListener('pointercancel',e=>{if(aksFieldDrag&&e.pointerId===aksFieldDrag.pointerId){e.preventDefault();e.stopImmediatePropagation();finishAksFieldDrag(true)}},true);
+  svg.addEventListener('lostpointercapture',e=>{if(aksFieldDrag&&e.pointerId===aksFieldDrag.pointerId)finishAksFieldDrag(true)});
+  document.addEventListener('keydown',e=>{if(aksFieldDrag&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();finishAksFieldDrag(true)}},true);
+  svg.addEventListener('contextmenu',e=>{
+    if(pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet])||e.target.closest('#parts,#wires'))return;
+    const field=validAksAreas(pages[activeSheet]).find(a=>a.id===e.target.closest('[data-aks-area]')?.dataset.aksArea),point=toWorld(e);
+    if(!field&&(point.x<0||point.x>1128||point.y<0||point.y>798))return;
+    e.preventDefault();e.stopPropagation();cancelAksAreaDrawing();if(field)editAksArea(pages[activeSheet],field);else showPageProperties();
+  });
+  svg.addEventListener('dblclick',e=>{
+    if(aksAreaDrawing||pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet])||e.target.closest('#parts,#wires'))return;
+    const p=toWorld(e),field=validAksAreas(pages[activeSheet]).sort((a,b)=>a.width*a.height-b.width*b.height).find(a=>p.x>=a.x-4&&p.x<=a.x+a.width+4&&p.y>=a.y-4&&p.y<=a.y+a.height+4&&(p.y<=a.y+14||Math.min(Math.abs(p.x-a.x),Math.abs(p.x-a.x-a.width),Math.abs(p.y-a.y-a.height))<=4));
+    if(field){e.preventDefault();e.stopImmediatePropagation();editAksArea(pages[activeSheet],field)}
+  },true);
+  const setSheetBeforeAks=setSheet;setSheet=function(i){finishAksFieldDrag(true);cancelAksAreaDrawing();setSheetBeforeAks(i)};
+  const refreshBeforeAksProperties=refreshSheetPanel;refreshSheetPanel=function(){refreshBeforeAksProperties();sheetPanel.querySelectorAll('.sheetItem').forEach(button=>{const sheet=pages[+button.dataset.rightSheet];if(sheet&&!isGenerated(sheet))button.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();showPageProperties(sheet)})})};
+  function drawAksField(field){
+    const dragging=aksFieldDrag?.field===field,g=el('g',{'data-aks-area':field.id},aksAreaGroup);
+    el('rect',{x:field.x,y:field.y,width:field.width,height:field.height,fill:'transparent',stroke:dragging?'#ff78b7':'#62889b','stroke-width':.8,'stroke-dasharray':'6 3','pointer-events':'all',class:'aks-area-border'},g);
+    // A wide invisible border makes thin field outlines easy to grab, without covering components or wires above this layer.
+    el('rect',{x:field.x,y:field.y,width:field.width,height:field.height,fill:'none',stroke:'transparent','stroke-width':8,'pointer-events':'stroke',class:'aks-field-handle screen-only',style:'cursor:grab'},g);
+    const padding=Math.min(4,field.width/4),fontSize=Math.min(8,field.height/1.6);
+    const text=(field.title||'AKS field')+' · '+scopeLabel(field),label=el('text',{x:field.x+padding,y:field.y+fontSize+Math.min(2,field.height/8),'font-size':fontSize,fill:'#2463b5',style:'cursor:grab','pointer-events':'all',class:'aks-area-label aks-field-handle'},g);
+    label.textContent=text;
+    const width=Math.max(0,field.width-2*padding);
+    if(label.getComputedTextLength()>width){let lo=0,hi=text.length;while(lo<hi){const mid=Math.ceil((lo+hi)/2);label.textContent=text.slice(0,mid)+'…';if(label.getComputedTextLength()<=width)lo=mid;else hi=mid-1}label.textContent=text.slice(0,lo)+'…'}
+    el('title',{},label).textContent=text;
+  }
   const drawBeforeAksPage=render;render=function(){
     drawBeforeAksPage();const sheet=pages[activeSheet],generated=isGenerated(sheet);aksAreaGroup.replaceChildren();aksAreaGroup.style.display=generated?'none':'';pagePropertiesButton.disabled=generated;aksAreaButton.disabled=generated;aksAreaButton.classList.toggle('active',aksAreaDrawing);aksAreaButton.setAttribute('aria-pressed',String(aksAreaDrawing));
-    if(!generated){if(scopeLabel(sheet.aks)){const n=el('text',{x:30,y:38,'font-size':9,fill:'#2463b5',class:'page-aks-context'},aksAreaGroup);n.textContent=scopeLabel(sheet.aks)}for(const a of validAksAreas(sheet)){const g=el('g',{'data-aks-area':a.id},aksAreaGroup),r=el('rect',{x:a.x,y:a.y,width:a.width,height:a.height,fill:'none',stroke:'#62889b','stroke-width':.8,'stroke-dasharray':'6 3','pointer-events':'stroke',class:'aks-area-border'},g),label=el('text',{x:a.x+5,y:Math.max(10,a.y-10),'font-size':8,fill:'#2463b5',style:'cursor:pointer','pointer-events':'all',class:'aks-area-label'},g);label.textContent=(a.title||'AKS area')+' · '+scopeLabel(a);for(const n of [r,label]){n.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editAksArea(sheet,a)});n.addEventListener('pointerdown',e=>e.stopPropagation());n.addEventListener('dblclick',e=>{e.stopPropagation();editAksArea(sheet,a)})}}
+    if(!generated){if(scopeLabel(sheet.aks)){const n=el('text',{x:30,y:38,'font-size':9,fill:'#2463b5',class:'page-aks-context'},aksAreaGroup);n.textContent=scopeLabel(sheet.aks)}for(const a of validAksAreas(sheet).sort((a,b)=>b.width*b.height-a.width*a.height))drawAksField(a);
     }
-    if(aksAreaDrawing)document.querySelector('#statusText').textContent='Drag a rectangle for an AKS area';
+    if(aksAreaDrawing)document.querySelector('#statusText').textContent='Drag a rectangle for an AKS field';
+    if(aksFieldDrag)document.querySelector('#statusText').textContent='Moving AKS field · Esc to cancel';
   };
   const scopeStyle=document.createElement('style');scopeStyle.textContent='.newnav #aksAreaTool.active{color:var(--selection);border-color:var(--selection);background:var(--selection-bg)}.scope-check{display:flex!important;align-items:center;gap:8px!important}.scope-check input{width:auto!important}.scope-area-row{display:flex;gap:7px;align-items:center;margin:7px 0}.scope-area-row span{flex:1}.scope-dimensions{display:grid;grid-template-columns:1fr 1fr;gap:8px}';document.head.append(scopeStyle);
 
@@ -1031,7 +1081,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   svg.addEventListener('pointerdown',e=>{
     if(e.button!==0||mode!=='select'||isGenerated(pages[activeSheet])||e.ctrlKey||e.metaKey||modal.style.display==='grid'||pdfExporting)return;
-    if(e.target.closest('#aksAreas'))return;
+    if(e.target.closest('.aks-field-handle'))return;
     const root=e.target.closest('#parts > g[data-id]'),point=toWorld(e);
     if(root){
       if((selectedParts.size>1||selectedWires.size>0)&&selectedParts.has(root.dataset.id)){
@@ -1323,14 +1373,14 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function historySnapshot(){return JSON.stringify(historyState())}
   let historyCurrent=historySnapshot();
   function commitHistory(){
-    if(historyRestoring||historyLoading||pdfExporting||drag||segmentDrag||selectionDrag||wireLabelDrag||aksAreaGesture)return;
+    if(historyRestoring||historyLoading||pdfExporting||drag||segmentDrag||selectionDrag||wireLabelDrag||aksAreaGesture||aksFieldDrag)return;
     const state=historySnapshot();if(historyReset){historyCurrent=state;undoStack.length=0;redoStack.length=0;historyReset=false;return}if(state===historyCurrent)return;
     undoStack.push(historyCurrent);if(undoStack.length>100)undoStack.shift();historyCurrent=state;redoStack.length=0;
   }
   function scheduleHistory(){clearTimeout(historyTimer);historyTimer=setTimeout(commitHistory,0)}
   const renderBeforeHistory=render;render=function(){renderBeforeHistory();if(!historyRestoring)scheduleHistory()};
   function restoreHistory(state){
-    const activeId=pages[activeSheet]?.id||pages[activeSheet]?.generatedId,data=JSON.parse(state);historyRestoring=true;cancelAksAreaDrawing();clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;selected=null;appClipboard=null;wireStart=null;wirePoints=[];preview.style.display='none';
+    const activeId=pages[activeSheet]?.id||pages[activeSheet]?.generatedId,data=JSON.parse(state);historyRestoring=true;finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;selected=null;appClipboard=null;wireStart=null;wirePoints=[];preview.style.display='none';
     pages.splice(0,pages.length,...data.sheets);activeSheet=Math.max(0,pages.findIndex(s=>s.id===activeId));model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;model.title=data.title;model.projectInfo=data.projectInfo;nextId=data.nextId;render();const target=pages.findIndex(s=>(s.id||s.generatedId)===activeId);if(target>=0)setSheet(target);historyCurrent=historySnapshot();historyRestoring=false;
   }
   document.addEventListener('keydown',e=>{
@@ -1339,7 +1389,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   },true);
   document.addEventListener('pointerup',()=>setTimeout(commitHistory,0),true);
   document.addEventListener('pointercancel',()=>setTimeout(commitHistory,0),true);
-  const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Project loaded')historyReset=true;commitHistory()}};
+  const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Project loaded')historyReset=true;commitHistory()}};
   render();
 
 

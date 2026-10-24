@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.24.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.24.1**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -96,6 +96,8 @@ The shared format in [`scripts/symbol-format.js`](scripts/symbol-format.js) uses
 ## Terminals, relays and cross-references
 
 **Create terminal strip** adds a master and its terminals. Use the strip's **+** action to add a terminal, or a terminal's **×** action to remove it permanently. A strip can contain different terminal types. Individual pins, whole terminals and the strip master can be placed separately. Pins retain the strip equipment tag, for example **X1 :1a**. A terminal's pins and its dedicated brown bridge port lie on one line.
+
+Phoenix **ST 2,5-MT** and **ST 4-MT** disconnect terminals show an open knife-disconnect symbol. Existing placed ST-MT references and terminals added from the same strip template use this drawing as well.
 
 **Connect** automatically creates a thicker brown bridge when starting at a brown bridge port. Bridges appear graphically in terminal lists. Bridge text is hidden when its straight section has insufficient room, and reappears when the section becomes long enough. The bridge and its connection data remain intact; select its line and use **Properties** to edit it when the text is hidden. Other conductor labels retain their white background and align automatically with the horizontal or vertical section on the grid. Previously saved bridges on regular pins remain readable and editable.
 

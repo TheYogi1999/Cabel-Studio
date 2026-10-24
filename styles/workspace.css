@@ -141,3 +141,12 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
   .workspace-ready .wire-form{grid-template-columns:minmax(0,1fr)}
   .workspace-ready footer{font-size:9px;gap:8px}
 }
+
+.workspace-ready #redPenTools [data-ink-color]::before{content:"";width:13px;height:13px;border-radius:3px;background:var(--ink-colour);border:1px solid #ffffff66}
+.workspace-ready #redPenTools [data-ink-color="red"]{--ink-colour:#cf3030}
+.workspace-ready #redPenTools [data-ink-color="yellow"]{--ink-colour:#ffdf00}
+.workspace-ready #redPenTools [data-ink-color="blue"]{--ink-colour:#2299ff}
+.workspace-ready #redPenTools [data-ink-color="green"]{--ink-colour:#40cf65}
+.workspace-ready .annotation-layer-controls{display:flex;align-items:center;gap:12px;padding:0 8px}
+.workspace-ready .annotation-layer-controls label{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:12px}
+.workspace-ready .annotation-layer-controls input{width:18px;height:18px;accent-color:var(--selection)}

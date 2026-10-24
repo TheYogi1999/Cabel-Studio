@@ -45,7 +45,10 @@ globalThis.CabelWorkspaceUI = {
     const handButton=button('panTool','Pan','Drag to pan with a finger, Pencil or mouse',modes,()=>{ink.setTool(null);hand=!hand;placement=null;api.cancel();refresh();},'pan');
     const redButton=button('redPenTool','Red pen','Freehand annotations: draw, erase or select strokes',modes,()=>{const enable=!ink.active();ink.setTool(null);hand=false;placement=null;api.cancel();ink.setTool(enable?'draw':null);refresh();},'pen');
     const redTools=group('Red pen tools');redTools.id='redPenTools';
-    for(const[id,label,tool]of[['redPenDraw','Draw','draw'],['redPenErase','Erase stroke','erase'],['redPenSelect','Select strokes','select']])button(id,label,label,redTools,()=>ink.setTool(tool));
+    for(const[id,label,color]of[['redPenDraw','Draw','red'],['redPenYellow','Yellow','yellow'],['redPenBlue','Blue','blue'],['redPenGreen','Green','green']]){const n=button(id,label,color==='red'?'Draw with red pen':'Transparent '+color+' highlighter',redTools,()=>ink.setBrush(color));n.dataset.inkColor=color;}
+    for(const[id,label,tool]of[['redPenErase','Erase stroke','erase'],['redPenSelect','Select strokes','select']])button(id,label,label,redTools,()=>ink.setTool(tool));
+    const layersButton=button('redPenLayers','Layers','Show or hide annotation colour layers',redTools,()=>{layerControls.hidden=!layerControls.hidden;layersButton.setAttribute('aria-expanded',String(!layerControls.hidden));});layersButton.setAttribute('aria-expanded','false');
+    const layerControls=document.createElement('div');layerControls.id='redPenLayerControls';layerControls.className='annotation-layer-controls';layerControls.hidden=true;layerControls.setAttribute('role','group');layerControls.setAttribute('aria-label','Visible annotation layers');for(const color of ['red','yellow','blue','green']){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=true;check.dataset.inkLayer=color;check.onchange=()=>ink.showLayer(color,check.checked);label.append(check,document.createTextNode(color[0].toUpperCase()+color.slice(1)));layerControls.append(label);}redTools.append(layerControls);
     const smaller=button('redPenSmaller','Smaller','Scale selected strokes to 80%',redTools,()=>ink.resize(.8));
     const larger=button('redPenLarger','Larger','Scale selected strokes to 125%',redTools,()=>ink.resize(1.25));
     const deleteStrokes=button('redPenDelete','Delete strokes','Delete selected strokes',redTools,()=>ink.removeSelected());
@@ -134,7 +137,12 @@ globalThis.CabelWorkspaceUI = {
       let best=null,distance=type==='touch'?22:14;
       for(const n of svg.querySelectorAll('.terminal')){if(!api.terminal(n))continue;const matrix=n.getScreenCTM();if(!matrix)continue;const q=new DOMPoint(n.cx.baseVal.value,n.cy.baseVal.value).matrixTransform(matrix),d=Math.hypot(q.x-p.x,q.y-p.y);if(d<=distance){best=n;distance=d;}}return best;
     }
-    function connectAt(p,type){const terminal=nearbyTerminal(p,type);if(terminal)api.connect(terminal);else if(!api.branchAt(p,type)){forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);}}
+    let lastConnectionTap=null;
+    function connectAt(p,type){
+      const terminal=nearbyTerminal(p,type);if(terminal){lastConnectionTap=null;api.connect(terminal);return;}if(api.branchAt(p,type)){lastConnectionTap=null;return;}
+      const time=performance.now();if(lastConnectionTap&&lastConnectionTap.type===type&&time-lastConnectionTap.time<400&&Math.hypot(p.x-lastConnectionTap.p.x,p.y-lastConnectionTap.p.y)<18){const draft=lastConnectionTap.draft;lastConnectionTap=null;api.openEnd(p,draft);return;}
+      lastConnectionTap={p:{...p},time,type,draft:api.connectionDraft()};forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);
+    }
     function makeSession(id,p,target,type,options={}){
       const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
       const s={id,type,kind,target,start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
@@ -159,7 +167,7 @@ globalThis.CabelWorkspaceUI = {
       setTimeout(()=>{if(c.handled||!c.node.isConnected||c.node.disabled||document.elementFromPoint(p.x,p.y)?.closest('button')!==c.node)return;pendingControls.delete(c.node);fallbackClicks.set(c.node,performance.now()+800);c.node.click();},80);
     }
     function touchContacts(e){const result=new Map();for(const t of Array.from(e.touches)){if(t.touchType==='stylus'||ignoredTouches.has(t.identifier))continue;if(inCanvas(t.target)||finger?.contacts?.has(t.identifier))result.set(t.identifier,point(t));}return result;}
-    function beginPinch(session,contacts){clearHold();if(session.kind==='edit')api.cancelPointer(session.checkpoint,true);else if(session.kind==='redpen')ink.cancel();session.kind='pinch';session.moved=true;session.contacts=contacts;rebase(session,contacts);}
+    function beginPinch(session,contacts){lastConnectionTap=null;clearHold();if(session.kind==='edit')api.cancelPointer(session.checkpoint,true);else if(session.kind==='redpen')ink.cancel();session.kind='pinch';session.moved=true;session.contacts=contacts;rebase(session,contacts);}
     document.addEventListener('touchstart',e=>{
       if(api.state().modalOpen||api.state().exporting)return;
       const changed=Array.from(e.changedTouches).filter(t=>t.touchType!=='stylus');if(!changed.length)return;
@@ -252,15 +260,16 @@ globalThis.CabelWorkspaceUI = {
     document.addEventListener('pointercancel',e=>finishPen(e,true),{capture:true,passive:false});
     document.addEventListener('click',e=>{
       if(e.__leitwerkInput||!(e.target instanceof Element))return;
-      const n=e.target.closest('button'),pending=n&&pendingControls.get(n);if(pending){pending.handled=true;pendingControls.delete(n);}
+      const n=e.target.closest('button'),pending=n&&pendingControls.get(n);if(n)lastConnectionTap=null;if(pending){pending.handled=true;pendingControls.delete(n);}
       if(n&&e.isTrusted&&(fallbackClicks.get(n)||0)>performance.now()){stop(e);return;}
       if(suppressSource&&performance.now()<suppressSource.until&&suppressSource.node.contains(e.target)){stop(e);return;}
       if(e.isTrusted&&inCanvas(e.target)&&performance.now()<suppressCanvasClickUntil){stop(e);return;}
       if(e.target.closest('#selectTool,#wireTool,#aksAreaTool')){ink.setTool(null);hand=false;placement=null;queueMicrotask(refresh);}
     },true);
+    document.addEventListener('dblclick',e=>{if(e.isTrusted&&inCanvas(e.target)&&performance.now()<suppressCanvasClickUntil)stop(e);},true);
     document.addEventListener('keydown',e=>{
       if(api.state().modalOpen||e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
-      if(e.key==='Escape'){placement=null;hand=false;clearHold();removeGhost();refresh();}
+      if(e.key==='Escape'){lastConnectionTap=null;placement=null;hand=false;clearHold();removeGhost();refresh();}
       else if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&['v','c','w','t'].includes(e.key.toLowerCase())){ink.setTool(null);hand=false;placement=null;queueMicrotask(refresh);}
     },true);
     window.addEventListener('blur',()=>{
@@ -272,7 +281,8 @@ globalThis.CabelWorkspaceUI = {
     function refresh(){
       retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
       const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
-      for(const[id,tool]of[['redPenDraw','draw'],['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
+      for(const[id,tool]of[['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
+      for(const n of redTools.querySelectorAll('[data-ink-color]')){n.setAttribute('aria-pressed',String(ink.tool()==='draw'&&ink.brush()===n.dataset.inkColor));n.disabled=state.generated||state.exporting;}for(const n of layerControls.querySelectorAll('input')){n.checked=ink.layerVisible(n.dataset.inkLayer);n.disabled=state.exporting;}
       smaller.disabled=larger.disabled=deleteStrokes.disabled=!ink.hasSelection()||ink.busy()||state.generated||state.exporting;
       $('#selectTool').setAttribute('aria-pressed',String(state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking));$('#selectTool').classList.toggle('active',state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking);
       const wire=$('#wireTool'),label=state.mode==='fiber'?'Fiber':state.mode==='bridge'?'Bridge':state.connecting?'Wire':'Connect';if(wire.textContent!==label)labelButton(wire,label);

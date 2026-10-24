@@ -118,7 +118,7 @@ globalThis.CabelConnections = (() => {
       return result;
     }
     function edit(id){
-      const n=nodes().find(n=>n.id===id);if(!n)return;api.select({kind:'junction',id});api.render();
+      const n=nodes().find(n=>n.id===id);if(!n)return;api.clearSelection();api.select({kind:'junction',id});api.render();
       const connections=incident(n),options=connections.map(w=>{const other=w.a===ref(id)?w.b:w.a;return'<option value="'+api.safe(w.id)+'"'+(w.id===n.rootWireId?' selected':'')+'>'+api.safe(w.id+' · '+api.endpoint(sheet(),other,w.id))+'</option>';}).join('');
       api.panel('<h2>Junction properties</h2><div class="wire-form"><label>Junction style<select id="junctionStyle"><option value="dot"'+(n.style!=='root'?' selected':'')+'>Dot</option><option value="root"'+(n.style==='root'?' selected':'')+'>45° root</option></select></label><label>Root connection<select id="junctionRoot">'+options+'</select></label><p>The root connection stays straight. Perpendicular branches enter at 45°. Each branch can have more junctions.</p><div class="actions"><button id="junctionApply">Apply</button><button id="junctionDelete">Delete junction and attached sections</button></div></div>');
       document.querySelector('#junctionApply').onclick=()=>{n.style=document.querySelector('#junctionStyle').value;n.rootWireId=document.querySelector('#junctionRoot').value;api.render();api.close();};
@@ -128,7 +128,7 @@ globalThis.CabelConnections = (() => {
     function draw(){
       if(!api.pending().start){drafts.clear();diagonalUsed=false;lastCursor=null;}
       for(const n of nodes()){
-        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id,g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'},api.layer),color=connected.some(w=>w.kind==='bridge')?'#795548':connected.some(w=>w.kind==='fiber')?'#ef7d24':'#263943';
+        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id||api.isSelected?.(n.id),g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'+(active?' selected':'')},api.layer),color=connected.some(w=>w.kind==='bridge')?'#795548':connected.some(w=>w.kind==='fiber')?'#ef7d24':'#263943';
         if(n.style!=='root'&&connected.length>=3)api.el('circle',{cx:n.x,cy:n.y,r:3,fill:color,class:'junction-dot','pointer-events':'none'},g);
         if(active)api.el('circle',{cx:n.x,cy:n.y,r:6,fill:'none',stroke:'#e94391','stroke-width':1.5,class:'screen-only','pointer-events':'none'},g);
         const hit=api.el('circle',{cx:n.x,cy:n.y,r:9,fill:'transparent','pointer-events':'all',class:'junction-hit screen-only',tabindex:0,role:'button','aria-label':'Connection junction: open properties to choose dot or 45° root'},g);
@@ -154,7 +154,7 @@ globalThis.CabelConnections = (() => {
     },true);
     document.addEventListener('keyup',e=>{if(e.key==='Shift'){shift=false;if(lastCursor)api.updatePreview(lastCursor);}});
     window.addEventListener('blur',()=>{shift=false;});
-    return{position,kind,bridge,validBridge,conflictingKind,begin,waypoint,preview,complete,connectAt,displayRoute,prune,enclosed,edit,remove,draw,cancel,busy:()=>Boolean(nodeDrag),angle:()=>locked,toggleAngle:()=>{locked=!locked;if(lastCursor)api.updatePreview(lastCursor);api.refresh();},terminals,nodeId};
+    return{position,kind,host:key=>drafts.get(key)?.wireId||null,bridge,validBridge,conflictingKind,begin,waypoint,preview,complete,connectAt,displayRoute,prune,enclosed,edit,remove,draw,cancel,busy:()=>Boolean(nodeDrag),angle:()=>locked,toggleAngle:()=>{locked=!locked;if(lastCursor)api.updatePreview(lastCursor);api.refresh();},terminals,nodeId};
   }
   return{init,clean,octilinear,stretch};
 })();

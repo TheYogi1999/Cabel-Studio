@@ -52,7 +52,7 @@ globalThis.CabelCables=(()=>{
         const groups=new Map();for(const w of sheet.wires){const id=w.runId||w.id;if(!groups.has(id))groups.set(id,[]);groups.get(id).push(w);}
         for(const[id,sections]of groups){const remaining=new Set(sections);while(remaining.size){const first=[...remaining].find(w=>![...remaining].some(q=>q!==w&&q.b===w.a))||[...remaining].find(w=>w.id===id)||remaining.values().next().value,chain=[first];remaining.delete(first);let last=first;
             for(;;){const next=[...remaining].find(w=>w.a===last.b);if(!next)break;remaining.delete(next);chain.push(next);last=next;}
-            result.push({id:first.id,sheet,sections:chain,w:first,a:first.a,b:last.b,from:api.endpoint(sheet,first.a,first.id),to:api.endpoint(sheet,last.b,last.id),entry:entry(first)});
+            result.push({id:chain.some(w=>w.id===id)?id:first.id,sheet,sections:chain,w:first,a:first.a,b:last.b,from:api.endpoint(sheet,first.a,first.id),to:api.endpoint(sheet,last.b,last.id),entry:entry(first)});
           }}
       }return result;
     }

@@ -104,8 +104,8 @@ globalThis.CabelWorkspaceUI = {
     const inCanvas=n=>n instanceof Element&&Boolean(n.closest('#sheet'));
     const capture=id=>{try{svg.setPointerCapture(id);}catch{/* Touch Events need no capture. */}};
     const release=id=>{if(svg.hasPointerCapture(id))svg.releasePointerCapture(id);};
-    function forward(type,target,p,id,inputType='touch'){
-      const e=new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:id,pointerType:inputType,isPrimary:true,button:0,buttons:type==='pointerup'||type==='pointercancel'?0:1,clientX:p.x,clientY:p.y,pressure:type==='pointerup'?0:.5});
+    function forward(type,target,p,id,inputType='touch',modifiers={}){
+      const e=new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:id,pointerType:inputType,isPrimary:true,ctrlKey:Boolean(modifiers.ctrlKey),metaKey:Boolean(modifiers.metaKey),altKey:Boolean(modifiers.altKey),shiftKey:Boolean(modifiers.shiftKey),button:0,buttons:type==='pointerup'||type==='pointercancel'?0:1,clientX:p.x,clientY:p.y,pressure:type==='pointerup'?0:.5});
       Object.defineProperty(e,'__leitwerkInput',{value:true});target.dispatchEvent(e);
     }
     function clearHold(){clearTimeout(holdTimer);holdTimer=null;}
@@ -145,8 +145,8 @@ globalThis.CabelWorkspaceUI = {
     }
     function makeSession(id,p,target,type,options={}){
       const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
-      const s={id,type,kind,target,start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
-      if(kind==='edit')forward('pointerdown',target,p,id,type);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
+      const s={id,type,kind,target,modifiers:{ctrlKey:options.ctrlKey,metaKey:options.metaKey,altKey:options.altKey,shiftKey:options.shiftKey},start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
+      if(kind==='edit')forward('pointerdown',target,p,id,type,options);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
     }
     function center(contacts){
       const points=[...contacts.values()],p={x:points.reduce((n,v)=>n+v.x,0)/points.length,y:points.reduce((n,v)=>n+v.y,0)/points.length},q=api.svgPoint({clientX:p.x,clientY:p.y});
@@ -177,7 +177,7 @@ globalThis.CabelWorkspaceUI = {
         const source=sourceAt(target);
         if(source){rememberTarget(source.node);finger={kind:'source',id:t.identifier,type:'touch',source,start:p,last:p,moved:false,wasDraggable:source.node.draggable};source.node.draggable=false;sourceHold=setTimeout(()=>{if(finger?.kind==='source')startSourceDrag(finger);},280);return;}
         if(!inCanvas(target)){armControl(t.identifier,target.closest('button'),p);return;}
-        stop(e);rememberTarget(t.target);finger=makeSession(800000+t.identifier,p,target,'touch');finger.touchId=t.identifier;finger.contacts=new Map([[t.identifier,p]]);finger.contacts=touchContacts(e);retainTargets();
+        stop(e);rememberTarget(t.target);finger=makeSession(800000+t.identifier,p,target,'touch',e);finger.touchId=t.identifier;finger.contacts=new Map([[t.identifier,p]]);finger.contacts=touchContacts(e);retainTargets();
         if(finger.contacts.size>1)beginPinch(finger,finger.contacts);else{rebase(finger,finger.contacts);startHold(finger);}return;
       }
       if(finger.kind==='source'){stop(e);finishSource(finger,true);finger=null;for(const x of changed)ignoredTouches.add(x.identifier);return;}

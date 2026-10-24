@@ -142,7 +142,7 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     ],wires:[]}]};
     await load(routing);await tapControl('wireTool');const term=(id,i)=>page.locator(`[data-part="${id}"][data-term="${i}"]`).evaluate(n=>{const p=new DOMPoint(n.cx.baseVal.value,n.cy.baseVal.value).matrixTransform(n.getScreenCTM());return{x:p.x,y:p.y};});
     await penTap(await term('c1',8));assert.equal(await page.locator('#wireTool').textContent(),'Bridge');
-    await penTap(await term('h1',0));assert.match(await page.locator('#toast').textContent(),/wire ports/);assert.equal(drawings(await save())[0].wires.length,0);
+    await penTap(await term('h1',0));assert.match(await page.locator('#toast').textContent(),/matching ports/);assert.equal(drawings(await save())[0].wires.length,0);
     await penTap(await term('c2',8));let wires=drawings(await save())[0].wires;assert.equal(wires.length,1);assert.equal(wires[0].kind,'bridge');assert.equal(wires[0].a,'c1:8');assert.equal(wires[0].b,'c2:8');
     assert.equal(await page.locator('#wireTool').textContent(),'Connect');await penTap(await term('c1',1));assert.equal(await page.locator('#wireTool').textContent(),'Wire');await penTap(await term('h1',0));
     wires=drawings(await save())[0].wires;assert.equal(wires.length,2);assert.equal(wires.filter(w=>w.kind==='bridge').length,1);
@@ -157,8 +157,8 @@ const near=(a,b,t=1e-5)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`),drawings=p=>p
     await tapControl('fullscreenBtn');assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');assert.equal(await page.locator('#fullscreenKeep').isVisible(),true);await page.locator('#fullscreenKeep').tap();assert.equal(await page.locator('.app.focus-mode').count(),1);
     await tapControl('exitFullscreenBtn');await page.locator('#fullscreenLeave').tap();await page.waitForFunction(()=>!document.querySelector('.app.focus-mode'));
-    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.22.0-ipad-portrait.png'});
-    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.22.0-ipad-landscape.png'});
+    await page.setViewportSize({width:834,height:1194});await assertLayout();await page.screenshot({path:'/tmp/Cabel-Studio-v1.23.0-ipad-portrait.png'});
+    await page.setViewportSize({width:1194,height:834});await page.screenshot({path:'/tmp/Cabel-Studio-v1.23.0-ipad-landscape.png'});
     project=await save();const pdf=await download('#exportBtn');assert.match(pdf.toString('latin1',0,8),/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-tablet.pdf',pdf);await fs.writeFile('/tmp/Cabel-Studio-tablet.expected.json',JSON.stringify({pages:project.sheets.length}));
     await page.reload();await load(project);assert.deepEqual(drawings(await save()),drawings(project));
     const manifest=await(await page.request.get(url+'manifest.webmanifest')).json();assert.equal(manifest.display,'standalone');assert.equal(await page.locator('meta[name="apple-mobile-web-app-capable"]').getAttribute('content'),'yes');

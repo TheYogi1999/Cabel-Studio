@@ -48,6 +48,7 @@ globalThis.CabelConnections = (() => {
         for(const w of s.wires||[]){if(w.id===exclude||w.a!==current&&w.b!==current)continue;const other=w.a===current?w.b:w.a;if(nodeId(other))queue.push(other);else result.add(other);}}
       return[...result];
     }
+    function kind(key){const draft=drafts.get(key);if(draft)return draft.kind;const n=node(key);return n?(incident(n)[0]?.kind||'wire'):null;}
     function bridge(key){const draft=drafts.get(key);if(draft)return draft.kind==='bridge';const n=node(key);if(n)return incident(n).some(w=>w.kind==='bridge');return null;}
     function validBridge(a,b,base){const left=terminals(sheet(),a),right=terminals(sheet(),b);return left.length>0&&right.length>0&&left.every(x=>right.every(y=>base(x,y)));}
     function conflictingKind(w,kind){const group=wires().filter(q=>q===w||w.runId&&q.runId===w.runId),ids=new Set(group.map(q=>q.id));return group.some(q=>[q.a,q.b].some(key=>{const n=node(key);return n&&incident(n).some(other=>!ids.has(other.id)&&(other.kind||'wire')!==kind);}));}
@@ -127,7 +128,7 @@ globalThis.CabelConnections = (() => {
     function draw(){
       if(!api.pending().start){drafts.clear();diagonalUsed=false;lastCursor=null;}
       for(const n of nodes()){
-        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id,g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'},api.layer),color=connected.some(w=>w.kind==='bridge')?'#795548':'#263943';
+        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id,g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'},api.layer),color=connected.some(w=>w.kind==='bridge')?'#795548':connected.some(w=>w.kind==='fiber')?'#ef7d24':'#263943';
         if(n.style!=='root'&&connected.length>=3)api.el('circle',{cx:n.x,cy:n.y,r:3,fill:color,class:'junction-dot','pointer-events':'none'},g);
         if(active)api.el('circle',{cx:n.x,cy:n.y,r:6,fill:'none',stroke:'#e94391','stroke-width':1.5,class:'screen-only','pointer-events':'none'},g);
         const hit=api.el('circle',{cx:n.x,cy:n.y,r:9,fill:'transparent','pointer-events':'all',class:'junction-hit screen-only',tabindex:0,role:'button','aria-label':'Connection junction: open properties to choose dot or 45° root'},g);
@@ -137,7 +138,7 @@ globalThis.CabelConnections = (() => {
     }
     function cancel(){drafts.clear();lastCursor=null;diagonalUsed=false;nodeDrag=null;}
     api.svg.addEventListener('pointerdown',e=>{
-      if(e.button!==0||api.blocked())return;
+      if(e.button!==0||api.blocked()||e.ctrlKey||e.metaKey)return;
       if(api.connecting()){if(e.target.closest('.terminal'))return;if(e.target.closest('#wires')&&connectAt({x:e.clientX,y:e.clientY},e.pointerType)){e.preventDefault();e.stopImmediatePropagation();}return;}
       const id=e.target.closest('[data-junction-id]')?.dataset.junctionId;if(!id||api.mode()!=='select')return;
       e.preventDefault();e.stopImmediatePropagation();const n=nodes().find(n=>n.id===id);api.commit();api.clearSelection();api.select({kind:'junction',id});nodeDrag={n,start:api.world(e),x:n.x,y:n.y,routes:api.captureRoutes()};api.capture(e.pointerId);api.render();
@@ -153,7 +154,7 @@ globalThis.CabelConnections = (() => {
     },true);
     document.addEventListener('keyup',e=>{if(e.key==='Shift'){shift=false;if(lastCursor)api.updatePreview(lastCursor);}});
     window.addEventListener('blur',()=>{shift=false;});
-    return{position,bridge,validBridge,conflictingKind,begin,waypoint,preview,complete,connectAt,displayRoute,prune,enclosed,edit,remove,draw,cancel,busy:()=>Boolean(nodeDrag),angle:()=>locked,toggleAngle:()=>{locked=!locked;if(lastCursor)api.updatePreview(lastCursor);api.refresh();},terminals,nodeId};
+    return{position,kind,bridge,validBridge,conflictingKind,begin,waypoint,preview,complete,connectAt,displayRoute,prune,enclosed,edit,remove,draw,cancel,busy:()=>Boolean(nodeDrag),angle:()=>locked,toggleAngle:()=>{locked=!locked;if(lastCursor)api.updatePreview(lastCursor);api.refresh();},terminals,nodeId};
   }
   return{init,clean,octilinear,stretch};
 })();

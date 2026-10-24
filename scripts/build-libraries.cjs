@@ -9,6 +9,7 @@ const libraries=names.map(name=>{
   for(const family of data.families)for(const p of family.products){
     const key=name+':'+p.id;
     if(seen.has(key)||!p.id||!p.model||!p.symbol||!p.verification)throw new Error('Invalid/duplicate product '+key);
+    if(p.portKinds!==undefined&&(!Array.isArray(p.portKinds)||p.portKinds.length!==p.pinNumbers?.length||p.portKinds.some(k=>!['wire','fiber'].includes(k))))throw Error('Invalid port media '+key);
     seen.add(key);
   }
   return data;

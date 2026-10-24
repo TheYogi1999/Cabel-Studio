@@ -5,12 +5,18 @@
   "coverage": {
     "complete": false,
     "status": "Reference library; verify product specifications, ordering codes and pinouts.",
-    "reason": "Manufacturer documentation could not be retrieved under the cloud outbound policy."
+    "reason": "Original references remain unverified. EK1501 optical interface presence was checked separately against the linked manufacturer page; physical pinouts and ordering details remain unverified."
   },
   "sources": [
     {
       "url": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/",
       "retrieved": false
+    },
+    {
+      "url": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/ek1xxx-bk1xx0-ethercat-coupler/ek1501.html",
+      "retrieved": true,
+      "retrievedOn": "2026-10-23",
+      "scope": "EK1501 optical interface only; no blanket verification of catalogue data or physical pinouts."
     }
   ],
   "families": [
@@ -267,6 +273,49 @@
             "right",
             "right"
           ]
+        },
+        {
+          "id": "ek1501",
+          "model": "EK1501 · Multi-mode fiber optic EtherCAT coupler",
+          "name": "EK1501 · Multi-mode fiber optic EtherCAT coupler",
+          "symbol": "io-module",
+          "manufacturerNumber": "",
+          "verification": "optical-interface-documented",
+          "pinNumbers": [
+            "24V",
+            "0V",
+            "PE",
+            "E-bus",
+            "FO-IN-TX",
+            "FO-IN-RX",
+            "FO-OUT-TX",
+            "FO-OUT-RX"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "left",
+            "right",
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire",
+            "fiber",
+            "fiber",
+            "fiber",
+            "fiber"
+          ],
+          "attributes": {
+            "portMapping": "Functional power/E-bus ports and logical Tx/Rx fibers of the upper/lower SC duplex interfaces. Optical SC duplex interfaces and multi-mode medium documented by Beckhoff; physical power-pin numbering and optical connector orientation are not verified.",
+            "opticalInterface": "2 x SC duplex, multi-mode; each duplex interface is represented by two logical fibers.",
+            "opticalSource": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/ek1xxx-bk1xx0-ethercat-coupler/ek1501.html"
+          }
         }
       ]
     }

@@ -136,7 +136,7 @@ globalThis.CabelWorkspaceUI = {
     }
     function connectAt(p,type){const terminal=nearbyTerminal(p,type);if(terminal)api.connect(terminal);else if(!api.branchAt(p,type)){forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);}}
     function makeSession(id,p,target,type,options={}){
-      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':state.mode==='wire'||state.mode==='bridge'?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
+      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
       const s={id,type,kind,target,start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
       if(kind==='edit')forward('pointerdown',target,p,id,type);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
     }
@@ -270,13 +270,13 @@ globalThis.CabelWorkspaceUI = {
       finger=null;pen=null;ignoredTouches.clear();removeGhost();controlContact=null;clearTargets();
     });
     function refresh(){
-      retainTargets();const state=api.state(),connecting=state.mode==='wire'||state.mode==='bridge';handButton.setAttribute('aria-pressed',String(hand));
+      retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
       const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
       for(const[id,tool]of[['redPenDraw','draw'],['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
       smaller.disabled=larger.disabled=deleteStrokes.disabled=!ink.hasSelection()||ink.busy()||state.generated||state.exporting;
       $('#selectTool').setAttribute('aria-pressed',String(state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking));$('#selectTool').classList.toggle('active',state.mode==='select'&&!hand&&!state.fieldDrawing&&!marking);
-      const wire=$('#wireTool'),label=state.mode==='bridge'?'Bridge':state.connecting?'Wire':'Connect';if(wire.textContent!==label)labelButton(wire,label);
-      wire.setAttribute('aria-label','Connect; automatically choose a wire or terminal bridge');wire.setAttribute('aria-pressed',String(connecting));wire.classList.toggle('active',connecting);wire.dataset.connectionKind=state.mode==='bridge'?'bridge':'wire';
+      const wire=$('#wireTool'),label=state.mode==='fiber'?'Fiber':state.mode==='bridge'?'Bridge':state.connecting?'Wire':'Connect';if(wire.textContent!==label)labelButton(wire,label);
+      wire.setAttribute('aria-label','Connect; automatically choose wire, fiber optic or terminal bridge');wire.setAttribute('aria-pressed',String(connecting));wire.classList.toggle('active',connecting);wire.dataset.connectionKind=connecting?state.mode:'wire';
       diagonal.hidden=!connecting;diagonal.setAttribute('aria-pressed',String(state.diagonal));
       $('#aksAreaTool').setAttribute('aria-pressed',String(state.fieldDrawing));svg.dataset.hand=String(hand);svg.dataset.placement=String(Boolean(placement));
       for(const id of['rotateBtn','mirrorXBtn','mirrorYBtn','copyBtn','cutBtn'])$('#'+id).disabled=!state.partSelected||state.exporting;

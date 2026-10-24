@@ -79,7 +79,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const assertOrthogonal=async()=>{for(const values of await page.locator('#wires .wire').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number))))for(let i=2;i<values.length;i+=2)assert.ok(Math.abs(values[i]-values[i-2])<1e-5||Math.abs(values[i+1]-values[i-1])<1e-5)};
     const editor=await browser.newPage({viewport:{width:1600,height:1100}});editor.setDefaultTimeout(10000);editor.on('pageerror',e=>errors.push(e.message));
     await editor.goto(`http://127.0.0.1:${server.address().port}/symbol-editor.html`);
-    assert.equal(await editor.locator('#editorVersion').textContent(),'v1.25.1');
+    assert.equal(await editor.locator('#editorVersion').textContent(),'v1.26.0');
     const editorPoint=(x,y)=>editor.locator('#editorCanvas').evaluate((svg,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(svg.getScreenCTM());return{x:q.x,y:q.y}},{x,y});
     const draw=async(tool,a,b)=>{await editor.locator(`[data-tool="${tool}"]`).click();const p=await editorPoint(...a);await editor.mouse.move(p.x,p.y);await editor.mouse.down();if(b){const q=await editorPoint(...b);await editor.mouse.move(q.x,q.y,{steps:6})}await editor.mouse.up()};
     const editorDownload=async selector=>{const [file]=await Promise.all([editor.waitForEvent('download'),editor.locator(selector).click()]);const chunks=[];for await(const chunk of await file.createReadStream())chunks.push(chunk);return{name:file.suggestedFilename(),text:Buffer.concat(chunks).toString()}};
@@ -95,7 +95,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await editor.locator('#clearSymbol').click();assert.equal(await editor.locator('#objectList .object').count(),0);
     await editor.locator('#proposalFile').setInputFiles({name:json.name,mimeType:'application/json',buffer:Buffer.from(json.text)});await editor.waitForFunction(()=>document.querySelector('#editorStatus').textContent==='Symbol proposal opened');assert.equal(await editor.locator('#objectList .object').count(),7);
     const bad=structuredClone(proposal);bad.geometry.push({id:'bad',type:'script',text:'alert(1)'});await editor.locator('#proposalFile').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await editor.waitForFunction(()=>document.querySelector('#editorStatus').textContent.includes('Invalid shape'));assert.equal(await editor.locator('#objectList .object').count(),7);
-    await editor.locator('[data-tool="select"]').click();await editor.screenshot({path:'/tmp/Cabel-Studio-v1.25.1-symbol-editor.png'});await editor.close();
+    await editor.locator('[data-tool="select"]').click();await editor.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-symbol-editor.png'});await editor.close();
     console.log('PASS separate symbol editor: drawing, 4 mm terminals, exact properties, undo/redo, safe JSON/SVG export, reopening and invalid-input preservation');
 
     await load({title:'Custom proposals',parts:[],wires:[]});
@@ -121,7 +121,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     const glyphs=await page.locator('#parts > g[data-id="p8000"]').evaluate(root=>{const f=root.querySelector('.port-block-frame').getBBox();return Array.from(root.querySelectorAll('.supply-divider,.supply-ac,.supply-dc'),n=>{const b=n.getBBox();return b.x>=f.x-.001&&b.y>=f.y-.001&&b.x+b.width<=f.x+f.width+.001&&b.y+b.height<=f.y+f.height+.001})});assert.deepEqual(glyphs,[true,true,true]);
     await page.keyboard.press('Control+z');assert.equal(parts(await save()).find(p=>p.id==='p8000').pinNumbers.length,5);await assertAttached();await page.keyboard.press('Control+y');assert.equal(parts(await save()).find(p=>p.id==='p8000').pinNumbers.length,12);await assertAttached();
     for(const [i,[key,count]]of [['uno-24dc-60w',7],['trio-24dc-5',9],['quint4-24dc-10',12]].entries()){const p=await placeProduct('phoenix-contact:'+key,(40+12*i)*GRID,30*GRID);assert.equal(p.pinNumbers.length,count)}
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.25.1-power-supplies.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-power-supplies.png'});
     console.log('PASS AC/DC divider/wave/DC glyphs fit frame, UNO/TRIO/QUINT output/signal variants, explicit legacy port upgrade preserving terminal indices, route adjustment and undo/redo');
 
     const fixture={title:'AKS contexts',sheets:[{id:'scope-main',title:'Original title',parts:[{id:'p9000',type:'resistor',deviceCode:'R1',label:'R1',functionCode:'F1',locationCode:'TU001',x:12*GRID,y:12*GRID},{id:'p9001',type:'lamp',deviceCode:'H1',label:'H1',functionCode:'F1',locationCode:'TU002',x:35*GRID,y:14*GRID},{id:'p9002',type:'coil',deviceCode:'K1',label:'K1',functionCode:'F2',locationCode:'TU001',x:46*GRID,y:14*GRID}],wires:[]},{id:'scope-other',title:'Other page',parts:[],wires:[]}],activeSheet:0};
@@ -148,7 +148,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await page.locator('#aksAreaTool').click();await page.keyboard.press('Control+a');assert.equal(await page.locator('#aksAreaTool').getAttribute('aria-pressed'),'false');await page.keyboard.press('Escape');
     await page.locator('.sheetItem[data-sheet-kind="drawing"]').nth(1).click({button:'right'});await page.locator('#pagePropertiesForm [name="title"]').fill('Auxiliary page');await page.locator('#pagePropertiesForm [type="submit"]').click();assert.equal(drawings(await save())[1].title,'Auxiliary page');assert.equal((await save()).activeSheetId,'scope-main');
     const pageFile=await save();await page.reload();await load(pageFile);assert.deepEqual(drawings(await save()),drawings(pageFile));assert.equal(await page.locator('.aks-area-border').count(),2);assert.equal(await caption(areaPart.id).isVisible(),false);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.25.1-aks-areas.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-aks-areas.png'});
     const scopesPdf=await download('#exportBtn');await fs.writeFile('/tmp/Cabel-Studio-aks-scopes.pdf',scopesPdf);await fs.writeFile('/tmp/Cabel-Studio-aks-scopes.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     assert.equal(await page.locator('.aks-area-border').count(),2);assert.equal(await caption(areaPart.id).isVisible(),false);
     await page.locator('[data-overview="devices"]').click();assert.match(await page.locator(`.device-node[data-device-id="${areaPart.id}"] > summary .device-jump`).getAttribute('title'),/=F4\+TU001.01/);
@@ -213,7 +213,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await rightWorld(50,8);assert.equal(await page.locator('#pagePropertiesForm').isVisible(),true);assert.equal(await page.locator('#simpleContent h3').textContent(),'AKS fields');await page.locator('#pagePropertiesForm [name="title"]').fill('Field property smoke');await outsideKeeps('#pagePropertiesForm');assert.equal(await page.locator('#pagePropertiesForm [name="title"]').inputValue(),'Field property smoke');await page.locator('#pagePropertiesForm [type="submit"]').click();assert.equal(drawings(await save())[0].title,'Field property smoke');
     await dragWorld([24,16],[28,20]);assert.equal(await page.locator('#parts > g[data-id="p9201"]').getAttribute('class').then(s=>s.includes('selected')),true);assert.deepEqual(fieldIn(await save()),fieldIn(movedFields));await page.keyboard.press('Escape');
     const fieldsFile=await save();await page.reload();await load(fieldsFile);assert.deepEqual(drawings(await save()),drawings(fieldsFile));await assertHeadingsInside();await assertAttached();
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.25.1-fields.png'});await fs.writeFile('/tmp/Cabel-Studio-fields.pdf',await download('#exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-fields.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await assertHeadingsInside();
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-fields.png'});await fs.writeFile('/tmp/Cabel-Studio-fields.pdf',await download('#exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-fields.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await assertHeadingsInside();
     console.log('PASS Fields terminology, headings inside small/large rectangles, field border/heading/interior context menus and double-click, component precedence, blank-sheet properties, modal draft persistence after backdrop clicks, interior multi-selection, JSON roundtrip and PDF');
     const resizeField=async(direction,dx,dy,finish='release')=>{
       const b=await page.locator(`[data-aks-area="move-field"] [data-field-resize="${direction}"]`).boundingBox(),zero=await screen(0,0),delta=await screen(dx*GRID,dy*GRID);
@@ -242,7 +242,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await resizeField('se',100,100);let resizedBox=fieldIn(await save());assert.ok(resizedBox.x+resizedBox.width<=1128&&resizedBox.y+resizedBox.height<=710);near((resizedBox.x+resizedBox.width)/GRID,Math.floor(1128/GRID));near((resizedBox.y+resizedBox.height)/GRID,Math.floor(710/GRID));await page.keyboard.press('Control+z');
     await page.locator('#wireTool').click();assert.equal(await page.locator('[data-field-resize]').count(),0);await page.locator('#selectTool').click();
     await resizeField('se',2,3);const resizedFile=await save();await page.reload();await load(resizedFile);assert.deepEqual(drawings(await save()),drawings(resizedFile));await assertHeadingsInside();await assertAttached();
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.25.1-resize-fields.png'});await fs.writeFile('/tmp/Cabel-Studio-fields.pdf',await download('#exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-fields.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-resize-fields.png'});await fs.writeFile('/tmp/Cabel-Studio-fields.pdf',await download('#exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-fields.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     assert.deepEqual(errors,[]);
     console.log('PASS all eight field resize handles, anchored opposite edges, 4/2 mm steps, minimum dimensions/bounds, stable components/routes, live AKS hiding, single-step undo/redo, cancellation, connection-mode isolation, JSON and PDF');
   } finally {

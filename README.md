@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.25.1**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.26.0**, shown beside the application name and in the browser title.
 
 ## Run
 
@@ -24,6 +24,16 @@ With a finger or Pencil, drag components from the generic/product libraries or d
 - Selected objects and active buttons are highlighted in pink. Press **Ctrl/⌘+A** to select all placed objects and visible connections on the current drawing sheet, or drag a rectangle over multiple objects to select them. Move, edit common properties, or delete the selection together. Deleting electrical devices from the drawing marks them **unplaced** in yellow in the device tree; placed devices appear in light blue. Click or drag a tree entry back onto a drawing to place it again. The **×** button in the device tree permanently deletes a device and its descendants across all drawing sheets after confirmation, clearing stale references and retaining attached connections as open ends. Undo restores the whole operation; deleting from the drawing still only unplaces a device.
 - Switch the right sidebar between **Sheets**, **Devices** and **Cables**. AKS fields use dots for nested folders, for example `+TU001.01`. Ctrl/⌘-click symbols in Select to add or remove them individually. Ctrl+Alt-click (Command+Option-click) a symbol or terminal reveals its device-tree position.
 - Edit manufacturer numbers, SAP numbers, pin names and master/slave relationships in properties. Device lists include article numbers and links back to symbols. Slaves can be placed independently.
+
+## Compact library and terminal type selection
+
+The library uses compact rows, consistent group headings with counts, and a manufacturer filter in **Products**. Generic controls and indicators are grouped together. Manufacturer/family expansion is retained while filtering or switching views. Shared wildcard search, import/export and finger/Pencil drag/drop remain available; touch rows retain at least 44 px height.
+
+**EAO** adds 33 configurable schematic references for Series **04 / 704**, **14**, **45**, **61** and **84** in `libraries/eao.json`. EAO's [selector configurator](https://www.eao.com/catalog/function/selector_switch/en/selector-switch?a_hmi_function=Selector+switch) and [indicator configurator](https://www.eao.com/catalog/function/indicator/en/indicator?a_hmi_function=Indicator&a_series_assignment=Series+04) identify the 704 prefix as Series 04. References include NO/NC pushbuttons, illuminated pushbuttons with independent contact and lamp ports, indicators, and selector/keylock templates in the applicable groups. Series 84 includes pushbutton/illumination/indicator templates. Symbols distinguish push, selector and key actuators. Logical terminal names and selected contact counts describe the schematic template; they are **not verified physical pinouts or complete orderable assemblies**. Exact article numbers, contacts, lamps, colour/voltage and accessory compatibility must be checked in EAO's configurator. No invented full ordering codes are supplied. Sources and their limited verification scope are stored in the library.
+
+In a terminal's **Properties**, type into **Terminal type** to search all terminal products by manufacturer, model or article number, or use the adjacent dropdown to browse. Arrow keys and Enter select a match; custom names remain possible. The choice prepares its model, pin count and catalogue data in the form; **Apply** commits it and **Cancel** changes nothing. BMK, strip/master, terminal ordinal, existing pin names, SAP number, connection IDs, cable assignments and separate pin placement remain intact. Adding pins extends the existing names. A type cannot remove a wired or separately placed pin. Port geometry changes stretch existing routes in one undoable operation, and switching to/from ST-MT updates the disconnect symbol. Generic/custom types clear stale catalogue identity; only explicit catalogue choices attach catalogue metadata. Manufacturer filtering does not limit the terminal picker.
+
+Run `node tests/library-types-smoke.cjs` for library filtering/state, EAO symbol geometry and typed placement, transactional type switching, pin compatibility, catalogue identity, keyboard/tablet input, history and PDF checks.
 
 ## Cables and conductors
 

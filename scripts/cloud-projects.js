@@ -176,6 +176,6 @@ globalThis.CabelCloudProjects={
     if(config)initialize(config).catch(fail);
     // Expose state, not credentials or a testing backdoor. Useful when reporting
     // a connection problem from an iPad without developer tools.
-    return{state:()=>({status,projectId:project?.id,role:project?.role,readOnly,connected,lastBackupAt})};
+    return{changed:()=>{if(sync&&!revisionView&&sync.dirty()){state(connected?'pending':'offline-pending');backup().catch(fail);}},state:()=>({status,projectId:project?.id,role:project?.role,readOnly,connected,lastBackupAt})};
   }
 };

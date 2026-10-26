@@ -1728,14 +1728,14 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   refreshComponentLibrary();
 
   // Record document changes; one drag or synchronous action is one undo step.
-  const undoStack=[],redoStack=[];let historyTimer=null,historyRestoring=false,historyReset=false,historyLoading=false,workspaceUI=null,redPen=null;
+  const undoStack=[],redoStack=[];let historyTimer=null,historyRestoring=false,historyReset=false,historyLoading=false,workspaceUI=null,redPen=null,cloudProjects=null;
   function historyState(){return {title:model.title,projectInfo:model.projectInfo||{},cables:model.cables||[],sheets:drawingPages().map(s=>({...s})),nextId}}
   function historySnapshot(){return JSON.stringify(historyState())}
   let historyCurrent=historySnapshot();
   function commitHistory(){
     if(historyRestoring||historyLoading||pdfExporting||drag||segmentDrag||selectionDrag||wireLabelDrag||aksAreaGesture||aksFieldDrag||redPen?.busy()||connectionGraph?.busy())return;
     const state=historySnapshot();if(historyReset){historyCurrent=state;undoStack.length=0;redoStack.length=0;historyReset=false;workspaceUI?.refresh();return}if(state===historyCurrent)return;
-    undoStack.push(historyCurrent);if(undoStack.length>100)undoStack.shift();historyCurrent=state;redoStack.length=0;workspaceUI?.refresh();
+    undoStack.push(historyCurrent);if(undoStack.length>100)undoStack.shift();historyCurrent=state;redoStack.length=0;workspaceUI?.refresh();cloudProjects?.changed();
   }
   function scheduleHistory(){clearTimeout(historyTimer);historyTimer=setTimeout(commitHistory,0)}
   const renderBeforeHistory=render;render=function(){renderBeforeHistory();if(!historyRestoring)scheduleHistory()};
@@ -1747,7 +1747,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   function documentHistoryAction(redo){
     connectionGraph?.cancel();
     wireStart=null;wirePoints=[];preview.style.display='none';
-    redPen?.cancel();commitHistory();const source=redo?redoStack:undoStack,destination=redo?undoStack:redoStack;if(!source.length){toast(redo?'Nothing to redo':'Nothing to undo');return}destination.push(historyCurrent);restoreHistory(source.pop());toast(redo?'Redo':'Undo');workspaceUI?.refresh();
+    redPen?.cancel();commitHistory();const source=redo?redoStack:undoStack,destination=redo?undoStack:redoStack;if(!source.length){toast(redo?'Nothing to redo':'Nothing to undo');return}destination.push(historyCurrent);restoreHistory(source.pop());toast(redo?'Redo':'Undo');workspaceUI?.refresh();cloudProjects?.changed();
   }
   document.addEventListener('keydown',e=>{
     if(!(e.ctrlKey||e.metaKey)||!['z','y'].includes(e.key.toLowerCase())||editingTarget(e.target)||modal.style.display==='grid'||pdfExporting)return;
@@ -1842,7 +1842,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   render();applyView();
   // Cloud synchronization shares document data only; camera, selection, active
   // sheet and clipboard remain specific to this device.
-  CabelCloudProjects.init({
+  cloudProjects=CabelCloudProjects.init({
     version:APP_VERSION,
     capture:()=>({title:model.title,projectInfo:model.projectInfo||{},cables:model.cables||[],sheets:JSON.parse(JSON.stringify(drawingPages()))}),
     apply:data=>{

@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.28.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.28.1">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,16 +59,16 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.28.0"></script>
+<script src="libraries/catalog.js?v=1.28.1"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.28.0"></script>
-<script src="scripts/red-pen.js?v=1.28.0"></script>
-<script src="scripts/connection-graph.js?v=1.28.0"></script>
-<script src="scripts/cables.js?v=1.28.0"></script>
-<script src="scripts/workspace-ui.js?v=1.28.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.28.1"></script>
+<script src="scripts/red-pen.js?v=1.28.1"></script>
+<script src="scripts/connection-graph.js?v=1.28.1"></script>
+<script src="scripts/cables.js?v=1.28.1"></script>
+<script src="scripts/workspace-ui.js?v=1.28.1"></script>
 <script>
 (() => {
-  const APP_VERSION='1.28.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.28.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -893,22 +893,23 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   // A shared drawing frame for every document page.
   title.id='drawingTitleBlock';title.setAttribute('transform','translate(22 710)');title.replaceChildren();
   el('rect',{x:0,y:0,width:1084,height:66,fill:'none',stroke:'#60737c','stroke-width':1},title);
-  el('path',{d:'M0 27 H1084 M0 53 H1084 M380 0 V27 M615 0 V27 M900 0 V27 M490 27 V53 M638.5 27 V53 M787 27 V53 M935.5 27 V53 M900 53 V66',stroke:'#60737c',fill:'none'},title);
+  el('path',{d:'M0 33 H1084 M380 0 V33 M615 0 V33 M900 0 V33 M290 33 V66 M390 33 V66 M490 33 V66 M590 33 V66 M690 33 V66 M788.5 33 V66 M887 33 V66 M985.5 33 V66',stroke:'#60737c',fill:'none'},title);
   generatedText(title,8,10,'PROJECT',6,'bold','#73838b');generatedText(title,8,22,'',12,'bold').id='a4Project';
   generatedText(title,388,10,'DOCUMENT / REVISION',6,'bold','#73838b');generatedText(title,388,22,'',9).id='a4Document';
   generatedText(title,623,10,'COMPANY',6,'bold','#73838b');generatedText(title,623,22,'',9).id='a4Company';
   generatedText(title,908,18,'Leitwerk Version '+APP_VERSION,9,'bold').id='a4Version';
-  generatedText(title,908,62,'SHEET / TOTAL',6,'bold','#73838b');generatedText(title,1000,62,'',9,'bold').id='a4Number';
-  generatedText(title,8,62,'',8).id='a4Previous';generatedText(title,160,62,'',8).id='a4Next';
-  generatedText(title,8,37,'SHEET TITLE',6,'bold','#73838b');generatedText(title,8,48,'',12,'bold').id='a4Sheet';
-  approvalStages.forEach(([key,label],i)=>{const x=498+i*148.5,g=el('g',{'data-approval-stage':key},title);generatedText(g,x,34,label,6,'bold','#73838b');generatedText(g,x,43,'',8).id='a4-'+key+'-name';generatedText(g,x,51,'',7).id='a4-'+key+'-date'});
+  for(const [i,[label,id]]of [['PREVIOUS','a4Previous'],['CURRENT','a4Number'],['NEXT','a4Next'],['TOTAL','a4Total']].entries()){
+    const x=698+i*98.5,g=el('g',{'data-navigation-field':label.toLowerCase()},title);generatedText(g,x,43,label,6,'bold','#73838b');generatedText(g,x,58,'',10,'bold').id=id;
+  }
+  generatedText(title,8,43,'SHEET TITLE',6,'bold','#73838b');generatedText(title,8,57,'',12,'bold').id='a4Sheet';
+  approvalStages.forEach(([key,label],i)=>{const x=298+i*100,g=el('g',{'data-approval-stage':key},title);generatedText(g,x,42,label,6,'bold','#73838b');generatedText(g,x,52,'',8).id='a4-'+key+'-name';generatedText(g,x,62,'',7).id='a4-'+key+'-date'});
 
   const zones=el('g',{id:'frameZones'},pageContent);
   for(let i=0;i<8;i++)generatedText(zones,22+(i+.5)*1084/8,17,String(i+1),7,'normal','#73838b');
   for(let i=0;i<5;i++)generatedText(zones,10,22+(i+.5)*688/5,String.fromCharCode(65+i),7,'normal','#73838b');
   const renderBeforeDocument=render;
   function fitTitleText(node,value,width){node.textContent=String(value||'—');node.removeAttribute('textLength');node.removeAttribute('lengthAdjust');if(node.getComputedTextLength()>width){node.setAttribute('textLength',width);node.setAttribute('lengthAdjust','spacingAndGlyphs')}}
-  render=function(){renderBeforeDocument();grid.style.display=isGenerated(pages[activeSheet])?'none':'';const info=model.projectInfo||{};fitTitleText(document.querySelector('#a4Project'),model.title,364);fitTitleText(document.querySelector('#a4Sheet'),pages[activeSheet].title||'Schematic',474);fitTitleText(document.querySelector('#a4Document'),(info.documentNumber||'—')+' / '+(info.revision||'A'),219);fitTitleText(document.querySelector('#a4Company'),info.company,269);for(const [key] of approvalStages){fitTitleText(document.querySelector('#a4-'+key+'-name'),info[key+'Name']||(key==='issued'?info.author:''),132.5);fitTitleText(document.querySelector('#a4-'+key+'-date'),info[key+'Date']||(key==='issued'?info.date:''),132.5)}};
+  render=function(){renderBeforeDocument();grid.style.display=isGenerated(pages[activeSheet])?'none':'';const info=model.projectInfo||{};fitTitleText(document.querySelector('#a4Project'),model.title,364);fitTitleText(document.querySelector('#a4Sheet'),pages[activeSheet].title||'Schematic',274);fitTitleText(document.querySelector('#a4Document'),(info.documentNumber||'—')+' / '+(info.revision||'A'),219);fitTitleText(document.querySelector('#a4Company'),info.company,269);for(const [key] of approvalStages){fitTitleText(document.querySelector('#a4-'+key+'-name'),info[key+'Name']||(key==='issued'?info.author:''),84);fitTitleText(document.querySelector('#a4-'+key+'-date'),info[key+'Date']||(key==='issued'?info.date:''),84)}};
   addSheet=function(){const name=prompt('Name of the new drawing sheet','Schematic');if(name===null)return;const sheet={id:crypto.randomUUID(),title:name.trim()||'Schematic',parts:[],wires:[]};pages.push(sheet);setSheet(pages.length-1);closePanel()};
   document.querySelector('#sheetAdd').onclick=addSheet;
   const refreshBeforeDocument=refreshSheetPanel;
@@ -1541,6 +1542,10 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     if(p.type==='connector')for(const index of [...partTerminals(p).map((_,i)=>i),8]){const slave=pinSlave(p.id,index);if(slave&&!slave.unplaced)linkTo(slave,':'+pinNumber(p,index),index)}
     if(p.type==='terminal-pin'){const parent=deviceEntries().find(e=>e.p.id===p.masterId)?.p;if(parent)linkTo(parent,'Main symbol',p.pinIndex)}
   };
+  function captionLineOffset(nodes,index){
+    const typeIndex=nodes.findIndex(n=>n.classList.contains('part-value'));
+    return(nodes.length-index-1)*9+(typeIndex>index&&nodes.some(n=>n.classList.contains('page-reference'))?5:0);
+  }
   const drawBeforeTopCaptions=drawPart;drawPart=function(p){
     drawBeforeTopCaptions(p);if(p.type==='text')return;const root=partsG.lastElementChild,caption=root.querySelector('.part-caption'),geometry=root.querySelector('.part-geometry');caption.setAttribute('transform','rotate(0)');
     const box=geometry.getBBox(),matrix=geometry.transform.baseVal.consolidate().matrix,top=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
@@ -1548,7 +1553,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const valueNode=caption.querySelector('.part-value');valueNode.textContent=[deviceTypeOf(p)===TYPES[p.type]?.name?'':deviceTypeOf(p),electricalValueOf(p)].filter(Boolean).join(' · ');
     const terminal=terminalCaptionInfo(p);
     if(terminal){const previous=precedingTerminal(p,terminal);caption.querySelector('.part-value').textContent=[terminal.type,electricalValueOf(p)].filter(Boolean).join(' · ');if(previous){caption.querySelector('.part-aks').style.display='none';caption.querySelector('.part-label').style.display='none';if(previous.type===terminal.type)caption.querySelector('.part-value').style.display='none'}}
-    const order=['.part-aks','.part-label','.part-value','.page-reference'];const texts=order.flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent);texts.forEach((n,i)=>{n.setAttribute('x',0);n.setAttribute('y',top-4-(texts.length-i-1)*9)});
+    const order=['.part-aks','.part-label','.page-reference','.part-value'];const texts=order.flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent);texts.forEach((n,i)=>{n.setAttribute('x',0);n.setAttribute('y',top-4-captionLineOffset(texts,i))});
   };
   function layoutTerminalStackReferences(){
     const terminals=model.parts.filter(p=>p.type==='connector'&&!p.unplaced),spacing=4*1128/297,groups=new Map();
@@ -1561,16 +1566,16 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       if(parts.length<2)continue;const root=partsG.querySelector('[data-id="'+CSS.escape(top.id)+'"]'),caption=root?.querySelector('.part-caption'),geometry=root?.querySelector('.part-geometry');if(!caption||!geometry)continue;
       const refs=parts.sort((a,b)=>a.y-b.y).flatMap(p=>Array.from(partsG.querySelector('[data-id="'+CSS.escape(p.id)+'"] .part-caption')?.querySelectorAll('.terminal-cross-reference')||[]).filter(n=>n.style.display!=='none').map(node=>({p,node})));
       if(!refs.some(e=>e.p!==top))continue;
-      const base=['.part-aks','.part-label','.part-value'].flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent).map(node=>({p:top,node})),texts=[...base,...refs],box=geometry.getBBox(),matrix=geometry.transform.baseVal.consolidate().matrix;
+      const base=['.part-aks','.part-label'].flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent).map(node=>({p:top,node})),types=Array.from(caption.querySelectorAll('.part-value')).filter(n=>n.style.display!=='none'&&n.textContent).map(node=>({p:top,node})),otherRefs=Array.from(caption.querySelectorAll('.page-reference:not(.terminal-cross-reference)')).filter(n=>n.style.display!=='none'&&n.textContent).map(node=>({p:top,node})),texts=[...base,...otherRefs,...refs,...types],box=geometry.getBBox(),matrix=geometry.transform.baseVal.consolidate().matrix;
       const y=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
-      texts.forEach(({p,node},i)=>{node.setAttribute('x',top.x-p.x);node.setAttribute('y',top.y-p.y+y-4-(texts.length-i-1)*9);if(node.classList.contains('terminal-cross-reference'))node.dataset.stackReferenceTop=top.id;});
+      texts.forEach(({p,node},i)=>{node.setAttribute('x',top.x-p.x);node.setAttribute('y',top.y-p.y+y-4-captionLineOffset(texts.map(entry=>entry.node),i));if(node.classList.contains('terminal-cross-reference'))node.dataset.stackReferenceTop=top.id;});
       // References moved to the stack header no longer occupy a text row on
       // their original terminal. Keep each lower type caption at its own symbol.
       for(const p of parts.filter(p=>p!==top)){
         const local=partsG.querySelector('[data-id="'+CSS.escape(p.id)+'"]'),localCaption=local?.querySelector('.part-caption'),localGeometry=local?.querySelector('.part-geometry');if(!localCaption||!localGeometry)continue;
         const box=localGeometry.getBBox(),matrix=localGeometry.transform.baseVal.consolidate().matrix,localTop=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
-        const localTexts=['.part-aks','.part-label','.part-value','.page-reference'].flatMap(selector=>Array.from(localCaption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent&&n.dataset.stackReferenceTop!==top.id);
-        localTexts.forEach((node,i)=>{node.setAttribute('x',0);node.setAttribute('y',localTop-4-(localTexts.length-i-1)*9)});
+        const localTexts=['.part-aks','.part-label','.page-reference','.part-value'].flatMap(selector=>Array.from(localCaption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent&&n.dataset.stackReferenceTop!==top.id);
+        localTexts.forEach((node,i)=>{node.setAttribute('x',0);node.setAttribute('y',localTop-4-captionLineOffset(localTexts,i))});
       }
 
     }
@@ -1821,9 +1826,10 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     status:message=>document.querySelector('#statusText').textContent=message
   });
   function updateDocumentNavigation(){
-    const current=pages[activeSheet];fitTitleText(document.querySelector('#a4Number'),sheetLabel(current)+' / '+pageNumber(pages.length),76);
-    document.querySelector('#a4Previous').textContent='PREVIOUS '+(activeSheet>0?sheetLabel(pages[activeSheet-1]):'—');
-    document.querySelector('#a4Next').textContent='NEXT '+(activeSheet+1<pages.length?sheetLabel(pages[activeSheet+1]):'—');
+    document.querySelector('#a4Total').textContent=pages.length+' SHEETS';
+    const current=pages[activeSheet];fitTitleText(document.querySelector('#a4Number'),sheetLabel(current),82);
+    document.querySelector('#a4Previous').textContent=activeSheet>0?sheetLabel(pages[activeSheet-1]):'—';
+    document.querySelector('#a4Next').textContent=activeSheet+1<pages.length?sheetLabel(pages[activeSheet+1]):'—';
   }
   const renderBeforeWorkspace=render;render=function(){if(!wireStart)openEndDrafts.clear();pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;connectionGraph.prune();for(const sheet of drawingPages())if(sheet.looseEnds)sheet.looseEnds=sheet.looseEnds.filter(n=>sheet.wires.some(w=>[w.a,w.b].includes('~'+n.id+':0')));cableSystem.sync();renderBeforeWorkspace();layoutTerminalStackReferences();connectionGraph.draw();drawConnectionMedia();cableSystem.decorate();redPen.render();workspaceUI.refresh();updateDocumentNavigation()};
   const applyBeforeWorkspace=applyView;applyView=function(){applyBeforeWorkspace();redPen.render();workspaceUI.refresh();updateDocumentNavigation()};

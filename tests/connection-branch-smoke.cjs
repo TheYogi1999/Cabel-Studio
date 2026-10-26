@@ -54,7 +54,7 @@ function hasDiagonal(points){return points.slice(1).some((b,i)=>{const a=points[
     console.log('PASS Shift/toggle octilinear routing, automatic bridge detection, branched bridges and rejected mixed-port connections');
     project=await a.save();await page.reload();await a.load(project);assert.deepEqual(drawings(await a.save()),drawings(project));
     const beforeExport=await a.save();await fs.writeFile('/tmp/Cabel-Studio-branches.pdf',await a.download('exportBtn'));await fs.writeFile('/tmp/Cabel-Studio-branches.expected.json',JSON.stringify({pages:beforeExport.sheets.length}));assert.deepEqual(await a.save(),beforeExport);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-branches-desktop.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.27.0-branches-desktop.png'});
     await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();assert.ok(await page.locator('.terminal-bridge').count()>0);await page.locator('.sheetItem[data-sheet-kind="drawing"]').first().click();
     await page.keyboard.press('c');await a.click(28,26);await a.click(20,18);s=drawings(await a.save())[0];assert.equal(s.junctions.length,drawings(beforeExport)[0].junctions.length+2);assert.equal(s.wires.length,drawings(beforeExport)[0].wires.length+3);checkGraph(s);await page.locator('#undoBtn').click();assert.deepEqual(drawings(await a.save()),drawings(beforeExport));await page.keyboard.press('Escape');
     // Removing one terminal must keep the other branches connected.
@@ -67,7 +67,7 @@ function hasDiagonal(points){return points.slice(1).some((b,i)=>{const a=points[
     const context=await browser.newContext(devices['iPad Pro 11 landscape']),tablet=await context.newPage(),t=await setup(tablet),client=await context.newCDPSession(tablet);
     const touch=async(x,y)=>{const p=await t.screen(x*G,y*G);await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...p,id:1}]});await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});};
     await tablet.locator('#wireTool').tap();await touch(27,30);await touch(28,18);s=drawings(await t.save())[0];assert.equal(s.junctions.length,1);assert.equal(s.wires.length,3);
-    await tablet.locator('#diagonalTool').tap();await touch(11,41);await touch(18,46);s=drawings(await t.save())[0];assert.equal(s.wires.at(-1).routing,'octilinear');assert.ok(hasDiagonal(pathPoints(await t.wirePath(s.wires.at(-1).id))));await tablet.screenshot({path:'/tmp/Cabel-Studio-v1.26.0-branches-ipad.png'});
+    await tablet.locator('#diagonalTool').tap();await touch(11,41);await touch(18,46);s=drawings(await t.save())[0];assert.equal(s.wires.at(-1).routing,'octilinear');assert.ok(hasDiagonal(pathPoints(await t.wirePath(s.wires.at(-1).id))));await tablet.screenshot({path:'/tmp/Cabel-Studio-v1.27.0-branches-ipad.png'});
     assert.deepEqual(errors,[]);console.log('PASS native tablet touch branching and 45° routing without a keyboard');
   }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

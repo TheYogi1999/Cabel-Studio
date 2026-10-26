@@ -15,6 +15,11 @@
     {
       "url": "https://new.abb.com/low-voltage/products/motor-protection/Contactors-and-contactor-relays/af-contactor-range",
       "retrieved": false
+    },
+    {
+      "url": "https://library.e.abb.com/public/e1feaf53e4b99c8ac1257e36003719a4/Modular%20DIN%20Comps%20MCB%20RCB%20Meters%20Surge%209AKK106354A1400.pdf",
+      "retrieved": true,
+      "scope": "S201-C16 article number and rated current only; historical manufacturer catalogue, current availability and physical pinout unverified."
     }
   ],
   "families": [
@@ -275,19 +280,24 @@
           "model": "S201-C16",
           "name": "S201-C16 · 1P · 16 A",
           "symbol": "mcb-1p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS251001R0164",
           "verification": "not-verified",
           "attributes": {
             "poles": 1,
             "tripCurve": "C",
             "ratedCurrentA": 16,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ]
           },
           "pinNumbers": [
             "1",
             "2"
-          ]
+          ],
+          "value": "16 A"
         },
         {
           "id": "s201-c20",

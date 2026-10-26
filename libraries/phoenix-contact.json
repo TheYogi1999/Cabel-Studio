@@ -23,6 +23,11 @@
     {
       "url": "https://www.phoenixcontact.com/en-pc/products/relays-and-optocouplers",
       "retrieved": false
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-25-3031212",
+      "retrieved": true,
+      "scope": "ST 2,5 article number and nominal voltage/current only; physical pinout/accessories unverified."
     }
   ],
   "families": [
@@ -36,19 +41,24 @@
           "model": "ST 2,5",
           "name": "ST 2,5 · Feed-through",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031212",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 2.5,
             "terminalFunction": "Feed-through",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ]
           },
           "terminalType": "ST 2,5",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "800 V · 24 A"
         },
         {
           "id": "st-2-5-bu",

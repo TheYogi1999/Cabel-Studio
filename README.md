@@ -292,6 +292,7 @@ node tests/segment-selection-smoke.cjs
 node tests/library-types-smoke.cjs
 node tests/component-properties-smoke.cjs
 node tests/document-navigation-smoke.cjs
+node tests/cloud-local-smoke.cjs
 npm run test:cloud
 npm run test:firebase
 ```

@@ -55,7 +55,6 @@ Bundled license information:
 @firebase/util/dist/index.esm.js:
 @firebase/logger/dist/esm/index.esm.js:
 @firebase/database/dist/index.esm.js:
-@firebase/database/dist/index.esm.js:
   /**
    * @license
    * Copyright 2017 Google LLC

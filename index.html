@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.27.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.28.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,16 +59,16 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.27.0"></script>
+<script src="libraries/catalog.js?v=1.28.0"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.27.0"></script>
-<script src="scripts/red-pen.js?v=1.27.0"></script>
-<script src="scripts/connection-graph.js?v=1.27.0"></script>
-<script src="scripts/cables.js?v=1.27.0"></script>
-<script src="scripts/workspace-ui.js?v=1.27.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.28.0"></script>
+<script src="scripts/red-pen.js?v=1.28.0"></script>
+<script src="scripts/connection-graph.js?v=1.28.0"></script>
+<script src="scripts/cables.js?v=1.28.0"></script>
+<script src="scripts/workspace-ui.js?v=1.28.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.27.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.28.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -317,7 +317,7 @@
   el('text',{x:314,y:22,'font-size':12,'font-weight':'bold',fill:'#138b78'},title).textContent='A4';
   const style=document.createElement('style');style.textContent='.wire{stroke:#293f4c}.part-body{fill:#fff;stroke:#3c535f}.part-label{fill:#15252e}.part-value{fill:#586b74}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle;pointer-events:none}.symbol{stroke:#203844}.terminal{fill:#07977e;stroke:#fff}.newnav{position:absolute;z-index:2;top:44px;left:50%;transform:translateX(-50%);display:flex;gap:5px}.newnav button{background:#1b2934;border:1px solid #40515b;border-radius:6px;color:#e6eef1;padding:5px 9px;font-size:11px}.newnav button:hover{border-color:#62d6bd;color:#62d6bd}.newnav .add{color:#62d6bd}.simpleModal{display:none;position:fixed;inset:0;z-index:20;background:#071017bb;place-items:center;padding:20px}.simplePanel{width:min(900px,96vw);max-height:88vh;overflow:auto;background:#17232e;border:1px solid #40525d;border-radius:12px;padding:18px;box-shadow:0 20px 70px #0009}.simplePanel h2{font-size:16px;margin:0 0 5px}.simplePanel p{font-size:11px;color:#91a0ac;margin:0 0 14px}.simplePanel table{border-collapse:collapse;width:100%;font-size:11px;margin:0 0 14px}.simplePanel th,.simplePanel td{text-align:left;padding:7px;border-bottom:1px solid #354651}.simplePanel th{color:#aebbc2;background:#1c2a36}.simplePanel button{background:#243541;border:1px solid #40525d;border-radius:6px;padding:6px 9px;color:#e8eef2;font-size:11px;margin-right:4px}.simplePanel .close{float:right}.simplePanel .page{border:1px solid #354651;border-radius:8px;padding:10px;margin:8px 0}.simplePanel .page.current{border-color:#62d6bd}';document.head.append(style);
   const pages=[{id:crypto.randomUUID(),title:'Schematic',parts:model.parts,wires:model.wires}];let activeSheet=0;
-  const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Sheet '+sheetLabel(pages[activeSheet])+'/'+pageNumber(pages.length)+' · '+pages[activeSheet].title+' · A4 landscape · 4 mm grid';document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title+' · A4 · 4 mm grid';document.querySelector('#a4Number').textContent=sheetLabel(pages[activeSheet])+' / '+pageNumber(pages.length);document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Sheets')};
+  const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Sheet '+sheetLabel(pages[activeSheet])+'/'+pageNumber(pages.length)+' · '+pages[activeSheet].title+' · '+(altGrid?'2 mm grid':'4 mm grid');document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title;document.querySelector('#a4Number').textContent=sheetLabel(pages[activeSheet])+' / '+pageNumber(pages.length);document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Sheets')};
   const baseSnap=snap;snap=function(v){const g=gridSpacing();return Math.round(v/g)*g};
   const baseDraw=drawPart;drawPart=function(p){baseDraw(p);if(p.targetSheetId){const target=pages.findIndex(s=>(s.id||s.generatedId)===p.targetSheetId),link=el('text',{x:0,y:86,fill:'#138b78','font-size':10,'text-anchor':'middle',class:'page-reference',style:'cursor:pointer'},partsG.lastElementChild);link.textContent=target<0?'Target missing':referenceAddress(pages[target],p.targetPartId?pages[target].parts.find(q=>q.id===p.targetPartId):{x:22,y:22});link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();if(e.ctrlKey||e.metaKey)showDeviceInTree(p);else followPageReference(p)})}if(['text','reference','destination'].includes(p.type))return;const t=el('text',{x:0,y:70,class:'part-aks'},partsG.lastElementChild);t.textContent='='+(p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)};
   const baseAdd=addPart;addPart=function(type,position){baseAdd(type,position);const p=model.parts[model.parts.length-1],prefix=TYPES[type].label,used=new Set(pages.flatMap(s=>s.parts).filter(q=>q!==p).map(q=>q.deviceCode));let n=1;while(used.has(prefix+n))n++;const context=effectiveAksScope(p);p.functionCode=context.functionCode||'A1';p.locationCode=context.locationCode||'P1';p.deviceCode=prefix+n;render()};
@@ -327,7 +327,7 @@
   function addSheet(){const name=prompt('Name of the new A4 sheet','Sheet '+pageNumber(pages.length+1));if(name===null)return;pages.push({title:name.trim()||'Sheet '+pageNumber(pages.length+1),parts:[],wires:[]});setSheet(pages.length-1);closePanel()}
   function showPanel(html){document.querySelector('#simpleContent').innerHTML=html;modal.style.display='grid'}
   const safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function drawPages(){let h='<h2>Sheet overview</h2><p>A4 landscape · 4 mm grid</p>';pages.forEach((s,i)=>{h+='<div class="page '+(i===activeSheet?'current':'')+'"><b>'+sheetLabel(s)+' · '+safe(s.title)+'</b><p>'+s.parts.length+' Devices · '+s.wires.length+' connections</p><button data-go="'+i+'">Open</button><button data-rename="'+i+'">Rename</button>'+(pages.length>1?'<button data-drop="'+i+'">Delete</button>':'')+'</div>'});h+='<button id="panelAdd">＋ New sheet</button>';showPanel(h);document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{setSheet(+b.dataset.go);closePanel()});document.querySelectorAll('[data-rename]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rename,n=prompt('Sheet name',pages[i].title);if(n!==null){pages[i].title=n.trim()||pages[i].title;drawPages();render()}});document.querySelectorAll('[data-drop]').forEach(b=>b.onclick=()=>{const i=+b.dataset.drop;if(confirm('Delete this sheet?')){pages.splice(i,1);setSheet(Math.max(0,Math.min(activeSheet,pages.length-1)));drawPages()}});document.querySelector('#panelAdd').onclick=addSheet}
+  function drawPages(){let h='<h2>Sheet overview</h2><p>Drawing sheets and generated lists</p>';pages.forEach((s,i)=>{h+='<div class="page '+(i===activeSheet?'current':'')+'"><b>'+sheetLabel(s)+' · '+safe(s.title)+'</b><p>'+s.parts.length+' Devices · '+s.wires.length+' connections</p><button data-go="'+i+'">Open</button><button data-rename="'+i+'">Rename</button>'+(pages.length>1?'<button data-drop="'+i+'">Delete</button>':'')+'</div>'});h+='<button id="panelAdd">＋ New sheet</button>';showPanel(h);document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{setSheet(+b.dataset.go);closePanel()});document.querySelectorAll('[data-rename]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rename,n=prompt('Sheet name',pages[i].title);if(n!==null){pages[i].title=n.trim()||pages[i].title;drawPages();render()}});document.querySelectorAll('[data-drop]').forEach(b=>b.onclick=()=>{const i=+b.dataset.drop;if(confirm('Delete this sheet?')){pages.splice(i,1);setSheet(Math.max(0,Math.min(activeSheet,pages.length-1)));drawPages()}});document.querySelector('#panelAdd').onclick=addSheet}
   function aks(p){return '='+ (p.functionCode||'A1')+'+'+(p.locationCode||'P1')+'−'+(p.deviceCode||p.label)}
   function endPoint(s,ref,exclude=null){const loose=looseEnd(ref,s);if(loose)return loose.formerRef?'Open end (formerly '+loose.formerLabel+')':'Open end';if(connectionGraph?.nodeId(ref))return connectionGraph.terminals(s,ref,exclude).map(key=>endPoint(s,key)).join(', ')||'Junction';const z=ref.split(':'),p=s.parts.find(x=>x.id===z[0]);if(!p)return'—';const terminal=p.type==='connector'?p:p.type==='terminal-pin'?deviceEntries().find(e=>e.p.id===p.masterId&&e.p.type==='connector')?.p:null;return aks(p)+' · Terminal'+(terminal?' '+terminalOrdinal(terminal):'')+' :'+pinNumber(p,+z[1])}
   function dataLists(){const devices=[],bom={},cables=[];let wi=0;pages.forEach((s,si)=>{s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).forEach(p=>devices.push({sheet:sheetNumber(s),p}));s.parts.filter(p=>!['text','reference','destination'].includes(p.type)).filter(p=>!p.catalogAssemblyPart).forEach(p=>{const k=p.type+'|'+deviceTypeOf(p)+'|'+electricalValueOf(p)+'|'+(p.terminalType||'')+'|'+(p.manufacturerNumber||'')+'|'+(p.sapNumber||'');if(!bom[k])bom[k]={type:deviceTypeOf(p),value:electricalValueOf(p),n:0,ids:[]};bom[k].n++;bom[k].ids.push(aks(p))});s.wires.forEach(w=>cables.push({id:'W'+(++wi),from:endPoint(s,w.a,w.id),to:endPoint(s,w.b,w.id),sheet:sheetNumber(s)}))});return{devices,bom:Object.values(bom),cables}}
@@ -422,7 +422,7 @@
     deviceListGroup.style.display=generated?'':'none';
     if(generated)drawGeneratedPage(pages[activeSheet]);
     const s=pages[activeSheet];
-    document.querySelector('#hud').textContent='Sheet '+sheetLabel(pages[activeSheet])+'/'+pageNumber(pages.length)+' · '+s.title+' · A4 landscape · 4 mm grid';
+    document.querySelector('#hud').textContent='Sheet '+sheetLabel(pages[activeSheet])+'/'+pageNumber(pages.length)+' · '+s.title+' · '+(altGrid?'2 mm grid':'4 mm grid');
     document.querySelector('#a4Sheet').textContent=s.title||'Schematic';
     document.querySelector('#a4Number').textContent=sheetLabel(pages[activeSheet])+' / '+pageNumber(pages.length);
     if(sheetPanel){sheetPanel.querySelectorAll('.sheetItem').forEach((b,i)=>{const page=pages[i];if(page?.kind===DEVICE_LIST_KIND)b.innerHTML=sheetButtonContent(page,i)})}
@@ -741,9 +741,9 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   }
   let sidebarMode='sheets',treeFocusId=null;
   const treeOpen=new Map();
-  function showDeviceInTree(p){
+  function showDeviceInTree(p,preserveSelection=false){
     if(!deviceEntries().some(e=>e.p===p)){toast('This object is not a device');return}
-    treeFocusId=p.id;sidebarMode='devices';drag=null;selected={kind:'part',id:p.id};render();
+    treeFocusId=p.id;sidebarMode='devices';drag=null;if(!preserveSelection)selected={kind:'part',id:p.id};render();
     const node=sheetPanel.querySelector('[data-device-id="'+CSS.escape(p.id)+'"]');
     if(node){let current=node;while(current&&current!==sheetPanel){if(current.tagName==='DETAILS'){current.open=true;treeOpen.set(current.dataset.treeKey,true)}current=current.parentElement}node.querySelector('.device-jump')?.focus({preventScroll:true});node.scrollIntoView({block:'nearest'})}
   }
@@ -835,7 +835,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     const snapped=first<=last?Math.max(first,Math.min(last,snap(value))):Math.max(low,Math.min(high,value));
     return horizontally?{x:snapped,y:segment.y1,angle:0}:{x:segment.x1,y:snapped,angle:-90};
   }
-  function showPinInTree(p,i){showDeviceInTree(p);const pin=sheetPanel.querySelector('[data-pin-part="'+CSS.escape(p.id)+'"][data-pin-index="'+i+'"]');if(pin){pin.focus({preventScroll:true});pin.scrollIntoView({block:'nearest'})}}
+  function showPinInTree(p,i,preserveSelection=false){showDeviceInTree(p,preserveSelection);const pin=sheetPanel.querySelector('[data-pin-part="'+CSS.escape(p.id)+'"][data-pin-index="'+i+'"]');if(pin){pin.focus({preventScroll:true});pin.scrollIntoView({block:'nearest'})}}
   function jumpToPin(id,i){const slave=pinSlave(id,i);if(slave){jumpToDevice(slave.id);return}jumpToDevice(id);const terminal=partsG.querySelector('[data-id="'+CSS.escape(id)+'"] [data-term="'+i+'"]');terminal?.classList.add('focused-pin');terminal?.focus({preventScroll:true})}
   function generatedText(parent,x,y,value,size=11,weight='normal',fill='#263943'){
     const t=el('text',{x,y,'font-family':'Arial,sans-serif','font-size':size,'font-weight':weight,fill},parent);t.textContent=value;return t;
@@ -853,7 +853,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       generatedText(g,65,205,'SCHEMATIC DOCUMENTATION',12,'bold','#73838b');
       generatedText(g,65,260,model.title,30,'bold');
       el('path',{d:'M65 290 H1063',stroke:'#138b78','stroke-width':3},g);
-      const fields=[['Document number',info.documentNumber||'—'],['Revision',info.revision||'A'],['Drawn by',info.issuedName||info.author||'—'],['Date',info.issuedDate||info.date||'—'],['Page count',pages.length+' pages'],['Description',info.description||'—']];
+      const fields=[['Document number',info.documentNumber||'—'],['Revision',info.revision||'A'],['Drawn by',info.issuedName||info.author||'—'],['Page count',pages.length+' pages'],['Description',info.description||'—']];
       fields.forEach(([key,value],i)=>{generatedText(g,65,340+i*44,key,10,'bold','#73838b');generatedText(g,260,340+i*44,value,14)});
       const edit=generatedText(g,65,655,'Edit project information',11,'bold','#138b78');edit.classList.add('screen-only');edit.style.cursor='pointer';edit.addEventListener('pointerdown',e=>e.stopPropagation());edit.addEventListener('click',editProjectInfo);
     }else if(sheet.kind==='toc'){
@@ -893,14 +893,16 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   // A shared drawing frame for every document page.
   title.id='drawingTitleBlock';title.setAttribute('transform','translate(22 710)');title.replaceChildren();
   el('rect',{x:0,y:0,width:1084,height:66,fill:'none',stroke:'#60737c','stroke-width':1},title);
-  el('path',{d:'M0 27 H1084 M0 61 H1084 M380 0 V27 M615 0 V27 M900 0 V27 M490 27 V61 M638.5 27 V61 M787 27 V61 M935.5 27 V61',stroke:'#60737c',fill:'none'},title);
+  el('path',{d:'M0 27 H1084 M0 53 H1084 M380 0 V27 M615 0 V27 M900 0 V27 M490 27 V53 M638.5 27 V53 M787 27 V53 M935.5 27 V53 M900 53 V66',stroke:'#60737c',fill:'none'},title);
   generatedText(title,8,10,'PROJECT',6,'bold','#73838b');generatedText(title,8,22,'',12,'bold').id='a4Project';
   generatedText(title,388,10,'DOCUMENT / REVISION',6,'bold','#73838b');generatedText(title,388,22,'',9).id='a4Document';
   generatedText(title,623,10,'COMPANY',6,'bold','#73838b');generatedText(title,623,22,'',9).id='a4Company';
-  generatedText(title,908,10,'SHEET / TOTAL',6,'bold','#73838b');generatedText(title,908,23,'',11,'bold').id='a4Number';
-  generatedText(title,8,37,'SHEET TITLE',6,'bold','#73838b');generatedText(title,8,54,'',13,'bold').id='a4Sheet';
-  approvalStages.forEach(([key,label],i)=>{const x=498+i*148.5,g=el('g',{'data-approval-stage':key},title);generatedText(g,x,36,label,6,'bold','#73838b');generatedText(g,x,47,'',8).id='a4-'+key+'-name';generatedText(g,x,58,'',7).id='a4-'+key+'-date'});
-  generatedText(title,8,65,'A4 landscape · 4 mm grid',5);generatedText(title,800,65,'A4 · 297 × 210 mm · Version '+APP_VERSION,5);
+  generatedText(title,908,18,'Leitwerk Version '+APP_VERSION,9,'bold').id='a4Version';
+  generatedText(title,908,62,'SHEET / TOTAL',6,'bold','#73838b');generatedText(title,1000,62,'',9,'bold').id='a4Number';
+  generatedText(title,8,62,'',8).id='a4Previous';generatedText(title,160,62,'',8).id='a4Next';
+  generatedText(title,8,37,'SHEET TITLE',6,'bold','#73838b');generatedText(title,8,48,'',12,'bold').id='a4Sheet';
+  approvalStages.forEach(([key,label],i)=>{const x=498+i*148.5,g=el('g',{'data-approval-stage':key},title);generatedText(g,x,34,label,6,'bold','#73838b');generatedText(g,x,43,'',8).id='a4-'+key+'-name';generatedText(g,x,51,'',7).id='a4-'+key+'-date'});
+
   const zones=el('g',{id:'frameZones'},pageContent);
   for(let i=0;i<8;i++)generatedText(zones,22+(i+.5)*1084/8,17,String(i+1),7,'normal','#73838b');
   for(let i=0;i<5;i++)generatedText(zones,10,22+(i+.5)*688/5,String.fromCharCode(65+i),7,'normal','#73838b');
@@ -1356,7 +1358,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     if(e.target.closest('.aks-field-handle'))return;
     const root=e.target.closest('#parts > g[data-id]'),end=e.target.closest('[data-loose-end]'),junction=e.target.closest('[data-junction-id]'),wire=e.target.closest('path[data-id],[data-wire-label]'),point=toWorld(e),count=selectedParts.size+selectedWires.size+selectedLooseEnds.size+selectedJunctions.size;
     if(wire?.matches('path[data-id]')&&!junction&&!end&&!e.altKey&&(!(count>1&&selectedWires.has(wire.dataset.id))||e.ctrlKey||e.metaKey)){const w=findWire(wire.dataset.id);if(w){selectWireSegment(w,e);return;}}
-    if(e.ctrlKey||e.metaKey){if(e.altKey)return;const w=wire&&findWire(wire.dataset.id||wire.dataset.wireLabel);if(w&&model.cables.some(c=>c.id===w.cableId&&c.cores.some(core=>core.id===w.coreId)))return;const kind=root?'part':end?'loose-end':junction?'junction':w?'wire':null,id=root?.dataset.id||end?.dataset.looseEnd||junction?.dataset.junctionId||w?.id;if(kind){e.preventDefault();e.stopImmediatePropagation();toggleSelection(kind,id);}return;}
+    if(e.ctrlKey||e.metaKey){if(e.altKey)return;const w=wire&&findWire(wire.dataset.id||wire.dataset.wireLabel);if(w&&model.cables.some(c=>c.id===w.cableId&&c.cores.some(core=>core.id===w.coreId)))return;const kind=root?'part':end?'loose-end':junction?'junction':w?'wire':null,id=root?.dataset.id||end?.dataset.looseEnd||junction?.dataset.junctionId||w?.id;if(kind){e.preventDefault();e.stopImmediatePropagation();toggleSelection(kind,id);if(root){const part=model.parts.find(p=>p.id===id);if(deviceEntries().some(entry=>entry.p===part)){const pin=e.target.closest('.terminal[data-term]');if(pin)showPinInTree(part,Number(pin.dataset.term),true);else showDeviceInTree(part,true);}}}return;}
     if(junction){const id=junction.dataset.junctionId;if(!selectedJunctions.has(id)){clearAreaSelection();selectedJunctions.add(id);}selected={kind:'junction',id};startSelectionDrag(e);return;}
     if(end){const id=end.dataset.looseEnd;if(!selectedLooseEnds.has(id)){clearAreaSelection();selectedLooseEnds.add(id);}selected={kind:'loose-end',id};startSelectionDrag(e);return;}
     if(root){selectedSegments.clear();if(count>1&&selectedParts.has(root.dataset.id)){startSelectionDrag(e);return;}selectedParts.clear();selectedWires.clear();selectedLooseEnds.clear();selectedJunctions.clear();return;}
@@ -1562,6 +1564,15 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const base=['.part-aks','.part-label','.part-value'].flatMap(selector=>Array.from(caption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent).map(node=>({p:top,node})),texts=[...base,...refs],box=geometry.getBBox(),matrix=geometry.transform.baseVal.consolidate().matrix;
       const y=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
       texts.forEach(({p,node},i)=>{node.setAttribute('x',top.x-p.x);node.setAttribute('y',top.y-p.y+y-4-(texts.length-i-1)*9);if(node.classList.contains('terminal-cross-reference'))node.dataset.stackReferenceTop=top.id;});
+      // References moved to the stack header no longer occupy a text row on
+      // their original terminal. Keep each lower type caption at its own symbol.
+      for(const p of parts.filter(p=>p!==top)){
+        const local=partsG.querySelector('[data-id="'+CSS.escape(p.id)+'"]'),localCaption=local?.querySelector('.part-caption'),localGeometry=local?.querySelector('.part-geometry');if(!localCaption||!localGeometry)continue;
+        const box=localGeometry.getBBox(),matrix=localGeometry.transform.baseVal.consolidate().matrix,localTop=Math.min(...[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix).y));
+        const localTexts=['.part-aks','.part-label','.part-value','.page-reference'].flatMap(selector=>Array.from(localCaption.querySelectorAll(selector))).filter(n=>n.style.display!=='none'&&n.textContent&&n.dataset.stackReferenceTop!==top.id);
+        localTexts.forEach((node,i)=>{node.setAttribute('x',0);node.setAttribute('y',localTop-4-(localTexts.length-i-1)*9)});
+      }
+
     }
   }
   const motorPins={'motor-ac-1p':['L','N','PE'],'motor-ac-3p':['U1','V1','W1','PE'],'motor-ac-6t':['U1','V1','W1','U2','V2','W2','PE']};
@@ -1809,9 +1820,14 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     cancelPointer:(checkpoint,keepTool=false)=>{connectionGraph.cancel();finishAksFieldDrag(true);cancelAksAreaDrawing();drag=null;segmentDrag=null;wireLabelDrag=null;clearAreaSelection();if(checkpoint&&historySnapshot()!==checkpoint.document){restoreHistory(checkpoint.document);undoStack.splice(0,undoStack.length,...checkpoint.undo);redoStack.splice(0,redoStack.length,...checkpoint.redo);appClipboard=checkpoint.clipboard}if(keepTool&&checkpoint){mode=checkpoint.mode;aksAreaDrawing=checkpoint.fieldDrawing;wireStart=checkpoint.wireStart;wirePoints=checkpoint.wirePoints;preview.setAttribute('d',checkpoint.preview||'');preview.style.display=wireStart?'block':'none'}if(checkpoint?.selection){selected=checkpoint.selection.primary;checkpoint.selection.parts.forEach(id=>selectedParts.add(id));checkpoint.selection.wires.forEach(id=>selectedWires.add(id));checkpoint.selection.ends.forEach(id=>selectedLooseEnds.add(id));checkpoint.selection.junctions.forEach(id=>selectedJunctions.add(id));checkpoint.selection.segments.forEach(([id,indices])=>selectedSegments.set(id,new Set(indices)));}render()},
     status:message=>document.querySelector('#statusText').textContent=message
   });
-  const renderBeforeWorkspace=render;render=function(){if(!wireStart)openEndDrafts.clear();pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;connectionGraph.prune();for(const sheet of drawingPages())if(sheet.looseEnds)sheet.looseEnds=sheet.looseEnds.filter(n=>sheet.wires.some(w=>[w.a,w.b].includes('~'+n.id+':0')));cableSystem.sync();renderBeforeWorkspace();layoutTerminalStackReferences();connectionGraph.draw();drawConnectionMedia();cableSystem.decorate();redPen.render();workspaceUI.refresh()};
-  const applyBeforeWorkspace=applyView;applyView=function(){applyBeforeWorkspace();redPen.render();workspaceUI.refresh()};
-  const showDeviceBeforeWorkspace=showDeviceInTree;showDeviceInTree=function(p){workspaceUI.openOverview();showDeviceBeforeWorkspace(p)};
+  function updateDocumentNavigation(){
+    const current=pages[activeSheet];fitTitleText(document.querySelector('#a4Number'),sheetLabel(current)+' / '+pageNumber(pages.length),76);
+    document.querySelector('#a4Previous').textContent='PREVIOUS '+(activeSheet>0?sheetLabel(pages[activeSheet-1]):'—');
+    document.querySelector('#a4Next').textContent='NEXT '+(activeSheet+1<pages.length?sheetLabel(pages[activeSheet+1]):'—');
+  }
+  const renderBeforeWorkspace=render;render=function(){if(!wireStart)openEndDrafts.clear();pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;connectionGraph.prune();for(const sheet of drawingPages())if(sheet.looseEnds)sheet.looseEnds=sheet.looseEnds.filter(n=>sheet.wires.some(w=>[w.a,w.b].includes('~'+n.id+':0')));cableSystem.sync();renderBeforeWorkspace();layoutTerminalStackReferences();connectionGraph.draw();drawConnectionMedia();cableSystem.decorate();redPen.render();workspaceUI.refresh();updateDocumentNavigation()};
+  const applyBeforeWorkspace=applyView;applyView=function(){applyBeforeWorkspace();redPen.render();workspaceUI.refresh();updateDocumentNavigation()};
+  const showDeviceBeforeWorkspace=showDeviceInTree;showDeviceInTree=function(p,preserveSelection=false){workspaceUI.openOverview();showDeviceBeforeWorkspace(p,preserveSelection)};
   render();applyView();
 })();
 </script>

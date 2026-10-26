@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.27.0**, shown beside the application name and in the browser title.
+A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.28.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -49,7 +49,7 @@ With a finger or Pencil, drag components from the generic/product libraries or d
 - Select **Connect**, click/tap a terminal or existing connection, choose intermediate grid points, and finish at another terminal or connection. The same button changes to **Wire** at normal terminals, **Fiber** at orange optical ports or **Bridge** at brown bridge ports/existing bridges. Bridge ports connect only to bridge ports in the same terminal strip; ordinary ports create conductors. Routes are orthogonal by default. Hold **Shift** while choosing a point, or enable **45°** beside Connect on a tablet, to draw diagonally with an axis-aligned remainder when needed to reach the exact target. Moving a component stretches its attached sections and adjusts adjacent bends while leaving the rest of the route in place. Drag wire sections perpendicular to their direction, including diagonal sections.
 - Right-click a symbol, device-tree entry or terminal-list row to edit its properties. Device Designations, values, AKS, pins and references each have a visibility switch beside the corresponding field. Device Designation and displayed label use the same value. Text remains upright and unmirrored above the symbol, ordered AKS → Device Designation → device type/electrical value.
 - Selected objects and active buttons are highlighted in pink. Press **Ctrl/⌘+A** to select all placed objects and visible connections on the current drawing sheet, or drag a rectangle over multiple objects to select them. Move, edit common properties, or delete the selection together. Deleting electrical devices from the drawing marks them **unplaced** in yellow in the device tree; placed devices appear in light blue. Click or drag a tree entry back onto a drawing to place it again. The **×** button in the device tree permanently deletes a device and its descendants across all drawing sheets after confirmation, clearing stale references and retaining attached connections as open ends. Undo restores the whole operation; deleting from the drawing still only unplaces a device.
-- Switch the right sidebar between **Sheets**, **Devices** and **Cables**. AKS fields use dots for nested folders, for example `+TU001.01`. Ctrl/⌘-click symbols in Select to add or remove them individually. Ctrl+Alt-click (Command+Option-click) a symbol or terminal reveals its device-tree position.
+- Switch the right sidebar between **Sheets**, **Devices** and **Cables**. AKS fields use dots for nested folders, for example `+TU001.01`. Ctrl/⌘-click symbols in Select to add or remove them individually **and** reveal the clicked device/pin in Devices. Revealing does not replace the drawing selection. Ctrl+Alt-click (Command+Option-click) remains a reveal-only shortcut.
 - Edit manufacturer numbers, SAP numbers, pin names and master/slave relationships in properties. Device lists include article numbers and links back to symbols. Slaves can be placed independently.
 
 ## Component properties and device overview
@@ -156,11 +156,11 @@ Phoenix **ST 2,5-MT** and **ST 4-MT** disconnect terminals show an open knife-di
 
 Relays provide a vertical complete symbol, a rectangular coil and independently placeable contact slaves. Generic relays have three changeover contacts; manufacturer family templates can have one, two or three. Links on the complete symbol open/place the sub-symbols, and sub-symbol references return to the complete symbol. All share its equipment tag.
 
-Placed separate terminal pins leave the main symbol's terminals available. Reciprocal live references use **/0003.A3** notation throughout the application. Source and destination arrows can be paired in properties. Click a reference or press **J** to jump to its target. Stacked terminals of the same strip suppress repeated AKS/equipment tags; the terminal type repeats at the top of a stack and at each type change. References to separately placed pins on lower terminals move above the first terminal in the stack, retain their pin identifiers and remain clickable.
+Placed separate terminal pins leave the main symbol's terminals available. Reciprocal live references use **/0003.A3** notation throughout the application. Source and destination arrows can be paired in properties. Click a reference or press **J** to jump to its target. Stacked terminals of the same strip suppress repeated AKS/equipment tags; the terminal type repeats at the top of a stack and at each type change. References to separately placed pins on lower terminals move above the first terminal in the stack, retain their pin identifiers and remain clickable. Only the first terminal's own text block moves up to make room for these collected links. Type captions on lower terminals stay at their original symbols, including mixed-type stacks and multiple separately placed pins.
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.27.0. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.28.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -174,6 +174,23 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 | [`libraries/eao.json`](libraries/eao.json) | 33: Series 04/704, 14, 45, 61 and 84 pushbutton, illuminated pushbutton, indicator and applicable selector/keylock schematic templates |
 
 **These are reference libraries, not verified complete manufacturer catalogues.** Most original references could not be verified when manufacturer websites were blocked by the cloud outbound policy. The EK1501 optical interface was subsequently checked against the linked manufacturer documentation; this does not verify the rest of its physical pinout or the other references. EAO family functions and the 704/Series 04 naming were researched separately; the schematic templates still have unverified physical pinouts and assembly configurations. Source URLs, incomplete coverage and verification status are recorded in the files and shown in the library UI. Variant availability, coil suffixes, ratings, physical pin diagrams and accessory compatibility require manufacturer confirmation. Power-supply entries now include family-specific functional templates: duplicate DC outputs on UNO, DC OK contacts on TRIO, and additional configurable signal IN/OUT ports on QUINT4. These do not claim verified physical terminal designations for every variant. Unknown ordering numbers remain blank. Manufacturer numbers are supplied for the user-specified Finder article, Phoenix ST 2,5 (3031212) and ABB S201-C16 (2CDS251001R0164). The latter two have a narrowly scoped manufacturer-source check recorded in their library data; other specifications and physical pinouts remain unverified. SAP numbers remain project-specific.
+
+Twelve further Phoenix Contact article numbers were added from manufacturer sources in v1.28.0. Each record includes its `manufacturerNumberSource`, the documented fields and a narrowly scoped source note; physical pinout, current availability and accessory compatibility remain unverified. Family templates without an unambiguous complete ordering code retain blank manufacturer numbers.
+
+| Reference | Manufacturer number |
+| --- | --- |
+| ST 2,5 BU | 3031225 |
+| ST 2,5 PE | 3031238 |
+| ST 4 | 3031364 |
+| ST 4 BU | 3031377 |
+| ST 4 PE | 3031380 |
+| ST 6 | 3031487 |
+| ST 6 BU | 3031490 |
+| ST 2,5-MT | 3036343 |
+| ST 4-MT | 3038875 |
+| FBS 2-5 | 3030161 |
+| UNO-PS/1AC/24DC/60W | 2902992 |
+| UNO-PS/1AC/24DC/100W | 2902993 |
 
 Choose **Products**, optionally filter by manufacturer, then expand a manufacturer/family or search by manufacturer, model or article number. Click or drag a product onto the drawing. Placed entries retain manufacturer, model, attributes, source URLs and verification status in the project. Phoenix terminals are added to the selected terminal/strip's master; otherwise a new unplaced strip master is created. Finder family templates create the appropriate number of contact slaves. Relay sub-symbols appear in the device tree but do not duplicate the purchased assembly in the bill of materials.
 
@@ -194,6 +211,8 @@ Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape PDF, independently of screen zoom/pan, and restores the current view afterward.
 
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.28.0** sits beside **Company**. **SHEET / TOTAL** is at the bottom right: the left value is the assigned page number and the right value is the actual number of document pages, including generated lists. With numbering gaps, `0010 / 0008` therefore means sheet 0010 in an eight-page document. **PREVIOUS** and **NEXT** show the neighbouring page identifiers in document order, with `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
 Drawing sheets may also contain `redlines: [{id, points: [{x,y}], layer?}]`, with `layer` set to `red`, `yellow`, `blue` or `green`. Missing layers retain the original red-pen appearance. These freehand points use the same paper coordinates as the schematic, independently of screen zoom. Old projects without `redlines` need no migration. Annotations survive JSON roundtrips, sheet changes and undo/redo, and appear in their layer colours/transparency in PDF exports without selection boxes or handles. They do not add entries to device, terminal or connection lists.
@@ -213,7 +232,7 @@ Drawing sheets may also contain `redlines: [{id, points: [{x,y}], layer?}]`, wit
 | Hold Shift while connecting | Draw the next wire/fiber/bridge leg at 45° |
 | Ctrl/⌘+A | Select placed symbols, connections, junctions and open ends on the current drawing sheet |
 | Click a connection in Select | Select one straight line segment |
-| Ctrl/⌘+click in Select | Add/remove individual symbols, junctions, open ends or line segments |
+| Ctrl/⌘+click in Select | Add/remove symbols, junctions, open ends or line segments; clicking a symbol/pin also reveals it in Devices |
 | Double-click / double-tap a connection in Select | Select the whole logical connection, leaving other branches separate |
 | Ctrl+Alt+click / Command+Option+click | Reveal a symbol/terminal in Devices, or an assigned cable route in Cables |
 | Ctrl/⌘+click a cable caption | Reveal the assigned conductor/fiber in Cables |
@@ -263,6 +282,7 @@ node tests/selection-continuation-smoke.cjs
 node tests/segment-selection-smoke.cjs
 node tests/library-types-smoke.cjs
 node tests/component-properties-smoke.cjs
+node tests/document-navigation-smoke.cjs
 ```
 
 | Check | Main coverage |
@@ -280,10 +300,11 @@ node tests/component-properties-smoke.cjs
 | `review-tools-smoke.cjs` | Highlighter layers, visibility, sheet numbering/references, Field deletion, free-end double-click/tap creation and movement, history and PDF |
 | `selection-continuation-smoke.cjs` | Ctrl selection, T-node/group movement, continuing existing connection IDs, compatible automatic port attachment, cancelled drops, history, JSON/PDF and touch/Pencil input |
 | `segment-selection-smoke.cjs` | Individual/box-selected legs, Ctrl toggling, multi-leg movement, endpoints, whole-run double-click/double-tap, branch isolation, cancellation, history and PDF restoration |
+| `document-navigation-smoke.cjs` | Combined Ctrl/Cmd selection and device/pin reveal, numbering gaps and physical page totals, previous/next boundaries, title block/cover cleanup, sourced article numbers, native Ctrl+Pencil and JSON/PDF |
 | `component-properties-smoke.cjs` | Device Designation/type/value separation, semicolon pins, terminal-only fields, material SAP resets, device-tree labels/colours, history, JSON/PDF and tablet input |
 | `library-types-smoke.cjs` | Compact library filtering/state, EAO symbol variants, transactional terminal-type changes, wired/slave pin guards, metadata, keyboard/tablet input, history and PDF |
 
-Chromium defaults to `/usr/bin/chromium`. Most older checks support `CHROMIUM_PATH` to select another Chromium executable; `fiber-open-ends`, `review-tools`, `selection-continuation`, `segment-selection`, `library-types` and `component-properties` currently use the default path directly. The workspace-view check also accepts `CHROMIUM_PATH` pointing at Brave and `PLAYWRIGHT_HEADED=1` when a display server is available.
+Chromium defaults to `/usr/bin/chromium`. Most older checks support `CHROMIUM_PATH` to select another Chromium executable; `fiber-open-ends`, `review-tools`, `selection-continuation`, `segment-selection`, `library-types`, `component-properties` and `document-navigation` currently use the default path directly. The workspace-view check also accepts `CHROMIUM_PATH` pointing at Brave and `PLAYWRIGHT_HEADED=1` when a display server is available.
 
 `PLAYWRIGHT_BROWSER=webkit node tests/tablet-input-smoke.cjs` uses an installed Playwright WebKit engine for that check. Chromium iPad emulation, native browser touch/pen events and synthetic original-target Touch Events help cover redraws and gesture cancellation; they do not replace testing on a physical iPad with Safari and Apple Pencil.
 

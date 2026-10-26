@@ -28,6 +28,66 @@
       "url": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-25-3031212",
       "retrieved": true,
       "scope": "ST 2,5 article number and nominal voltage/current only; physical pinout/accessories unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-gb/products/feed-through-terminal-block-st-25-bu-3031225",
+      "retrieved": true,
+      "scope": "ST 2,5 BU article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/pl-pl/produkty/zlacze-przewodu-ochronnego-st-25-pe-3031238",
+      "retrieved": true,
+      "scope": "ST 2,5 PE article number only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-4-3031364",
+      "retrieved": true,
+      "scope": "ST 4 article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/de-de/produkte/durchgangsklemme-st-4-bu-3031377",
+      "retrieved": true,
+      "scope": "ST 4 BU article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-fr/products/spring-cage-ground-terminal-block-st-4-pe-3031380",
+      "retrieved": true,
+      "scope": "ST 4 PE article number only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-6-3031487?type=pdf",
+      "retrieved": true,
+      "scope": "ST 6 article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-6-bu-3031490",
+      "retrieved": true,
+      "scope": "ST 6 BU article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-dk/products/knife-disconnect-terminal-block-st-25-mt-3036343",
+      "retrieved": true,
+      "scope": "ST 2,5-MT article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/disconnect-terminal-block-st-4-mt-3038875",
+      "retrieved": true,
+      "scope": "ST 4-MT article number and nominal voltage/current only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/jumper-fbs-2-5-3030161",
+      "retrieved": true,
+      "scope": "FBS 2-5 article number only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://assets.phoenixcontact.com/file/011d22ad-dbbb-4516-9d95-fab673e60b1c/media/original?PxCTR-Fiyat+Listesi-Ocak2026.v0.pdf=",
+      "retrieved": true,
+      "scope": "UNO-PS/1AC/24DC/60W article number only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://assets.phoenixcontact.com/file/c25a8041-71b0-4c58-90bf-2e26942357de/media/original?Power_Supplies_and_UPS-Lit52004219-13.pdf=",
+      "retrieved": true,
+      "scope": "UNO-PS/1AC/24DC/100W article number only; physical pinout, current availability and accessory compatibility unverified."
     }
   ],
   "families": [
@@ -65,32 +125,42 @@
           "model": "ST 2,5 BU",
           "name": "ST 2,5 BU · Neutral",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031225",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 2.5,
             "terminalFunction": "Neutral",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-gb/products/feed-through-terminal-block-st-25-bu-3031225"
           },
           "terminalType": "ST 2,5 BU",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "800 V · 24 A"
         },
         {
           "id": "st-2-5-pe",
           "model": "ST 2,5 PE",
           "name": "ST 2,5 PE · Protective earth",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031238",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 2.5,
             "terminalFunction": "Protective earth",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/pl-pl/produkty/zlacze-przewodu-ochronnego-st-25-pe-3031238"
           },
           "terminalType": "ST 2,5 PE",
           "pinNumbers": [
@@ -103,51 +173,67 @@
           "model": "ST 4",
           "name": "ST 4 · Feed-through",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031364",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 4.0,
             "terminalFunction": "Feed-through",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-4-3031364"
           },
           "terminalType": "ST 4",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "800 V · 32 A"
         },
         {
           "id": "st-4-bu",
           "model": "ST 4 BU",
           "name": "ST 4 BU · Neutral",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031377",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 4.0,
             "terminalFunction": "Neutral",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/de-de/produkte/durchgangsklemme-st-4-bu-3031377"
           },
           "terminalType": "ST 4 BU",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "800 V · 32 A"
         },
         {
           "id": "st-4-pe",
           "model": "ST 4 PE",
           "name": "ST 4 PE · Protective earth",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031380",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 4.0,
             "terminalFunction": "Protective earth",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-fr/products/spring-cage-ground-terminal-block-st-4-pe-3031380"
           },
           "terminalType": "ST 4 PE",
           "pinNumbers": [
@@ -160,38 +246,50 @@
           "model": "ST 6",
           "name": "ST 6 · Feed-through",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031487",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 6.0,
             "terminalFunction": "Feed-through",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-6-3031487?type=pdf"
           },
           "terminalType": "ST 6",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "1000 V · 41 A"
         },
         {
           "id": "st-6-bu",
           "model": "ST 6 BU",
           "name": "ST 6 BU · Neutral",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3031490",
           "verification": "not-verified",
           "attributes": {
             "family": "ST",
             "nominalCrossSectionMm2": 6.0,
             "terminalFunction": "Neutral",
-            "availability": "Verify conductor range, colour and exact article number."
+            "availability": "Verify conductor range, colour and exact article number.",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/feed-through-terminal-block-st-6-bu-3031490"
           },
           "terminalType": "ST 6 BU",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "1000 V · 41 A"
         },
         {
           "id": "st-6-pe",
@@ -756,32 +854,44 @@
           "model": "ST 2,5-MT",
           "name": "ST 2,5-MT",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3036343",
           "verification": "not-verified",
           "attributes": {
-            "terminalFunction": "disconnect"
+            "terminalFunction": "disconnect",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-dk/products/knife-disconnect-terminal-block-st-25-mt-3036343"
           },
           "terminalType": "Disconnect terminal",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "400 V · 20 A"
         },
         {
           "id": "st-4-mt",
           "model": "ST 4-MT",
           "name": "ST 4-MT",
           "symbol": "connector",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3038875",
           "verification": "not-verified",
           "attributes": {
-            "terminalFunction": "disconnect"
+            "terminalFunction": "disconnect",
+            "documentedFields": [
+              "manufacturerNumber",
+              "value"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/disconnect-terminal-block-st-4-mt-3038875"
           },
           "terminalType": "Disconnect terminal",
           "pinNumbers": [
             "1a",
             "1b"
-          ]
+          ],
+          "value": "400 V · 20 A"
         },
         {
           "id": "st-4-hesi",
@@ -809,13 +919,17 @@
           "model": "FBS 2-5",
           "name": "FBS 2-5",
           "symbol": "busbar",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "3030161",
           "verification": "not-verified",
           "attributes": {
             "family": "Plug-in bridge",
             "positions": 2,
             "pitchFamily": 5,
-            "compatibility": "Confirm bridge pitch and terminal compatibility."
+            "compatibility": "Confirm bridge pitch and terminal compatibility.",
+            "documentedFields": [
+              "manufacturerNumber"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/jumper-fbs-2-5-3030161"
           }
         },
         {
@@ -1074,7 +1188,7 @@
           "model": "UNO-PS/1AC/24DC/60W",
           "name": "UNO-PS/1AC/24DC/60W",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2902992",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1088,7 +1202,11 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "documentedFields": [
+              "manufacturerNumber"
+            ],
+            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/011d22ad-dbbb-4516-9d95-fab673e60b1c/media/original?PxCTR-Fiyat+Listesi-Ocak2026.v0.pdf="
           },
           "portSides": [
             "left",
@@ -1105,7 +1223,7 @@
           "model": "UNO-PS/1AC/24DC/100W",
           "name": "UNO-PS/1AC/24DC/100W",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2902993",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1119,7 +1237,11 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "documentedFields": [
+              "manufacturerNumber"
+            ],
+            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/c25a8041-71b0-4c58-90bf-2e26942357de/media/original?Power_Supplies_and_UPS-Lit52004219-13.pdf="
           },
           "portSides": [
             "left",

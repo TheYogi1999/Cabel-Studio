@@ -2,6 +2,8 @@
 
 Leitwerk uses **Firebase Authentication (email/password)** and **Realtime Database**. The static app can stay on GitHub Pages. No private server key belongs in this repository or browser.
 
+The hosted Leitwerk app is preconfigured with the public Web App settings for **leitwerk-prod-dffe5** and its Belgium Realtime Database. For that project, complete steps 3 and 5 below in the Firebase Console; the Web App settings do not need to be pasted again. For a separate Firebase project, follow all steps.
+
 ## Create the Firebase project
 
 1. Open [Firebase Console](https://console.firebase.google.com/) in your Google account and create a project. Analytics is optional.

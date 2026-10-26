@@ -39,7 +39,8 @@ globalThis.CabelCloudProjects={
     function serialize(doc){const text=JSON.stringify(Core.documentOf(doc));if(text.length>4000000)throw Error('This project exceeds the 4 MB cloud document limit. Save a JSON file.');return text;}
     function configure(){
       overviewMode='setup';body('<p>Connect a Firebase Web App. Use the same configuration on iPad and PC. The setup guide is in <a href="firebase/SETUP.md" target="_blank" rel="noopener">firebase/SETUP.md</a>.</p><form id="cloudSetupForm"><label>Public firebaseConfig JSON<textarea id="cloudConfig" rows="9" placeholder=\'{"apiKey":"…","authDomain":"…","databaseURL":"…","projectId":"…","appId":"…"}\' required></textarea></label><p>Only public Web App settings belong here. Passwords and service-account keys do not.</p><div class="cloud-actions"><button type="submit">Connect Firebase</button><button type="button" id="cloudSetupBack">Back</button></div></form>');
-      on('cloudSetupBack',overview);$('#cloudSetupForm').onsubmit=e=>{e.preventDefault();action(async()=>{if(auth)throw Error('Reload Leitwerk before changing the Firebase project.');const config=JSON.parse($('#cloudConfig').value);validateConfig(config);localStorage.setItem('leitwerk.firebase.config',JSON.stringify(config));await initialize(config);overview();});};
+      try{$('#cloudConfig').value=JSON.stringify(JSON.parse(localStorage.getItem('leitwerk.firebase.config')||'null')||globalThis.LEITWERK_FIREBASE_CONFIG||{},null,2);}catch{/* Leave the editable field available. */}
+      on('cloudSetupBack',overview);$('#cloudSetupForm').onsubmit=e=>{e.preventDefault();action(async()=>{const config=JSON.parse($('#cloudConfig').value);validateConfig(config);if(auth){await safeDetach();await F.signOut(auth);localStorage.setItem('leitwerk.firebase.config',JSON.stringify(config));location.reload();return;}localStorage.setItem('leitwerk.firebase.config',JSON.stringify(config));await initialize(config);overview();});};
     }
     function validateConfig(config){for(const key of ['apiKey','authDomain','databaseURL','projectId','appId'])if(typeof config?.[key]!=='string'||!config[key].trim())throw Error('Missing Firebase setting: '+key);const url=new URL(config.databaseURL);if(url.protocol!=='https:'&&!['localhost','127.0.0.1'].includes(url.hostname))throw Error('databaseURL must use HTTPS');}
     async function initialize(config){
@@ -62,6 +63,7 @@ globalThis.CabelCloudProjects={
     }
     function login(){
       overviewMode='login';body('<p>Sign in with the same account on iPad and PC, or share a project with another account.</p><form id="cloudLoginForm"><label>Email<input id="cloudEmail" type="email" autocomplete="username" required></label><label>Password<input id="cloudPassword" type="password" autocomplete="current-password" minlength="8" required></label><div class="cloud-actions"><button type="submit">Sign in</button><button type="button" id="cloudRegister">Create account</button><button type="button" id="cloudReset">Reset password</button></div></form>');
+      const setup=document.createElement('button');setup.type='button';setup.textContent='Cloud setup';setup.onclick=configure;$('#cloudBody').append(setup);
       const credentials=()=>[$('#cloudEmail').value.trim(),$('#cloudPassword').value];$('#cloudLoginForm').onsubmit=e=>{e.preventDefault();action(async()=>{await F.signInWithEmailAndPassword(auth,...credentials());overview();});};
       on('cloudRegister',async()=>{if(!$('#cloudLoginForm').reportValidity())return;await F.createUserWithEmailAndPassword(auth,...credentials());overview();});
       on('cloudReset',async()=>{if(!$('#cloudEmail').reportValidity())return;await F.sendPasswordResetEmail(auth,$('#cloudEmail').value.trim());message('Password reset requested. Check your email.');});
@@ -71,6 +73,7 @@ globalThis.CabelCloudProjects={
       const rows=[...projectRows].map(([id,p])=>'<article class="cloud-card"><div><strong>'+esc(id===project?.id?project.title:p?.title||'Loading…')+'</strong><small>'+esc(id)+'</small></div><button data-cloud-open="'+esc(id)+'" '+(p?.removed?'disabled':'')+'>Open</button></article>').join('');
       body('<div class="cloud-account"><span>'+esc(user.email||user.uid)+'</span><button id="cloudCopyUid">Copy my user ID</button><button id="cloudSignOut">Sign out</button></div><div class="cloud-actions"><button id="cloudCreate">Save current project to cloud</button><button id="cloudJoin">Open shared project</button><button id="cloudRecovery">Device recovery</button>'+(project?'<button id="cloudDetails">Current project / revisions</button><button id="cloudLocal">Continue locally</button>':'')+'</div><p>Open a project on both devices to synchronize. Different sheets merge automatically; overlapping sheet edits require review.</p><div class="cloud-projects">'+(rows||'<p>No cloud projects yet.</p>')+'</div>');
       on('cloudCopyUid',async()=>{try{await navigator.clipboard.writeText(user.uid);}catch{/* The visible ID can be selected manually. */}message('User ID: '+user.uid);});
+      const setup=document.createElement('button');setup.type='button';setup.textContent='Cloud setup';setup.onclick=configure;dialog.querySelector('.cloud-account').append(setup);
       on('cloudSignOut',async()=>{await safeDetach();await F.signOut(auth);overview();});on('cloudCreate',createForm);on('cloudJoin',joinForm);on('cloudRecovery',recoveryView);on('cloudDetails',details);on('cloudLocal',async()=>{await backup(true);await detach();dialog.close();});
       for(const node of dialog.querySelectorAll('[data-cloud-open]'))node.onclick=()=>action(()=>openProject(node.dataset.cloudOpen));
     }
@@ -172,7 +175,7 @@ globalThis.CabelCloudProjects={
     // snapshot partial drags; final pointerup/history commit completes them first.
     setInterval(()=>{if(!project||api.busy()||revisionView)return;backup().then(()=>sync?.tick()).catch(fail);if(connected&&Date.now()-lastPresence>30000)presence().catch(fail);},1000);
     state('local');
-    let config=globalThis.LEITWERK_FIREBASE_CONFIG;try{config=config||JSON.parse(localStorage.getItem('leitwerk.firebase.config')||'null');}catch{/* Setup remains available when browser storage is blocked. */}
+    let config=globalThis.LEITWERK_FIREBASE_CONFIG;try{config=JSON.parse(localStorage.getItem('leitwerk.firebase.config')||'null')||config;}catch{/* Setup remains available when browser storage is blocked. */}
     if(config)initialize(config).catch(fail);
     // Expose state, not credentials or a testing backdoor. Useful when reporting
     // a connection problem from an iPad without developer tools.

@@ -13,6 +13,8 @@ Leitwerk uses **Firebase Authentication (email/password)** and **Realtime Databa
 7. In Leitwerk, open **Projects → Cloud setup** and paste the configuration as valid JSON (double quotes, no `const firebaseConfig =` wrapper). Repeat on iPad and PC. Alternatively, set `globalThis.LEITWERK_FIREBASE_CONFIG = {...}` in [../firebase-config.js](../firebase-config.js) and publish the app once for all devices.
 8. Create an account in Leitwerk, then **Save current project to cloud**. Sign in on the other device and open the same project.
 
+**Cloud setup** remains available on the sign-in screen and project overview if settings need correcting. A browser-specific configuration overrides the hosted default. Changing an active Firebase connection signs out and reloads the app after checking pending edits.
+
 The Web App `apiKey` and the other settings are public identifiers, not database authorization. Access is enforced by Authentication and the database rules. Do not paste passwords, refresh tokens or service-account JSON into Cloud setup.
 
 Firebase setup, rules publication and billing belong to the Google account that owns the project. The repository does not create a Firebase account, enable billing or deploy rules automatically. Check the Firebase Console for current service quotas and usage; frequent saves and revision snapshots consume database bandwidth/storage.
@@ -61,7 +63,7 @@ npm run test:cloud
 npm run test:firebase
 ```
 
-The SDK bundle in `vendor/` is checked in so runtime needs no package manager or CDN. The build uses pinned Firebase/esbuild versions in `package-lock.json` and retains license notices. Java 21+ is needed for the Realtime Database emulator. The emulator test uses **demo-leitwerk** and localhost only; it does not access production data. Tests cover actual rules and two browser sessions against local Authentication/Realtime Database emulators. A production Firebase project still needs the setup above and a real-device iPad/PC acceptance check.
+The SDK bundle in `vendor/` is checked in so runtime needs no package manager or CDN. The build uses pinned Firebase/esbuild versions in `package-lock.json` and retains license notices. Use Node.js 24.12+ and Java 21+ for the Firebase checks. The emulator test uses **demo-leitwerk** and localhost only; it does not access production data. Tests cover actual rules and two browser sessions against local Authentication/Realtime Database emulators. A production Firebase project still needs the setup above and a real-device iPad/PC acceptance check.
 
 With Firebase CLI access in the owning Google account, rules can also be published using:
 

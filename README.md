@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A local browser schematic editor for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.28.1**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.29.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -14,6 +14,7 @@ The interface and generated document headings are English. The app runs entirely
 - [Documents and project files](#documents-and-project-files)
 - [Shortcuts](#shortcuts)
 - [Project layout](#project-layout)
+- [Cloud projects](#cloud-projects)
 - [Checks](#checks)
 
 ## Run and quick start
@@ -160,7 +161,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.28.1. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.29.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -211,7 +212,7 @@ Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape PDF, independently of screen zoom/pan, and restores the current view afterward.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.28.1** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.29.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -261,6 +262,14 @@ Shortcuts leave normal text editing intact while an input or dialog is active. I
 | `symbol-editor.html`, `scripts/symbol-editor.js`, `scripts/symbol-format.js` | Separate symbol editor and shared proposal format |
 | `tests/*-smoke.cjs` | Browser and interaction regression checks |
 
+## Cloud projects
+
+**Projects** opens the optional Firebase project overview. Sign in on iPad and PC with the same account and open the same cloud project. Finished edits synchronize automatically; different drawing sheets merge, while overlapping sheet changes require review. Zoom, pan and the current sheet remain independent on each device. Local JSON and PDF work without Firebase.
+
+Owners manage **Editor / Viewer** access and create immutable **Released** revisions. Editors can save draft revisions. Revision history opens snapshots read only; restoration preserves the previous working copy as a draft. Device recovery stores pending work separately in IndexedDB. Incoming cloud documents clear local Undo/Redo to protect the other device's work.
+
+A Firebase project, email/password Authentication, Realtime Database and the supplied access rules must be configured before cloud features can connect. This repository ships no production Firebase credentials or preconfigured database. See [Firebase setup and collaboration behavior](firebase/SETUP.md) for exact steps, roles, conflict handling, recovery, data layout and limits.
+
 ## Checks
 
 Checks require Node.js, the `playwright` module and Chromium. These are development dependencies; running the app does not require them. Each browser check starts a temporary local server and closes it and the browser afterward. Run from the repository root:
@@ -283,6 +292,8 @@ node tests/segment-selection-smoke.cjs
 node tests/library-types-smoke.cjs
 node tests/component-properties-smoke.cjs
 node tests/document-navigation-smoke.cjs
+npm run test:cloud
+npm run test:firebase
 ```
 
 | Check | Main coverage |

@@ -1,0 +1,13 @@
+#cloudDialog{color:var(--text);background:var(--panel);border:1px solid #40525d;border-radius:12px;width:min(850px,96vw);max-height:90dvh;padding:20px;box-shadow:0 20px 70px #0009;overscroll-behavior:contain;font:14px/1.5 system-ui,sans-serif}
+#cloudDialog::backdrop{background:#071017bb}
+.cloud-dialog-bar,.cloud-actions,.cloud-account,.cloud-card,.cloud-inline-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cloud-dialog-bar{justify-content:space-between;margin-bottom:14px}.cloud-dialog-bar h2{font-size:20px;margin:0}
+#cloudDialog button{min-height:38px;padding:7px 12px;border-radius:6px;border:1px solid #40525d;background:#243541;color:var(--text);font:inherit;touch-action:manipulation}
+#cloudDialog button:hover{border-color:var(--accent)}#cloudDialog button:disabled{opacity:.5}
+#cloudDialog label{display:grid;gap:5px;margin:12px 0}#cloudDialog input,#cloudDialog textarea,#cloudDialog select{width:100%;padding:10px;border:1px solid #40525d;border-radius:6px;background:#101923;color:var(--text);font:16px system-ui,sans-serif}
+#cloudDialog textarea{font:13px/1.5 ui-monospace,monospace}#cloudDialog p{color:var(--muted)}#cloudDialog a{color:var(--accent)}#cloudDialog small{display:block;color:var(--muted);overflow-wrap:anywhere}
+.cloud-card{border:1px solid var(--line);border-radius:8px;margin:9px 0;padding:12px}.cloud-card>div{flex:1;min-width:180px}.cloud-account{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}.cloud-account span{flex:1;overflow-wrap:anywhere}
+.cloud-project-heading{display:grid;gap:4px;margin-bottom:15px}.cloud-project-heading strong{font-size:18px}.cloud-members>div{padding:8px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.cloud-inline-form label{flex:1;min-width:140px}.cloud-revision-status{margin-left:12px;font-size:11px;color:var(--accent)}
+#cloudMessage.error{color:var(--danger)}.cloud-status{border:0;padding:0;background:none;color:inherit;font:inherit;cursor:pointer}.cloud-status[data-state=conflict],.cloud-status[data-state=error],.cloud-status[data-state=offline-pending]{color:var(--yellow)}
+body[data-cloud-read-only=true] #workspaceToolbar .tool-group:not([aria-label="Drawing tools"]){opacity:.55}
+@media(max-width:700px){#cloudDialog{padding:14px}.cloud-card{gap:8px;padding:9px}.cloud-actions button{flex:1}.cloud-account span{flex-basis:100%}#cloudDialog button{min-height:44px}}

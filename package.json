@@ -1,0 +1,19 @@
+{
+  "name": "leitwerk",
+  "private": true,
+  "version": "1.29.0",
+  "scripts": {
+    "build:firebase": "node scripts/build-firebase.cjs",
+    "test:cloud": "node tests/cloud-core.cjs",
+    "test:firebase": "firebase emulators:exec --project demo-leitwerk --only auth,database 'node tests/firebase-cloud.cjs'"
+  },
+  "dependencies": {
+    "firebase": "13.1.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "esbuild": "0.28.2",
+    "firebase-tools": "15.34.1",
+    "playwright": "1.62.1"
+  }
+}

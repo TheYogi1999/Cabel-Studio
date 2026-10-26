@@ -1,0 +1,71 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "userProjects": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$project": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('projects').child($project).child('owner').val() === auth.uid)",
+          ".validate": "newData.val() === true && root.child('projects').child($project).child('members').child($uid).exists()"
+        }
+      }
+    },
+    "projects": {
+      "$project": {
+        ".read": "auth != null && data.child('members').child(auth.uid).exists()",
+        ".write": "auth != null && !data.exists() && newData.child('owner').val() === auth.uid && newData.child('members').child(auth.uid).val() === 'owner'",
+        ".validate": "newData.hasChildren(['owner', 'members', 'meta', 'head'])",
+        "owner": { ".validate": "newData.isString() && ((!data.exists() && newData.val() === auth.uid) || newData.val() === data.val())" },
+        "members": {
+          "$uid": {
+            ".write": "auth != null && data.parent().parent().child('owner').val() === auth.uid && $uid !== auth.uid",
+            ".validate": "newData.isString() && ((newData.val() === 'owner' && $uid === newData.parent().parent().child('owner').val()) || (newData.val() === 'editor' || newData.val() === 'viewer') && $uid !== newData.parent().parent().child('owner').val())"
+          }
+        },
+        "meta": {
+          ".write": "auth != null && (data.parent().child('members').child(auth.uid).val() === 'owner' || data.parent().child('members').child(auth.uid).val() === 'editor') && newData.exists()",
+          ".validate": "newData.hasChildren(['title', 'createdAt'])",
+          "title": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200" },
+          "createdAt": { ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())" },
+          "$other": { ".validate": false }
+        },
+        "head": {
+          ".write": "auth != null && (data.parent().child('members').child(auth.uid).val() === 'owner' || data.parent().child('members').child(auth.uid).val() === 'editor') && newData.exists()",
+          ".validate": "newData.hasChildren(['document', 'sequence', 'updatedAt', 'updatedBy']) && ((!data.exists() && newData.child('sequence').val() === 1) || newData.child('sequence').val() === data.child('sequence').val() + 1) && newData.child('updatedAt').val() === now && newData.child('updatedBy').val() === auth.uid",
+          "document": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 4000000" },
+          "sequence": { ".validate": "newData.isNumber() && ((!data.exists() && newData.val() === 1) || newData.val() === data.val() + 1)" },
+          "updatedAt": { ".validate": "newData.isNumber() && newData.val() === now" },
+          "updatedBy": { ".validate": "newData.val() === auth.uid" },
+          "$other": { ".validate": false }
+        },
+        "revisions": {
+          "$revision": {
+            ".write": "auth != null && !data.exists() && newData.exists() && (data.parent().parent().child('members').child(auth.uid).val() === 'owner' || (data.parent().parent().child('members').child(auth.uid).val() === 'editor' && newData.child('status').val() === 'draft'))",
+            ".validate": "newData.hasChildren(['name', 'status', 'document', 'sourceSequence', 'createdAt', 'createdBy'])",
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 120" },
+            "status": { ".validate": "newData.val() === 'draft' || newData.val() === 'released'" },
+            "document": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 4000000" },
+            "sourceSequence": { ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= newData.parent().parent().parent().child('head').child('sequence').val()" },
+            "createdAt": { ".validate": "newData.isNumber() && newData.val() === now" },
+            "createdBy": { ".validate": "newData.val() === auth.uid" },
+            "$other": { ".validate": false }
+          }
+        },
+        "presence": {
+          "$uid": {
+            "$session": {
+              ".write": "auth != null && auth.uid === $uid && root.child('projects').child($project).child('members').child(auth.uid).exists()",
+              ".validate": "newData.hasChildren(['name', 'sheet', 'seenAt'])",
+              "name": { ".validate": "newData.isString() && newData.val().length <= 120" },
+              "sheet": { ".validate": "newData.isString() && newData.val().length <= 120" },
+              "seenAt": { ".validate": "newData.isNumber() && newData.val() === now" },
+              "$other": { ".validate": false }
+            }
+          }
+        },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

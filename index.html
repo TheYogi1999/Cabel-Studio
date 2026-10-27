@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.31.1">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.32.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,19 +59,19 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.31.1"></script>
+<script src="libraries/catalog.js?v=1.32.0"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.31.1"></script>
-<script src="scripts/red-pen.js?v=1.31.1"></script>
-<script src="scripts/connection-graph.js?v=1.31.1"></script>
-<script src="scripts/cables.js?v=1.31.1"></script>
-<script src="scripts/workspace-ui.js?v=1.31.1"></script>
-<script src="firebase-config.js?v=1.31.1"></script>
-<script src="scripts/cloud-core.js?v=1.31.1"></script>
-<script src="scripts/cloud-projects.js?v=1.31.1"></script>
+<script src="scripts/sheet-numbers.js?v=1.32.0"></script>
+<script src="scripts/red-pen.js?v=1.32.0"></script>
+<script src="scripts/connection-graph.js?v=1.32.0"></script>
+<script src="scripts/cables.js?v=1.32.0"></script>
+<script src="scripts/workspace-ui.js?v=1.32.0"></script>
+<script src="firebase-config.js?v=1.32.0"></script>
+<script src="scripts/cloud-core.js?v=1.32.0"></script>
+<script src="scripts/cloud-projects.js?v=1.32.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.31.1', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.32.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -300,7 +300,6 @@
   document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.15);applyView()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom/1.15);applyView()};document.querySelector('#fitBtn').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
   document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schematic').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Project file saved')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
   document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Opened schematic',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Project loaded')}catch{toast('Could not read the file')}e.target.value=''};
-  function cloneForExport(){const clone=svg.cloneNode(true);clone.setAttribute('width','297mm');clone.setAttribute('height','210mm');clone.querySelector('#pageContent')?.removeAttribute('transform');const exportStyle=el('style',{},clone);exportStyle.textContent='.symbol{fill:none;stroke:#203844;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}.part-body{fill:transparent;stroke:none;pointer-events:all}.terminal{fill:#07977e;stroke:#fff;stroke-width:2}.part-label{fill:#15252e;font-size:13px;font-weight:650;text-anchor:middle}.part-value{fill:#586b74;font-size:11px;text-anchor:middle}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle}.wire{fill:none;stroke:#293f4c;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}';clone.querySelector('#preview')?.remove();clone.querySelectorAll('.wire-hit').forEach(node=>node.remove());clone.querySelectorAll('.selected').forEach(x=>x.classList.remove('selected'));return clone;}
   function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
   document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select,[contenteditable="true"]')||modal.style.display==='grid'||e.altKey||e.repeat)return;if(e.ctrlKey||e.metaKey){if(['c','x','v'].includes(e.key.toLowerCase())){e.preventDefault();clipboardAction(e.key.toLowerCase())}return};if(e.key==='Escape'){wireStart=null;wirePoints=[];preview.style.display='none';mode='select';render()}if(e.key.toLowerCase()==='v'){mode='select';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(['w','c'].includes(e.key.toLowerCase())){mode='wire';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(e.key.toLowerCase()==='r'){e.preventDefault();transformSelected('rotate')}if(e.key.toLowerCase()==='x'){e.preventDefault();transformSelected('flipX')}if(e.key.toLowerCase()==='y'){e.preventDefault();transformSelected('flipY')}if(e.key.toLowerCase()==='t'){e.preventDefault();insertText()}if(e.key.toLowerCase()==='j'){e.preventDefault();jumpToPage()}if(e.key==='Delete'||e.key==='Backspace'){if(selected?.kind==='part'){const removed=model.parts.find(p=>p.id===selected.id);detachConnections(pages[activeSheet],new Set([selected.id]));if(removed&&!['text','reference','destination'].includes(removed.type))removed.unplaced=true;else model.parts=model.parts.filter(p=>p.id!==selected.id);}else if(selected?.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);selected=null;render()}});
   let toastTimer;function toast(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
@@ -1081,41 +1080,52 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   render();applyView();
 
 
-  function buildProjectPDF(images){
-    const encoder=new TextEncoder(),bytes=s=>encoder.encode(s),objects=[null];
-    objects.push([bytes('<< /Type /Catalog /Pages 2 0 R >>')]);
-    objects.push([bytes('<< /Type /Pages /Count '+images.length+' /Kids ['+images.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>')]);
-    images.forEach((image,i)=>{
-      const pageId=3+i*3,imageId=pageId+1,contentId=pageId+2,commands='q 841.8898 0 0 595.2756 0 0 cm /PageImage Do Q';
-      objects.push([bytes('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.8898 595.2756] /Resources << /XObject << /PageImage '+imageId+' 0 R >> >> /Contents '+contentId+' 0 R >>')]);
-      objects.push([bytes('<< /Type /XObject /Subtype /Image /Width '+image.width+' /Height '+image.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+image.data.length+' >>\nstream\n'),image.data,bytes('\nendstream')]);
-      objects.push([bytes('<< /Length '+bytes(commands).length+' >>\nstream\n'+commands+'\nendstream')]);
-    });
-    const chunks=[bytes('%PDF-1.4\n')],offsets=[0];let offset=chunks[0].length;
-    for(let i=1;i<objects.length;i++){offsets.push(offset);const start=bytes(i+' 0 obj\n'),end=bytes('\nendobj\n');chunks.push(start,...objects[i],end);offset+=start.length+objects[i].reduce((n,b)=>n+b.length,0)+end.length}
-    const xref=offset;chunks.push(bytes('xref\n0 '+objects.length+'\n0000000000 65535 f \n'+offsets.slice(1).map(n=>String(n).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<< /Size '+objects.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n'));
-    return new Blob(chunks,{type:'application/pdf'});
+  let pdfRendererLoading=null;
+  async function loadPDFRenderer(){
+    if(globalThis.CabelPDF)return;
+    if(!pdfRendererLoading)pdfRendererLoading=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='vendor/pdf.js?v='+APP_VERSION;script.onload=resolve;script.onerror=()=>{script.remove();pdfRendererLoading=null;reject(Error('Could not load the PDF renderer. Check the connection and retry.'));};document.head.append(script)});
+    await pdfRendererLoading;
+  }
+  function pdfPageLinks(svg,sheet,documentPages){
+    const links=[],linked=new Set(),byNumber=new Map(documentPages.map((s,i)=>[sheetLabel(s),i+1]));
+    function target(owner,point){const page=documentPages.indexOf(owner)+1;if(!page||point?.unplaced)return null;return{page,x:point?.x??22,y:point?.y??22};}
+    function device(id){const entry=deviceEntries().find(e=>e.p.id===id);return entry&&target(entry.sheet,entry.p);}
+    function add(node,destination,start=null,length=null){
+      if(!node||!destination||!node.getClientRects().length)return;
+      const boxes=[];if(start===null)boxes.push(node.getBBox());else for(let i=start;i<start+length;i++)boxes.push(node.getExtentOfChar(i));
+      const matrix=svg.getScreenCTM().inverse().multiply(node.getScreenCTM()),corners=boxes.flatMap(b=>[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix)));
+      const x=Math.min(...corners.map(p=>p.x)),y=Math.min(...corners.map(p=>p.y)),right=Math.max(...corners.map(p=>p.x)),bottom=Math.max(...corners.map(p=>p.y));if(right<=x||bottom<=y)return;
+      links.push({rect:{x:x-1,y:y-1,width:right-x+2,height:bottom-y+2},target:destination});linked.add(node);
+    }
+    for(const node of svg.querySelectorAll('[data-relay-target],[data-terminal-target]'))add(node,device(node.dataset.relayTarget||node.dataset.terminalTarget));
+    for(const p of sheet.parts||[])if(p.targetSheetId){const owner=documentPages.find(s=>(s.id||s.generatedId)===p.targetSheetId),point=p.targetPartId?owner?.parts.find(q=>q.id===p.targetPartId):null;if(owner&&(!p.targetPartId||point))for(const node of svg.querySelectorAll('#parts > g[data-id="'+CSS.escape(p.id)+'"] .page-reference'))if(!linked.has(node))add(node,target(owner,point));}
+    for(const node of svg.querySelectorAll('.device-list-link'))add(node,device(node.dataset.partId));
+    svg.querySelectorAll('.terminal-list-link').forEach((node,i)=>{const entry=sheet.terminalEntries?.[i];if(entry){const slave=pinSlave(entry.p.id,entry.pin);add(node,device(slave&&!slave.unplaced?slave.id:entry.p.id));}});
+    if(sheet.kind==='toc')svg.querySelectorAll('#deviceListContent [role="button"]').forEach((node,i)=>add(node,target(sheet.contents?.[i]?.page)));
+    svg.querySelectorAll('.cable-list-link,.connection-list-link').forEach((node,i)=>{const row=sheet.kind==='cable-list'?sheet.cableEntries?.[i]?.linked?.[0]:sheet.connectionEntries?.[i];if(row)add(node,target(row.sheet,(row.w.points||[])[0]||row.sheet.parts.find(p=>p.id===row.w.a.split(':')[0])));});
+    // Generated tables can contain multiple references on the same text line.
+    // Give each printed reference its own rectangle and numbered destination.
+    for(const node of svg.querySelectorAll('#deviceListContent text'))if(!linked.has(node)){
+      const text=node.textContent.slice(0,node.getNumberOfChars());for(const match of text.matchAll(/\/(\d{4})\.([A-E])([1-8])/g)){const page=byNumber.get(match[1]);if(page)add(node,{page,x:22+(Number(match[3])-.5)*1084/8,y:22+(match[2].charCodeAt(0)-65+.5)*688/5},match.index,match[0].length);}
+    }
+    const index=documentPages.indexOf(sheet);if(index>0)add(svg.querySelector('#a4Previous'),target(documentPages[index-1]));if(index<documentPages.length-1)add(svg.querySelector('#a4Next'),target(documentPages[index+1]));
+    return links;
   }
   async function exportProjectPDF(){
     const button=document.querySelector('#exportBtn');if(button.disabled)return;
     const previous={page:pages[activeSheet],selected,parts:[...selectedParts],wires:[...selectedWires],ends:[...selectedLooseEnds],junctions:[...selectedJunctions],segments:[...selectedSegments].map(([id,indices])=>[id,[...indices]]),pan:{...pan},zoom,mode};button.disabled=true;pdfExporting=true;
     showPanel('<h2>Creating PDF</h2><p id="pdfProgress">Preparing document …</p>');
+    let exporter;
     try{
-      render();const documentPages=[...pages],images=[];
+      await loadPDFRenderer();clearAreaSelection();selected=null;render();const documentPages=[...pages];exporter=await CabelPDF.create(model.title);
       for(let i=0;i<documentPages.length;i++){
         setSheet(pages.indexOf(documentPages[i]));document.querySelector('#pdfProgress').textContent='Page '+pageNumber(i+1)+' of '+pageNumber(documentPages.length);
-        const clone=cloneForExport();clone.querySelectorAll('.screen-only').forEach(n=>n.remove());
-        const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml;charset=utf-8'}));
-        const image=new Image();
-        try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Could not load the page image'));image.src=url});
-          const canvas=document.createElement('canvas');canvas.width=2820;canvas.height=1995;const context=canvas.getContext('2d');if(!context)throw new Error('Canvas is unavailable');
-          context.fillStyle='#fff';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
-          const raw=atob(canvas.toDataURL('image/jpeg',.96).split(',')[1]),data=Uint8Array.from(raw,c=>c.charCodeAt(0));images.push({width:canvas.width,height:canvas.height,data});canvas.width=canvas.height=0;
-        }finally{URL.revokeObjectURL(url)}
+        const clone=CabelPDF.snapshot(svg,[grid]);
+        await exporter.page(clone,copy=>pdfPageLinks(copy,documentPages[i],documentPages));
       }
-      download(buildProjectPDF(images),(model.title||'Project').replace(/[\\/:*?"<>|]/g,'-')+'.pdf');toast('Project exported as PDF');
+      download(exporter.finish(),(model.title||'Project').replace(/[\\/:*?"<>|]/g,'-')+'.pdf');toast('Project exported as PDF');
     }catch(error){toast('PDF export failed: '+error.message)}
-    finally{const index=pages.indexOf(previous.page);if(index>=0)setSheet(index);selected=previous.selected;previous.parts.forEach(id=>selectedParts.add(id));previous.wires.forEach(id=>selectedWires.add(id));previous.ends.forEach(id=>selectedLooseEnds.add(id));previous.junctions.forEach(id=>selectedJunctions.add(id));previous.segments.forEach(([id,indices])=>selectedSegments.set(id,new Set(indices)));pan=previous.pan;zoom=previous.zoom;mode=previous.mode;render();applyView();pdfExporting=false;render();closePanel();button.disabled=false;workspaceUI?.refresh()}
+    finally{exporter?.dispose();const index=pages.indexOf(previous.page);if(index>=0)setSheet(index);selected=previous.selected;previous.parts.forEach(id=>selectedParts.add(id));previous.wires.forEach(id=>selectedWires.add(id));previous.ends.forEach(id=>selectedLooseEnds.add(id));previous.junctions.forEach(id=>selectedJunctions.add(id));previous.segments.forEach(([id,indices])=>selectedSegments.set(id,new Set(indices)));pan=previous.pan;zoom=previous.zoom;mode=previous.mode;render();applyView();pdfExporting=false;render();closePanel();button.disabled=false;workspaceUI?.refresh()}
   }
   document.querySelector('#exportBtn').onclick=exportProjectPDF;
 
@@ -1284,7 +1294,6 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     .part-aks{font-size:7px!important;fill:#2463b5!important}
     .pin-label,.page-reference{fill:#2463b5!important}
   `;document.head.append(placementStyle);
-  const cloneBeforePlacement=cloneForExport;cloneForExport=function(){const clone=cloneBeforePlacement();el('style',{},clone).textContent=placementStyle.textContent;return clone};
 
   function pinSlave(id,index){if(!pinPlacementReady)return null;return drawingPages().flatMap(s=>s.parts).find(p=>p.type==='terminal-pin'&&p.masterId===id&&p.pinIndex===index)}
   function placePin(parent,index,options={}){

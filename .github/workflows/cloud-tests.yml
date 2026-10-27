@@ -27,7 +27,8 @@ jobs:
       - run: node tests/cloud-local-smoke.cjs
       - run: node tests/cloud-ui-smoke.cjs
       - run: node tests/pin-label-smoke.cjs
-      - run: npm run build:firebase && git diff --exit-code -- vendor/
+      - run: node tests/pdf-export-smoke.cjs
+      - run: npm run build:firebase && npm run build:pdf && git diff --exit-code -- vendor/
       - run: npm run test:firebase
       - uses: actions/upload-artifact@v4
         if: always()
@@ -36,3 +37,4 @@ jobs:
           path: |
             *-debug.log
             /tmp/Leitwerk-cloud-*.png
+            /tmp/Leitwerk-vector-*.pdf

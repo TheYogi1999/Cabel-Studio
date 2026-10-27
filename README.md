@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.31.1**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.32.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -171,7 +171,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.31.1. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.32.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -220,9 +220,9 @@ Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `
 
 ## Documents and project files
 
-The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape PDF, independently of screen zoom/pan, and restores the current view afterward.
+The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.31.1** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.32.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -368,6 +368,7 @@ The symbol editor ignores its drawing shortcuts while a form field is focused. U
 | `scripts/connection-graph.js` | Junctions, branch/root routing and route geometry |
 | `scripts/cables.js` | Cable/conductor data, assignments and generated connection lists |
 | `scripts/red-pen.js`, `scripts/sheet-numbers.js` | Annotation layers and drawing-sheet numbering |
+| `scripts/pdf-entry.js`, `scripts/build-pdf.cjs`, `vendor/pdf.js`, `assets/fonts/` | Local vector PDF renderer, embedded fonts and internal PDF links; rebuild with `npm run build:pdf` |
 | `scripts/cloud-projects.js`, `styles/cloud.css` | Sign-in, cloud project overview, sharing, revisions and responsive cloud UI |
 | `scripts/cloud-core.js` | Atomic-sheet three-way merge and cloud session synchronization |
 | `firebase-config.js`, `firebase/database.rules.json`, `firebase/SETUP.md` | Public Web App settings, database access rules and setup/quotas guide |
@@ -432,6 +433,7 @@ node tests/segment-selection-smoke.cjs
 node tests/library-types-smoke.cjs
 node tests/component-properties-smoke.cjs
 node tests/pin-label-smoke.cjs
+node tests/pdf-export-smoke.cjs
 node tests/document-navigation-smoke.cjs
 node tests/cloud-local-smoke.cjs
 node tests/cloud-ui-smoke.cjs
@@ -441,6 +443,8 @@ npm run test:firebase
 
 | Check | Main coverage |
 | --- | --- |
+| `pdf-export-smoke.cjs` | Independent PDF.js inspection of real exported files: selectable Unicode text, vector paths without images, internal links across numbering gaps, transparent highlights, LWL dashes, grid-free output, failed-load retry and preserved desktop/iPad state |
+| `pin-label-smoke.cjs` | Long pin labels outside device bodies through rotation/reflection, zoom, desktop/iPad properties, history and PDF |
 | `cloud-local-smoke.cjs` | Offline/local workflows, optional Firebase setup and public defaults initializing with production network access blocked |
 | `cloud-core.cjs` | Atomic-sheet merging, explicit conflicts, offline retention, gesture deferral and edits during in-flight synchronization |
 | `firebase-cloud.cjs` / `npm run test:firebase` | Real local Auth/Realtime Database emulators: access rules, role enforcement, independent PC/iPad sessions, conflict choices, offline recovery, sharing, immutable revisions and JSON/PDF |
@@ -466,6 +470,6 @@ Chromium defaults to `/usr/bin/chromium`. Most older checks support `CHROMIUM_PA
 
 `PLAYWRIGHT_BROWSER=webkit node tests/tablet-input-smoke.cjs` uses an installed Playwright WebKit engine for that check. Chromium iPad emulation, native browser touch/pen events and synthetic original-target Touch Events help cover redraws and gesture cancellation; they do not replace testing on a physical iPad with Safari and Apple Pencil.
 
-Screenshots and PDFs are written under `/tmp`, outside the repository. PDF checks cover document state and exports; generated files can additionally be inspected for expected page counts and A4 landscape dimensions. The manufacturer `file://` check explicitly skips when Chromium administrator policy blocks local-file navigation; HTTP checks still run.
+Screenshots and PDFs are written under `/tmp`, outside the repository. The dedicated PDF check parses actual exported documents with PDF.js, verifies A4 landscape page sizes, extracts text, checks vector operators and link destinations, and compares grid-on/grid-off exports. The bundled DejaVu fonts retain their license in `assets/fonts/LICENSE-DejaVu.txt`; JavaScript notices are in `vendor/pdf.js.LEGAL.txt`. The manufacturer `file://` check explicitly skips when Chromium administrator policy blocks local-file navigation; HTTP checks still run.
 
-The Firebase CI workflow runs the cloud core, local/cloud UI checks, deterministic SDK bundle check and Auth/Realtime Database emulator checks against **demo-leitwerk**. These checks do not modify the production Firebase database. Deployment of the supplied access rules and console-side account/API configuration are separate setup steps.
+The Firebase CI workflow runs the cloud core, local/cloud UI and pin-label checks, PDF file inspection, deterministic SDK/PDF bundle builds and Auth/Realtime Database emulator checks against **demo-leitwerk**. These checks do not modify the production Firebase database. Deployment of the supplied access rules and console-side account/API configuration are separate setup steps.

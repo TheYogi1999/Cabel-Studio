@@ -13,7 +13,7 @@ The hosted Leitwerk app is preconfigured with the public Web App settings for **
 5. In **Realtime Database → Rules**, publish the complete contents of [database.rules.json](database.rules.json). Do not use public/test rules. These rules enforce project membership, roles, immutable revisions and transaction sequence numbers.
 6. Copy the database URL from the Data tab into `firebaseConfig.databaseURL`. It may use `firebasedatabase.app` or `firebaseio.com`, depending on region.
 7. In Leitwerk, open **Projects → Cloud setup** and paste the configuration as valid JSON (double quotes, no `const firebaseConfig =` wrapper). Repeat on iPad and PC. Alternatively, set `globalThis.LEITWERK_FIREBASE_CONFIG = {...}` in [../firebase-config.js](../firebase-config.js) and publish the app once for all devices.
-8. Create an account in Leitwerk, then **Save current project to cloud**. Sign in on the other device and open the same project.
+8. Create an account in Leitwerk, then choose **New empty project** or **Save current project to cloud**. Existing cards also offer **Duplicate** for an independent working copy, with you as owner and fresh sharing/revision history. Creation lets you set a project name and document number; cards show that number and search matches both name and number. The existing rules already support these actions. Sign in on the other device and open the same project.
 
 **Cloud setup** remains available on the sign-in screen and project overview if settings need correcting. A browser-specific configuration overrides the hosted default. Changing an active Firebase connection signs out and reloads the app after checking pending edits.
 

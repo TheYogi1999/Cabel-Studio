@@ -131,7 +131,10 @@
 .cloud-pill-muted { color: #cebd9e; background: #3c3529; }
 .cloud-card-content h4 { font-size: 16px; line-height: 1.4; margin-bottom: 6px; overflow-wrap: anywhere; }
 .cloud-card-content small { font-size: 10px; }
-.cloud-card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.cloud-document-number { color: #9bb4bf; font-size: 11px; margin: 8px 0; overflow-wrap: anywhere; }
+.cloud-document-number strong { color: #d3e8e2; font-family: ui-monospace, monospace; }
+.cloud-card-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.cloud-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .cloud-card-id { color: #7f96a4; font: 9px ui-monospace, monospace; max-width: 175px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #cloudDialog .cloud-card-bottom button { flex: 0 0 auto; padding-inline: 12px; }
 .cloud-empty { text-align: center; padding: 36px 20px; border: 1px dashed #3a515f; border-radius: 12px; background: #13232c; }

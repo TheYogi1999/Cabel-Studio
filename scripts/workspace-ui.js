@@ -73,7 +73,7 @@ globalThis.CabelWorkspaceUI = {
     const fullscreenButton=button('fullscreenBtn','Full screen','Enter or restore full screen',tools,enterFullscreen,'fullscreen');
     const exitButton=button('exitFullscreenBtn','Exit…','Leave full screen',tools,()=>api.confirmFullscreenExit(leaveFullscreen));
     $('#sheetCurrent').onclick=()=>{$('[data-overview="sheets"]')?.click();};
-    $('.hint').textContent='Select: drag objects or an empty-paper selection box. Connect: tap ports and route points. Pan: drag the paper. Two fingers pan and zoom in every mode. Red pen: draw freely, erase whole strokes, or select and resize them. Drag library components sideways onto the paper, or tap then place. Right-click edits properties on desktop.';
+    $('.hint').textContent='Select: drag objects or an empty-paper selection box. Connect: tap ports and route points. Pan: drag the paper. Two fingers pan and zoom in every mode. Scroll to pan; Ctrl/Command+scroll to zoom. SpaceMouse: 3D. Red pen: draw freely, erase whole strokes, or select and resize them. Drag library components sideways onto the paper, or tap then place. Right-click edits properties on desktop.';
     $('#statusText').setAttribute('role','status');$('#statusText').setAttribute('aria-live','polite');
 
     function fullscreenElement(){return document.fullscreenElement||document.webkitFullscreenElement;}
@@ -160,7 +160,23 @@ globalThis.CabelWorkspaceUI = {
     function zoomAt(p,factor){const c=api.svgPoint({clientX:p.x,clientY:p.y}),v=api.view(),w=api.world({clientX:p.x,clientY:p.y}),z=Math.max(.5,Math.min(4,v.zoom*factor));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-w.x*z,y:c.y-399*(1-z)-w.y*z}});}
     $('#zoomIn').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt({x:r.left+r.width/2,y:r.top+r.height/2},1.15);};
     $('#zoomOut').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt({x:r.left+r.width/2,y:r.top+r.height/2},1/1.15);};
-    document.addEventListener('wheel',e=>{if(!inCanvas(e.target)||api.state().modalOpen)return;if(e.ctrlKey||e.metaKey){stop(e);zoomAt(point(e),e.deltaY<0?1.1:1/1.1);}},{capture:true,passive:false});
+    function canNavigate(){const s=api.state();return !s.modalOpen&&!s.exporting&&!s.navigationBusy&&!$('#cloudDialog')?.open&&!finger&&!pen&&!placement&&!ink.busy();}
+    document.addEventListener('wheel',e=>{
+      if(!inCanvas(e.target))return;
+      // Own the wheel over the drawing even during a gesture: browser scrolling
+      // or page zoom must not take over when document navigation is suspended.
+      stop(e);if(!canNavigate()||![e.deltaX,e.deltaY].every(Number.isFinite))return;
+      if(e.ctrlKey||e.metaKey){if(e.deltaY)zoomAt(point(e),e.deltaY<0?1.1:1/1.1);return;}
+      const rect=svg.getBoundingClientRect(),unit=e.deltaMode===1?16:1;
+      let dx=e.deltaX*(e.deltaMode===2?rect.width:unit),dy=e.deltaY*(e.deltaMode===2?rect.height:unit);
+      if(e.shiftKey&&!dx){dx=dy;dy=0;}if(!dx&&!dy)return;
+      // Convert CSS pixels through the SVG matrix, including fullscreen and
+      // letterboxing; a scroll moves the paper by the same on-screen distance
+      // at every document zoom level.
+      const a=api.svgPoint({clientX:rect.left,clientY:rect.top}),b=api.svgPoint({clientX:rect.left-dx,clientY:rect.top-dy}),v=api.view();
+      api.setView({zoom:v.zoom,pan:{x:v.pan.x+b.x-a.x,y:v.pan.y+b.y-a.y}});
+    },{capture:true,passive:false});
+    const spaceMouse=CabelSpaceMouse.init({svg,controls:$('.zoom-controls'),view:api.view,setView:api.setView,svgPoint:api.svgPoint,world:api.world,canNavigate,panel:api.navigationPanel,fit:()=>$('#fitBtn').click()});
     function armControl(id,node,p){if(!node||node.disabled)return;const old=pendingControls.get(node);if(old)old.handled=true;fallbackClicks.delete(node);controlContact={id,node,p,handled:false,moved:false};}
     function finishControl(id,p,cancelled){
       if(controlContact?.id!==id)return;const c=controlContact;controlContact=null;
@@ -280,6 +296,7 @@ globalThis.CabelWorkspaceUI = {
       finger=null;pen=null;ignoredTouches.clear();removeGhost();controlContact=null;clearTargets();
     });
     function refresh(){
+      spaceMouse.refresh();
       retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
       const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
       for(const[id,tool]of[['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}

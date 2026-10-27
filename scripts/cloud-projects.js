@@ -52,7 +52,7 @@ globalThis.CabelCloudProjects={
         F=CabelFirebase;const app=F.initializeApp(config);auth=F.getAuth(app);db=F.getDatabase(app);
         const emulators=globalThis.LEITWERK_FIREBASE_EMULATORS;
         if(emulators&&['localhost','127.0.0.1'].includes(location.hostname)){F.connectAuthEmulator(auth,'http://127.0.0.1:'+emulators.auth,{disableWarnings:true});F.connectDatabaseEmulator(db,'127.0.0.1',emulators.database);}
-        F.onValue(root('.info/connected'),snapshot=>{connected=snapshot.val()===true;if(project&&!revisionView){state(!connected?(sync?.dirty()?'offline-pending':'offline'):readOnly?'readonly':'pending');if(connected)presence();}},fail);
+        F.onValue(root('.info/connected'),snapshot=>{connected=snapshot.val()===true;const indicator=dialog.querySelector('.cloud-connection');if(indicator){indicator.classList.toggle('is-connected',connected);indicator.innerHTML='<i aria-hidden="true"></i>'+(connected?'Connected':'Offline');}if(project&&!revisionView){state(!connected?(sync?.dirty()?'offline-pending':'offline'):readOnly?'readonly':'pending');if(connected)presence();}},fail);
         F.onAuthStateChanged(auth,async value=>{if(value?.uid!==user?.uid)projectQuery='';if(user&&value?.uid!==user.uid)await detach();user=value;projectRows.clear();indexOff?.();indexOff=null;if(user){indexOff=F.onValue(root('userProjects/'+user.uid),snapshot=>{const previous=projectRows;projectRows=new Map(Object.keys(snapshot.val()||{}).map(id=>[id,previous.get(id)||null]));if(dialog.open&&overviewMode==='projects')renderProjects();loadProjectRows();},fail);}if(dialog.open&&overviewMode!=='setup'&&!(overviewMode==='login'&&!value))overview();});
       })();
       try{await initializing;}finally{initializing=null;}

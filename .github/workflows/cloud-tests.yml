@@ -25,6 +25,7 @@ jobs:
       - run: test -x "$CHROMIUM_PATH"
       - run: npm run test:cloud
       - run: node tests/cloud-local-smoke.cjs
+      - run: node tests/cloud-ui-smoke.cjs
       - run: npm run build:firebase && git diff --exit-code -- vendor/
       - run: npm run test:firebase
       - uses: actions/upload-artifact@v4

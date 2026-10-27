@@ -224,7 +224,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     assert.equal(await page.locator('#deviceListContent').isVisible(), true);
     assert.equal(drawing(await save()).parts.filter(p=>!p.unplaced).length, 2);
     // Version, transformations and shortcuts must survive the normal project roundtrip.
-    assert.equal(await page.locator('#appVersion').textContent(), 'v1.29.1');
+    assert.equal(await page.locator('#appVersion').textContent(), 'v1.30.0');
     await load(project);
     await page.locator('#selectTool').click();
     await page.locator('#parts > g[data-id="p1"] .part-body').click();
@@ -253,7 +253,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart(textId, snap(500), snap(500));
     await page.keyboard.press('r');
     let withText = await save();
-    assert.equal(withText.appVersion, '1.29.1');
+    assert.equal(withText.appVersion, '1.30.0');
     assert.equal(drawing(withText).parts.find(p => p.type === 'text').rotation, 90);
     await page.reload(); await load(withText);
     assert.equal(await page.locator('.annotation-text').textContent(), 'Prüftext <&>');
@@ -312,7 +312,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.locator(`#parts > g[data-id="${referenceId}"] .part-body`).click();
     await page.keyboard.press('j');
     assert.equal(await page.locator('#toast').textContent(), 'The reference target no longer exists');
-    console.log('PASS v1.29.1, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
+    console.log('PASS v1.30.0, C/X/Y/R/T/J shortcuts, transformed wire endpoints and adjacent bends, text and page references after save/reopen');
     // Engineering regression cases: fixed routing channels must resize at their ends.
     const engineering = {
       title: 'Engineering', sheets: [{ id: 'engineering-sheet', title: 'Steuerung', parts: [
@@ -735,7 +735,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     const listFile=await save();await page.reload();await load(listFile);assert.ok(await page.locator('.terminal-bridge').count()>0);
     await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').last().click();assert.ok((await page.locator('#deviceListContent').textContent()).includes('X3'));assert.equal(await page.locator('.terminal-bridge').count(),0);
     const finalPdf=await download('#exportBtn');assert.match(finalPdf,/^%PDF-1.4/);assert.ok(finalPdf.includes('/Count '+(await save()).sheets.length));await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.29.1-terminal-list.png'});
+    await page.locator('.sheetItem[data-sheet-kind="terminal-list"]').first().click();await page.screenshot({path:'/tmp/Cabel-Studio-v1.30.0-terminal-list.png'});
     console.log('PASS compact device tree, independent regular/bridge pin placement and movement with attached wires, inline terminals, one list per strip, graphical bridges, right-click edits and PDF/JSON roundtrip');
 
     const overviewFixture={title:'Mehrfachauswahl',sheets:[{id:'multi-sheet',title:'Zeichnung',parts:[
@@ -817,7 +817,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.keyboard.press('c');await page.locator(`[data-part="${relayCoil.id}"][data-term="1"]`).click();await page.locator(`[data-part="${relayContacts[0].id}"][data-term="0"]`).click();await page.keyboard.press('Escape');await assertAttached();await assertOrthogonal();
     const relaysWired=await save();await page.reload();await load(relaysWired);assert.equal(drawing(await save()).wires.length,2);assert.equal(await page.locator('.relay-symbol-link').count(),4);await assertAttached();
     await page.locator('[data-overview="devices"]').click();assert.equal(await page.locator(`[data-device-id="${relayCoil.id}"] .device-node`).count(),3);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.29.1-relay.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.30.0-relay.png'});
     const relayPdf=await download('#exportBtn');assert.match(relayPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
     // Stack headers repeat only at the first terminal or a type change; other strips/columns are independent.
     const stackFixture={title:'Klemmenkopf',sheets:[{id:'stack-sheet',title:'Terminals',parts:[
@@ -836,7 +836,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await dragPart('p904',18*GRID,15*GRID);assert.deepEqual(await captionState('p904'),[true,true,true]);assert.deepEqual(await captionState('p905'),[true,true,true]);
     const stackFile=await save();await page.reload();await load(stackFile);assert.deepEqual(await captionState('p903'),[true,true,true]);assert.deepEqual(await captionState('p906'),[false,false,false]);
     const stackPdf=await download('#exportBtn');assert.match(stackPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.29.1-stacked-terminals.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.30.0-stacked-terminals.png'});
     console.log('PASS relay overview, box coil, three contact slaves, linked placement/navigation, shared BMK and pins, routes/JSON/PDF; automatic 4/8 mm strip headers, type changes, gaps, movement, separate strips and AKS/BMK/type text order');
 
     const referenceFixture={title:'Pinverweise',sheets:[{id:'pin-main',title:'Hauptsymbole',parts:[
@@ -866,7 +866,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await load(relaysWired);const verticalRelay=await page.locator(`#parts > g[data-id="${relay.id}"] .relay-enclosure`).evaluate(n=>({width:+n.getAttribute('width'),height:+n.getAttribute('height')}));assert.ok(verticalRelay.height>2*verticalRelay.width);
     const relayTerminalPositions=await page.locator(`#parts > g[data-id="${relay.id}"] .terminal`).evaluateAll(nodes=>nodes.map(n=>({x:+n.getAttribute('cx'),y:+n.getAttribute('cy')})));assert.deepEqual([...new Set(relayTerminalPositions.map(p=>p.x))],[-48,48]);assert.ok(relayTerminalPositions[0].y<relayTerminalPositions[2].y&&relayTerminalPositions[2].y<relayTerminalPositions[5].y&&relayTerminalPositions[5].y<relayTerminalPositions[8].y);await assertAttached();await assertOrthogonal();
     for(const link of await page.locator('.relay-symbol-link,.relay-parent-link').all()){const text=await link.textContent();if(!text.includes('＋'))assert.match(text,/\/\d{4}\.[A-E][1-8]/)}
-    const finalReferencesPdf=await download('#exportBtn');assert.match(finalReferencesPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await page.screenshot({path:'/tmp/Cabel-Studio-v1.29.1-relay.png'});
+    const finalReferencesPdf=await download('#exportBtn');assert.match(finalReferencesPdf,/^%PDF-1.4/);await fs.writeFile('/tmp/Cabel-Studio-smoke.expected.json',JSON.stringify({pages:(await save()).sheets.length}));await page.screenshot({path:'/tmp/Cabel-Studio-v1.30.0-relay.png'});
     console.log('PASS retained main terminal/bridge anchors and original wires, reciprocal live /page.zone pin references across sheets, combined connection lists, X1 main BMK, uniform source/relay references, vertical relay, JSON/PDF and route attachment');
 
     assert.deepEqual(errors, []);

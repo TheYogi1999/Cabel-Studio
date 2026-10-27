@@ -41,6 +41,14 @@ During an offline period the current document remains editable. Finished edits a
 
 Cloud documents and each revision have a **4,000,000-character JSON limit** in this initial implementation. History stores full snapshots. Only named draft/released revisions are kept in the shared revision history; automatic working-state updates increment its sequence but are not individual revisions. Device recovery retains the latest copy per browser tab session and project. There is no project deletion or revision deletion UI in this version.
 
+## Quotas and data volume
+
+The [Realtime Database pricing table](https://firebase.google.com/pricing) lists these **Spark** limits per project: **1 GB stored**, **10 GB downloaded per month** and **100 simultaneous connections**. One connected browser tab/device typically uses one connection; this is not a limit of 100 registered users. Check the project's actual plan and **Realtime Database → Usage** in the Firebase Console.
+
+Realtime Database usage is based on stored data and network traffic, rather than Firestore-style daily document-read/write allowances. There are also [operation/rate limits](https://firebase.google.com/docs/database/usage/limits), including a guideline of 1,000 writes/second per database (sustained excess may be rate-limited). [Downloaded traffic includes protocol/encryption overhead](https://firebase.google.com/docs/database/usage/billing); rejected operations can also consume bandwidth. Blaze provides higher connection capacity and usage-based billing; check its current pricing before changing plans.
+
+Leitwerk's current working copy and every named revision store a full project snapshot. Cloud synchronization currently transmits full document states after finished edits. Large projects, many revisions and multiple devices therefore affect storage/traffic, independently of how many projects appear in the overview. A single project/revision is limited by Leitwerk to **4,000,000 JSON string characters**, including the database rule check; this is an application limit, not Firebase's total storage limit. Project search itself filters already-loaded metadata and generates no new database reads. The app does not display account-wide quota usage because it does not have administrative access to Firebase metrics.
+
 ## Data layout
 
 ```text

@@ -211,7 +211,7 @@ globalThis.CabelCloudProjects={
       // A focused export/navigation button must not let document shortcuts leak
       // through. Native form editing and keyboard activation still work.
       if(event.type==='keydown'){
-        if(event.target.closest?.('input,textarea,select,[contenteditable="true"]')||['Tab','Enter',' ','Escape','PageUp','PageDown','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-'].includes(event.key))return;
+        if(event.target.closest?.('input,textarea,select,[contenteditable="true"]')||['Shift','Control','Meta','Alt','Tab','Enter',' ','Escape','PageUp','PageDown','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-'].includes(event.key))return;
         event.preventDefault();event.stopImmediatePropagation();api.toast('Read-only view. Open the working copy with editor access to make changes.');return;
       }
       if(dialog.contains(event.target)||event.target.closest?.('.zoom-controls,.newnav,#cloudProjectsBtn,#cloudStatus,#openBtn,#saveBtn,#exportBtn,#fullscreenBtn,#exitFullscreenBtn,#panTool,[data-overview="sheets"],.sheetItem,#simpleClose'))return;

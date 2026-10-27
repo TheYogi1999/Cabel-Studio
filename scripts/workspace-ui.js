@@ -134,8 +134,9 @@ globalThis.CabelWorkspaceUI = {
       if(!cancelled){if(session.dragging){if(insideDrawing(session.last)){api.cancel();api.place(session.source.payload,api.world({clientX:session.last.x,clientY:session.last.y}));placement=null;}}else queueSource(session.source);}
       removeGhost();refresh();
     }
-    function nearbyTerminal(p,type){
-      let best=null,distance=type==='touch'?22:14;
+    function nearbyTerminal(p,type,target=null){
+      const direct=target?.closest?.('.terminal');if(direct&&svg.contains(direct)&&api.terminal(direct))return direct;
+      let best=null,distance=type==='touch'?22:type==='pen'?18:14;
       for(const n of svg.querySelectorAll('.terminal')){if(!api.terminal(n))continue;const matrix=n.getScreenCTM();if(!matrix)continue;const q=new DOMPoint(n.cx.baseVal.value,n.cy.baseVal.value).matrixTransform(matrix),d=Math.hypot(q.x-p.x,q.y-p.y);if(d<=distance){best=n;distance=d;}}return best;
     }
     let lastConnectionTap=null;
@@ -143,6 +144,31 @@ globalThis.CabelWorkspaceUI = {
       const terminal=nearbyTerminal(p,type);if(terminal){lastConnectionTap=null;api.connect(terminal);return;}if(api.branchAt(p,type)){lastConnectionTap=null;return;}
       const time=performance.now();if(lastConnectionTap&&lastConnectionTap.type===type&&time-lastConnectionTap.time<400&&Math.hypot(p.x-lastConnectionTap.p.x,p.y-lastConnectionTap.p.y)<18){const draft=lastConnectionTap.draft;lastConnectionTap=null;api.openEnd(p,draft);return;}
       lastConnectionTap={p:{...p},time,type,draft:api.connectionDraft()};forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);
+    }
+    const terminalRef=node=>node.dataset.part+':'+node.dataset.term;
+    function beginPenConnection(session){
+      if(session.type!=='pen'||session.kind!=='connect')return;
+      const terminal=nearbyTerminal(session.start,'pen',session.target);if(!terminal)return;
+      const draft=api.connectionDraft();lastConnectionTap=null;
+      session.connection={terminal,ref:terminalRef(terminal),start:draft.start,started:!draft.start};
+      // A Pencil usually moves slightly before lifting. Lock the touched pin
+      // now rather than requiring a motionless pointerup inside its tiny shape.
+      if(!draft.start){session.checkpoint=api.checkpoint();api.connect(terminal);session.connection.start=api.connectionDraft().start;}
+    }
+    function finishPenConnection(session,cancelled){
+      const contact=session.connection,state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode),blocked=state.modalOpen||state.exporting||$('#cloudDialog')?.open;
+      if(!contact){if(connecting&&!blocked&&!cancelled&&!session.moved)connectAt(session.last,session.type);return;}
+      // Escape, a tool change or a replaced document invalidates this contact.
+      if(!connecting||!contact.start||api.connectionDraft().start!==contact.start)return;
+      if(cancelled){if(contact.started)api.cancelPointer(session.checkpoint,true);return;}
+      if(blocked)return;
+      if(!contact.started&&contact.ref!==contact.start){lastConnectionTap=null;api.connect(contact.terminal);return;}
+      // A deliberate drag can finish on another pin. A small wobble or a lift on
+      // empty paper keeps the draft for normal route taps. A second source-pin
+      // tap still cancels; dragging from that same pin resumes the draft.
+      if(Math.hypot(session.last.x-session.start.x,session.last.y-session.start.y)<=18){if(!contact.started)api.connect(contact.terminal);return;}
+      const target=nearbyTerminal(session.last,'pen',document.elementFromPoint(session.last.x,session.last.y));
+      if(target&&terminalRef(target)!==contact.ref)api.connect(target);
     }
     function makeSession(id,p,target,type,options={}){
       const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
@@ -250,7 +276,7 @@ globalThis.CabelWorkspaceUI = {
       if(e.pointerType==='mouse'&&!hand&&!ink.active())return;
       stop(e);clearHold();
       if(finger){if(finger.kind==='edit')api.cancelPointer(finger.checkpoint,true);else if(finger.kind==='redpen')ink.cancel();for(const id of finger.contacts?.keys()||[])ignoredTouches.add(id);finger=null;}
-      pen=makeSession(e.pointerId,point(e),e.target,e.pointerType,e);capture(e.pointerId);rebase(pen,new Map([[pen.id,pen.start]]));startHold(pen);
+      capture(e.pointerId);pen=makeSession(e.pointerId,point(e),e.target,e.pointerType,e);beginPenConnection(pen);rebase(pen,new Map([[pen.id,pen.start]]));startHold(pen);
     },{capture:true,passive:false});
     document.addEventListener('pointermove',e=>{
       if(e.__leitwerkInput)return;if(e.pointerType==='touch'){if(inCanvas(e.target))e.stopImmediatePropagation();return;}
@@ -270,7 +296,8 @@ globalThis.CabelWorkspaceUI = {
       if(old.kind==='source')finishSource(old,cancelled);
       else if(old.kind==='edit'){if(cancelled)api.cancelPointer(old.checkpoint);else forward('pointerup',svg,old.last,old.id,old.type);}
       else if(old.kind==='redpen'){if(cancelled)ink.cancel();else ink.end(old.last);}
-      else if(!cancelled){if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}else if(old.kind==='connect'&&!old.moved)connectAt(old.last,old.type);else if(old.kind==='link'&&!old.moved)old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}
+      else if(old.kind==='connect')finishPenConnection(old,cancelled);
+      else if(!cancelled){if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}else if(old.kind==='link'&&!old.moved)old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}
       suppressCanvasClickUntil=performance.now()+1000;release(old.id);
     }
     document.addEventListener('pointerup',e=>finishPen(e,false),{capture:true,passive:false});
@@ -291,6 +318,7 @@ globalThis.CabelWorkspaceUI = {
     },true);
     window.addEventListener('blur',()=>{
       clearHold();if(finger?.kind==='edit')api.cancelPointer(finger.checkpoint);if(pen?.kind==='edit')api.cancelPointer(pen.checkpoint);
+      if(pen?.kind==='connect')finishPenConnection(pen,true);
       if(finger?.kind==='source')finishSource(finger,true);if(pen?.kind==='source')finishSource(pen,true);
       ink.cancel();
       finger=null;pen=null;ignoredTouches.clear();removeGhost();controlContact=null;clearTargets();

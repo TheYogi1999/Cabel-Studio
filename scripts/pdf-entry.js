@@ -27,6 +27,8 @@ function snapshot(source,remove=[]){
 async function create(title){
   await fonts();
   const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});
+  // Transparent review strokes require PDF 1.4 (the pinned engine defaults to 1.3).
+  pdf.__private__.setPdfVersion('1.4');
   for(const [data,style] of [[regular,'normal'],[bold,'bold']]){const filename='Leitwerk-'+style+'.ttf';pdf.addFileToVFS(filename,data);pdf.addFont(filename,FAMILY,style);}
   pdf.setProperties({title,creator:'Leitwerk',subject:'Schematic documentation'});
   const host=document.createElement('div');host.style.cssText='position:fixed;left:-100000px;top:0;pointer-events:none;width:1128px;height:798px;';document.body.append(host);

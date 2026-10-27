@@ -26,6 +26,7 @@ const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',do
  const server=http.createServer(async(req,res)=>{try{const pathname=new URL(req.url,'http://localhost').pathname,file=path.resolve(ROOT,'.'+(pathname==='/'?'/index.html':pathname));if(!file.startsWith(ROOT+path.sep))return res.writeHead(403).end();res.setHeader('Content-Type',file.endsWith('.html')?'text/html':file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':'application/json');res.end(await fs.readFile(file));}catch{res.writeHead(404).end();}});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));let browser;const errors=[];
  async function inspect(bytes,expected){
+  assert.match(bytes.subarray(0,8).toString(),/^%PDF-1.4/);
   const task=getDocument({data:new Uint8Array(bytes),isEvalSupported:false,useSystemFonts:false}),doc=await task.promise;assert.equal(doc.numPages,expected.sheets.length);
   const rows=[];for(let i=1;i<=doc.numPages;i++){
    const page=await doc.getPage(i),text=await page.getTextContent(),ops=await page.getOperatorList(),annotations=await page.getAnnotations(),links=[];

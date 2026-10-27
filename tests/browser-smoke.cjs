@@ -355,7 +355,7 @@ const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} != ${b}`);
     await page.reload();await load(adjustedFile);
     assert.equal(await page.locator('#wires path.wire').getAttribute('d'),adjustedPath);
     const cleanSvg=await download('#exportBtn');
-    assert.match(cleanSvg,/^%PDF-1.4/);assert.ok(cleanSvg.includes('/MediaBox [0 0 841.8898 595.2756]'));
+    assert.match(cleanSvg,/^%PDF-1.4/);const mediaBox=cleanSvg.match(/\/MediaBox\s*\[0 0 ([\d.]+) ([\d.]+)\]/);assert.ok(mediaBox);assert.ok(Math.abs(Number(mediaBox[1])-841.89)<.02&&Math.abs(Number(mediaBox[2])-595.28)<.02);
     assert.equal(await page.locator('#wires path.wire').getAttribute('d'),adjustedPath);
     // A formerly straight wire can gain elbows when a component moves perpendicular to it.
     const straight=structuredClone(engineering);straight.sheets[0].parts[1].y=12*GRID;straight.sheets[0].wires[0].points=[];

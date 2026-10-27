@@ -4,22 +4,31 @@ A browser schematic editor with optional Firebase cloud projects for A4 landscap
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
-The interface and generated document headings are English. The app runs entirely in the browser; save your project as JSON to keep an editable copy.
+The interface and generated document headings are English. The editor runs entirely in the browser. Work locally with JSON/PDF, or use **Projects** to sign in and synchronize a cloud project between iPad and desktop. Download JSON to keep an independent editable backup.
 
 - [Run and quick start](#run-and-quick-start)
 - [Drawing and editing](#drawing-and-editing)
+- [Component properties and device overview](#component-properties-and-device-overview)
 - [Selecting connections and line segments](#selecting-connections-and-line-segments)
 - [Library and terminal type selection](#compact-library-and-terminal-type-selection)
+- [Cables and conductors](#cables-and-conductors)
+- [Fiber optics and open connection ends](#fiber-optics-and-open-connection-ends)
+- [Drawing sheet numbers and Field deletion](#drawing-sheet-numbers-and-field-deletion)
+- [Branches and root connections](#branches-and-root-connections)
+- [Page properties and AKS fields](#page-properties-and-aks-fields)
+- [Symbol proposals](#symbol-proposals)
+- [Terminals, relays and cross-references](#terminals-relays-and-cross-references)
 - [Manufacturer references](#manufacturer-libraries)
 - [Documents and project files](#documents-and-project-files)
-- [Shortcuts](#shortcuts)
+- [All shortcuts and gestures](#shortcuts)
 - [Project layout](#project-layout)
 - [Cloud projects](#cloud-projects)
+- [Firebase limits and data usage](#firebase-limits-and-data-usage)
 - [Checks](#checks)
 
 ## Run and quick start
 
-Open `index.html` in a browser, or serve this directory with any static web server. The checked-in manufacturer bundle works with both HTTP and `file://`; there are no runtime dependencies or required build steps. Project files and exports are downloaded locally.
+Open `index.html` in a browser, or serve this directory with any static web server. The checked-in manufacturer bundle works with both HTTP and `file://`. All required browser scripts are included; no package installation or build step is required to use the editor. Project files and exports are downloaded locally. Use the hosted HTTPS app or a local HTTP server for cloud sign-in; `file://` is intended for local editing.
 
 For a local HTTP server, run this in the project directory and open <http://localhost:8080>:
 
@@ -31,6 +40,7 @@ python3 -m http.server 8080 --bind 127.0.0.1
 2. Use **Connect** to join ports. It automatically selects wire, bridge or fiber from the starting port. Use **Select** to edit objects and line segments.
 3. Use **Sheets**, **Devices** and **Cables** in the right overview to manage the project. Add drawings with **+** in Sheets; edit titles and numbers with **Page properties**.
 4. Use **Project info** for document metadata, **Lists** for generated tables/CSV, **Save** for editable JSON, and **Export PDF** for the complete document.
+5. For cloud work, open **Projects**, sign in, then choose **Save current project to cloud** or open an existing project. Sign in with the same account on the other device and open that project. Firebase setup is described under [Cloud projects](#cloud-projects).
 
 On iPad, entries can be dragged with a finger/Pencil or tapped and then placed on the paper. Two fingers pan/zoom in every tool. For an app-style window, launch the site through **Safari → Share → Add to Home Screen**. Detailed touch and fullscreen behaviour is described below.
 
@@ -48,7 +58,7 @@ With a finger or Pencil, drag components from the generic/product libraries or d
 
 - Choose **Generic** for dummy symbols or **Products** for manufacturer-specific components in the library. Expand a folder, then click a component to insert it or drag it onto the sheet. The shared search stays at the top of the sidebar and searches names, models and manufacturer/article numbers in the selected view. Without `*`, it finds any matching substring. Use `S201*` for a prefix, `*0074` for an ending, `*024*` for a middle section, or `60.*.024.*` for several unknown sections. Searches ignore case; other punctuation is literal. Symbols and terminals follow the 4 mm grid; hold **Alt** for a temporary 2 mm grid. Toggle grid visibility with **Grid**.
 - Select **Connect**, click/tap a terminal or existing connection, choose intermediate grid points, and finish at another terminal or connection. The same button changes to **Wire** at normal terminals, **Fiber** at orange optical ports or **Bridge** at brown bridge ports/existing bridges. Bridge ports connect only to bridge ports in the same terminal strip; ordinary ports create conductors. Routes are orthogonal by default. Hold **Shift** while choosing a point, or enable **45°** beside Connect on a tablet, to draw diagonally with an axis-aligned remainder when needed to reach the exact target. Moving a component stretches its attached sections and adjusts adjacent bends while leaving the rest of the route in place. Drag wire sections perpendicular to their direction, including diagonal sections.
-- Right-click a symbol, device-tree entry or terminal-list row to edit its properties. Device Designations, values, AKS, pins and references each have a visibility switch beside the corresponding field. Device Designation and displayed label use the same value. Text remains upright and unmirrored above the symbol, ordered AKS → Device Designation → device type/electrical value.
+- Right-click a symbol, device-tree entry or terminal-list row to edit its properties. Device Designations, values, AKS, pins and references each have a visibility switch beside the corresponding field. Device Designation and displayed label use the same value. Text remains upright and unmirrored above the symbol, ordered AKS → Device Designation → page-reference links → device type/electrical value. Links sit above the type, with additional spacing to avoid overlap.
 - Selected objects and active buttons are highlighted in pink. Press **Ctrl/⌘+A** to select all placed objects and visible connections on the current drawing sheet, or drag a rectangle over multiple objects to select them. Move, edit common properties, or delete the selection together. Deleting electrical devices from the drawing marks them **unplaced** in yellow in the device tree; placed devices appear in light blue. Click or drag a tree entry back onto a drawing to place it again. The **×** button in the device tree permanently deletes a device and its descendants across all drawing sheets after confirmation, clearing stale references and retaining attached connections as open ends. Undo restores the whole operation; deleting from the drawing still only unplaces a device.
 - Switch the right sidebar between **Sheets**, **Devices** and **Cables**. AKS fields use dots for nested folders, for example `+TU001.01`. Ctrl/⌘-click symbols in Select to add or remove them individually **and** reveal the clicked device/pin in Devices. Revealing does not replace the drawing selection. Ctrl+Alt-click (Command+Option-click) remains a reveal-only shortcut.
 - Edit manufacturer numbers, SAP numbers, pin names and master/slave relationships in properties. Device lists include article numbers and links back to symbols. Slaves can be placed independently.
@@ -93,7 +103,7 @@ JSON projects add optional top-level `cables: [{id, number, cores: [{id, masterI
 
 **Connect** automatically chooses a wire, terminal bridge or **Fiber** connection from the starting port. Optical ports are orange; optical connections have long dashes (18 drawing units on, 7 off). Connect matching media; ordinary electrical/bridge ports cannot be connected to optical ports. Fiber links support grid routes, Shift/45° routing, junction dots, root junctions, movement and undo in the same way as other connections. Crossing lines do not create junctions or model an optical splitter automatically.
 
-Use **Generic → Connections → Fiber optic device / patch panel** for configurable optical equipment. Port-block properties expose **Port media (wire/fiber, comma separated)** alongside port names/sides; changing a wired port's medium is blocked. A single fiber can remain an independent connection, with optional fiber type in its properties. For several fibers, create a cable with **Medium → Fiber optic** and an optional fiber type (e.g. OS2/OM3), then name, add, remove and assign its individual fibers like copper conductors. Optical cables do not require a copper cross-section or shielding. The cable slash and cable/fiber caption remain visible. Copper and fiber cable assignments must match the connection medium. Cable/connection pages and CSV include all media, bridges and open connections.
+Use **Generic → Connections → Fiber optic device / patch panel** for configurable optical equipment. Port-block properties expose **Port media (wire/fiber, semicolon separated)** alongside port names/sides; changing a wired port's medium is blocked. A single fiber can remain an independent connection, with optional fiber type in its properties. For several fibers, create a cable with **Medium → Fiber optic** and an optional fiber type (e.g. OS2/OM3), then name, add, remove and assign its individual fibers like copper conductors. Optical cables do not require a copper cross-section or shielding. The cable slash and cable/fiber caption remain visible. Copper and fiber cable assignments must match the connection medium. Cable/connection pages and CSV include all media, bridges and open connections.
 
 **Ctrl+Alt-click** (Command+Option-click) a cable-assigned route, or **Ctrl-click** (Command-click) its caption to open **Cables**, expand its cable and scroll to the selected conductor/fiber. This only changes the view/selection.
 
@@ -220,32 +230,133 @@ Drawing sheets may also contain `redlines: [{id, points: [{x,y}], layer?}]`, wit
 
 ## Shortcuts
 
+This list covers the implemented application shortcuts. **Ctrl/⌘** means **Ctrl** on Windows/Linux or **Command (⌘)** on macOS; **Alt** corresponds to **Option (⌥)** on a Mac. Focus the drawing workspace before using its shortcuts. Inputs retain normal text-editing commands. Editing commands require an editable drawing; cloud viewers and saved/released revision views are read only.
+
+[Main editor](#main-editor-keyboard) · [Selection and pointer shortcuts](#selection-and-pointer-shortcuts) · [Red Pen](#red-pen-shortcuts) · [Forms and links](#forms-and-keyboard-navigation) · [iPad/Pencil gestures](#ipad-and-pencil-gestures) · [Separate symbol editor](#symbol-editor-keyboard)
+
+### Main editor keyboard
+
+| Shortcut | Action and scope |
+| --- | --- |
+| **V** | Switch to **Select**; cancel an unfinished connection, placement or drawing tool. |
+| **C** or **W** | Switch to **Connect**. The starting port/connection determines wire, bridge or fiber. |
+| **R** | Rotate the currently selected symbol by 90°. |
+| **X** | Mirror the currently selected symbol horizontally. |
+| **Y** | Mirror the currently selected symbol vertically. |
+| **T** | Insert a text annotation through the text prompt. |
+| **J** | Follow the selected object's reference target. Otherwise open **Go to sheet**; an unassigned source/destination reference asks for its target to be configured first. |
+| **Page Up** | Previous sheet, stopping at the first sheet. |
+| **Page Down** | Next sheet, stopping at the last sheet. |
+| Hold **Alt / Option** | Temporarily use the 2 mm grid instead of 4 mm. Release to restore 4 mm. |
+| Hold **Shift** while connecting | Allow a 45° leg for a wire, fiber or bridge; an axis-aligned remainder can still be needed to reach the exact port. |
+| **Ctrl/⌘+A** | Select placed symbols/text/references, valid connections, junctions and open ends on the current drawing sheet. Fields and Red Pen strokes are not included in this electrical selection. |
+| **Ctrl/⌘+C** | Copy the currently selected symbol/text/reference into the editor clipboard. |
+| **Ctrl/⌘+X** | Cut that object; attached connections remain as open ends. |
+| **Ctrl/⌘+V** | Paste the editor clipboard, including onto another drawing sheet. A copy receives a new identity; a cut retains its identity for its first paste. |
+| **Ctrl/⌘+Z** | Undo a document change or completed gesture. |
+| **Ctrl/⌘+Y** or **Ctrl/⌘+Shift+Z** | Redo. |
+| **Delete** or **Backspace** | Unplace selected electrical devices, or remove selected text/references, Fields, whole connections, junctions or open ends. Deleting a junction/end removes its attached connections; deleting a Field preserves its contents. |
+| **Esc** | Cancel an unfinished gesture/connection/placement or close the active property dialog. In the drawing, also clear the selection and return to Select. Cancelling a drag restores its initial geometry. |
+
+**R/X/Y and the clipboard act on the current individual symbol**, not on every object in an area selection. Group movement, common-property editing and deletion use the selection tools. A selection containing only individual line segments cannot delete the whole connection: double-click the connection first. Incoming cloud document changes clear local Undo/Redo so an older local snapshot cannot undo another device's work.
+
+### Selection and pointer shortcuts
+
+These actions refer to the main schematic editor. A click can be a mouse click or a tap where the active tool supports it.
+
+| Input | Action |
+| --- | --- |
+| Click a symbol, junction, open end or Field border/heading in **Select** | Select that object. |
+| Drag empty paper in **Select** | Draw a selection box. Enclosed connection legs can be selected independently; fully enclosed routes are selected as whole connections. |
+| **Ctrl/⌘+click** a symbol/pin in **Select** | Toggle it in the selection **and** reveal the clicked device/pin in **Devices**. Existing additive selections remain. |
+| **Ctrl/⌘+click** a junction or open end in **Select** | Add/remove that item from the selection. |
+| Click a connection leg in **Select** | Select one straight segment. |
+| **Ctrl/⌘+click** a connection leg in **Select** | Add/remove that segment, including several segments of the same connection. |
+| Double-click / double-tap a connection in **Select** | Select the entire logical connection across its split sections; other branches stay separate. |
+| **Ctrl+Alt+click / Command+Option+click** a symbol/pin | Reveal it in **Devices**, without the additive-selection toggle. |
+| **Ctrl+Alt+click / Command+Option+click** a cable-assigned route | Reveal its cable/conductor/fiber in **Cables**. |
+| **Ctrl/⌘+click** a cable caption | Reveal its assigned conductor/fiber in **Cables**. |
+| Right-click a symbol, device entry, terminal-list row, connection, junction or Field | Open the corresponding properties. |
+| Double-click a symbol | Quick-edit its Device Designation/text and value. Right-click opens the full property form. |
+| Double-click a connection label or junction | Open its properties. |
+| Click a page/reference link | Follow its target. Relay links can also place an unplaced coil/contact. |
+| Double-click empty paper in **Connect** | Finish the current route with an open end; without a pending route, start a provisional free end. Single clicks still add route points. |
+| **Ctrl/⌘+mouse wheel** over the drawing | Zoom around the cursor. |
+| Middle-button drag | Pan the drawing without moving objects. |
+
+### Red Pen shortcuts
+
+Choose **Red pen** in the toolbar first. These commands apply to annotations, not to electrical devices.
+
+| Shortcut / gesture | Action |
+| --- | --- |
+| **Ctrl/⌘+A** | Select all strokes on visible annotation layers and switch to **Select strokes**. |
+| **Shift+click** a stroke in **Select strokes** | Add/remove the stroke from the selection. |
+| **Shift+drag** an empty-paper selection box in **Select strokes** | Add intersecting visible strokes to the current selection. |
+| **Delete / Backspace** | Delete selected whole strokes. |
+| **Ctrl/⌘+Z** | Undo a completed annotation gesture. |
+| **Ctrl/⌘+Y** or **Ctrl/⌘+Shift+Z** | Redo it. |
+| **Esc** during drawing, erasing, moving or scaling | Cancel the gesture and restore its starting state. |
+| **Esc** while no gesture is active | Leave Red Pen mode. |
+| **V**, **C/W** or **T** | Leave Red Pen and select the corresponding main-editor tool. |
+| Drag in **Draw / Yellow / Blue / Green** | Add one freehand stroke per gesture. |
+| Drag in **Erase stroke** | Remove each whole visible stroke touched or crossed. |
+| Drag a selected stroke / a corner handle | Move the stroke selection / scale it uniformly. |
+| Two-finger pan/pinch | Navigate; an unfinished finger annotation is cancelled before navigation. |
+
+Brush colours, layer visibility and **Smaller/Larger** use the Red Pen toolbar. There are no dedicated letter shortcuts for individual brushes, Pan, Fields or full screen.
+
+### Forms and keyboard navigation
+
+| Input | Action |
+| --- | --- |
+| **Tab / Shift+Tab** | Move between focusable fields, buttons and links using normal browser navigation. |
+| **Enter** on a focused form submit button or in a submit-ready single-line form | Submit the form, for example sign-in, project creation or a property change. |
+| **Arrow Up / Arrow Down** in terminal **Device Type** search | Open/browse the matching terminal types. |
+| **Enter** in an open terminal-type result list | Choose the highlighted match; the component form still needs **Apply**. |
+| **Esc** in a component property dialog | Close the dialog and discard unapplied changes, including an open type-result list. |
+| **Enter** on a keyboard-focusable generated-list/reference/relay link | Follow that link; a focused junction editing target opens its properties. |
+
+Use the application buttons for **Save**, **Open**, **Export PDF**, **Grid**, **Pan**, **Field**, **Red pen**, **Full screen** and **Fit/centre**. There are currently no dedicated app mappings for **Ctrl/⌘+S**, **Ctrl/⌘+O**, **Ctrl/⌘+P**, **F11**, **+/-** or arrow-key object movement. The browser/operating system may handle these keys itself. Clipboard operations in the drawing use Leitwerk's object clipboard; they are not a system-clipboard project export.
+
+### iPad and Pencil gestures
+
+| Gesture / control | Action |
+| --- | --- |
+| Tap a library entry, then the paper | Place a component. |
+| Drag sideways from the library or overview | Place/move the item; hold briefly before dragging vertically to preserve scrolling. |
+| One-finger/Pencil drag in **Select** | Move an object, connection segment, label or Field handle; empty paper starts a selection box. |
+| One-finger/Pencil drag in **Pan** | Pan, including when starting over an object. |
+| Two-finger drag / pinch in any tool | Pan / zoom around the fingers' midpoint. |
+| Hold an object, or select it and tap **Properties** | Open its properties. |
+| Tap ports/lines and route points in **Connect** | Draw a wire, bridge or fiber chosen from the starting port. |
+| Double-tap empty paper in **Connect** | Start/finish an open connection end. |
+| Double-tap a connection in **Select** | Select its whole logical route. |
+| **45°** button beside Connect | Tablet alternative to holding Shift for diagonal routing. |
+| **Cancel** button | Cancel a pending placement or drawing tool. |
+| Floating **− / + / Fit** controls | Zoom out/in or fit and centre the page. |
+| Floating previous/next sheet controls | Change sheets; tapping the current sheet indicator opens **Sheets**. |
+
+A hardware keyboard can provide the keyboard shortcuts above when the browser forwards the keys. Pencil gestures ignore stray finger contacts; using **Pan** with the Pencil remains available. For standalone display use Safari's **Add to Home Screen**; browser/system fullscreen gestures cannot be disabled by Leitwerk.
+
+### Symbol editor keyboard
+
+These shortcuts apply only to the separate [symbol editor](symbol-editor.html), not to the main schematic editor.
+
 | Shortcut | Action |
 | --- | --- |
-| V | Select |
-| C / W | Connect terminals through grid points |
-| R | Rotate selected object by 90° |
-| X / Y | Mirror selected object horizontally / vertically |
-| T | Insert text |
-| J | Jump to a reference target or choose a sheet |
-| Page Up / Page Down | Previous / next sheet |
-| Hold Alt | Temporary 2 mm grid |
-| Hold Shift while connecting | Draw the next wire/fiber/bridge leg at 45° |
-| Ctrl/⌘+A | Select placed symbols, connections, junctions and open ends on the current drawing sheet |
-| Click a connection in Select | Select one straight line segment |
-| Ctrl/⌘+click in Select | Add/remove symbols, junctions, open ends or line segments; clicking a symbol/pin also reveals it in Devices |
-| Double-click / double-tap a connection in Select | Select the whole logical connection, leaving other branches separate |
-| Ctrl+Alt+click / Command+Option+click | Reveal a symbol/terminal in Devices, or an assigned cable route in Cables |
-| Ctrl/⌘+click a cable caption | Reveal the assigned conductor/fiber in Cables |
-| Ctrl/⌘+C / X / V | Copy / cut / paste selected object |
-| Ctrl/⌘+Z | Undo |
-| Ctrl/⌘+Y or Ctrl/⌘+Shift+Z | Redo |
-| Delete / Backspace | Unplace electrical devices or delete selected text, references, Fields, whole connections, junctions or open ends |
-| Esc | Cancel the current operation or dialog |
-| Ctrl/⌘ + mouse wheel | Zoom |
-| Middle-button drag | Pan the sheet |
+| **V** | Select/move a geometry object or terminal. |
+| **L** | Draw a line. |
+| **B** | Draw a rectangle. |
+| **O** | Draw a circle. |
+| **P** | Place a named terminal on the 4 mm grid. |
+| **T** | Place the text from **Text to insert**. |
+| **Ctrl/⌘+Z** | Undo. |
+| **Ctrl/⌘+Y** or **Ctrl/⌘+Shift+Z** | Redo. |
+| **Delete / Backspace** | Remove the selected geometry object or terminal. |
+| **Esc** | Cancel an unfinished gesture, clear selection and return to Select. |
 
-Shortcuts leave normal text editing intact while an input or dialog is active. In the terminal-type search, **Arrow Up/Down** and **Enter** choose a result; **Esc** closes its result list before closing the dialog. Partial line selection does not delete a whole connection: double-click it first when deleting the whole connection is intended.
+The symbol editor ignores its drawing shortcuts while a form field is focused. Use its buttons to open/save proposal JSON and export an SVG preview. Main-editor clipboard, page-navigation and connection shortcuts do not apply here.
 
 ## Project layout
 
@@ -257,6 +368,11 @@ Shortcuts leave normal text editing intact while an input or dialog is active. I
 | `scripts/connection-graph.js` | Junctions, branch/root routing and route geometry |
 | `scripts/cables.js` | Cable/conductor data, assignments and generated connection lists |
 | `scripts/red-pen.js`, `scripts/sheet-numbers.js` | Annotation layers and drawing-sheet numbering |
+| `scripts/cloud-projects.js`, `styles/cloud.css` | Sign-in, cloud project overview, sharing, revisions and responsive cloud UI |
+| `scripts/cloud-core.js` | Atomic-sheet three-way merge and cloud session synchronization |
+| `firebase-config.js`, `firebase/database.rules.json`, `firebase/SETUP.md` | Public Web App settings, database access rules and setup/quotas guide |
+| `scripts/firebase-entry.js`, `scripts/build-firebase.cjs`, `vendor/firebase.js` | Pinned Firebase SDK entry, local bundle builder and checked-in browser bundle |
+| `firebase.json`, `.github/workflows/cloud-tests.yml` | Local emulator configuration and Firebase/browser CI checks |
 | `libraries/*.json` | Editable reference library sources |
 | `libraries/catalog.js`, `scripts/build-libraries.cjs` | Generated browser bundle and its build/check script |
 | `symbol-editor.html`, `scripts/symbol-editor.js`, `scripts/symbol-format.js` | Separate symbol editor and shared proposal format |
@@ -268,13 +384,35 @@ Shortcuts leave normal text editing intact while an input or dialog is active. I
 
 The sign-in window has a dedicated form, password visibility control, a separate password-reset action, pending-request feedback and readable authentication errors. **Projects** always opens the project overview; the footer cloud status opens the current project details. The responsive project overview uses document cards, a current-project marker and a search by name or project ID. Search filters loaded metadata locally, without additional database reads. Search text/focus survive asynchronous metadata updates; late updates do not replace a create/shared-project form. Cloud setup remains available from sign-in and the account toolbar.
 
+To use the project space:
+
+1. Sign in through **Projects**. Use **Forgot password?** if needed; **Cloud setup** edits the browser's connection settings.
+2. Choose **Save current project to cloud**, **Open shared project**, or **Open** on a project card. The opened project is marked **Current project**; the editor's own **Save** button still downloads JSON.
+3. Open the same project with the same account on iPad and PC. Use **Project / revisions** on the overview or click the footer cloud status for its details.
+4. In **Project access**, owners add another account's user ID as **Editor** or **Viewer**. **Copy my user ID** is in the overview's account toolbar. An account alone does not grant access to another person's project.
+5. Use **Save revision / release** for a named immutable snapshot, **Revision history** to open it read only, and **Open working copy** to resume editing. A restore first saves the previous working state as a draft.
+
 Owners manage **Editor / Viewer** access and create immutable **Released** revisions. Editors can save draft revisions. Revision history opens snapshots read only; restoration preserves the previous working copy as a draft. Device recovery stores pending work separately in IndexedDB. Incoming cloud documents clear local Undo/Redo to protect the other device's work.
 
 A Firebase project, email/password Authentication, Realtime Database and the supplied access rules must be configured before cloud features can connect. The hosted app includes the public Web App configuration for `leitwerk-prod-dffe5`. Firebase Authentication and the supplied database rules must still be enabled/published in the owning Firebase Console. No private service-account credentials are shipped. See [Firebase setup and collaboration behavior](firebase/SETUP.md) for exact steps, roles, conflict handling, recovery, data layout and limits.
 
+## Firebase limits and data usage
+
+For the **Spark** plan, the [Firebase pricing table](https://firebase.google.com/pricing) lists the following Realtime Database allowances. They apply to the entire Firebase project/database, shared by all Leitwerk projects and accounts.
+
+| Resource | Spark allowance |
+| --- | --- |
+| Stored data | **1 GB** |
+| Downloads to clients | **10 GB per month** |
+| Simultaneous connections | **100**; a connected browser tab/device typically uses one connection |
+
+Realtime Database usage is mainly storage and transferred data, with additional [operation/rate limits](https://firebase.google.com/docs/database/usage/limits). It is not a Firestore-style daily document-read/write allowance. Protocol/encryption traffic also contributes to usage. Check the actual plan and **Realtime Database → Usage** in the owning Firebase Console. Blaze permits more usage with usage-based billing; consult current pricing before changing plans.
+
+Leitwerk currently limits each project/revision snapshot to **4,000,000 JSON string characters**. Named revisions store full snapshots, and synchronization transmits full working states after finished edits. Large projects, many saved revisions and multiple devices therefore consume storage/download allowance even when there are only a few projects. Search filters already-loaded project metadata locally. The app does not have administrative access to account-wide usage metrics; see [Firebase setup, data layout and recovery](firebase/SETUP.md) for details.
+
 ## Checks
 
-Checks require Node.js, the `playwright` module and Chromium. These are development dependencies; running the app does not require them. Each browser check starts a temporary local server and closes it and the browser afterward. Run from the repository root:
+Browser checks require Node.js, the `playwright` module and Chromium. Use **Node.js 24.12+** and **Java 21+** for the Firebase emulator checks. Install the pinned development dependencies with `npm ci` when preparing a test workspace. These are development dependencies; running the app does not require them. Each browser check starts a temporary local server and closes it and the browser afterward. Run from the repository root:
 
 ```sh
 node scripts/build-libraries.cjs --check
@@ -302,6 +440,9 @@ npm run test:firebase
 
 | Check | Main coverage |
 | --- | --- |
+| `cloud-local-smoke.cjs` | Offline/local workflows, optional Firebase setup and public defaults initializing with production network access blocked |
+| `cloud-core.cjs` | Atomic-sheet merging, explicit conflicts, offline retention, gesture deferral and edits during in-flight synchronization |
+| `firebase-cloud.cjs` / `npm run test:firebase` | Real local Auth/Realtime Database emulators: access rules, role enforcement, independent PC/iPad sessions, conflict choices, offline recovery, sharing, immutable revisions and JSON/PDF |
 | `cloud-ui-smoke.cjs` | Desktop/iPad/phone sign-in/project layout, password visibility/reset, delayed authentication failures and duplicate submits, escaped card titles, local search/focus, form/metadata races, current project and overflow |
 | `browser-smoke.cjs` | Placement, properties, routing/segment movement, clipboard, transformations, selection, history, devices/slaves, terminals/bridges, references, lists, JSON and PDF |
 | `manufacturer-smoke.cjs` | JSON/bundle agreement, search, imports/downloads, product placement/ports, symbol geometry, metadata, device deletion, lists/pagination, approvals and PDF |
@@ -325,3 +466,5 @@ Chromium defaults to `/usr/bin/chromium`. Most older checks support `CHROMIUM_PA
 `PLAYWRIGHT_BROWSER=webkit node tests/tablet-input-smoke.cjs` uses an installed Playwright WebKit engine for that check. Chromium iPad emulation, native browser touch/pen events and synthetic original-target Touch Events help cover redraws and gesture cancellation; they do not replace testing on a physical iPad with Safari and Apple Pencil.
 
 Screenshots and PDFs are written under `/tmp`, outside the repository. PDF checks cover document state and exports; generated files can additionally be inspected for expected page counts and A4 landscape dimensions. The manufacturer `file://` check explicitly skips when Chromium administrator policy blocks local-file navigation; HTTP checks still run.
+
+The Firebase CI workflow runs the cloud core, local/cloud UI checks, deterministic SDK bundle check and Auth/Realtime Database emulator checks against **demo-leitwerk**. These checks do not modify the production Firebase database. Deployment of the supplied access rules and console-side account/API configuration are separate setup steps.

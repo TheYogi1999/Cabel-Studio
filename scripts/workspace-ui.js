@@ -25,6 +25,7 @@ globalThis.CabelWorkspaceUI = {
       horizontal:'M2 12h20M6 8l-4 4 4 4M18 8l4 4-4 4M12 3v3M12 18v3',
       vertical:'M12 2v20M8 6l4-4 4 4M8 18l4 4 4-4M3 12h3M18 12h3',
       fullscreen:'M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6',
+      image:'M3 4h18v16H3zM3 16l6-6 5 5 3-3 4 4M16 8h.01',
       pen:'M4 17l-1 4 4-1L21 6l-3-3zM15 6l3 3',
       fit:'M3 8V3h5M16 3h5v5M21 16v5h-5M8 21H3v-5M8 12h8M12 8v8'
     };
@@ -42,6 +43,7 @@ globalThis.CabelWorkspaceUI = {
     const diagonal=button('diagonalTool','45°','Draw at 45°; also available while holding Shift',modes,()=>api.action('diagonal'));
     $('#wireTool').after(diagonal);
     $('#bridgeTool').hidden=true;labelButton($('#selectTool'),'Select','select');labelButton($('#aksAreaTool'),'Field');
+    const imageButton=button('imageBtn','Image','Insert an image from a web link',modes,()=>api.action('image'),'image');
     const handButton=button('panTool','Pan','Drag to pan with a finger, Pencil or mouse',modes,()=>{ink.setTool(null);hand=!hand;placement=null;api.cancel();refresh();},'pan');
     const redButton=button('redPenTool','Red pen','Freehand annotations: draw, erase or select strokes',modes,()=>{const enable=!ink.active();ink.setTool(null);hand=false;placement=null;api.cancel();ink.setTool(enable?'draw':null);refresh();},'pen');
     const redTools=group('Red pen tools');redTools.id='redPenTools';
@@ -280,6 +282,7 @@ globalThis.CabelWorkspaceUI = {
     });
     function refresh(){
       retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
+      imageButton.disabled=state.exporting;
       const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
       for(const[id,tool]of[['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
       for(const n of redTools.querySelectorAll('[data-ink-color]')){n.setAttribute('aria-pressed',String(ink.tool()==='draw'&&ink.brush()===n.dataset.inkColor));n.disabled=state.generated||state.exporting;}for(const n of layerControls.querySelectorAll('input')){n.checked=ink.layerVisible(n.dataset.inkLayer);n.disabled=state.exporting;}

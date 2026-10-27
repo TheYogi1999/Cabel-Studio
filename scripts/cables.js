@@ -14,22 +14,17 @@ globalThis.CabelCables=(()=>{
       return{...c,number:text(c.number),cores:c.cores.map(core=>{if(!core||typeof core.id!=='string'||typeof core.designation!=='string'||!text(core.id)||!text(core.designation)||core.designation.length>64||coreIds.has(core.id)||labels.has(key(core.designation))||core.diameter!==undefined&&(!Number.isFinite(+core.diameter)||+core.diameter<=0))throw Error('Invalid cable conductor');coreIds.add(core.id);labels.add(key(core.designation));return{...core,designation:text(core.designation),masterId:c.id};})};
     });
   }
-  let measureContext;const wraps=new Map();
-  function wrap(value,width,size=8,weight='normal'){
-    const valueText=text(value)||'—',cacheKey=JSON.stringify([valueText,width,size,weight]),cached=wraps.get(cacheKey);if(cached)return[...cached];
-    measureContext||=document.createElement('canvas').getContext('2d');if(measureContext)measureContext.font=weight+' '+size+'px Arial';const fits=s=>(measureContext?.measureText(s).width??s.length*size*.6)<=width,out=[];let line='';
-    for(let word of valueText.split(/\s+/)){if(!fits(word)){if(line){out.push(line);line='';}let chunk='';for(const character of word){if(chunk&&!fits(chunk+character)){out.push(chunk);chunk='';}chunk+=character;}word=chunk;}if(!word)continue;if(line&&!fits(line+' '+word)){out.push(line);line=word;}else line+=(line?' ':'')+word;}
-    if(line)out.push(line);if(wraps.size>=10000)wraps.delete(wraps.keys().next().value);wraps.set(cacheKey,out);return[...out];
-  }
-  const columnSlice=(lines,offset,count,repeat=false)=>repeat||lines.length<=1?[...lines]:lines.slice(offset,offset+count);
-  const chunks=(rows,height)=>{const result=[],limit=Math.floor((height-10)/10);let page=[],used=0;for(const original of rows){const length=Math.max(...original.lines.map(l=>l.length));for(let offset=0;offset<length;offset+=limit){const lines=original.lines.map((l,i)=>columnSlice(l,offset,limit,i===0));if(offset)lines[0].push('(continued)');const row={...original,lines,lineOffset:offset,lineCount:limit,height:Math.max(26,Math.max(...lines.map(l=>l.length))*10+10)};if(page.length&&used+row.height>height){result.push(page);page=[];used=0;}page.push(row);used+=row.height;}}if(page.length||!result.length)result.push(page);return result;};
+  const cableColumns=[{key:'conductor',title:'CONDUCTOR',x:46,width:80},{key:'from',title:'FROM',x:136,width:340},{key:'to',title:'TO',x:486,width:340},{key:'data',title:'WIRE DATA',x:836,width:110},{key:'reference',title:'REFERENCE',x:956,width:126}];
+  const connectionColumns=[{key:'number',title:'NO.',x:46,width:62},{key:'from',title:'FROM',x:118,width:280},{key:'to',title:'TO',x:408,width:280},{key:'data',title:'TYPE / DATA',x:698,width:100},{key:'cable',title:'CABLE / CONDUCTOR',x:808,width:145},{key:'reference',title:'REFERENCE',x:963,width:119}];
+  const wrap=(value,width,size=8,weight='normal')=>CabelTableLayout.wrap(text(value)||'—',width-4,size,weight);
+  function paginate(entries,describe,columns,top){return CabelTableLayout.paginate(entries,describe,{columns,top,bottom:690,repeatColumns:[0],repeatLimit:Infinity}).map(page=>page.map(fragment=>({...fragment.entry,lines:fragment.cells,height:fragment.height,continued:fragment.continued,lineOffset:fragment.lineOffset,lineCount:fragment.lineCount})));}
   function init(api){
     const data=()=>api.data(),find=id=>data().find(c=>c.id===id),entry=w=>{const cable=find(w.cableId),core=cable?.cores.find(c=>c.id===w.coreId);return core?{cable,core}:null;},group=(sheet,w)=>sheet.wires.filter(q=>q===w||w.runId&&q.runId===w.runId);
     const all=()=>api.drawings().flatMap(sheet=>sheet.wires.map(w=>({sheet,w}))),assigned=(c,core)=>all().filter(e=>e.w.cableId===c.id&&e.w.coreId===core.id);
     const label=c=>{const scope=(c.functionCode?'='+c.functionCode:'')+(c.locationCode?'+'+c.locationCode:'');return(scope?scope+'−':'')+c.number;};
     function cableHeader(c){
-      const scope=wrap(label(c),1030,10,'bold'),properties=['Type: '+(c.type||'—')+' · Conductors: '+c.cores.length+(optical(c)?' · Fiber optic · Fiber type: '+(c.fiberType||'—'):' · Default cross-section: '+(c.crossSection||'1.5')+' mm²')+' · Length: '+(c.length!==''&&c.length!==undefined?c.length+' m':'—')+(optical(c)?'':' · Shielded: '+(c.shielded?'Yes':'No')),'Manufacturer: '+(c.manufacturer||'—')+' · Article: '+(c.manufacturerNumber||'—')+' · SAP: '+(c.sapNumber||'—'),'Description: '+(c.description||'—')].flatMap(value=>wrap(value,1030,9)),propertyStart=92+scope.length*12+10;
-      return{scope,properties,propertyStart,tableStart:Math.max(200,propertyStart+properties.length*12+24)};
+      const scope=wrap('Cable: '+label(c),1030,10,'bold'),properties=['Type: '+(c.type||'—')+' · Conductors: '+c.cores.length+(optical(c)?' · Fiber optic · Fiber type: '+(c.fiberType||'—'):' · Default cross-section: '+(c.crossSection||'1.5')+' mm²')+' · Length: '+(c.length!==''&&c.length!==undefined?c.length+' m':'—')+(optical(c)?'':' · Shielded: '+(c.shielded?'Yes':'No')),'Manufacturer: '+(c.manufacturer||'—')+' · Article: '+(c.manufacturerNumber||'—')+' · SAP: '+(c.sapNumber||'—'),'Description: '+(c.description||'—')].flatMap(value=>wrap(value,1030,9)),propertyStart=58+scope.length*12+8;
+      return{scope,properties,propertyStart,tableStart:propertyStart+properties.length*12+28};
     }
     const diameter=(c,core)=>text(core.diameter||c.crossSection||'1.5'),color=core=>api.colors[core.colorCode]?core.colorCode:'BK';
     function sync(){for(const{w}of all()){const e=entry(w);if(!e||w.kind==='bridge')continue;if(optical(e.cable)!==(w.kind==='fiber')){delete w.cableId;delete w.coreId;continue;}if(optical(e.cable)){w.fiberType=e.cable.fiberType||'';delete w.diameter;}else w.diameter=diameter(e.cable,e.core);w.colorCode=optical(e.cable)?'OG':color(e.core);}}
@@ -124,21 +119,34 @@ globalThis.CabelCables=(()=>{
     api.svg.addEventListener('drop',e=>{const raw=e.dataTransfer?.getData('application/x-cabel-core');if(!raw)return;e.preventDefault();e.stopImmediatePropagation();try{assignAt(api.world(e),JSON.parse(raw));}catch{api.toast('Could not assign this conductor');}},true);
     function generatedPages(generated){
       const result=[],rows=connections();for(const c of data()){
-        const entries=c.cores.map(core=>{const info=coreInfo(c,core,rows),cells=[core.designation,info.from,info.to,coreData(c,core),info.references],lines=cells.map((v,i)=>wrap(v,[80,340,340,110,130][i]));return{...info,lines,height:Math.max(26,Math.max(...lines.map(l=>l.length))*10+10)};});
-        chunks(entries,Math.max(26,690-cableHeader(c).tableStart)).forEach((chunk,i)=>{const s=generated('cable-list',c.id+'-'+i,'Cable list · '+c.number);s.cable=c;s.cableEntries=chunk;s.cableContinuation=i;result.push(s);});
+        const entries=c.cores.map(core=>coreInfo(c,core,rows));
+        paginate(entries,info=>({values:[info.core.designation,info.from,info.to,coreData(c,info.core),info.references]}),cableColumns,cableHeader(c).tableStart).forEach((chunk,i)=>{const s=generated('cable-list',c.id+'-'+i,'Cable list · '+c.number);s.cable=c;s.cableEntries=chunk;s.cableContinuation=i;result.push(s);});
       }if(!data().length){const s=generated('cable-list','empty','Cable list');s.cable=null;s.cableEntries=[];result.push(s);}
-      const entries=rows.map((row,i)=>{const e=row.entry,values=[String(i+1).padStart(4,'0'),row.from,row.to,wireData(row.w),e?e.cable.number+' :'+e.core.designation:'—',refs(row)],lines=values.map((v,j)=>wrap(v,[64,280,280,100,145,125][j]));return{...row,number:i+1,lines,height:Math.max(26,Math.max(...lines.map(l=>l.length))*10+10)};});
-      chunks(entries,550).forEach((chunk,i)=>{const s=generated('connection-list',i,'Connection list');s.connectionEntries=chunk;result.push(s);});return result;
+      const entries=rows.map((row,i)=>({...row,number:i+1}));
+      paginate(entries,row=>({values:[String(row.number).padStart(4,'0'),row.from,row.to,wireData(row.w),row.entry?row.entry.cable.number+' :'+row.entry.core.designation:'—',refs(row)]}),connectionColumns,86).forEach((chunk,i)=>{const s=generated('connection-list',i,'Connection list');s.connectionEntries=chunk;result.push(s);});return result;
     }
     function drawGenerated(sheet,g){
       if(!['cable-list','connection-list'].includes(sheet.kind))return false;g.replaceChildren();
-      const txt=(x,y,value,size=8,weight='normal')=>api.text(g,x,y,value,size,weight),drawTable=(entries,start,columns,headers)=>{let y=start;headers.forEach((title,i)=>txt(columns[i],y-10,title,8,'bold'));for(const[rowIndex,row]of entries.entries()){row.lines[row.lines.length-1]=columnSlice(wrap(sheet.kind==='cable-list'?[...new Set(row.linked.map(refs))].join(', ')||'—':refs(row),sheet.kind==='cable-list'?130:125),row.lineOffset||0,row.lineCount||1000);api.el('rect',{x:36,y:y-1,width:1056,height:row.height,fill:rowIndex%2?'#edf3f6':'#fff'},g);row.lines.forEach((lines,i)=>lines.forEach((value,j)=>txt(columns[i],y+12+j*10,value)));const hit=api.el('rect',{x:36,y:y-1,width:1056,height:row.height,fill:'transparent',role:'button',tabindex:0,class:sheet.kind==='cable-list'?'cable-list-link':'connection-list-link',style:'cursor:pointer'},g);hit.addEventListener('pointerdown',e=>e.stopPropagation());const action=()=>{if(sheet.kind==='cable-list'){if(row.linked.length)go(row.linked[0]);else editCore(sheet.cable.id,row.core.id);}else go(row);};hit.onclick=action;hit.onkeydown=e=>{if(e.key==='Enter')action();};hit.oncontextmenu=e=>{e.preventDefault();if(sheet.kind==='cable-list')editCore(sheet.cable.id,row.core.id);else api.editRowWire(row);};y+=row.height;}};
+      const txt=(x,y,value,size=8,weight='normal')=>api.text(g,x,y,value,size,weight);
+      const paintLine=(parent,x,y,line)=>{const t=api.text(parent,x,y,line.text,line.size,line.weight);if(line.width>0&&line.text.length>1){t.setAttribute('textLength',line.width);t.setAttribute('lengthAdjust','spacingAndGlyphs');}return t;};
+      function drawTable(entries,start,columns){
+        api.el('rect',{x:36,y:start-36,width:1056,height:30,rx:2,fill:'#e8eef0'},g);
+        for(const column of columns)txt(column.x,start-17,column.title,8,'bold');
+        const rule=y=>api.el('path',{d:'M36 '+y+' H1092',stroke:'#aebbc2','stroke-width':.8},g);rule(start-4);let y=start;
+        for(const [rowIndex,row] of entries.entries()){
+          const references=sheet.kind==='cable-list'?[...new Set(row.linked.map(refs))].join(', ')||'—':refs(row),lines=wrap(references,columns.at(-1).width);
+          row.lines[row.lines.length-1]=lines.length<=1?lines:lines.slice(row.lineOffset,row.lineOffset+row.lineCount);
+          const group=api.el('g',{class:'list-table-row','data-row-index':rowIndex,'data-continued':row.continued,'data-row-height':row.height},g);
+          api.el('rect',{x:36,y,width:1056,height:row.height,fill:rowIndex%2?'#edf3f6':'#fff'},group);
+          row.lines.forEach((values,i)=>{const column=columns[i],cell=api.el('g',{class:'list-table-cell','data-column':column.key,'data-column-x':column.x,'data-column-width':column.width},group);values.forEach((value,j)=>paintLine(cell,column.x,y+14+j*10,value));});
+          const hit=api.el('rect',{x:36,y,width:1056,height:row.height,fill:'transparent',role:'button',tabindex:0,class:sheet.kind==='cable-list'?'cable-list-link':'connection-list-link',style:'cursor:pointer'},group);hit.addEventListener('pointerdown',e=>e.stopPropagation());const action=()=>{if(sheet.kind==='cable-list'){if(row.linked.length)go(row.linked[0]);else editCore(sheet.cable.id,row.core.id);}else go(row);};hit.onclick=action;hit.onkeydown=e=>{if(e.key==='Enter')action();};hit.oncontextmenu=e=>{e.preventDefault();if(sheet.kind==='cable-list')editCore(sheet.cable.id,row.core.id);else api.editRowWire(row);};y+=row.height;rule(y);
+        }
+      }
       if(sheet.kind==='cable-list'){
-        const c=sheet.cable,title=txt(42,68,c?'Cable list · '+c.number+(sheet.cableContinuation?' · continued':''):'Cable list',22,'bold');if(title.getComputedTextLength()>1040){title.setAttribute('textLength',1040);title.setAttribute('lengthAdjust','spacingAndGlyphs');}if(!c){txt(46,110,'No cables in this project.',11);return true;}
-        const header=cableHeader(c);header.scope.forEach((line,i)=>txt(46,92+i*12,line,10,'bold'));
-        header.properties.forEach((line,i)=>txt(46,header.propertyStart+i*12,line,9));
-        drawTable(sheet.cableEntries,header.tableStart,[46,136,486,836,956],['CONDUCTOR','FROM','TO','WIRE DATA','REFERENCE']);if(!c.cores.length)txt(46,header.tableStart+30,'No conductors in this cable.',11);
-      }else{txt(42,68,'Connection list',22,'bold');txt(46,92,'All wires, fiber optic connections and terminal bridges · split sections are grouped by connection.',9);drawTable(sheet.connectionEntries,132,[46,118,408,698,808,963],['NO.','FROM','TO','TYPE / DATA','CABLE / CONDUCTOR','REFERENCE']);if(!sheet.connectionEntries.length)txt(46,164,'No connections in this project.',11);}
+        const c=sheet.cable;if(!c){drawTable([],86,cableColumns);txt(46,110,'No cables in this project.',11);return true;}
+        const header=cableHeader(c),info=api.el('g',{class:'cable-list-properties'},g);header.scope.forEach((line,i)=>paintLine(info,46,58+i*12,line));header.properties.forEach((line,i)=>paintLine(info,46,header.propertyStart+i*12,line));
+        drawTable(sheet.cableEntries,header.tableStart,cableColumns);if(!c.cores.length)txt(46,header.tableStart+24,'No conductors in this cable.',11);
+      }else{drawTable(sheet.connectionEntries,86,connectionColumns);if(!sheet.connectionEntries.length)txt(46,110,'No connections in this project.',11);}
       return true;
     }
     function enhanceLists(){

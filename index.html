@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.32.1">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.32.2">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,20 +59,20 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.32.1"></script>
+<script src="libraries/catalog.js?v=1.32.2"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.32.1"></script>
-<script src="scripts/red-pen.js?v=1.32.1"></script>
-<script src="scripts/connection-graph.js?v=1.32.1"></script>
-<script src="scripts/cables.js?v=1.32.1"></script>
-<script src="scripts/device-list.js?v=1.32.1"></script>
-<script src="scripts/workspace-ui.js?v=1.32.1"></script>
-<script src="firebase-config.js?v=1.32.1"></script>
-<script src="scripts/cloud-core.js?v=1.32.1"></script>
-<script src="scripts/cloud-projects.js?v=1.32.1"></script>
+<script src="scripts/sheet-numbers.js?v=1.32.2"></script>
+<script src="scripts/red-pen.js?v=1.32.2"></script>
+<script src="scripts/connection-graph.js?v=1.32.2"></script>
+<script src="scripts/cables.js?v=1.32.2"></script>
+<script src="scripts/table-layout.js?v=1.32.2"></script>
+<script src="scripts/workspace-ui.js?v=1.32.2"></script>
+<script src="firebase-config.js?v=1.32.2"></script>
+<script src="scripts/cloud-core.js?v=1.32.2"></script>
+<script src="scripts/cloud-projects.js?v=1.32.2"></script>
 <script>
 (() => {
-  const APP_VERSION='1.32.1', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.32.2', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={

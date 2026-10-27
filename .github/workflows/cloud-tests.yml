@@ -29,6 +29,7 @@ jobs:
       - run: node tests/pin-label-smoke.cjs
       - run: node tests/pdf-export-smoke.cjs
       - run: node tests/device-list-smoke.cjs
+      - run: node tests/connection-lists-smoke.cjs
       - run: npm run build:firebase && npm run build:pdf && git diff --exit-code -- vendor/
       - run: npm run test:firebase
       - uses: actions/upload-artifact@v4
@@ -40,3 +41,5 @@ jobs:
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-vector-*.pdf
             /tmp/Leitwerk-device-list-*
+            /tmp/Leitwerk-cable-list-*
+            /tmp/Leitwerk-connection-list*

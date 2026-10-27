@@ -12,12 +12,13 @@
     // are a conflict, never silently renumbered during a cloud merge.
     const numbers=new Set();for(const s of doc.sheets)if(s.number!==undefined){if(!Number.isInteger(s.number)||s.number<1||s.number>9999||numbers.has(s.number))throw Error('Drawing sheet numbers conflict');numbers.add(s.number);}
     const objects=new Set();for(const s of doc.sheets)for(const p of [...s.parts,...s.wires,...(s.junctions||[]),...(s.looseEnds||[])]){if(typeof p.id!=='string'||!p.id||objects.has(p.id))throw Error('Duplicate project object ID');objects.add(p.id);}
+    if(doc.projectInfo.coverImages!==undefined){if(!Array.isArray(doc.projectInfo.coverImages))throw Error('Invalid cover images');for(const p of doc.projectInfo.coverImages){if(p?.type!=='image'||typeof p.id!=='string'||!p.id||objects.has(p.id))throw Error('Invalid or duplicate cover image');objects.add(p.id);}}
     return doc;
   }
   function merge(base,local,remote,choices={}){
     const conflicts=[];
     function unit(key,label,b,l,r){if(equal(l,r)||equal(b,r))return copy(l);if(equal(b,l))return copy(r);if(choices[key]==='local')return copy(l);if(choices[key]==='remote')return copy(r);conflicts.push({key,label});return copy(l);}
-    const result={title:unit('title','Project title',base.title,local.title,remote.title),projectInfo:unit('projectInfo','Project information / approvals',base.projectInfo,local.projectInfo,remote.projectInfo),cables:unit('cables','Cable definitions',base.cables,local.cables,remote.cables),sheets:[]};
+    const result={title:unit('title','Project title',base.title,local.title,remote.title),projectInfo:unit('projectInfo','Project information / cover images / approvals',base.projectInfo,local.projectInfo,remote.projectInfo),cables:unit('cables','Cable definitions',base.cables,local.cables,remote.cables),sheets:[]};
     const maps=[base,local,remote].map(d=>new Map(d.sheets.map(s=>[s.id,s]))),order=[...new Set([...remote.sheets,...local.sheets].map(s=>s.id))];
     for(const id of order){const [b,l,r]=maps.map(m=>m.get(id)),s=unit('sheet:'+id,'Sheet: '+(l?.title||r?.title||b?.title||id),b,l,r);if(s)result.sheets.push(s);}
     // Cable material removal/renaming and simultaneous route edits can be linked.

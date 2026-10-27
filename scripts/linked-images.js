@@ -11,6 +11,11 @@ globalThis.CabelLinkedImages=(()=>{
     url(p.imageUrl);if(![p.x,p.y,p.imageWidthMm,p.imageHeightMm].every(Number.isFinite)||p.imageWidthMm<1||p.imageWidthMm>260||p.imageHeightMm<1||p.imageHeightMm>180||p.imageName!==undefined&&(typeof p.imageName!=='string'||p.imageName.length>200)||p.rotation!==undefined&&(!Number.isFinite(p.rotation)||p.rotation%90!==0))throw Error('Invalid linked image placement.');
   }
   function validateDocument(sheets){for(const sheet of sheets)for(const p of sheet.parts||[])if(p.type==='image')validate(p);}
+  function validateCover(value,sheets=[]){
+    if(value===undefined)return;if(!Array.isArray(value))throw Error('Invalid cover images.');
+    const ids=new Set(sheets.flatMap(s=>[...(s.parts||[]),...(s.wires||[]),...(s.junctions||[]),...(s.looseEnds||[])].map(p=>p.id)));
+    for(const p of value){if(!p||p.type!=='image'||typeof p.id!=='string'||!p.id||ids.has(p.id))throw Error('Invalid or duplicate cover image.');ids.add(p.id);validate(p);}
+  }
   async function fetchImage(address){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
     try{
@@ -94,5 +99,5 @@ globalThis.CabelLinkedImages=(()=>{
     new MutationObserver(()=>{if(gesture&&api.blocked())cancel();}).observe(document.body,{attributes:true,attributeFilter:['data-cloud-read-only']});
     return{draw,form,cancel,busy:()=>Boolean(gesture)};
   }
-  return{init,validateDocument,ready};
+  return{init,validateDocument,validateCover,ready};
 })();

@@ -43,7 +43,6 @@ globalThis.CabelWorkspaceUI = {
     const diagonal=button('diagonalTool','45°','Draw at 45°; also available while holding Shift',modes,()=>api.action('diagonal'));
     $('#wireTool').after(diagonal);
     $('#bridgeTool').hidden=true;labelButton($('#selectTool'),'Select','select');labelButton($('#aksAreaTool'),'Field');
-    const imageButton=button('imageBtn','Image','Insert an image from a web link',modes,()=>api.action('image'),'image');
     const handButton=button('panTool','Pan','Drag to pan with a finger, Pencil or mouse',modes,()=>{ink.setTool(null);hand=!hand;placement=null;api.cancel();refresh();},'pan');
     const redButton=button('redPenTool','Red pen','Freehand annotations: draw, erase or select strokes',modes,()=>{const enable=!ink.active();ink.setTool(null);hand=false;placement=null;api.cancel();ink.setTool(enable?'draw':null);refresh();},'pen');
     const redTools=group('Red pen tools');redTools.id='redPenTools';
@@ -146,7 +145,7 @@ globalThis.CabelWorkspaceUI = {
       lastConnectionTap={p:{...p},time,type,draft:api.connectionDraft()};forward('pointerdown',svg,p,700001,type);forward('pointerup',svg,p,700001,type);
     }
     function makeSession(id,p,target,type,options={}){
-      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||!state.generated&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated?'handled':'edit';
+      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
       const s={id,type,kind,target,modifiers:{ctrlKey:options.ctrlKey,metaKey:options.metaKey,altKey:options.altKey,shiftKey:options.shiftKey},start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
       if(kind==='edit')forward('pointerdown',target,p,id,type,options);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
     }
@@ -282,7 +281,6 @@ globalThis.CabelWorkspaceUI = {
     });
     function refresh(){
       retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
-      imageButton.disabled=state.exporting;
       const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
       for(const[id,tool]of[['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
       for(const n of redTools.querySelectorAll('[data-ink-color]')){n.setAttribute('aria-pressed',String(ink.tool()==='draw'&&ink.brush()===n.dataset.inkColor));n.disabled=state.generated||state.exporting;}for(const n of layerControls.querySelectorAll('input')){n.checked=ink.layerVisible(n.dataset.inkLayer);n.disabled=state.exporting;}

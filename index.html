@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.32.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.32.1">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,19 +59,20 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.32.0"></script>
+<script src="libraries/catalog.js?v=1.32.1"></script>
 <script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.32.0"></script>
-<script src="scripts/red-pen.js?v=1.32.0"></script>
-<script src="scripts/connection-graph.js?v=1.32.0"></script>
-<script src="scripts/cables.js?v=1.32.0"></script>
-<script src="scripts/workspace-ui.js?v=1.32.0"></script>
-<script src="firebase-config.js?v=1.32.0"></script>
-<script src="scripts/cloud-core.js?v=1.32.0"></script>
-<script src="scripts/cloud-projects.js?v=1.32.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.32.1"></script>
+<script src="scripts/red-pen.js?v=1.32.1"></script>
+<script src="scripts/connection-graph.js?v=1.32.1"></script>
+<script src="scripts/cables.js?v=1.32.1"></script>
+<script src="scripts/device-list.js?v=1.32.1"></script>
+<script src="scripts/workspace-ui.js?v=1.32.1"></script>
+<script src="firebase-config.js?v=1.32.1"></script>
+<script src="scripts/cloud-core.js?v=1.32.1"></script>
+<script src="scripts/cloud-projects.js?v=1.32.1"></script>
 <script>
 (() => {
-  const APP_VERSION='1.32.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.32.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -362,7 +363,7 @@
   render();applyView();
 
   // Automatic A4 device-list pages after the drawings.
-  const DEVICE_LIST_KIND='device-list', DEVICE_LIST_ROWS=22;
+  const DEVICE_LIST_KIND='device-list';
   const deviceListGroup=el('g',{id:'deviceListContent','font-family':'Arial,sans-serif'},svg);
   pageContent.append(deviceListGroup);
   const drawingPages=()=>pages.filter(s=>!isGenerated(s));var pinPlacementReady=true;
@@ -382,7 +383,9 @@
     const terminalChunks=[];for(const [key,group] of terminalGroups)for(let i=0;i<Math.max(1,Math.ceil(group.rows.length/20));i++)terminalChunks.push({key:key+'-'+i,masterId:key,name:group.name,rows:group.rows.slice(i*20,(i+1)*20)});
     if(!terminalChunks.length)terminalChunks.push({key:'empty',name:'',rows:[]});
     const deviceIds=new Set(entries.map(e=>e.p.id)),masters=entries.filter(e=>!deviceIds.has(e.p.masterId));
-    const deviceCount=Math.max(1,Math.ceil(masters.length/DEVICE_LIST_ROWS)),terminalCount=terminalChunks.length;
+    const children=new Map();for(const {p}of entries){if(!children.has(p.masterId))children.set(p.masterId,[]);children.get(p.masterId).push(p.id);}
+    const deviceChunks=CabelDeviceList.paginate(masters,entry=>{const p=entry.p,queue=[...(children.get(p.id)||[])],seen=new Set([p.id]);let count=0;while(queue.length){const id=queue.pop();if(seen.has(id))continue;seen.add(id);count++;queue.push(...(children.get(id)||[]));}return{values:[aks(p),String(p.label||p.deviceCode||''),deviceTypeOf(p),electricalValueOf(p),p.manufacturerNumber||'—',p.sapNumber||'—',referenceAddress(entry.sheetRef,p)],detail:count?'Master · '+count+' sub-items':''};});
+    const deviceCount=deviceChunks.length,terminalCount=terminalChunks.length;
     const cablePages=cableSystem?.generatedPages(generated)||[];
     let tocCount=1;while(Math.ceil((1+tocCount+drawings.length+deviceCount+terminalCount+cablePages.length)/22)>tocCount)tocCount++;
     const cover=generated('cover',0,'Cover page'),contents=Array.from({length:tocCount},(_,i)=>generated('toc',i,'Table of contents'));
@@ -390,32 +393,28 @@
     const clamps=Array.from({length:terminalCount},(_,i)=>generated('terminal-list',terminalChunks[i].key,'Terminal list'+(terminalChunks[i].name?' · '+terminalChunks[i].name:'')));
     CabelSheetNumbers.order(drawings,1+tocCount);
     pages.splice(0,pages.length,cover,...contents,...drawings,...lists,...clamps,...cablePages);CabelSheetNumbers.update(pages,isGenerated);
-    lists.forEach((s,i)=>s.deviceEntries=masters.slice(i*DEVICE_LIST_ROWS,(i+1)*DEVICE_LIST_ROWS).map(e=>({...e,sheet:sheetNumber(e.sheetRef)})));
+    lists.forEach((s,i)=>{s.deviceRows=deviceChunks[i];s.deviceEntries=deviceChunks[i].map(row=>({...row.entry,sheet:sheetNumber(row.entry.sheetRef)}));});
     clamps.forEach((s,i)=>{s.terminalEntries=terminalChunks[i].rows;s.stripTitle=terminalChunks[i].name;s.stripMasterId=terminalChunks[i].masterId});
+    for(const sheet of lists)for(const row of sheet.deviceRows){row.cells[row.cells.length-1]=[{text:referenceAddress(row.entry.sheetRef,row.entry.p),size:8,weight:'normal',width:0}];}
     contents.forEach((s,i)=>s.contents=pages.slice(i*22,(i+1)*22).map(page=>({page,number:sheetNumber(page)})));
     const next=pages.indexOf(current);activeSheet=next<0?pages.indexOf(drawings[0]):next;
     model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;
   }
   function drawDeviceList(sheet){
-    deviceListGroup.replaceChildren();
-    const txt=(x,y,value,size=11,weight='normal',fill='#263943')=>{const t=el('text',{x,y,'font-size':size,'font-weight':weight,fill},deviceListGroup);t.textContent=value};
-    const line=(x1,y1,x2,y2)=>el('path',{d:'M'+x1+' '+y1+' H'+x2,stroke:'#aebbc2','stroke-width':.8},deviceListGroup);
-    txt(42,68,'Automatic device directory',22,'bold','#15252e');
-    txt(42,90,'Master devices · generated from all drawing sheets · '+(sheet.deviceEntries||[]).length+' Devices on this sheet',10,'normal','#53666f');
-    const y0=128;
-    el('rect',{x:36,y:103,width:1056,height:30,rx:2,fill:'#e8eef0'},deviceListGroup);
-    [['AKS DESIGNATION',46],['EQUIPMENT TAG',250],['COMPONENT',425],['VALUE / TYPE',540],['MANUFACTURER NUMBER',685],['SAP NUMBER',850],['REFERENCE',1015]].forEach(([label,x])=>txt(x,y0,label,8,'bold'));
-    line(36,137,1092);
-    (sheet.deviceEntries||[]).forEach((entry,i)=>{
-      const y=158+i*25,p=entry.p;
-      el('rect',{x:36,y:y-16,width:1056,height:24,fill:p.unplaced?'#fff2a8':'#dcefff'},deviceListGroup);
-      txt(46,y,aks(p),8,'bold','#138b78');txt(250,y,String(p.label||p.deviceCode||''),8);txt(425,y,deviceTypeOf(p),8);txt(540,y,electricalValueOf(p),8);txt(685,y,p.manufacturerNumber||'—',8);txt(850,y,p.sapNumber||'—',8);txt(1015,y,referenceAddress(entry.sheetRef,p),8);
-      txt(46,y+9,(p.masterId?' · Slave of '+(deviceEntries().find(e=>e.p.id===p.masterId)?.p.label||p.masterId):descendants(p.id).length?' · Master · '+descendants(p.id).length+' sub-items':''),7,'normal','#53666f');
-      const hit=el('rect',{x:36,y:y-15,width:1056,height:25,fill:'transparent',class:'device-list-link','data-part-id':p.id,tabindex:0,role:'button',style:'cursor:pointer'},deviceListGroup);hit.setAttribute('aria-label','Go to device '+aks(p));hit.addEventListener('pointerdown',e=>e.stopPropagation());hit.addEventListener('click',()=>jumpToDevice(p.id));hit.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpToDevice(p.id)}});
-      line(36,y+12,1092);
-    });
-    if(!(sheet.deviceEntries||[]).length)txt(46,164,'No devices in this schematic yet.',11,'normal','#53666f');
-    txt(42,706,'Generated automatically from project components.',9,'normal','#73838b');
+    deviceListGroup.replaceChildren();const layout=CabelDeviceList;
+    const txt=(parent,x,y,value,size=8,weight='normal',fill='#263943')=>{const t=el('text',{x,y,'font-size':size,'font-weight':weight,fill},parent);t.textContent=value;return t;};
+    const line=y=>el('path',{d:'M36 '+y+' H1092',stroke:'#aebbc2','stroke-width':.8},deviceListGroup);
+    el('rect',{x:36,y:50,width:1056,height:30,rx:2,fill:'#e8eef0'},deviceListGroup);
+    for(const column of layout.columns)txt(deviceListGroup,column.x,69,column.title,8,'bold');line(82);
+    let y=layout.top;
+    for(const {entry,cells,height,continued} of sheet.deviceRows||[]){
+      const p=entry.p,row=el('g',{class:'device-list-row','data-part-id':p.id,'data-row-height':height,'data-continued':continued},deviceListGroup);
+      el('rect',{x:36,y,width:1056,height,fill:p.unplaced?'#fff2a8':'#dcefff'},row);
+      cells.forEach((lines,i)=>{const column=layout.columns[i],cell=el('g',{class:'device-list-cell','data-column':column.key,'data-column-x':column.x,'data-column-width':column.width},row);lines.forEach((value,j)=>{const t=txt(cell,column.x,y+14+j*layout.lineHeight,value.text,value.size,value.weight,value.fill||column.fill||'#263943');if(value.width>0&&value.text.length>1){t.setAttribute('textLength',value.width);t.setAttribute('lengthAdjust','spacingAndGlyphs');}});});
+      const hit=el('rect',{x:36,y,width:1056,height,fill:'transparent',class:'device-list-link','data-part-id':p.id,tabindex:0,role:'button',style:'cursor:pointer'},row);hit.setAttribute('aria-label','Go to device '+aks(p));hit.addEventListener('pointerdown',e=>e.stopPropagation());hit.addEventListener('click',()=>jumpToDevice(p.id));hit.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();jumpToDevice(p.id)}});
+      y+=height;line(y);
+    }
+    if(!sheet.deviceRows?.length)txt(deviceListGroup,46,110,'No devices in this schematic yet.',11,'normal','#53666f');
   }
   const renderBeforeDeviceLists=render;
   render=function(){

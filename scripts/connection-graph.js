@@ -128,7 +128,7 @@ globalThis.CabelConnections = (() => {
     function draw(){
       if(!api.pending().start){drafts.clear();diagonalUsed=false;lastCursor=null;}
       for(const n of nodes()){
-        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id||api.isSelected?.(n.id),g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'+(active?' selected':'')},api.layer),color=connected.some(w=>w.kind==='bridge')?'#795548':connected.some(w=>w.kind==='fiber')?'#ef7d24':'#263943';
+        const connected=incident(n);if(connected.length<2)continue;const active=api.selected()?.kind==='junction'&&api.selected().id===n.id||api.isSelected?.(n.id),g=api.el('g',{'data-junction-id':n.id,class:'connection-junction'+(active?' selected':'')},api.layer),color='#B62400';
         if(n.style!=='root'&&connected.length>=3)api.el('circle',{cx:n.x,cy:n.y,r:3,fill:color,class:'junction-dot','pointer-events':'none'},g);
         if(active)api.el('circle',{cx:n.x,cy:n.y,r:6,fill:'none',stroke:'#e94391','stroke-width':1.5,class:'screen-only','pointer-events':'none'},g);
         const hit=api.el('circle',{cx:n.x,cy:n.y,r:9,fill:'transparent','pointer-events':'all',class:'junction-hit screen-only',tabindex:0,role:'button','aria-label':'Connection junction: open properties to choose dot or 45° root'},g);

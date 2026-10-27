@@ -2,7 +2,7 @@
 // operators, internal destinations, fonts, transparency and preserved app state.
 const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http');
 const {chromium,devices}=require('playwright'),ROOT=path.resolve(__dirname,'..');
-const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',documentNumber:'LW-PDF-042'},cables:[{id:'c1',number:'W1',type:'Test cable',crossSection:'1.5',cores:[{id:'core1',designation:'L1',masterId:'c1'}]}],sheets:[
+const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',documentNumber:'LW-PDF-042'},cables:[{id:'c1',number:'W1',type:'Test cable',crossSection:'1.5',cores:[{id:'core1',designation:'L1',colorCode:'BU',masterId:'c1'}]}],sheets:[
  {id:'drawing-a',title:'Power',number:10,parts:[
   {id:'r1',type:'resistor',deviceCode:'R1',value:'4.7 kΩ',x:300,y:320},{id:'h1',type:'lamp',deviceCode:'H1',value:'24 V',x:600,y:320},
   {id:'source',type:'reference',deviceCode:'SRC',x:700,y:450,targetSheetId:'drawing-b',targetPartId:'destination'},
@@ -12,7 +12,7 @@ const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',do
   {id:'terminal2',type:'connector',masterId:'strip',deviceCode:'X1',terminalNumber:'2',pinNumbers:['2a','2b'],x:550,y:540},
   {id:'fo1',type:'fiber-device',deviceCode:'A1',pinNumbers:['TX','RX'],portSides:['left','right'],portKinds:['fiber','fiber'],x:450,y:200},
   {id:'fo2',type:'fiber-device',deviceCode:'A2',pinNumbers:['TX','RX'],portSides:['left','right'],portKinds:['fiber','fiber'],x:650,y:200}
- ],wires:[{id:'w1',a:'r1:1',b:'h1:0',points:[],cableId:'c1',coreId:'core1'},{id:'bridge',kind:'bridge',a:'terminal:8',b:'terminal2:8',points:[]},{id:'fiber',kind:'fiber',a:'fo1:1',b:'fo2:0',points:[]}],redlines:[{id:'highlight',layer:'yellow',points:[{x:300,y:320},{x:600,y:320}]}]},
+ ],wires:[{id:'w1',a:'r1:1',b:'h1:0',points:[],cableId:'c1',coreId:'core1'},{id:'bridge',kind:'bridge',a:'terminal:8',b:'terminal2:8',points:[]},{id:'fiber',kind:'fiber',a:'fo1:1',b:'fo2:0',points:[]},{id:'white',a:'r1:0',b:'h1:1',colorCode:'WH',points:[{x:220,y:390},{x:680,y:390}]},{id:'open',a:'r1:0',b:'~pdf-open:0',colorCode:'GN',points:[]}],looseEnds:[{id:'pdf-open',x:320,y:430,kind:'wire',formerLabel:''}],redlines:[{id:'highlight',layer:'yellow',points:[{x:300,y:320},{x:600,y:320}]}]},
  {id:'drawing-b',title:'Control',number:30,parts:[
   {id:'destination',type:'destination',deviceCode:'DST',x:700,y:450,targetSheetId:'drawing-a',targetPartId:'source'},
   {id:'coil',type:'relay-coil',deviceCode:'K1',masterId:'relay',pinNumbers:['A1','A2'],x:300,y:250},
@@ -40,6 +40,9 @@ const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',do
   const sourceLink=rows[a].links.find(l=>l.page===b+1&&l.dest[2]>400&&l.dest[2]<600);assert.ok(sourceLink,'Source must jump to the actual target on physical page '+(b+1));assert.ok(rows[b].links.some(l=>l.page===a+1&&l.dest[2]>400&&l.dest[2]<600),'Destination must link back to its source');
   assert.ok(rows[a].links.some(l=>l.page===b+1&&l.dest[2]<200),'Relay/terminal references must reach their separate symbols');assert.ok(rows[b].links.some(l=>l.page===a+1&&l.dest[2]<400),'Slave symbols must link back to their masters');
   for(const kind of ['toc','device-list','terminal-list','cable-list','connection-list']){const index=expected.sheets.findIndex(s=>s.kind===kind);assert.ok(index>=0);assert.ok(rows[index].links.some(l=>l.page===a+1||l.page===b+1),kind+' must link to drawings');}
+  const colours=(row,op)=>row.ops.fnArray.flatMap((n,i)=>n===op?row.ops.argsArray[i]:[]);
+  assert.ok(colours(rows[a],OPS.setStrokeRGBColor).includes('#b62400'),'Connection RGB must survive PDF without channel rounding');assert.ok(colours(rows[a],OPS.setFillRGBColor).includes('#0000ff'),'Blue symbol text must use pure blue in PDF');
+  const terminals=expected.sheets.findIndex(s=>s.kind==='terminal-list');assert.ok(colours(rows[terminals],OPS.setStrokeRGBColor).includes('#b62400'),'Terminal-list bridges must use the same connection colour');assert.ok(colours(rows[terminals],OPS.setFillRGBColor).includes('#0000ff'),'Terminal-list blue text must use pure blue');
   assert.ok(rows[a].ops.fnArray.includes(OPS.setDash),'Fiber dash patterns must survive');
   assert.ok(rows[a].ops.fnArray.some((op,i)=>op===OPS.setGState&&JSON.stringify(rows[a].ops.argsArray[i]).includes('0.32')),'Highlighter transparency must survive');
   const result=JSON.parse(JSON.stringify(rows.map(r=>({text:r.text,ops:r.ops,links:r.links}))).replace(/g_d\d+_/g,'g_doc_')); await task.destroy();return result;
@@ -52,7 +55,9 @@ const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',do
    const act=async selector=>page.locator(selector)[tablet?'tap':'click']();
    const download=async selector=>{const [d]=await Promise.all([page.waitForEvent('download',{timeout:60000}),act(selector)]);const chunks=[];for await(const c of await d.createReadStream())chunks.push(c);return Buffer.concat(chunks);};
    const save=async()=>JSON.parse((await download('#saveBtn')).toString());
-   await page.locator('#fileInput').setInputFiles({name:'vector.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(fixture))});await page.waitForFunction(()=>document.querySelector('#toast').textContent==='Project loaded');await act('#selectTool');await act('#zoomIn');await page.locator('#parts > g[data-id=r1] .part-body')[tablet?'tap':'click']();
+   await page.locator('#fileInput').setInputFiles({name:'vector.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(fixture))});await page.waitForFunction(()=>document.querySelector('#toast').textContent==='Project loaded');await act('#selectTool');
+   const drawingColours=await page.locator('#sheet').evaluate(n=>({wires:[...n.querySelectorAll('.wire,.cable-core-mark,.loose-end:not(.screen-only)')].map(p=>getComputedStyle(p).stroke),blue:[...n.querySelectorAll('.part-label,.part-value,.part-aks,.pin-label,.page-reference,.relay-symbol-link')].map(p=>getComputedStyle(p).fill)}));assert.ok(drawingColours.wires.length>=7);assert.ok(drawingColours.wires.every(c=>c==='rgb(182, 36, 0)'));assert.ok(drawingColours.blue.length>5);assert.ok(drawingColours.blue.every(c=>c==='rgb(0, 0, 255)'));assert.equal(await page.locator('path.wire[data-id=bridge]').evaluate(p=>getComputedStyle(p).strokeWidth),'2px');assert.equal(await page.locator('path.wire[data-id=fiber]').evaluate(p=>getComputedStyle(p).strokeDasharray),'18px, 7px');
+   await act('#zoomIn');await page.locator('#parts > g[data-id=r1] .part-body')[tablet?'tap':'click']();
    const before=await save(),view=await page.locator('#pageContent').getAttribute('transform'),grid=await page.locator('#gridToggle').getAttribute('aria-pressed'),selected=await page.locator('#parts > g.selected').getAttribute('data-id');
    // Failed lazy loading preserves the editor and can be retried.
    await context.route('**/vendor/pdf.js*',r=>r.abort());await act('#exportBtn');await page.waitForFunction(()=>document.querySelector('#toast').textContent.startsWith('PDF export failed:'));assert.ok(await page.locator('#exportBtn').isEnabled());assert.equal(await page.locator('#pageContent').getAttribute('transform'),view);assert.deepEqual(await save(),before);await context.unroute('**/vendor/pdf.js*');
@@ -61,6 +66,6 @@ const fixture={title:'Vector PDF ÄÖÜ',projectInfo:{company:'Leitwerk test',do
    await act('#gridToggle');await act('#zoomOut');const second=await inspect(await download('#exportBtn'),before);assert.deepEqual(second,first);assert.equal(await page.locator('#gridToggle').getAttribute('aria-pressed'),'false');
    await context.close();
   }
-  assert.deepEqual(errors,[]);console.log('PASS actual vector PDFs on desktop/iPad: selectable Unicode text, paths without images, A4 landscape, numbered source/destination links across gaps, TOC/device/terminal/cable/connection links, transparency/dashes, grid-free identical output, export retry and preserved drawing/view/selection');
+  assert.deepEqual(errors,[]);console.log('PASS actual vector PDFs on desktop/iPad: selectable Unicode text, paths without images, A4 landscape, numbered source/destination links across gaps, TOC/device/terminal/cable/connection links, exact #B62400 connection/#0000FF text colours across copper/bridges/fiber and generated terminal lists, retained colour-code data, transparency/dashes, grid-free identical output, export retry and preserved drawing/view/selection');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

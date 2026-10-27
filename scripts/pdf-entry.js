@@ -26,7 +26,9 @@ function snapshot(source,remove=[]){
 }
 async function create(title){
   await fonts();
-  const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});
+  // Six decimal places preserve 8-bit RGB colours; jsPDF's default
+  // two-decimal stroke/fill rounding otherwise changes e.g. #B62400.
+  const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true,precision:6});
   // Transparent review strokes require PDF 1.4 (the pinned engine defaults to 1.3).
   pdf.__private__.setPdfVersion('1.4');
   for(const [data,style] of [[regular,'normal'],[bold,'bold']]){const filename='Leitwerk-'+style+'.ttf';pdf.addFileToVFS(filename,data);pdf.addFont(filename,FAMILY,style);}

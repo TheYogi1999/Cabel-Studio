@@ -39,7 +39,7 @@
   function svgText(input){
     const d=validate(input),svg=document.createElementNS(NS,'svg');svg.setAttribute('xmlns',NS);svg.setAttribute('width',d.widthMm+'mm');svg.setAttribute('height',d.heightMm+'mm');svg.setAttribute('viewBox',[-d.widthMm/2,-d.heightMm/2,d.widthMm,d.heightMm].join(' '));
     element(svg,'rect',{x:-d.widthMm/2,y:-d.heightMm/2,width:d.widthMm,height:d.heightMm,fill:'#fff'});draw(svg,d);
-    for(const t of d.terminals){element(svg,'circle',{cx:t.x,cy:t.y,r:.6,fill:'#07977e'});const n=element(svg,'text',{x:t.x,y:t.y-1.2,'text-anchor':'middle','font-size':1.8,'font-family':'Arial,sans-serif',fill:'#2463b5'});n.textContent=':'+t.name}
+    for(const t of d.terminals){element(svg,'circle',{cx:t.x,cy:t.y,r:.6,fill:'#07977e'});const n=element(svg,'text',{x:t.x,y:t.y-1.2,'text-anchor':'middle','font-size':1.8,'font-family':'Arial,sans-serif',fill:'#0000FF'});n.textContent=':'+t.name}
     return new XMLSerializer().serializeToString(svg);
   }
   globalThis.CabelSymbol=Object.freeze({validate,draw,svgText,groups});

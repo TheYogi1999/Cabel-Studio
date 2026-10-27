@@ -18,7 +18,7 @@
     node('rect',{x:-state.widthMm/2,y:-state.heightMm/2,width:state.widthMm,height:state.heightMm,fill:'url(#editorGrid)'});
     node('path',{d:`M ${-state.widthMm/2} 0 H ${state.widthMm/2} M 0 ${-state.heightMm/2} V ${state.heightMm/2}`,fill:'none',stroke:'#aebfcb','stroke-width':.12,'stroke-dasharray':'.4 .5'});
     format.draw(canvas,state);
-    for(const t of state.terminals){node('circle',{cx:t.x,cy:t.y,r:.65,fill:'#07977e',stroke:'#fff','stroke-width':.15,'data-object-id':t.id});node('text',{x:t.x,y:t.y-1,'text-anchor':'middle','font-size':1.6,fill:'#2463b5','pointer-events':'none'}).textContent=':'+t.name}
+    for(const t of state.terminals){node('circle',{cx:t.x,cy:t.y,r:.65,fill:'#07977e',stroke:'#fff','stroke-width':.15,'data-object-id':t.id});node('text',{x:t.x,y:t.y-1,'text-anchor':'middle','font-size':1.6,fill:'#0000FF','pointer-events':'none'}).textContent=':'+t.name}
     for(const n of canvas.querySelectorAll('[data-object-id]'))n.classList.toggle('selected',n.dataset.objectId===selected);
     $('#objectList').replaceChildren();
     for(const o of all()){const b=document.createElement('button');b.type='button';b.className='object'+(selected===o.id?' selected':'');b.dataset.objectId=o.id;b.textContent=o.type==='text'?'Text: '+o.text:o.name?'Terminal: '+o.name:o.type;b.onclick=()=>{selected=o.id;render()};$('#objectList').append(b)}

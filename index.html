@@ -10,9 +10,9 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.34.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.34.1">
   <style>
-    :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#24465a;--yellow:#f2c66d;--danger:#f08d7f}
+    :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
     input[type=checkbox],input[type=radio]{accent-color:var(--selection)}
     button{font:inherit;color:inherit;cursor:pointer}.app{height:100%;display:grid;grid-template-rows:60px 1fr 28px}
@@ -20,7 +20,7 @@
     .brand{display:flex;align-items:center;gap:10px;min-width:205px}.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#09221f;display:grid;place-items:center;font-weight:900;font-size:17px}.brand strong{font-size:15px;letter-spacing:.3px}.brand span{display:block;color:var(--muted);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
     .project-name{font-size:13px;color:#bac6cd;white-space:nowrap}.project-name b{color:#fff;font-weight:550}.tools{display:flex;align-items:center;gap:7px;margin-left:auto}.tool-button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:#d8e1e6;display:flex;align-items:center;gap:7px}.tool-button:hover{background:#243541}.tool-button.active{border-color:var(--selection);color:var(--selection);background:var(--selection-bg)}.tool-button.primary{background:var(--accent);border-color:var(--accent);color:#0b2925;font-weight:700}.tool-button.danger:hover{border-color:var(--danger);color:var(--danger)}
     main{display:grid;grid-template-columns:218px 1fr;min-height:0}.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:18px 13px;overflow:auto}.section-title{display:flex;justify-content:space-between;align-items:center;color:#a7b5bf;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:0 5px;margin:0 0 12px}.section-title small{font-size:10px;color:#6f7e88;letter-spacing:0;text-transform:none}.library{display:grid;gap:7px}.component-group summary{cursor:pointer;padding:8px 3px;color:var(--accent);font-size:12px}.group-parts{display:grid;gap:7px}.part[draggable]{cursor:grab}.annotation-text{white-space:pre}.part{border:1px solid #2b3a46;border-radius:8px;background:#1b2934;min-height:58px;display:flex;align-items:center;gap:11px;padding:9px 10px;text-align:left}.part:hover{border-color:#60717d;background:#22323e}.part-icon{height:36px;width:42px;display:grid;place-items:center;color:var(--accent);background:#142c30;border-radius:6px;font-size:17px;font-weight:700}.part-name{display:block;font-size:12px;font-weight:600}.part-desc{display:block;color:#8fa0aa;font-size:10px;margin-top:2px}.hint{margin:20px 5px 0;color:#83929c;font-size:11px;line-height:1.55}.hint kbd{font:10px ui-monospace,monospace;color:#cbd5db;background:#263541;padding:2px 4px;border-radius:3px}
-    .workarea{position:relative;min-width:0;min-height:0;background:#111b24}.canvas-wrap{height:100%;overflow:hidden;position:relative;background-color:#111b24;background-image:radial-gradient(#30404b 1px,transparent 1px);background-size:24px 24px}svg#sheet{display:block;width:100%;height:100%;touch-action:none;user-select:none}.wire-hit{cursor:move}.wire{fill:none;stroke:var(--wire);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.wire.selected{stroke:var(--selection)!important;stroke-width:3.5}.part-body{fill:#17242e;stroke:#89a0aa;stroke-width:2}.terminal{fill:var(--accent);stroke:#111b24;stroke-width:2}.part-label{fill:#e4ebee;font-size:13px;font-weight:650;text-anchor:middle;pointer-events:none}.part-value{fill:#91a4ae;font-size:11px;text-anchor:middle;pointer-events:none}.symbol{fill:none;stroke:#d6e2e6;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.selected .part-body{stroke:var(--selection);stroke-width:2.5}.ghost{opacity:.45}.wire-preview{pointer-events:none;fill:none;stroke:var(--accent);stroke-dasharray:5 5;stroke-width:2}.canvas-hud{position:absolute;left:16px;top:14px;color:#80919c;font-size:11px;pointer-events:none}.zoom-controls{position:absolute;bottom:16px;right:16px;display:flex;align-items:center;gap:5px;background:#192631;border:1px solid var(--line);border-radius:8px;padding:4px}.zoom-controls button{width:28px;height:26px;border:0;border-radius:5px;background:transparent;color:#dbe4e8;font-size:16px}.zoom-controls button:hover{background:#2a3a46}.zoom-controls button[aria-pressed="true"]{background:var(--selection-bg);color:var(--selection)}.zoom-label{width:48px;text-align:center;color:#aab8c1;font-size:11px}
+    .workarea{position:relative;min-width:0;min-height:0;background:#111b24}.canvas-wrap{height:100%;overflow:hidden;position:relative;background-color:#111b24;background-image:radial-gradient(#30404b 1px,transparent 1px);background-size:24px 24px}svg#sheet{display:block;width:100%;height:100%;touch-action:none;user-select:none}.wire-hit{cursor:move}.wire{fill:none;stroke:var(--wire);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}.wire.selected{stroke:var(--selection)!important;stroke-width:3.5}.part-body{fill:#17242e;stroke:#89a0aa;stroke-width:2}.terminal{fill:var(--accent);stroke:#111b24;stroke-width:2}.part-label{fill:#e4ebee;font-size:13px;font-weight:650;text-anchor:middle;pointer-events:none}.part-value{fill:#91a4ae;font-size:11px;text-anchor:middle;pointer-events:none}.symbol{fill:none;stroke:#d6e2e6;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.selected .part-body{stroke:var(--selection);stroke-width:2.5}.ghost{opacity:.45}.wire-preview{pointer-events:none;fill:none;stroke:var(--wire);stroke-dasharray:5 5;stroke-width:2}.canvas-hud{position:absolute;left:16px;top:14px;color:#80919c;font-size:11px;pointer-events:none}.zoom-controls{position:absolute;bottom:16px;right:16px;display:flex;align-items:center;gap:5px;background:#192631;border:1px solid var(--line);border-radius:8px;padding:4px}.zoom-controls button{width:28px;height:26px;border:0;border-radius:5px;background:transparent;color:#dbe4e8;font-size:16px}.zoom-controls button:hover{background:#2a3a46}.zoom-controls button[aria-pressed="true"]{background:var(--selection-bg);color:var(--selection)}.zoom-label{width:48px;text-align:center;color:#aab8c1;font-size:11px}
     footer{display:flex;align-items:center;gap:18px;padding:0 14px;background:#131e28;border-top:1px solid var(--line);color:#84949e;font-size:10px}footer .status{display:flex;align-items:center;gap:6px}footer .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}footer .right{margin-left:auto}
     .toast{position:fixed;left:50%;bottom:45px;transform:translate(-50%,12px);opacity:0;background:#23343f;border:1px solid #3b505d;color:#e4ecef;border-radius:8px;padding:9px 14px;font-size:12px;transition:.2s;pointer-events:none;z-index:4}.toast.show{opacity:1;transform:translate(-50%,0)}
     input.hidden{display:none}@media(max-width:740px){.app{grid-template-rows:56px 1fr 26px}.brand{min-width:auto}.brand span,.project-name{display:none}main{grid-template-columns:155px 1fr}.sidebar{padding:14px 9px}.tools{gap:4px}.tool-button{padding:0 8px;font-size:12px}.tool-button .wide{display:none}.part{padding:8px;gap:7px}.part-icon{width:32px}.hint{font-size:10px}header{padding:0 10px;gap:8px}}
@@ -59,22 +59,22 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.34.0"></script>
-<script src="scripts/symbol-format.js"></script>
-<script src="scripts/sheet-numbers.js?v=1.34.0"></script>
-<script src="scripts/red-pen.js?v=1.34.0"></script>
-<script src="scripts/linked-images.js?v=1.34.0"></script>
-<script src="scripts/connection-graph.js?v=1.34.0"></script>
-<script src="scripts/cables.js?v=1.34.0"></script>
-<script src="scripts/table-layout.js?v=1.34.0"></script>
-<script src="scripts/spacemouse.js?v=1.34.0"></script>
-<script src="scripts/workspace-ui.js?v=1.34.0"></script>
-<script src="firebase-config.js?v=1.34.0"></script>
-<script src="scripts/cloud-core.js?v=1.34.0"></script>
-<script src="scripts/cloud-projects.js?v=1.34.0"></script>
+<script src="libraries/catalog.js?v=1.34.1"></script>
+<script src="scripts/symbol-format.js?v=1.34.1"></script>
+<script src="scripts/sheet-numbers.js?v=1.34.1"></script>
+<script src="scripts/red-pen.js?v=1.34.1"></script>
+<script src="scripts/linked-images.js?v=1.34.1"></script>
+<script src="scripts/connection-graph.js?v=1.34.1"></script>
+<script src="scripts/cables.js?v=1.34.1"></script>
+<script src="scripts/table-layout.js?v=1.34.1"></script>
+<script src="scripts/spacemouse.js?v=1.34.1"></script>
+<script src="scripts/workspace-ui.js?v=1.34.1"></script>
+<script src="firebase-config.js?v=1.34.1"></script>
+<script src="scripts/cloud-core.js?v=1.34.1"></script>
+<script src="scripts/cloud-projects.js?v=1.34.1"></script>
 <script>
 (() => {
-  const APP_VERSION='1.34.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.34.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -251,14 +251,14 @@
     for(const node of partsG.querySelectorAll('.terminal')){const ref=node.dataset.part+':'+node.dataset.term;if(connectionKind(ref)==='fiber'){node.classList.add('fiber-terminal');node.style.fill='#ef7d24';node.dataset.connectionKind='fiber';}}
     for(const n of [...(pages[activeSheet].looseEnds||[]),...openEndDrafts.values()]){
       const ref='~'+n.id+':0',draft=openEndDrafts.has(ref);if(!draft&&!model.wires.some(w=>w.a===ref||w.b===ref))continue;
-      const chosen=!pdfExporting&&(selected?.kind==='loose-end'&&selected.id===n.id||selectedLooseEnds.has(n.id)),color=chosen?'#ff78b7':n.kind==='fiber'?'#ef7d24':n.kind==='bridge'?'#795548':'#263943';
+      const chosen=!pdfExporting&&(selected?.kind==='loose-end'&&selected.id===n.id||selectedLooseEnds.has(n.id)),color=chosen?'#ff78b7':'#B62400';
       const hit=el('circle',{cx:n.x,cy:n.y,r:10,style:'fill:transparent;stroke:none','pointer-events':'all',class:'terminal loose-end-hit screen-only','data-part':'~'+n.id,'data-term':0,'data-loose-end':n.id},wiresG);
       const c=el('circle',{cx:n.x,cy:n.y,r:2,class:'terminal loose-end'+(draft?' screen-only':''),'data-part':'~'+n.id,'data-term':0,'data-loose-end':n.id,style:'fill:#fff;stroke:'+color+';stroke-width:'+(chosen?1.6:1.1),tabindex:0,role:'button','aria-label':n.formerRef?'Open end · '+n.formerLabel:'Open connection end'},wiresG);
       el('title',{},c).textContent=(n.formerRef?'Open end · '+n.formerLabel:'Open end')+' · Select to move; Connect to reconnect';c.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();e.stopPropagation();if(isConnectionMode())onTerminal('~'+n.id,0)};hit.onpointerdown=c.onpointerdown;
       if(chosen)el('circle',{cx:n.x,cy:n.y,r:7,fill:'none',stroke:'#ff78b7','stroke-width':1,'pointer-events':'none',class:'screen-only'},wiresG);
     }
 
-    preview.style.stroke=mode==='fiber'?'#ef7d24':mode==='bridge'?'#795548':'';preview.style.strokeDasharray=mode==='fiber'?'18 7':'';
+    preview.style.stroke='#B62400';preview.style.strokeDasharray=mode==='fiber'?'18 7':'';
   }
   function createOpenEnd(client,firstTapDraft=null){
     if(!isConnectionMode()||pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet])||redPen?.active())return false;
@@ -324,7 +324,7 @@
   el('text',{x:108,y:20,'font-size':9,fill:'#53666f'},title).textContent='DATE';
   const noText=el('text',{x:238,y:22,'font-size':12,'font-weight':'bold',fill:'#263943'},title);noText.id='a4Number';
   el('text',{x:314,y:22,'font-size':12,'font-weight':'bold',fill:'#138b78'},title).textContent='A4';
-  const style=document.createElement('style');style.textContent='.wire{stroke:#293f4c}.part-body{fill:#fff;stroke:#3c535f}.part-label{fill:#15252e}.part-value{fill:#586b74}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle;pointer-events:none}.symbol{stroke:#203844}.terminal{fill:#07977e;stroke:#fff}.newnav{position:absolute;z-index:2;top:44px;left:50%;transform:translateX(-50%);display:flex;gap:5px}.newnav button{background:#1b2934;border:1px solid #40515b;border-radius:6px;color:#e6eef1;padding:5px 9px;font-size:11px}.newnav button:hover{border-color:#62d6bd;color:#62d6bd}.newnav .add{color:#62d6bd}.simpleModal{display:none;position:fixed;inset:0;z-index:20;background:#071017bb;place-items:center;padding:20px}.simplePanel{width:min(900px,96vw);max-height:88vh;overflow:auto;background:#17232e;border:1px solid #40525d;border-radius:12px;padding:18px;box-shadow:0 20px 70px #0009}.simplePanel h2{font-size:16px;margin:0 0 5px}.simplePanel p{font-size:11px;color:#91a0ac;margin:0 0 14px}.simplePanel table{border-collapse:collapse;width:100%;font-size:11px;margin:0 0 14px}.simplePanel th,.simplePanel td{text-align:left;padding:7px;border-bottom:1px solid #354651}.simplePanel th{color:#aebbc2;background:#1c2a36}.simplePanel button{background:#243541;border:1px solid #40525d;border-radius:6px;padding:6px 9px;color:#e8eef2;font-size:11px;margin-right:4px}.simplePanel .close{float:right}.simplePanel .page{border:1px solid #354651;border-radius:8px;padding:10px;margin:8px 0}.simplePanel .page.current{border-color:#62d6bd}';document.head.append(style);
+  const style=document.createElement('style');style.textContent='.wire{stroke:#B62400}.part-body{fill:#fff;stroke:#3c535f}.part-label{fill:#15252e}.part-value{fill:#586b74}.part-aks{fill:#138b78;font-size:8px;font-weight:700;text-anchor:middle;pointer-events:none}.symbol{stroke:#203844}.terminal{fill:#07977e;stroke:#fff}.newnav{position:absolute;z-index:2;top:44px;left:50%;transform:translateX(-50%);display:flex;gap:5px}.newnav button{background:#1b2934;border:1px solid #40515b;border-radius:6px;color:#e6eef1;padding:5px 9px;font-size:11px}.newnav button:hover{border-color:#62d6bd;color:#62d6bd}.newnav .add{color:#62d6bd}.simpleModal{display:none;position:fixed;inset:0;z-index:20;background:#071017bb;place-items:center;padding:20px}.simplePanel{width:min(900px,96vw);max-height:88vh;overflow:auto;background:#17232e;border:1px solid #40525d;border-radius:12px;padding:18px;box-shadow:0 20px 70px #0009}.simplePanel h2{font-size:16px;margin:0 0 5px}.simplePanel p{font-size:11px;color:#91a0ac;margin:0 0 14px}.simplePanel table{border-collapse:collapse;width:100%;font-size:11px;margin:0 0 14px}.simplePanel th,.simplePanel td{text-align:left;padding:7px;border-bottom:1px solid #354651}.simplePanel th{color:#aebbc2;background:#1c2a36}.simplePanel button{background:#243541;border:1px solid #40525d;border-radius:6px;padding:6px 9px;color:#e8eef2;font-size:11px;margin-right:4px}.simplePanel .close{float:right}.simplePanel .page{border:1px solid #354651;border-radius:8px;padding:10px;margin:8px 0}.simplePanel .page.current{border-color:#62d6bd}';document.head.append(style);
   const pages=[{id:crypto.randomUUID(),title:'Schematic',parts:model.parts,wires:model.wires}];let activeSheet=0;
   const baseRender=render;render=function(){pages[activeSheet].parts=model.parts;pages[activeSheet].wires=model.wires;baseRender();document.querySelector('#hud').textContent='Sheet '+sheetLabel(pages[activeSheet])+'/'+pageNumber(pages.length)+' · '+pages[activeSheet].title+' · '+(altGrid?'2 mm grid':'4 mm grid');document.querySelector('#a4Project').textContent='Cabel-Studio · '+model.title;document.querySelector('#a4Sheet').textContent=pages[activeSheet].title;document.querySelector('#a4Number').textContent=sheetLabel(pages[activeSheet])+' / '+pageNumber(pages.length);document.querySelector('#sheetCount')&&(document.querySelector('#sheetCount').textContent=pages.length+' Sheets')};
   const baseSnap=snap;snap=function(v){const g=gridSpacing();return Math.round(v/g)*g};
@@ -466,7 +466,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
   const wireLabelPosition=(g,w)=>{const p=wireLabelAnchor(w);g.setAttribute('transform','translate('+p.x+' '+p.y+') rotate('+p.angle+')');if(w.kind==='bridge'){
     const route=wireRoute(w),text=g.querySelector('text'),required=(text?.getComputedTextLength()||28)+6;const fits=route?.segments.some(s=>{const dx=s.x2-s.x1,dy=s.y2-s.y1,u=((p.x-s.x1)*dx+(p.y-s.y1)*dy)/(s.length*s.length);return u>=0&&u<=1&&Math.hypot(p.x-s.x1-u*dx,p.y-s.y1-u*dy)<.001&&2*Math.min(u,1-u)*s.length>=required});g.style.display=fits?'':'none';g.dataset.labelHidden=String(!fits);
   }};
-  const drawWireLabels=()=>{wiresG.querySelectorAll('.wire-label').forEach(g=>g.remove());const active=pages[activeSheet];if(!active||active.kind===DEVICE_LIST_KIND)return;(active.wires||[]).forEach(w=>{ensureWireData(w);const path=Array.from(wiresG.querySelectorAll('path.wire')).find(p=>p.dataset.id===w.id);if(path){path.style.stroke=w.kind==='fiber'?'#ef7d24':w.kind==='bridge'?'#795548':wirePalette[w.colorCode]||wirePalette.BK;path.style.strokeWidth=w.kind==='bridge'?'2':'1';path.style.strokeDasharray=w.kind==='fiber'?'18 7':'';path.dataset.wireKind=w.kind||'wire'}if(w.labelHidden)return;const label=wireText(w),width=Math.max(12,label.length*4.4+4),g=el('g',{class:'wire-label','data-wire-label':w.id,style:'cursor:grab;touch-action:none'},wiresG);el('rect',{x:-width/2,y:-12,width,height:11,fill:'#fff',stroke:'none',class:'wire-label-background'},g);const text=el('text',{x:0,y:-4,'font-size':7,'font-weight':'normal','text-anchor':'middle',fill:'#263238','pointer-events':'all'},g);text.textContent=label;wireLabelPosition(g,w);g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();cableSystem?.reveal(w);return}if(e.button!==0||isConnectionMode())return;e.preventDefault();e.stopPropagation();selected={kind:'wire',id:w.id};wireLabelDrag=w.id;wireDataButton.disabled=false;g.style.cursor='grabbing'});g.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();editWire(w.id)})})};
+  const drawWireLabels=()=>{wiresG.querySelectorAll('.wire-label').forEach(g=>g.remove());const active=pages[activeSheet];if(!active||active.kind===DEVICE_LIST_KIND)return;(active.wires||[]).forEach(w=>{ensureWireData(w);const path=Array.from(wiresG.querySelectorAll('path.wire')).find(p=>p.dataset.id===w.id);if(path){path.style.stroke='#B62400';path.style.strokeWidth=w.kind==='bridge'?'2':'1';path.style.strokeDasharray=w.kind==='fiber'?'18 7':'';path.dataset.wireKind=w.kind||'wire'}if(w.labelHidden)return;const label=wireText(w),width=Math.max(12,label.length*4.4+4),g=el('g',{class:'wire-label','data-wire-label':w.id,style:'cursor:grab;touch-action:none'},wiresG);el('rect',{x:-width/2,y:-12,width,height:11,fill:'#fff',stroke:'none',class:'wire-label-background'},g);const text=el('text',{x:0,y:-4,'font-size':7,'font-weight':'normal','text-anchor':'middle',fill:'#263238','pointer-events':'all'},g);text.textContent=label;wireLabelPosition(g,w);g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();cableSystem?.reveal(w);return}if(e.button!==0||isConnectionMode())return;e.preventDefault();e.stopPropagation();selected={kind:'wire',id:w.id};wireLabelDrag=w.id;wireDataButton.disabled=false;g.style.cursor='grabbing'});g.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();editWire(w.id)})})};
   let wireLabelDrag=null;
   const wireDataButton=document.createElement('button');wireDataButton.id='wireDataButton';wireDataButton.textContent='Wire properties';wireDataButton.disabled=true;nav.append(wireDataButton);
   const wireUiStyle=document.createElement('style');wireUiStyle.textContent='.newnav button:disabled{opacity:.45;cursor:not-allowed}.wire-label{user-select:none}.wire-form{display:grid;gap:10px;max-width:420px}.wire-form label{display:grid;gap:5px;color:#b9c7ce;font-size:11px}.wire-form input,.wire-form select{width:100%;padding:8px;background:#101923;border:1px solid #40525d;border-radius:6px;color:#e8eef2;font:inherit}.wire-form .preview{display:inline-flex;align-items:center;gap:8px;color:#cbd5da}.wire-form .swatch{width:18px;height:18px;border:1px solid #82929a;border-radius:4px}.wire-form .actions{display:flex;gap:7px;margin-top:4px}';document.head.append(wireUiStyle);
@@ -884,16 +884,16 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
         const y=rowY(i),slave=pinSlave(p.id,pin),slaveSheet=slave?drawingPages().find(s=>s.parts.includes(slave)):null,owner=slave&&!slave.unplaced?slaveSheet:sheetRef;
         const representations=[{sheet:sheetRef,key:p.id+':'+pin},...(slave?[{sheet:slaveSheet,key:slave.id+':0'}]:[])];const targets=Array.from(new Set(representations.flatMap(r=>(r.sheet?.wires||[]).filter(w=>w.kind!=='bridge'&&(w.a===r.key||w.b===r.key)).map(w=>endPoint(r.sheet,w.a===r.key?w.b:w.a,w.id)))));
         el('rect',{x:36,y:y-17,width:1056,height:25,fill:i%2?'#edf3f6':'#fff'},g);
-        generatedText(g,46,y,terminalOrdinal(p),13,'bold');generatedText(g,170,y,':'+pinNumber(p,pin),13,'bold','#2463b5');generatedText(g,270,y,p.terminalType||p.value||'Terminal',11);const targetText=targets.join(', ')||'—';const targetLabel=generatedText(g,510,y,targetText.length>52?targetText.slice(0,49)+'…':targetText,11);el('title',{},targetLabel).textContent=targetText;generatedText(g,1020,y,referenceAddress(owner,slave&&!slave.unplaced?slave:p),8);
+        generatedText(g,46,y,terminalOrdinal(p),13,'bold');generatedText(g,170,y,':'+pinNumber(p,pin),13,'bold','#0000FF');generatedText(g,270,y,p.terminalType||p.value||'Terminal',11);const targetText=targets.join(', ')||'—';const targetLabel=generatedText(g,510,y,targetText.length>52?targetText.slice(0,49)+'…':targetText,11);el('title',{},targetLabel).textContent=targetText;generatedText(g,1020,y,referenceAddress(owner,slave&&!slave.unplaced?slave:p),8);
         const hit=rowJump(g,y,()=>jumpToPin(p.id,pin),'Go to terminal '+aks(p)+' Pin :'+pinNumber(p,pin));hit.setAttribute('height',25);hit.setAttribute('y',y-17);hit.classList.add('terminal-list-link');hit.dataset.partId=p.id;
         hit.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(p)});
       });
       const endpointRow=(ref,owner,exclude)=>{if(connectionGraph?.nodeId(ref)){const indices=connectionGraph.terminals(owner,ref,exclude).map(key=>endpointRow(key,owner)).filter(i=>i>=0);return indices.length?indices[0]:-1}const [id,index]=ref.split(':');return rows.findIndex(e=>(e.p.id===id&&(Number(index)===8||e.pin===Number(index)))||pinSlave(e.p.id,e.pin)?.id===id||pinSlave(e.p.id,8)?.id===id)};
       const bridges=drawingPages().flatMap(s=>s.wires.filter(w=>w.kind==='bridge'));let lane=0;
       for(const wire of bridges){const owner=drawingPages().find(s=>s.wires.includes(wire)),a=endpointRow(wire.a,owner,wire.id),b=endpointRow(wire.b,owner,wire.id);if(a<0&&b<0)continue;const x=910+(lane++%5)*14,ya=rowY(a<0?b:a)-5,yb=rowY(b<0?a:b)-5;
-        const path=el('path',{d:'M '+(x-8)+' '+ya+' H '+x+' V '+yb+' H '+(x-8),fill:'none',stroke:'#795548','stroke-width':3,class:'terminal-bridge'},g);el('title',{},path).textContent='Bridge → '+wire.a+' ↔ '+wire.b;path.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(rows[a<0?b:a].p)});
-        for(const y of [ya,yb])el('circle',{cx:x-8,cy:y,r:3,fill:'#795548'},g);
-        if(a<0||b<0)generatedText(g,x+4,ya-3,'↗',12,'bold','#795548');
+        const path=el('path',{d:'M '+(x-8)+' '+ya+' H '+x+' V '+yb+' H '+(x-8),fill:'none',stroke:'#B62400','stroke-width':3,class:'terminal-bridge'},g);el('title',{},path).textContent='Bridge → '+wire.a+' ↔ '+wire.b;path.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();editComponent(rows[a<0?b:a].p)});
+        for(const y of [ya,yb])el('circle',{cx:x-8,cy:y,r:3,fill:'#B62400'},g);
+        if(a<0||b<0)generatedText(g,x+4,ya-3,'↗',12,'bold','#B62400');
       }
       if(!sheet.terminalEntries?.length)generatedText(g,46,170,'No terminals in this strip.',13);
     }
@@ -1054,7 +1054,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     // A wide invisible border makes thin field outlines easy to grab, without covering components or wires above this layer.
     el('rect',{x:field.x,y:field.y,width:field.width,height:field.height,fill:'none',stroke:'transparent','stroke-width':8,'pointer-events':'stroke',class:'aks-field-handle screen-only',style:'cursor:grab'},g);
     const padding=Math.min(4,field.width/4),fontSize=Math.min(8,field.height/1.6);
-    const text=(field.title||'AKS field')+' · '+scopeLabel(field),label=el('text',{x:field.x+padding,y:field.y+fontSize+Math.min(2,field.height/8),'font-size':fontSize,fill:'#2463b5',style:'cursor:grab','pointer-events':'all',class:'aks-area-label aks-field-handle'},g);
+    const text=(field.title||'AKS field')+' · '+scopeLabel(field),label=el('text',{x:field.x+padding,y:field.y+fontSize+Math.min(2,field.height/8),'font-size':fontSize,fill:'#0000FF',style:'cursor:grab','pointer-events':'all',class:'aks-area-label aks-field-handle'},g);
     label.textContent=text;
     const width=Math.max(0,field.width-2*padding);
     if(label.getComputedTextLength()>width){let lo=0,hi=text.length;while(lo<hi){const mid=Math.ceil((lo+hi)/2);label.textContent=text.slice(0,mid)+'…';if(label.getComputedTextLength()<=width)lo=mid;else hi=mid-1}label.textContent=text.slice(0,lo)+'…'}
@@ -1068,7 +1068,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   const drawBeforeAksPage=render;render=function(){
     drawBeforeAksPage();const sheet=pages[activeSheet],generated=isGenerated(sheet);aksAreaGroup.replaceChildren();aksAreaGroup.style.display=generated?'none':'';pagePropertiesButton.disabled=generated;aksAreaButton.disabled=generated;aksAreaButton.classList.toggle('active',aksAreaDrawing);aksAreaButton.setAttribute('aria-pressed',String(aksAreaDrawing));
-    if(!generated){if(scopeLabel(sheet.aks)){const n=el('text',{x:30,y:38,'font-size':9,fill:'#2463b5',class:'page-aks-context'},aksAreaGroup);n.textContent=scopeLabel(sheet.aks)}for(const a of validAksAreas(sheet).sort((a,b)=>b.width*b.height-a.width*a.height))drawAksField(a);
+    if(!generated){if(scopeLabel(sheet.aks)){const n=el('text',{x:30,y:38,'font-size':9,fill:'#0000FF',class:'page-aks-context'},aksAreaGroup);n.textContent=scopeLabel(sheet.aks)}for(const a of validAksAreas(sheet).sort((a,b)=>b.width*b.height-a.width*a.height))drawAksField(a);
     }
     if(aksAreaDrawing)document.querySelector('#statusText').textContent='Drag a rectangle for an AKS field';
     if(aksFieldDrag)document.querySelector('#statusText').textContent=(aksFieldDrag.operation==='move'?'Moving':'Resizing')+' AKS field · Esc to cancel';
@@ -1173,7 +1173,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   const bridgeButton=document.createElement('button');bridgeButton.id='bridgeTool';bridgeButton.textContent='Terminal bridge';bridgeButton.title='Thicker brown connection within a terminal strip';
   bridgeButton.onclick=()=>{mode=mode==='bridge'?'select':'bridge';wireStart=null;wirePoints=[];preview.style.display='none';render()};nav.append(bridgeButton);
   const renderBeforeBridges=render;
-  render=function(){renderBeforeBridges();bridgeButton.classList.toggle('active',mode==='bridge');bridgeButton.setAttribute('aria-pressed',String(mode==='bridge'));document.querySelector('#wireTool').classList.toggle('active',mode==='wire');preview.style.stroke=mode==='bridge'?'#795548':'';if(mode==='bridge')document.querySelector('#statusText').textContent=wireStart?'Choose the bridge target pin':'Terminal bridge: choose a start pin'};
+  render=function(){renderBeforeBridges();bridgeButton.classList.toggle('active',mode==='bridge');bridgeButton.setAttribute('aria-pressed',String(mode==='bridge'));document.querySelector('#wireTool').classList.toggle('active',mode==='wire');preview.style.stroke='#B62400';if(mode==='bridge')document.querySelector('#statusText').textContent=wireStart?'Choose the bridge target pin':'Terminal bridge: choose a start pin'};
   createTerminalStrip=function(){
     showPanel('<h2>Create terminal strip</h2><form id="stripForm" class="wire-form"><label>Strip<input name="code" value="X1" required></label><label>Number of terminals<input name="count" type="number" min="2" max="24" value="4" required></label><label>Pins per terminal<input name="pins" type="number" min="2" max="8" value="2" required></label><label>Terminal type (editable per terminal)<input name="terminalType" value="Feed-through terminal"></label><label>Manufacturer number<input name="manufacturerNumber"></label><label>SAP number<input name="sapNumber"></label><button type="submit">Create</button></form>');
     document.querySelector('#stripForm').onsubmit=e=>{
@@ -1294,10 +1294,10 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     .device-unplaced>summary{background:#fff2a8;color:#514000;border-radius:4px}
     .device-placed>summary{background:#dcefff;color:#173c59;border-radius:4px}
     .device-node>summary .device-jump,.device-node>summary small{color:inherit}
-    .part-label{font-size:10px!important;fill:#2463b5!important}
-    .part-value{font-size:8px!important;fill:#2463b5!important}
-    .part-aks{font-size:7px!important;fill:#2463b5!important}
-    .pin-label,.page-reference{fill:#2463b5!important}
+    .part-label{font-size:10px!important;fill:#0000FF!important}
+    .part-value{font-size:8px!important;fill:#0000FF!important}
+    .part-aks{font-size:7px!important;fill:#0000FF!important}
+    .pin-label,.page-reference{fill:#0000FF!important}
   `;document.head.append(placementStyle);
 
   function pinSlave(id,index){if(!pinPlacementReady)return null;return drawingPages().flatMap(s=>s.parts).find(p=>p.type==='terminal-pin'&&p.masterId===id&&p.pinIndex===index)}
@@ -1449,7 +1449,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     .device-node>summary .device-jump{font-size:12px!important;font-weight:700!important;color:#123248!important;background:transparent!important;line-height:1.5;padding:3px 4px!important}
     .device-unplaced>summary .device-jump{color:#493400!important}
     .device-node>summary .device-jump:hover{background:#ffffff88!important}
-    .device-node>summary .device-jump:focus-visible{outline:2px solid #2463b5;outline-offset:1px}
+    .device-node>summary .device-jump:focus-visible{outline:2px solid #0000FF;outline-offset:1px}
     .device-node>summary .terminal-manage{color:#123248;background:#ffffffb3;border-color:#8098ac}
     .property-field{display:grid;gap:5px}.property-input-row{display:flex;align-items:center;gap:10px;min-width:0}
     .property-input-row>input,.property-input-row>select{flex:1;min-width:0;width:0}
@@ -1523,7 +1523,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   const drawBeforeCatalogGeometry=drawPart;drawPart=function(p){
     drawBeforeCatalogGeometry(p);const root=partsG.lastElementChild,geometry=root.querySelector('.part-geometry');
     if(p.type==='custom-symbol'){
-      const definition=customSymbolDefinition(p);if(definition){CabelSymbol.draw(geometry,definition,{scale:12,skipText:true,strokeWidth:2.3});for(const o of definition.geometry.filter(o=>o.type==='text')){const x=o.x*12*SYMBOL_SCALE*(p.flipX?-1:1),y=o.y*12*SYMBOL_SCALE*(p.flipY?-1:1),angle=(p.rotation||0)*Math.PI/180;const text=el('text',{x:x*Math.cos(angle)-y*Math.sin(angle),y:x*Math.sin(angle)+y*Math.cos(angle),'font-size':o.fontSize*1128/297,fill:'#2463b5',class:'custom-symbol-text','pointer-events':'all'},root.querySelector('.part-caption'));text.textContent=o.text}}
+      const definition=customSymbolDefinition(p);if(definition){CabelSymbol.draw(geometry,definition,{scale:12,skipText:true,strokeWidth:2.3});for(const o of definition.geometry.filter(o=>o.type==='text')){const x=o.x*12*SYMBOL_SCALE*(p.flipX?-1:1),y=o.y*12*SYMBOL_SCALE*(p.flipY?-1:1),angle=(p.rotation||0)*Math.PI/180;const text=el('text',{x:x*Math.cos(angle)-y*Math.sin(angle),y:x*Math.sin(angle)+y*Math.cos(angle),'font-size':o.fontSize*1128/297,fill:'#0000FF',class:'custom-symbol-text','pointer-events':'all'},root.querySelector('.part-caption'));text.textContent=o.text}}
     }
     if(isPortBlock(p)){
       const terminals=partTerminals(p),ys=terminals.map(t=>t[1]),top=Math.min(...ys)-24,bottom=Math.max(...ys)+24;
@@ -1550,11 +1550,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const root=partsG.lastElementChild,body=root.querySelector('.part-body');for(const [key,value] of Object.entries(relayBounds(p)))body.setAttribute(key,value);
       const coil=deviceEntries().find(e=>e.p.type==='relay-coil'&&e.p.masterId===p.id)?.p,contacts=coil?deviceEntries().filter(e=>e.p.type==='relay-contact'&&e.p.masterId===coil.id).sort((a,b)=>a.p.relayContact-b.p.relayContact).map(e=>e.p):[];
       [coil,...contacts].forEach((part,i)=>{if(!part)return;const offset=([-240,-96,48,192][i]+relayOffset(p))*SYMBOL_SCALE*(p.flipY?-1:1),angle=(p.rotation||0)*Math.PI/180,vertical=Math.abs(Math.cos(angle))>.5,x=vertical?124*SYMBOL_SCALE:-offset*Math.sin(angle),y=offset*Math.cos(angle)-(vertical?3:24);
-        const entry=deviceEntries().find(e=>e.p===part),link=el('text',{x,y,'font-size':6,'text-anchor':vertical?'start':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'relay-symbol-link','data-relay-target':part.id,tabindex:0,role:'button',style:'cursor:pointer'},root);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent=(i?'C'+i:'Coil')+' '+(part.unplaced?'＋':referenceAddress(entry.sheet,part));el('title',{},link).textContent=(i?'Changeover contact '+i:'Coil')+' · '+part.pinNumbers.join('/')+' · '+(part.unplaced?'Place':referenceAddress(entry.sheet,part));link.setAttribute('aria-label',(i?'Changeover contact '+i:'Coil')+' open');link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(part.id)});link.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();followRelaySymbol(part.id)}});
+        const entry=deviceEntries().find(e=>e.p===part),link=el('text',{x,y,'font-size':6,'text-anchor':vertical?'start':'middle',fill:'#0000FF',display:p.textVisibility?.reference===false?'none':'inline',class:'relay-symbol-link','data-relay-target':part.id,tabindex:0,role:'button',style:'cursor:pointer'},root);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent=(i?'C'+i:'Coil')+' '+(part.unplaced?'＋':referenceAddress(entry.sheet,part));el('title',{},link).textContent=(i?'Changeover contact '+i:'Coil')+' · '+part.pinNumbers.join('/')+' · '+(part.unplaced?'Place':referenceAddress(entry.sheet,part));link.setAttribute('aria-label',(i?'Changeover contact '+i:'Coil')+' open');link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(part.id)});link.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();followRelaySymbol(part.id)}});
       });
     }else if(['relay-coil','relay-contact'].includes(p.type)){
       const master=relayMaster(p);if(!master)return;const entry=deviceEntries().find(e=>e.p===master),caption=partsG.lastElementChild.querySelector('.part-caption');
-      const link=el('text',{x:0,y:-17,'font-size':7,'text-anchor':'middle',fill:'#2463b5',display:p.textVisibility?.reference===false?'none':'inline',class:'page-reference relay-parent-link','data-relay-target':master.id,style:'cursor:pointer'},caption);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent='Complete '+(master.unplaced?'＋':referenceAddress(entry.sheet,master));link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(master.id)});
+      const link=el('text',{x:0,y:-17,'font-size':7,'text-anchor':'middle',fill:'#0000FF',display:p.textVisibility?.reference===false?'none':'inline',class:'page-reference relay-parent-link','data-relay-target':master.id,style:'cursor:pointer'},caption);if(p.textVisibility?.reference===false)link.style.display='none';link.textContent='Complete '+(master.unplaced?'＋':referenceAddress(entry.sheet,master));link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();followRelaySymbol(master.id)});
     }
   };
   const jumpBeforeRelay=jumpToPage;jumpToPage=function(){const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id),master=p&&relayMaster(p);if(master&&master!==p){followRelaySymbol(master.id);return}jumpBeforeRelay()};
@@ -1563,7 +1563,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     drawBeforeTerminalReferences(p);const caption=partsG.lastElementChild.querySelector('.part-caption');
     function linkTo(target,label,index){
       const entry=deviceEntries().find(e=>e.p===target);if(!entry)return;
-      const link=el('text',{x:0,y:0,'font-size':6,'text-anchor':'middle',fill:'#2463b5',class:'page-reference terminal-cross-reference','data-terminal-target':target.id,'data-pin-index':index,style:'cursor:pointer'},caption);link.textContent=label+' '+referenceAddress(entry.sheet,target);if(p.textVisibility?.reference===false)link.style.display='none';link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();jumpToDevice(target.id)});
+      const link=el('text',{x:0,y:0,'font-size':6,'text-anchor':'middle',fill:'#0000FF',class:'page-reference terminal-cross-reference','data-terminal-target':target.id,'data-pin-index':index,style:'cursor:pointer'},caption);link.textContent=label+' '+referenceAddress(entry.sheet,target);if(p.textVisibility?.reference===false)link.style.display='none';link.addEventListener('pointerdown',e=>e.stopPropagation());link.addEventListener('click',e=>{e.stopPropagation();jumpToDevice(target.id)});
     }
     if(p.type==='connector')for(const index of [...partTerminals(p).map((_,i)=>i),8]){const slave=pinSlave(p.id,index);if(slave&&!slave.unplaced)linkTo(slave,':'+pinNumber(p,index),index)}
     if(p.type==='terminal-pin'){const parent=deviceEntries().find(e=>e.p.id===p.masterId)?.p;if(parent)linkTo(parent,'Main symbol',p.pinIndex)}

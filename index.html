@@ -1784,10 +1784,10 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     if(moved.length&&autoConnectParts(moved))render();
   },true);
   document.addEventListener('pointercancel',()=>{if(drag?.checkpoint){const before=drag.checkpoint;drag=null;restoreHistory(before);}},true);
-  redPen=CabelRedPen.init({svg,pageContent,sheet:()=>pages[activeSheet],world:toWorld,exporting:()=>pdfExporting,blocked:()=>pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet]),commit:commitHistory,changed:()=>render(),refresh:()=>workspaceUI?.refresh()});
+  redPen=CabelRedPen.init({svg,pageContent,sheet:()=>pages[activeSheet],world:toWorld,exporting:()=>pdfExporting,blocked:()=>pdfExporting||modal.style.display==='grid'||isGenerated(pages[activeSheet])||Boolean(cloudProjects?.state().readOnly),commit:commitHistory,changed:()=>render(),refresh:()=>workspaceUI?.refresh()});
   connectionGraph=CabelConnections.init({
     svg,content:pageContent,layer:wiresG,sheet:()=>pages[activeSheet],sheets:drawingPages,wires:()=>model.wires,position:findTerminal,route:routePoints,orthogonal:orthogonalPoints,snap,grid:gridSpacing,world:toWorld,
-    pending:()=>({start:wireStart,points:wirePoints}),selected:()=>selected,isSelected:id=>selectedJunctions.has(id),select:value=>{selected=value},mode:()=>mode,connecting:isConnectionMode,blocked:()=>pdfExporting||modal.style.display==='grid'||redPen.active()||isGenerated(pages[activeSheet]),
+    pending:()=>({start:wireStart,points:wirePoints}),selected:()=>selected,isSelected:id=>selectedJunctions.has(id),select:value=>{selected=value},mode:()=>mode,connecting:isConnectionMode,blocked:()=>pdfExporting||modal.style.display==='grid'||redPen.active()||isGenerated(pages[activeSheet])||Boolean(cloudProjects?.state().readOnly),
     connect:ref=>{const[id,index]=ref.split(':');onTerminal(id,Number(index))},id:objectId,removeWires:predicate=>{model.wires=model.wires.filter(w=>!predicate(w));pages[activeSheet].wires=model.wires},
     captureRoutes:captureWireRoutes,moveNode:(n,x,y,routes)=>changeComponent({id:'@'+n.id},()=>{n.x=x;n.y=y},new Set(),routes),clearSelection:clearAreaSelection,capture:captureSheetPointer,commit:commitHistory,render:()=>render(),refresh:()=>workspaceUI?.refresh(),updatePreview:updateWirePreview,
     el,safe,endpoint:endPoint,panel:showPanel,close:closePanel

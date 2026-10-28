@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.38.0**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.39.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -48,6 +48,14 @@ On iPad, entries can be dragged with a finger/Pencil or tapped and then placed o
 ## Supply and load calculations
 
 **Edit component** has separate **Device** and **Calculation** tabs. Device contains designation, type/value, material numbers, terminals, references and text visibility. Calculation contains load inputs/assignment, internal conductive paths and, for source devices, the supply/fault settings shortcut. Opening a device from **Calculations** selects Calculation directly. Non-electrical annotations and optical-only devices omit the empty calculation tab. Tab changes retain unsaved input; **Apply** commits both tabs together and **Cancel** discards both. Invalid inputs reveal their tab. Tabs support touch and Left/Right/Home/End keys; one Apply can be undone/redone as a whole.
+
+**AC/DC power supplies detect their DC output loads automatically.** The generic AC/DC symbol and supported Phoenix UNO/TRIO/QUINT products need no separate supply setup. Wire both DC poles to the consumer's actual power inputs: for example the 24 V/0 V supply ports of a Beckhoff module or the two lamp ports. Equivalent duplicate DC output terminals belong to the same rail. Switch contacts, GPIO, DC OK and fiber ports do not substitute for power inputs. Existing product placements without a saved power-port model use the matching library model.
+
+Open the power supply's **Calculation → DC output loads** section to see detected devices, their entered consumption and status. **Apply & view connected loads** opens its circuit directly. The separate **Input load (upstream supply)** section describes the converter's own AC input consumption; DC output demand is not copied into that input value. Devices with unknown consumption appear as **Not entered** and make the load total incomplete; enter their input W or A to include them in the demand total. No consumption or available output current is guessed from a product name.
+
+Each eligible power supply has a derived DC circuit with a stable identity. Catalogue output-voltage metadata supplies its nominal voltage; otherwise the generic profile starts at **24 V DC**, clearly marked for confirmation. **Edit supply / fault data** saves voltage, reserve, available current and fault settings as an explicit circuit. Existing configured circuits and output mappings take precedence, so a physical source is not duplicated. **Remove supply** disables automatic output detection for that device; this opt-out survives JSON/cloud/history. Re-enable it through **Apply & enable output load detection** in its Calculation tab. Unplacing/re-placing the source preserves its identity. Detection is based on schematic connections and does not simulate whether the AC input is currently energized or certify voltage compatibility.
+
+Automatic profiles use `@psu:<partId>` IDs and are derived without modifying the saved `projectInfo.electricalCalculations.circuits` inputs. Editing a profile writes an explicit circuit. Optional `disabledSourcePartIds: [partId, ...]` in the calculation settings records disabled automatic sources. Simultaneous edits to source settings and relevant port names, product power models or output-voltage metadata are reviewed as an electrical cloud conflict.
 
 Open **Calculations** in the upper toolbar and choose **Add supply**. DC, single-phase AC and three-phase AC start at 24 V, 230 V and 400 V respectively; voltage is editable. Enter a circuit name, continuous available current and reserve percentage. Automatic assignment needs a placed, linked source. A manual/external supply remains available for explicitly overridden planning loads. Three-phase voltage is **L–L**; single-phase voltage is **L–N**. Current ratings apply per phase.
 
@@ -212,7 +220,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.38.0. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.39.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -266,7 +274,7 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.38.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.39.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -499,6 +507,8 @@ node tests/device-list-smoke.cjs
 node tests/connection-lists-smoke.cjs
 node tests/document-navigation-smoke.cjs
 node tests/product-loads.cjs
+node tests/power-supply-loads.cjs
+node tests/power-supply-loads-smoke.cjs
 node tests/product-loads-smoke.cjs
 node tests/electrical-network.cjs
 node tests/electrical-network-ui-smoke.cjs
@@ -513,6 +523,7 @@ npm run test:firebase
 
 | Check | Main coverage |
 | --- | --- |
+| `power-supply-loads.cjs` / `power-supply-loads-smoke.cjs` | Generic/current/legacy product PSU outputs, automatic Beckhoff/lamp consumers, missing consumption, AC/DC separation, output aliases, custom source settings, source conflicts, real rewiring and source re-placement, persisted disable/re-enable, material/JSON/history, cloud model races and linked PDF on desktop/iPad |
 | `component-tabs-smoke.cjs` | Desktop/iPad Device and Calculation tabs, retained drafts, combined Apply/Cancel and history, hidden-field validation, direct calculation entry, supply shortcut, keyboard and narrow layout |
 | `connection-lists-smoke.cjs` | Compact cable/connection tables, retained cable metadata, long endpoint/identifier wrapping and continuations, bounded screen/PDF cells, copper/fiber/bridges, empty/unassigned conductors and retained links on desktop/iPad |
 | `device-list-smoke.cjs` | Wrapped cell/page bounds, variable row heights and pagination, very long values and material IDs, retained links and complete vector-PDF text on desktop/iPad |

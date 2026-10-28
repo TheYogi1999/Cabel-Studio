@@ -28,6 +28,7 @@
   function entries(doc){return doc.sheets.flatMap(sheet=>sheet.parts.filter(p=>p.loadCalculation).map(p=>({p,sheet})));}
   function validateDocument(doc){
     const settings=doc.projectInfo?.electricalCalculations;if(settings!==undefined&&(!settings||typeof settings!=='object'||settings.version!==1||!Array.isArray(settings.circuits)))throw Error('Invalid electrical calculation settings');
+    if(settings?.disabledSourcePartIds!==undefined){const list=settings.disabledSourcePartIds;if(!Array.isArray(list)||new Set(list).size!==list.length||list.some(id=>typeof id!=='string'||!id.trim()||id.length>200))throw Error('Invalid disabled automatic supplies');}
     const ids=new Set();for(const c of circuits(doc)){validateCircuit(c);if(ids.has(c.id))throw Error('Duplicate supply circuit ID');ids.add(c.id);}
     for(const sheet of doc.sheets)for(const p of sheet.parts)Network.validatePart(p);
     for(const sheet of doc.sheets)for(const p of sheet.parts)if(p.type==='supply'){if(!Object.hasOwn(systems,p.supplySystem)||!Array.isArray(p.pinNumbers)||p.pinNumbers.length!==supplyPins(p.supplySystem).length||p.portKinds?.some(k=>k!=='wire'))throw Error('Invalid Supply symbol or electrical ports');}

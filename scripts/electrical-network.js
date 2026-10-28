@@ -12,8 +12,14 @@
     if(!Array.isArray(m.inputs)||m.inputs.some(g=>!group(g,2,3))||!Array.isArray(m.groups)||m.groups.some(g=>!group(g,2,64))||!m.outputs||typeof m.outputs!=='object'||Object.entries(m.outputs).some(([k,g])=>!['dc','ac1','ac3'].includes(k)||!group(g,k==='ac3'?4:2,k==='ac3'?4:2)))throw Error('Invalid product power ports');
     return m;
   }
+  function genericSupplyModel(p){
+    if(p.type!=='power-supply'||p.catalog)return null;
+    const names=p.pinNumbers||['L','N','PE','+24V','0V','+24V.2','0V.2','DC OK 13','DC OK 14'],normal=names.map(n=>String(n).trim().toUpperCase()),unique=name=>normal.indexOf(name)>=0&&normal.indexOf(name)===normal.lastIndexOf(name)?normal.indexOf(name):-1;
+    const positive=normal.flatMap((n,i)=>/^(?:\+24V|\+)(?:\.\d+)?$/.test(n)&&unique(n)===i?[i]:[]),negative=normal.flatMap((n,i)=>/^(?:0V|[−-])(?:\.\d+)?$/.test(n)&&unique(n)===i?[i]:[]),l=unique('L'),n=unique('N');
+    return{inputs:l>=0&&n>=0?[[l,n]]:[],groups:[positive,negative].filter(g=>g.length>1),outputs:positive.length&&negative.length?{dc:[positive[0],negative[0]]}:{},scope:'Generic schematic AC input and equivalent DC output rails; verify custom port roles.'};
+  }
   function productModel(p,lookup){
-    const raw=p.catalog?.attributes?.loadModel||lookup?.(p);if(!raw)return null;
+    const raw=p.catalog?.attributes?.loadModel||lookup?.(p);if(!raw)return genericSupplyModel(p);
     try{validateModel(raw);}catch{return null;}
     const normal=s=>String(s).trim().replace(/\s+/g,' ').toUpperCase(),names=(p.pinNumbers||[]).map(normal),map=raw.portNames.map(n=>{const name=normal(n),i=names.indexOf(name);return i>=0&&names.lastIndexOf(name)===i?i:-1;}),translate=g=>g.every(i=>map[i]>=0)?g.map(i=>map[i]):null;
     return{inputs:raw.inputs.map(translate).filter(Boolean),groups:raw.groups.map(translate).filter(Boolean),outputs:Object.fromEntries(Object.entries(raw.outputs).map(([k,g])=>[k,translate(g)]).filter(([,g])=>g)),scope:raw.scope};
@@ -38,13 +44,22 @@
     return [...pairs,...(productModel(p,lookup)?.groups||[]).flatMap(g=>g.slice(1).map(i=>[g[0],i]))];
   }
   function sourcePins(p,system,lookup){return p.type==='supply'?(system==='ac3'?[0,1,2,3]:[0,1]):productModel(p,lookup)?.outputs[system];}
+  function powerSupplyCircuit(p,lookup){
+    if(p.type!=='power-supply')return null;const pins=sourcePins(p,'dc',lookup);if(!pins||pins.some(i=>!copper(p,i)))return null;
+    const voltage=p.catalog?.attributes?.outputVoltageV,known=typeof voltage==='number'&&Number.isFinite(voltage)&&voltage>=1&&voltage<=1500;
+    return{id:'@psu:'+p.id,name:(String(p.deviceCode||p.label||p.id).slice(0,185)+' · DC output'),sourcePartId:p.id,sourcePins:[...pins],system:'dc',voltage:known?voltage:24,reservePct:20,fault:{mode:'off'},automaticSource:true,voltageDefaulted:!known};
+  }
+  function circuits(doc,lookup){
+    const settings=doc.projectInfo?.electricalCalculations,explicit=settings?.circuits||[],disabled=new Set(settings?.disabledSourcePartIds||[]),sources=new Set(explicit.map(c=>c.sourcePartId)),ids=new Set(explicit.map(c=>c.id));
+    return[...explicit,...doc.sheets.flatMap(sheet=>sheet.parts.flatMap(p=>{if(sources.has(p.id)||disabled.has(p.id))return[];const c=powerSupplyCircuit(p,lookup);return c&&!ids.has(c.id)?[c]:[];}))];
+  }
   function validatePart(p){
     if(p.loadExcluded!==undefined&&typeof p.loadExcluded!=='boolean')throw Error('Invalid load exclusion');
     if(p.calculationLinks!==undefined&&(!Array.isArray(p.calculationLinks)||p.calculationLinks.length>64||p.calculationLinks.some(pair=>!Array.isArray(pair)||pair.length!==2||pair[0]===pair[1]||pair.some(i=>!copper(p,i)))))throw Error('Invalid internal conductive paths');
     if(p.loadCalculation?.powerPins!==undefined&&(!Array.isArray(p.loadCalculation.powerPins)||![2,3].includes(p.loadCalculation.powerPins.length)||new Set(p.loadCalculation.powerPins).size!==p.loadCalculation.powerPins.length||p.loadCalculation.powerPins.some(i=>!copper(p,i))))throw Error('Choose two or three distinct copper power inputs');
   }
   function analyse(doc,lookup){
-    const circuits=doc.projectInfo?.electricalCalculations?.circuits||[],entries=doc.sheets.flatMap(sheet=>sheet.parts.map(p=>({p,sheet}))),byId=new Map(entries.map(e=>[e.p.id,e])),parent=new Map(),connected=new Map(circuits.map(c=>[c.id,[]])),sourceErrors=new Map(circuits.map(c=>[c.id,[]]));
+    const supplies=circuits(doc,lookup),entries=doc.sheets.flatMap(sheet=>sheet.parts.map(p=>({p,sheet}))),byId=new Map(entries.map(e=>[e.p.id,e])),parent=new Map(),connected=new Map(supplies.map(c=>[c.id,[]])),sourceErrors=new Map(supplies.map(c=>[c.id,[]]));
     const find=k=>{if(!parent.has(k))parent.set(k,k);let r=k;while(parent.get(r)!==r)r=parent.get(r);while(k!==r){const n=parent.get(k);parent.set(k,r);k=n;}return r;},join=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent.set(a,b);},key=(sheet,ref)=>JSON.stringify([sheet.id,ref]);
     const partKey=(e,i)=>key(e.sheet,e.p.id+':'+i),valid=(sheet,ref)=>{
       if(typeof ref!=='string')return false;const [id,n]=ref.split(':'),i=Number(n);
@@ -63,8 +78,8 @@
       if(['reference','destination'].includes(p.type)&&!p.unplaced){const target=byId.get(p.targetPartId);if(target&&!target.p.unplaced&&target.sheet.id===p.targetSheetId&&['reference','destination'].includes(target.p.type)&&target.p.type!==p.type)join(partKey(e,0),partKey(target,0));}
     }
     const tags=new Map(),seeds=[];
-    for(const c of circuits){const e=byId.get(c.sourcePartId);if(!e||e.p.unplaced)continue;let pins=c.sourcePins||sourcePins(e.p,c.system,lookup);
-      // Other source devices need an explicit output mapping. Never join a
+    for(const c of supplies){const e=byId.get(c.sourcePartId);if(!e||e.p.unplaced)continue;let pins=c.sourcePins||sourcePins(e.p,c.system,lookup);
+      // Unknown source devices need an explicit output mapping. Never join a
       // converter's AC inputs to its DC outputs or infer physical pin numbers.
       if(!pins)continue;const roles=c.system==='ac3'?['L1','L2','L3','N']:c.system==='dc'?['+','−']:['L','N'];
       if(pins.length!==roles.length||pins.some(i=>!copper(e.p,i))){sourceErrors.get(c.id).push('Source output mapping is invalid');continue;}
@@ -92,18 +107,18 @@
       // connections, while only power-input candidates enter the load total.
       if((!p.unplaced||representative(p))&&!['text','image','reference','destination','terminal-pin','terminal-strip'].includes(p.type)){
         const all=[...Array.from({length:ports(p)},(_,i)=>i),...(p.type==='connector'?[8]:[])].filter(i=>copper(p,i)),ids=related(e,all);
-        for(const id of ids)if(circuits.find(c=>c.id===id)?.sourcePartId!==p.id)connected.get(id).push({...e,inputs:all.flatMap(i=>at(e,i).filter(t=>t.c.id===id).map(t=>({pin:i,role:t.role}))),transit:!candidate(p,lookup)});
+        for(const id of ids)if(supplies.find(c=>c.id===id)?.sourcePartId!==p.id)connected.get(id).push({...e,inputs:all.flatMap(i=>at(e,i).filter(t=>t.c.id===id).map(t=>({pin:i,role:t.role}))),transit:!candidate(p,lookup)});
       }
       if(master&&p.id!==master.p.id)continue;
       if(!candidate(p,lookup))continue;
-      if(!p.loadCalculation&&pins&&circuits.some(c=>c.sourcePartId===p.id&&c.sourcePins?.length===pins.length&&c.sourcePins.every(i=>pins.includes(i))))continue;
+      if(!p.loadCalculation&&pins&&supplies.some(c=>c.sourcePartId===p.id&&c.sourcePins?.length===pins.length&&c.sourcePins.every(i=>pins.includes(i))))continue;
       const state={entry:e,pins,physicalId:master?.p.id||p.id,loadData,excluded,related:related(e,groups.length?groups.flat():Array.from({length:ports(p)},(_,i)=>i)),status:'unresolved',message:'',circuit:null,phase:null};states.set(p.id,state);
       if(p.loadExcluded){state.status='excluded';state.message='Excluded from load totals';continue;}
       if(p.unplaced&&!representative(p)){state.message='Device is unplaced';}
       else if(!pins||![2,3].includes(pins.length)||pins.some(i=>!copper(p,i))){state.message='Select two or three copper power inputs';}
       else{
         const candidates=[];for(const selected of groups){const roots=selected.map(i=>find(partKey(e,i)));
-        for(const c of circuits){if(c.sourcePartId===p.id)continue;const roles=selected.map(i=>at(e,i).filter(t=>t.c.id===c.id).map(t=>t.role));let phase=null;
+        for(const c of supplies){if(c.sourcePartId===p.id)continue;const roles=selected.map(i=>at(e,i).filter(t=>t.c.id===c.id).map(t=>t.role));let phase=null;
           if(selected.length===3&&c.system==='ac3'&&['L1','L2','L3'].every(role=>roles.some(a=>a.includes(role)))&&new Set(roots).size===3)phase='balanced';
           if(selected.length===2&&new Set(roots).size===2){if(c.system==='dc'&&roles.some(a=>a.includes('+'))&&roles.some(a=>a.includes('−')))phase='single';if(c.system==='ac1'&&roles.some(a=>a.includes('L'))&&roles.some(a=>a.includes('N')))phase='single';if(c.system==='ac3'&&roles.some(a=>a.includes('N')))phase=['L1','L2','L3'].find(role=>roles.some(a=>a.includes(role)))||null;}
           if(phase&&!candidates.some(v=>v.c.id===c.id&&v.phase===phase))candidates.push({c,phase,pins:selected});
@@ -120,7 +135,7 @@
       else{const message=state.status==='connected'?'Detected load; electrical input power/current is missing':state.message;issues.push({state,circuitIds:state.circuit?[state.circuit.id]:state.related,message});}
     }
     for(const e of entries){const master=coilMaster(e.p),state=master&&states.get(master.p.id);if(state&&e.p.id!==master.p.id)states.set(e.p.id,{...state,aliasOf:master.p.id});}
-    return{states,resolved,issues,connected,sourceErrors,assumptions,byId};
+    return{circuits:supplies,states,resolved,issues,connected,sourceErrors,assumptions,byId};
   }
-  return{AUTO,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,validatePart,analyse};
+  return{AUTO,circuits,powerSupplyCircuit,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,validatePart,analyse};
 });

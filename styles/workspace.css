@@ -86,6 +86,18 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-ready .wire-form input,.workspace-ready .wire-form select{min-height:40px;min-width:0;font-size:14px}
 .workspace-ready .wire-form input[type="checkbox"]{min-height:22px;min-width:22px}
 .workspace-ready .wire-form .property-visibility{min-height:40px}
+#componentForm{max-width:none}
+#componentForm .component-tabs,#componentForm .component-panel{grid-column:1/-1;min-width:0}
+#componentForm .component-tabs{display:flex;gap:6px;background:var(--panel);padding:8px 0;border-bottom:1px solid var(--line)}
+#componentForm .component-tabs button{flex:1;margin:0;min-height:44px;font-size:13px;font-weight:600}
+#componentForm .component-tabs [aria-selected=true]{color:var(--selection);background:var(--selection-bg);border-color:var(--selection)}
+#componentForm .component-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start}
+#componentForm .component-panel[hidden]{display:none!important}
+#componentForm .component-panel>p,#componentForm .component-panel>button{grid-column:1/-1}
+#componentForm #componentPanel-calculation{grid-template-columns:minmax(0,1fr)}
+#componentForm .electrical-load-fields{margin:0}
+#componentForm>.actions{position:sticky;bottom:-18px;z-index:2;background:var(--panel);padding:12px 0 4px;border-top:1px solid var(--line)}
+@media(max-width:650px){#componentForm .component-panel{grid-template-columns:minmax(0,1fr)}#componentForm>.actions{bottom:-12px}}
 .workspace-ready .approval-fields{min-width:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:8px}
 .workspace-ready footer{min-width:0;gap:14px}
 .workspace-ready footer .status{min-width:0;flex:1}

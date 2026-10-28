@@ -27,6 +27,8 @@ jobs:
       - run: node tests/electrical-core.cjs
       - run: node tests/electrical-network.cjs
       - run: node tests/product-loads.cjs
+      - run: node tests/component-tabs-smoke.cjs
+      - run: node tests/component-properties-smoke.cjs
       - run: node tests/product-loads-smoke.cjs
       - run: node tests/electrical-network-ui-smoke.cjs
       - run: node tests/electrical-ui-smoke.cjs
@@ -52,6 +54,7 @@ jobs:
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-supply-*
             /tmp/Leitwerk-product-loads-*
+            /tmp/Leitwerk-component-tabs-*
             /tmp/Leitwerk-network-*
             /tmp/Leitwerk-electrical-*
             /tmp/Leitwerk-navigation-*.png

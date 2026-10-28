@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.35.0**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.36.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -48,6 +48,10 @@ On iPad, entries can be dragged with a finger/Pencil or tapped and then placed o
 ## Supply and load calculations
 
 Open **Calculations** in the upper toolbar and choose **Add supply**. DC, single-phase AC and three-phase AC start at 24 V, 230 V and 400 V respectively; voltage is editable. Enter a circuit name, continuous available current and reserve percentage. Linking a source device is optional; a manual/external supply is equally valid. Three-phase voltage is **L–L**; single-phase voltage is **L–N**. Current ratings apply per phase.
+
+To draw an incoming supply, select **Calculations → Place supply**, then click/tap the drawing to choose its position. **Escape** or **Cancel** abandons placement without creating a device. **Show source** jumps to an already placed source; an unplaced source is re-used with the same ID. Alternatively, use **Generic → Connections → Supply** (click, drag-and-drop, or tap then place). A new generic Supply creates a linked 24 V DC calculation circuit in the same undo step. Choose **Apply & edit supply / fault data** in its properties to configure it.
+
+Supply symbols have actual wire ports: **+/−/PE** for DC, **L/N/PE** for single-phase AC, and **L1/L2/L3/N/PE** for three-phase AC. Connect them using the normal Connect tool; terminals, routing, branches, component movement, rotation/reflection, open ends, JSON and vector PDF behave as for other electrical devices. Supply pin roles/media follow the selected system. Change the supply system before wiring; changing it while the source is wired or has separately placed pins is prevented. Editing voltage/current updates its caption without replacing connection IDs. A Supply symbol can be unplaced/re-placed without deleting its existing wires. Circuit definitions and source-device links are saved in JSON/cloud and retained in undo/redo. Drawing these wires does not yet replace explicit load assignments or derive feeder impedances from screen distances.
 
 In **Edit component → Load calculation**, choose a supply circuit and enter known **electrical input power (W)** or **current (A per phase)**, a demand/simultaneity factor from 0 to 1 and, for sinusoidal AC, **cos φ** and lagging/leading behaviour. Three-phase circuits accept balanced three-phase loads and individual **L1–N / L2–N / L3–N** loads. Motor mechanical output power must be converted to electrical input before entry. Device Value text, catalogue data, drawn wires, terminals and bridges do not assign calculation values or circuit membership automatically.
 
@@ -200,7 +204,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.35.0. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.36.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -251,7 +255,7 @@ Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.35.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.36.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -482,6 +486,7 @@ node tests/connection-lists-smoke.cjs
 node tests/document-navigation-smoke.cjs
 node tests/electrical-core.cjs
 node tests/electrical-ui-smoke.cjs
+node tests/supply-symbol-smoke.cjs
 node tests/cloud-local-smoke.cjs
 node tests/cloud-ui-smoke.cjs
 npm run test:cloud

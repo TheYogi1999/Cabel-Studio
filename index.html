@@ -10,8 +10,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.35.0">
-  <link rel="stylesheet" href="styles/electrical.css?v=1.35.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.36.0">
+  <link rel="stylesheet" href="styles/electrical.css?v=1.36.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -60,29 +60,30 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.35.0"></script>
-<script src="scripts/symbol-format.js?v=1.35.0"></script>
-<script src="scripts/sheet-numbers.js?v=1.35.0"></script>
-<script src="scripts/red-pen.js?v=1.35.0"></script>
-<script src="scripts/linked-images.js?v=1.35.0"></script>
-<script src="scripts/connection-graph.js?v=1.35.0"></script>
-<script src="scripts/cables.js?v=1.35.0"></script>
-<script src="scripts/table-layout.js?v=1.35.0"></script>
-<script src="scripts/spacemouse.js?v=1.35.0"></script>
-<script src="scripts/workspace-ui.js?v=1.35.0"></script>
-<script src="firebase-config.js?v=1.35.0"></script>
-<script src="scripts/electrical-core.js?v=1.35.0"></script>
-<script src="scripts/electrical-ui.js?v=1.35.0"></script>
-<script src="scripts/cloud-core.js?v=1.35.0"></script>
-<script src="scripts/cloud-projects.js?v=1.35.0"></script>
+<script src="libraries/catalog.js?v=1.36.0"></script>
+<script src="scripts/symbol-format.js?v=1.36.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.36.0"></script>
+<script src="scripts/red-pen.js?v=1.36.0"></script>
+<script src="scripts/linked-images.js?v=1.36.0"></script>
+<script src="scripts/connection-graph.js?v=1.36.0"></script>
+<script src="scripts/cables.js?v=1.36.0"></script>
+<script src="scripts/table-layout.js?v=1.36.0"></script>
+<script src="scripts/spacemouse.js?v=1.36.0"></script>
+<script src="scripts/workspace-ui.js?v=1.36.0"></script>
+<script src="firebase-config.js?v=1.36.0"></script>
+<script src="scripts/electrical-core.js?v=1.36.0"></script>
+<script src="scripts/electrical-ui.js?v=1.36.0"></script>
+<script src="scripts/cloud-core.js?v=1.36.0"></script>
+<script src="scripts/cloud-projects.js?v=1.36.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.35.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.36.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
     image:{internal:true,group:'Annotations',name:'Image',label:'Image',value:'',terminals:[],shape:'image'},
     'custom-symbol':{internal:true,group:'Connections',name:'Custom symbol',label:'U',value:'',terminals:[],shape:'custom-symbol'},
+    supply:{group:'Connections',name:'Supply',desc:'Place a DC / AC calculation source',label:'G',value:'24 V DC',icon:'→',terminals:[],shape:'supply',pinNumbers:['+','−','PE'],portSides:['right','right','right']},
     'power-supply':{group:'Loads',name:'AC/DC power supply',desc:'AC input / DC output',label:'G',value:'24 V DC power supply',icon:'⎓',terminals:[],shape:'power-supply',pinNumbers:['L','N','PE','+24V','0V','+24V.2','0V.2','DC OK 13','DC OK 14'],portSides:['left','left','left','right','right','right','right','right','right']},
     optocoupler:{group:'Switchgear',name:'Optocoupler',desc:'Optically isolated transistor output',label:'K',value:'Optocoupler',icon:'⇢',terminals:[[-48,-48],[-48,48],[48,-48],[48,48]],shape:'optocoupler',pinNumbers:['A','K','C','E']},
     'rcd-2p':{group:'Switchgear',name:'RCD (FI) · 2 poles',desc:'Residual-current device · L / N',label:'F',value:'RCD · 30 mA · 2P',icon:'Δ',terminals:[[-48,-48],[48,-48],[-48,48],[48,48]],shape:'rcd-2p',pinNumbers:['1','2','N-in','N-out']},
@@ -165,7 +166,7 @@
   function render(){partsG.replaceChildren();wiresG.replaceChildren();model.wires.forEach((w,i)=>{const a=findTerminal(w.a),b=findTerminal(w.b);if(!a||!b)return;const p=el('path',{d:routePath(connectionGraph?connectionGraph.displayRoute(w):routePoints(w)),class:'wire'+(selected?.kind==='wire'&&selected.id===w.id?' selected':'')},wiresG);p.dataset.id=w.id;p.addEventListener('pointerdown',e=>beginSegmentDrag(w,e));const hit=el('path',{d:p.getAttribute('d'),class:'wire-hit',fill:'none',stroke:'transparent','stroke-width':12,'pointer-events':'stroke','data-id':w.id},wiresG);hit.addEventListener('pointerdown',e=>beginSegmentDrag(w,e))});model.parts.filter(p=>!p.unplaced).forEach(p=>drawPart(p));document.querySelector('#projectTitle').textContent=model.title;document.querySelector('#partCount').textContent=`${model.parts.length} component${model.parts.length===1?'':'s'}`;document.querySelector('#wireCount').textContent=`${model.wires.length} connection${model.wires.length===1?'':'s'}`;document.querySelector('#statusText').textContent=isConnectionMode()?(wireStart?'Choose grid points or the target terminal':'Connection mode'):selected?'Object selected':'Ready';document.querySelector('#selectTool').classList.toggle('active',mode==='select');document.querySelector('#wireTool').classList.toggle('active',isConnectionMode())}
   function drawPart(p){const d=TYPES[p.type],g=el('g',{transform:`translate(${p.x} ${p.y}) rotate(${p.rotation||0}) scale(${p.flipX?-1:1} ${p.flipY?-1:1})`,tabindex:0,class:(selected?.kind==='part'&&selected.id===p.id?'selected ':'')+(p.ghost?'ghost':'')},partsG);g.dataset.id=p.id;el('rect',{x:-30,y:-22,width:60,height:44,rx:5,class:'part-body'},g);drawSymbol(g,d.shape);if(p.type==='connector')partTerminals(p).slice(2).forEach(([x,y])=>{const length=Math.hypot(x,y);el('path',{d:'M '+x/length*10+' '+y/length*10+' L '+x+' '+y,class:'symbol'},g)});if(p.type==='text'){const t=el('text',{x:0,y:5,'text-anchor':'middle',class:'annotation-text',fill:'#15252e','font-size':16,'pointer-events':'none'},g);t.textContent=p.label;g.querySelector('.part-body').setAttribute('width',Math.max(60,String(p.label).length*9));g.querySelector('.part-body').setAttribute('x',-Math.max(60,String(p.label).length*9)/2)}const label=el('text',{x:0,y:42,class:'part-label'},g);label.textContent=p.type==='text'?'':p.label||d.label;const value=el('text',{x:0,y:57,class:'part-value'},g);value.textContent=p.value??d.value;partTerminals(p).forEach((t,i)=>{const c=el('circle',{cx:t[0],cy:t[1],r:5,class:'terminal',tabindex:0},g);c.dataset.term=String(i);c.dataset.part=p.id;c.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showPinInTree(p,i);return}if(e.button!==0)return;if(isConnectionMode()){e.stopPropagation();onTerminal(p.id,i)}else{if(p.type==='terminal-pin')return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};render()}});c.addEventListener('click',e=>e.stopPropagation())});g.addEventListener('pointerdown',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();showDeviceInTree(p);return}if(e.button!==0||isConnectionMode())return;e.stopPropagation();selected={kind:'part',id:p.id};const pt=toWorld(e);drag={id:p.id,dx:p.x-pt.x,dy:p.y-pt.y};scene.querySelectorAll('.selected').forEach(node=>node.classList.remove('selected'));g.classList.add('selected');document.querySelector('#statusText').textContent='Object selected';wireDataButton.disabled=true;if(p.type==='image')render()});g.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();drag=null;editComponent(p)});g.addEventListener('dblclick',e=>{e.stopPropagation();const val=prompt(p.type==='text'?'Change text or value':'Change equipment tag or value',`${p.label||d.label} · ${p.value??d.value}`);if(val){const [label,...rest]=val.split('·');if(p.type==='text')p.label=label.trim();else p.deviceCode=label.trim().replace(/^[−-]/,'');if(rest.length)p.value=rest.join('·').trim();render()}})}
   function drawSymbol(g,s){
-    if(['image','custom-symbol','power-supply','io-module','controller-board'].includes(s))return; // Drawn from the component's configurable ports.
+    if(['image','custom-symbol','supply','power-supply','io-module','controller-board'].includes(s))return; // Drawn from the component's configurable ports.
     if(['pushbutton-no','pushbutton-nc','selector-switch','key-switch','illuminated-pushbutton-no','illuminated-pushbutton-nc'].includes(s)){
       drawSymbol(g,s.endsWith('-nc')?'switch-nc':'switch');
       const operator=el('g',{class:'operator-actuator'},g);el('path',{d:'M 0 -8 V -34',class:'symbol','stroke-dasharray':'4 3'},operator);
@@ -661,6 +662,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       const toggle=document.createElement('label');toggle.className='property-visibility';toggle.hidden=key==='annotation'?p.type!=='text':['label','aks'].includes(key)&&p.type==='text';
       const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.name='show_'+key;checkbox.checked=p.textVisibility?.[key]!==false;checkbox.setAttribute('aria-label',caption);toggle.append(checkbox,document.createTextNode(key==='aks'?'Show AKS':'Show'));toggle.title=caption;wrapper.querySelector('.property-input-row').append(toggle);
     }
+    calculationSystem?.sourceFields(p,form);
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
     form.onsubmit=e=>{e.preventDefault();let loadData;try{loadData=readLoad?.();}catch(error){toast(error.message);return;}const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=splitPins(values.get('pinNumbers'));if(isPortBlock(p)){if(pinValues.length<1||pinValues.length>64||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 1 to 64 unique port names');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(isPortBlock(p)){const kinds=String(values.get('portKinds')||'').split(';').map(v=>v.trim().toLowerCase());while(kinds.length<pinValues.length)kinds.push('wire');if(kinds.length!==pinValues.length||kinds.some(k=>!['wire','fiber'].includes(k))){toast('Enter one wire or fiber for every port');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&kinds[Number(ref.split(':')[1])]!==(w.kind==='fiber'?'fiber':'wire')))){toast('Disconnect wired ports before changing their medium');return}values.set('portKinds',kinds.join(';'));const sides=String(values.get('portSides')||'').split(';').map(v=>v.trim().toLowerCase());if(sides.length!==pinValues.length||sides.some(side=>!['l','r','left','right'].includes(side))){toast('Enter one L or R for every port');return}}if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}if(readLoad){if(loadData)p.loadCalculation=loadData;else delete p.loadCalculation;}for(const key of ['functionCode','locationCode','deviceCode','label','value','deviceType','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('deviceType')).trim()||'Feed-through terminal';if(isPortBlock(p)){changeComponent(p,()=>{p.pinNumbers=pinValues;p.portKinds=String(values.get('portKinds')).split(';');p.portSides=String(values.get('portSides')).split(';').map(v=>v.trim().toLowerCase().startsWith('l')?'left':'right')})}else if(p.type==='connector')changeComponent(p,()=>{p.pinNumbers=pinValues});else p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=p.deviceCode;}if(p.type==='connector'){const choice=getTerminalChoice();if(choice?.library){const {library,product}=choice;p.manufacturer=library.manufacturer;p.catalog={libraryId:library.id,productId:product.id,manufacturer:library.manufacturer,model:product.model,verification:product.verification||'not-verified',attributes:structuredClone(product.attributes||{}),sourceUrls:(library.sources||[]).map(s=>s.url)};}else if(choice||p.terminalType!==oldTerminalType){delete p.catalog;delete p.manufacturer;}}
@@ -1517,7 +1519,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   function relayOffset(p){return p.relayContactCount===1?144:p.relayContactCount===2?96:0}
   function relayBounds(p){const ys=partTerminals(p).map(([,y])=>y),top=Math.min(...ys)-48,bottom=Math.max(...ys)+48;return{x:-120,y:top,width:240,height:bottom-top}}
-  function isPortBlock(p){return ['power-supply','io-module','controller-board','fiber-device'].includes(p.type)}
+  function isPortBlock(p){return ['supply','power-supply','io-module','controller-board','fiber-device'].includes(p.type)}
   function portSidesFor(p,n=(p.pinNumbers?.length||TYPES[p.type].pinNumbers.length)){const raw=p.portSides?.length===n?p.portSides:TYPES[p.type].portSides?.length===n?TYPES[p.type].portSides:Array.from({length:n},(_,i)=>p.type==='power-supply'?(i<3?'left':'right'):i%2?'right':'left');return raw.map(side=>side==='left'?'left':'right')}
   function portBlockTerminals(p){
     const pins=p.pinNumbers?.length?p.pinNumbers:TYPES[p.type].pinNumbers,n=Math.min(64,pins.length),sides=portSidesFor(p,n);
@@ -1533,6 +1535,11 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       const terminals=partTerminals(p),ys=terminals.map(t=>t[1]),top=Math.min(...ys)-24,bottom=Math.max(...ys)+24;
       el('rect',{x:-72,y:top,width:144,height:bottom-top,class:'symbol port-block-frame'},geometry);
       for(const [x,y] of terminals)el('path',{d:'M '+x+' '+y+' H '+(x<0?-72:72),class:'symbol'},geometry);
+      if(p.type==='supply'){
+        const center=(top+bottom)/2;el('path',{d:'M -48 '+center+' H 40 M 20 '+(center-16)+' L 40 '+center+' L 20 '+(center+16),class:'symbol supply-source-arrow'},geometry);
+        if((p.supplySystem||'dc')==='dc')el('path',{d:'M -30 '+(center-28)+' H 30 M -30 '+(center-20)+' H -14 M -6 '+(center-20)+' H 10 M 18 '+(center-20)+' H 30',class:'symbol'},geometry);
+        else el('path',{d:'M -30 '+(center-25)+' Q -15 '+(center-45)+' 0 '+(center-25)+' T 30 '+(center-25),class:'symbol'},geometry);
+      }
       if(p.type==='power-supply'){
         const center=(top+bottom)/2,acY=center-(bottom-top)*.22,dcY=center+(bottom-top)*.22;
         el('path',{d:'M -72 '+bottom+' L 72 '+top,class:'symbol supply-divider'},geometry);
@@ -1783,8 +1790,33 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   const loadBeforeHistory=document.querySelector('#fileInput').onchange;document.querySelector('#fileInput').onchange=async e=>{historyLoading=true;connectionGraph?.cancel();redPen?.reset();finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();try{await loadBeforeHistory(e)}finally{historyLoading=false;if(document.querySelector('#toast').textContent==='Project loaded')historyReset=true;commitHistory()}};
   render();
 
+  function calculationCircuits(){return model.projectInfo?.electricalCalculations?.circuits||[];}
+  function supplyHasWires(p){return drawingPages().some(s=>s.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id)))||deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id);}
+  function checkCalculationSource(c){
+    const p=deviceEntries().find(e=>e.p.id===c.sourcePartId)?.p;if(p?.type!=='supply')return;
+    if(calculationCircuits().some(q=>q.id!==c.id&&q.sourcePartId===p.id))throw Error('This Supply symbol already belongs to another circuit');
+    if(p.supplySystem!==c.system&&supplyHasWires(p))throw Error('Disconnect this Supply before changing its supply system');
+  }
+  function updateCalculationSource(c){
+    const p=deviceEntries().find(e=>e.p.id===c.sourcePartId)?.p;if(p?.type!=='supply')return;
+    p.supplySystem=c.system;p.pinNumbers=CabelElectricalCore.supplyPins(c.system);p.portKinds=p.pinNumbers.map(()=> 'wire');
+    if(p.portSides?.length!==p.pinNumbers.length)p.portSides=p.pinNumbers.map(()=> 'right');
+    p.value=c.voltage+' V '+(c.system==='dc'?'DC':c.system==='ac1'?'AC 1~':'AC 3~')+(c.ratingA?' · '+c.ratingA+' A':'');
+  }
+  function attachNewSupply(p,circuitId){
+    const circuits=calculationCircuits(),existing=circuits.find(c=>c.id===circuitId),c=existing?{...existing,sourcePartId:p.id}:{id:crypto.randomUUID(),name:p.deviceCode||p.label||'Supply',system:p.supplySystem||'dc',voltage:{dc:24,ac1:230,ac3:400}[p.supplySystem||'dc'],reservePct:20,sourcePartId:p.id,fault:{mode:'off'}};
+    model.projectInfo={...(model.projectInfo||{}),electricalCalculations:{version:1,circuits:existing?circuits.map(q=>q.id===c.id?c:q):[...circuits,c]}};updateCalculationSource(c);render();return c;
+  }
+  function placeCalculationSupply(id,point){
+    if(pdfExporting||cloudProjects?.state().readOnly)return;const c=calculationCircuits().find(c=>c.id===id);if(!c){toast('Supply no longer exists');return;}
+    const entry=deviceEntries().find(e=>e.p.id===c.sourcePartId);
+    if(entry&&!entry.p.unplaced){jumpToDevice(entry.p.id);return;}
+    if(entry){placeWorkspacePayload({kind:'device',id:entry.p.id},point);return;}
+    addPart('supply',point,{supplyCircuitId:c.id});
+  }
   function placeWorkspacePayload(source,point){
     if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)));
+    if(source.kind==='supply'){placeCalculationSupply(source.id,point);return;}
     if(source.kind==='cable-core'){cableSystem.assignAt(point,source);return;}
     if(source.kind==='component'){addPart(source.type,point);return}
     if(source.kind==='product'){placeCatalogProduct(source.key,point);return}
@@ -1800,6 +1832,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   }
   const addBeforeAutomaticConnections=addPart;addPart=function(type,position,options={}){
     const before=new Set(drawingPages().flatMap(s=>s.parts.map(p=>p.id)));addBeforeAutomaticConnections(type,position);
+    if(type==='supply'){const p=model.parts.find(p=>!before.has(p.id)&&p.type==='supply');if(p)attachNewSupply(p,options.supplyCircuitId);}
     if(!options.deferConnection&&autoConnectParts(model.parts.filter(p=>!before.has(p.id))))render();
   };
   document.addEventListener('pointerup',()=>{
@@ -1867,6 +1900,8 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   calculationSystem=CabelElectricalUI.init({
     info:()=>model.projectInfo||{},setInfo:value=>{model.projectInfo=value},drawings:drawingPages,designation:aks,reference:referenceAddress,readOnly:()=>pdfExporting||Boolean(cloudProjects?.state().readOnly),
     panel:showPanel,safe,toast,commit:commitHistory,render:()=>render(),download,el,text:generatedText,jump:jumpToDevice,
+    validateSource:checkCalculationSource,updateSource:updateCalculationSource,createSource:p=>attachNewSupply(p),close:closePanel,
+    queueSupply:c=>{closePanel();workspaceUI.queuePlacement({kind:'supply',id:c.id},'Supply · '+c.name);},
     editDevice:id=>{const entry=deviceEntries().find(e=>e.p.id===id);if(entry){setSheet(pages.indexOf(entry.sheet));editComponent(entry.p);}},
     goReport:id=>{const sheet=pages.find(s=>s.kind==='calculation-list'&&s.calculationCircuit.id===id);if(sheet){closePanel();setSheet(pages.indexOf(sheet));}}
   });

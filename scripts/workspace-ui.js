@@ -273,7 +273,7 @@ globalThis.CabelWorkspaceUI = {
       const source=e.pointerType==='pen'&&sourceAt(e.target);
       if(source){stop(e);clearHold();pen={kind:'source',id:e.pointerId,type:'pen',source,start:point(e),last:point(e),wasDraggable:source.node.draggable};source.node.draggable=false;capture(e.pointerId);return;}
       if(!inCanvas(e.target)){if(e.pointerType==='pen')armControl(e.pointerId,e.target.closest('button'),point(e));return;}
-      if(e.pointerType==='mouse'&&!hand&&!ink.active())return;
+      if(e.pointerType==='mouse'&&!hand&&!ink.active()&&!placement)return;
       stop(e);clearHold();
       if(finger){if(finger.kind==='edit')api.cancelPointer(finger.checkpoint,true);else if(finger.kind==='redpen')ink.cancel();for(const id of finger.contacts?.keys()||[])ignoredTouches.add(id);finger=null;}
       capture(e.pointerId);pen=makeSession(e.pointerId,point(e),e.target,e.pointerType,e);beginPenConnection(pen);rebase(pen,new Map([[pen.id,pen.start]]));startHold(pen);
@@ -300,13 +300,13 @@ globalThis.CabelWorkspaceUI = {
       else if(!cancelled){if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}else if(old.kind==='link'&&!old.moved)old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}
       suppressCanvasClickUntil=performance.now()+1000;release(old.id);
     }
-    document.addEventListener('pointerup',e=>finishPen(e,false),{capture:true,passive:false});
-    document.addEventListener('pointercancel',e=>finishPen(e,true),{capture:true,passive:false});
+    document.addEventListener('pointerup',e=>{const canvas=inCanvas(e.target)||Boolean(pen);finishPen(e,false);if(canvas)setTimeout(refresh,0);},{capture:true,passive:false});
+    document.addEventListener('pointercancel',e=>{const canvas=inCanvas(e.target)||Boolean(pen);finishPen(e,true);if(canvas)setTimeout(refresh,0);},{capture:true,passive:false});
     document.addEventListener('click',e=>{
       if(e.__leitwerkInput||!(e.target instanceof Element))return;
       const n=e.target.closest('button'),pending=n&&pendingControls.get(n);if(n)lastConnectionTap=null;if(pending){pending.handled=true;pendingControls.delete(n);}
       if(n&&e.isTrusted&&(fallbackClicks.get(n)||0)>performance.now()){stop(e);return;}
-      if(suppressSource&&performance.now()<suppressSource.until&&suppressSource.node.contains(e.target)){stop(e);return;}
+      if(suppressSource&&performance.now()<suppressSource.until&&suppressSource.node?.contains(e.target)){stop(e);return;}
       if(e.isTrusted&&inCanvas(e.target)&&performance.now()<suppressCanvasClickUntil){stop(e);return;}
       if(e.target.closest('#selectTool,#wireTool,#aksAreaTool')){ink.setTool(null);hand=false;placement=null;queueMicrotask(refresh);}
     },true);
@@ -345,6 +345,6 @@ globalThis.CabelWorkspaceUI = {
       else if(marking)api.status(state.generated?'Red pen: open a drawing sheet':ink.tool()==='draw'?'Red pen: draw with a finger, Pencil or mouse · Two fingers: pan/zoom':ink.tool()==='erase'?'Red pen: touch a stroke to erase it completely':'Red pen: tap a stroke or drag a selection box · Drag corners to scale');
       svg.dataset.redPen=marking?ink.tool():'';
     }
-    document.body.classList.add('workspace-ready');refresh();return{refresh,openOverview:()=>{},busy:()=>Boolean(finger||pen||ghost||placement),cancelInput:()=>{clearHold();removeGhost();placement=null;finger=null;pen=null;hand=false;clearTargets();}};
+    document.body.classList.add('workspace-ready');refresh();return{refresh,openOverview:()=>{},queuePlacement:(payload,label)=>queueSource({node:null,payload,label}),busy:()=>Boolean(finger||pen||ghost||placement),cancelInput:()=>{clearHold();removeGhost();placement=null;finger=null;pen=null;hand=false;clearTargets();}};
   }
 };

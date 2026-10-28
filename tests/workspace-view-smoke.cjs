@@ -33,7 +33,7 @@ const near=(a,b,t=.3)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
     const before=await save(),view=await camera();await assertPainted('windowed');
     await page.locator('#fullscreenBtn').click();await page.waitForFunction(()=>Boolean(document.fullscreenElement));await assertPainted('native fullscreen');await assertCamera(view);
     await page.setViewportSize({width:1600,height:1000});await assertPainted('resized fullscreen');await assertCamera(view);
-    await page.screenshot({path:'/tmp/Cabel-Studio-v1.35.0-desktop-fullscreen.png'});
+    await page.screenshot({path:'/tmp/Cabel-Studio-v1.36.0-desktop-fullscreen.png'});
     await page.evaluate(()=>document.exitFullscreen());await page.waitForFunction(()=>!document.fullscreenElement);assert.equal(await page.locator('.app.focus-mode').count(),1);await assertPainted('browser exited fullscreen');await assertCamera(view);
     await page.locator('#fullscreenBtn').click();await page.waitForFunction(()=>Boolean(document.fullscreenElement));await assertPainted('resumed fullscreen');await assertCamera(view);
     await page.locator('#exitFullscreenBtn').click();await page.locator('#fullscreenLeave').click();await page.waitForFunction(()=>!document.fullscreenElement);await assertPainted('explicit exit');await assertCamera(view);

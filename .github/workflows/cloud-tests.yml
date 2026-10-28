@@ -29,6 +29,8 @@ jobs:
       - run: node tests/product-loads.cjs
       - run: node tests/power-supply-loads.cjs
       - run: node tests/power-supply-loads-smoke.cjs
+      - run: node tests/power-supply-input.cjs
+      - run: node tests/power-supply-input-smoke.cjs
       - run: node tests/component-tabs-smoke.cjs
       - run: node tests/component-properties-smoke.cjs
       - run: node tests/product-loads-smoke.cjs
@@ -57,6 +59,7 @@ jobs:
             /tmp/Leitwerk-supply-*
             /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-psu-loads-*
+            /tmp/Leitwerk-psu-input-*
             /tmp/Leitwerk-component-tabs-*
             /tmp/Leitwerk-network-*
             /tmp/Leitwerk-electrical-*

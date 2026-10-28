@@ -18,9 +18,16 @@
     for(const k of ['sourceR','sourceX','lineR','lineX'])if(present(f[k]))number(f[k],k+' (mΩ)',0,1e9);
     if(present(f.factor))number(f.factor,'Fault voltage multiplier',.1,2);if(present(f.limitA))number(f.limitA,'Declared short-circuit current (A)',.000001,1e6);
   }
-  function validateLoad(l){
+  function conversionMode(p){return p.type==='power-supply'?(p.powerConversion?.mode||(typeof p.loadCalculation?.value==='number'?'manual':'automatic')):null;}
+  function validateConversion(p){
+    const m=p.powerConversion;if(m===undefined)return;
+    if(p.type!=='power-supply'||!m||typeof m!=='object'||!['automatic','manual'].includes(m.mode))throw Error('Invalid power-supply input calculation mode');
+    if(m.efficiencyPct!==undefined)number(m.efficiencyPct,'Efficiency (%)',.000001,100);
+    if(m.fixedLossW!==undefined)number(m.fixedLossW,'Additional fixed loss (W)',0,1e9);
+  }
+  function validateLoad(l,derived=false){
     if(!l||typeof l!=='object')throw Error('Invalid load calculation');text(l.circuitId,'load circuit ID');if(!['power','current'].includes(l.input))throw Error('Choose load input power or current');
-    if(l.value!==undefined||l.assignment!=='automatic')number(l.value,l.input==='power'?'Input power (W)':'Load current (A)',0,l.input==='power'?1e9:1e6);if(l.assignment!==undefined&&!['automatic','manual'].includes(l.assignment))throw Error('Invalid load assignment mode');number(l.demandFactor,'Demand factor',0,1);
+    if(l.value!==undefined||l.assignment!=='automatic'&&!derived)number(l.value,l.input==='power'?'Input power (W)':'Load current (A)',0,l.input==='power'?1e9:1e6);if(l.assignment!==undefined&&!['automatic','manual'].includes(l.assignment))throw Error('Invalid load assignment mode');number(l.demandFactor,'Demand factor',0,1);
     if(!['auto','single','balanced','L1','L2','L3'].includes(l.phase))throw Error('Invalid load phase');
     if(present(l.powerFactor))number(l.powerFactor,'Power factor',.01,1);if(present(l.reactive)&&!['lagging','leading'].includes(l.reactive))throw Error('Choose lagging or leading power factor');
   }
@@ -30,9 +37,9 @@
     const settings=doc.projectInfo?.electricalCalculations;if(settings!==undefined&&(!settings||typeof settings!=='object'||settings.version!==1||!Array.isArray(settings.circuits)))throw Error('Invalid electrical calculation settings');
     if(settings?.disabledSourcePartIds!==undefined){const list=settings.disabledSourcePartIds;if(!Array.isArray(list)||new Set(list).size!==list.length||list.some(id=>typeof id!=='string'||!id.trim()||id.length>200))throw Error('Invalid disabled automatic supplies');}
     const ids=new Set();for(const c of circuits(doc)){validateCircuit(c);if(ids.has(c.id))throw Error('Duplicate supply circuit ID');ids.add(c.id);}
-    for(const sheet of doc.sheets)for(const p of sheet.parts)Network.validatePart(p);
+    for(const sheet of doc.sheets)for(const p of sheet.parts){Network.validatePart(p);validateConversion(p);}
     for(const sheet of doc.sheets)for(const p of sheet.parts)if(p.type==='supply'){if(!Object.hasOwn(systems,p.supplySystem)||!Array.isArray(p.pinNumbers)||p.pinNumbers.length!==supplyPins(p.supplySystem).length||p.portKinds?.some(k=>k!=='wire'))throw Error('Invalid Supply symbol or electrical ports');}
-    for(const {p} of entries(doc)){validateLoad(p.loadCalculation);if(['text','image','reference','destination','terminal-pin'].includes(p.type))throw Error('Only devices may have load calculations');}
+    for(const {p} of entries(doc)){validateLoad(p.loadCalculation,conversionMode(p)==='automatic');if(['text','image','reference','destination','terminal-pin'].includes(p.type))throw Error('Only devices may have load calculations');}
     return doc;
   }
   function fault(c){
@@ -68,5 +75,5 @@
     const sum=key=>rows.reduce((n,r)=>n+r[key],0),powerW=sum('powerW'),installedVA=sum('apparentVA'),demandW=sum('demandW'),demandVar=sum('demandVar'),demandVA=Math.hypot(demandW,demandVar),currentA=Math.max(...phases.map(p=>p.currentA)),requiredA=currentA*(1+c.reservePct/100);
     return{c,rows,errors,complete:!errors.length&&rows.length>0,phases,powerW,installedVA,demandW,demandVar,demandVA,currentA,requiredA,requiredW:demandW*(1+c.reservePct/100),marginA:present(c.ratingA)?c.ratingA-requiredA:null,overloaded:present(c.ratingA)?requiredA>c.ratingA:null,fault:fault(c)};
   }
-  return{systems,supplyPins,present,validateCircuit,validateLoad,validateDocument,circuits,entries,fault,load,calculate};
+  return{systems,supplyPins,present,conversionMode,validateConversion,validateCircuit,validateLoad,validateDocument,circuits,entries,fault,load,calculate};
 });

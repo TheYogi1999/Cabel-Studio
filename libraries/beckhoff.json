@@ -40,7 +40,26 @@
             "E-bus"
           ],
           "attributes": {
-            "portMapping": "Functional power and bus ports; Ethernet/E-bus connectors are represented as whole ports, not individual conductors."
+            "portMapping": "Functional power and bus ports; Ethernet/E-bus connectors are represented as whole ports, not individual conductors.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "PE",
+                "EtherCAT-IN",
+                "E-bus"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -71,7 +90,31 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 8
+            "channels": 8,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "I1",
+                "I2",
+                "I3",
+                "I4",
+                "I5",
+                "I6",
+                "I7",
+                "I8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -107,7 +150,31 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 8
+            "channels": 8,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "Q1",
+                "Q2",
+                "Q3",
+                "Q4",
+                "Q5",
+                "Q6",
+                "Q7",
+                "Q8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -151,7 +218,39 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 16
+            "channels": 16,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "I1",
+                "I2",
+                "I3",
+                "I4",
+                "I5",
+                "I6",
+                "I7",
+                "I8",
+                "I9",
+                "I10",
+                "I11",
+                "I12",
+                "I13",
+                "I14",
+                "I15",
+                "I16"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -203,7 +302,39 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 16
+            "channels": 16,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "Q1",
+                "Q2",
+                "Q3",
+                "Q4",
+                "Q5",
+                "Q6",
+                "Q7",
+                "Q8",
+                "Q9",
+                "Q10",
+                "Q11",
+                "Q12",
+                "Q13",
+                "Q14",
+                "Q15",
+                "Q16"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -241,7 +372,25 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 2
+            "channels": 2,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "AI1",
+                "AI2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -265,7 +414,25 @@
           ],
           "attributes": {
             "portMapping": "Logical power/channel ports, not physical terminal numbering, analogue returns or bus contacts. Confirm the module connection diagram.",
-            "channels": 2
+            "channels": 2,
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "AO1",
+                "AO2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -314,7 +481,29 @@
           "attributes": {
             "portMapping": "Functional power/E-bus ports and logical Tx/Rx fibers of the upper/lower SC duplex interfaces. Optical SC duplex interfaces and multi-mode medium documented by Beckhoff; physical power-pin numbering and optical connector orientation are not verified.",
             "opticalInterface": "2 x SC duplex, multi-mode; each duplex interface is represented by two logical fibers.",
-            "opticalSource": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/ek1xxx-bk1xx0-ethercat-coupler/ek1501.html"
+            "opticalSource": "https://www.beckhoff.com/en-en/products/i-o/ethercat-terminals/ek1xxx-bk1xx0-ethercat-coupler/ek1501.html",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "24V",
+                "0V",
+                "PE",
+                "E-bus",
+                "FO-IN-TX",
+                "FO-IN-RX",
+                "FO-OUT-TX",
+                "FO-OUT-RX"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         }
       ]

@@ -1206,7 +1206,42 @@
             "documentedFields": [
               "manufacturerNumber"
             ],
-            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/011d22ad-dbbb-4516-9d95-fab673e60b1c/media/original?PxCTR-Fiyat+Listesi-Ocak2026.v0.pdf="
+            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/011d22ad-dbbb-4516-9d95-fab673e60b1c/media/original?PxCTR-Fiyat+Listesi-Ocak2026.v0.pdf=",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1241,7 +1276,42 @@
             "documentedFields": [
               "manufacturerNumber"
             ],
-            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/c25a8041-71b0-4c58-90bf-2e26942357de/media/original?Power_Supplies_and_UPS-Lit52004219-13.pdf="
+            "manufacturerNumberSource": "https://assets.phoenixcontact.com/file/c25a8041-71b0-4c58-90bf-2e26942357de/media/original?Power_Supplies_and_UPS-Lit52004219-13.pdf=",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1274,7 +1344,44 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2",
+                "DC OK 13",
+                "DC OK 14"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1309,7 +1416,44 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2",
+                "DC OK 13",
+                "DC OK 14"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1347,7 +1491,47 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2",
+                "DC OK 13",
+                "DC OK 14",
+                "Signal IN",
+                "Signal OUT1",
+                "Signal OUT2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1388,7 +1572,47 @@
           "attributes": {
             "portMapping": "Functional AC/DC ports, duplicate DC outputs and family-specific signal templates. Verify physical terminal designations and available signal functions for the exact variant.",
             "outputVoltageV": 24,
-            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant."
+            "note": "UNO: duplicate DC outputs. TRIO: DC OK contact template. QUINT4: DC OK and configurable IN/OUT signal templates; remove or rename functions not provided by the selected variant.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "L",
+                "N",
+                "PE",
+                "+24V",
+                "0V",
+                "+24V.2",
+                "0V.2",
+                "DC OK 13",
+                "DC OK 14",
+                "Signal IN",
+                "Signal OUT1",
+                "Signal OUT2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ]
+              ],
+              "outputs": {
+                "dc": [
+                  3,
+                  4
+                ]
+              },
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "portSides": [
             "left",
@@ -1427,7 +1651,25 @@
           ],
           "attributes": {
             "portMapping": "Logical circuit ports; verify the exact product pinout, terminal numbering and variant before wiring.",
-            "note": "Solid-state interface reference; the drawn transistor symbol is functional, not a physical terminal diagram."
+            "note": "Solid-state interface reference; the drawn transistor symbol is functional, not a physical terminal diagram.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN-",
+                "OUT+",
+                "OUT-"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         }
       ]

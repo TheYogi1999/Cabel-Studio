@@ -11,6 +11,7 @@ const libraries=names.map(name=>{
     if(seen.has(key)||!p.id||!p.model||!p.symbol||!p.verification)throw new Error('Invalid/duplicate product '+key);
     if(p.value!==undefined&&typeof p.value!=='string')throw Error('Invalid electrical value '+key);
     if(p.portKinds!==undefined&&(!Array.isArray(p.portKinds)||p.portKinds.length!==p.pinNumbers?.length||p.portKinds.some(k=>!['wire','fiber'].includes(k))))throw Error('Invalid port media '+key);
+    if(p.attributes?.loadModel){const m=require('./electrical-network.js').validateModel(p.attributes.loadModel);if(JSON.stringify(m.portNames)!==JSON.stringify(p.pinNumbers))throw Error('Stale product power-port names '+key);}
     seen.add(key);
   }
   return data;

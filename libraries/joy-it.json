@@ -47,7 +47,42 @@
           ],
           "attributes": {
             "portMapping": "Logical unique power/control/GPIO ports; duplicate physical power pins and header ordering are not modelled.",
-            "description": "Joy-it NodeMCU V2 LUA development board / ESP8266 WiFi module"
+            "description": "Joy-it NodeMCU V2 LUA development board / ESP8266 WiFi module",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "VIN",
+                "GND",
+                "3V3",
+                "EN",
+                "RST",
+                "A0",
+                "D0 / GPIO16",
+                "D1 / GPIO5",
+                "D2 / GPIO4",
+                "D3 / GPIO0",
+                "D4 / GPIO2",
+                "D5 / GPIO14",
+                "D6 / GPIO12",
+                "D7 / GPIO13",
+                "D8 / GPIO15",
+                "RX / GPIO3",
+                "TX / GPIO1"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         }
       ]

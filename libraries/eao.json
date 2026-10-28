@@ -52,8 +52,8 @@
       "products": [
         {
           "id": "series-04-pushbutton-no",
-          "model": "704 \u00b7 Pushbutton \u00b7 1NO",
-          "name": "Series 04 \u00b7 Pushbutton \u00b7 1NO",
+          "model": "704 · Pushbutton · 1NO",
+          "name": "Series 04 · Pushbutton · 1NO",
           "symbol": "pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -64,15 +64,15 @@
           "attributes": {
             "series": "04",
             "orderPrefix": "704",
-            "function": "Pushbutton \u00b7 1NO",
+            "function": "Pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-04-pushbutton-nc",
-          "model": "704 \u00b7 Pushbutton \u00b7 1NC",
-          "name": "Series 04 \u00b7 Pushbutton \u00b7 1NC",
+          "model": "704 · Pushbutton · 1NC",
+          "name": "Series 04 · Pushbutton · 1NC",
           "symbol": "pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -83,15 +83,15 @@
           "attributes": {
             "series": "04",
             "orderPrefix": "704",
-            "function": "Pushbutton \u00b7 1NC",
+            "function": "Pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-04-illuminated-no",
-          "model": "704 \u00b7 Illuminated pushbutton \u00b7 1NO",
-          "name": "Series 04 \u00b7 Illuminated pushbutton \u00b7 1NO",
+          "model": "704 · Illuminated pushbutton · 1NO",
+          "name": "Series 04 · Illuminated pushbutton · 1NO",
           "symbol": "illuminated-pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -104,15 +104,33 @@
           "attributes": {
             "series": "04",
             "orderPrefix": "704",
-            "function": "Illuminated pushbutton \u00b7 1NO",
+            "function": "Illuminated pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "13",
+                "14",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-04-illuminated-nc",
-          "model": "704 \u00b7 Illuminated pushbutton \u00b7 1NC",
-          "name": "Series 04 \u00b7 Illuminated pushbutton \u00b7 1NC",
+          "model": "704 · Illuminated pushbutton · 1NC",
+          "name": "Series 04 · Illuminated pushbutton · 1NC",
           "symbol": "illuminated-pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -125,15 +143,33 @@
           "attributes": {
             "series": "04",
             "orderPrefix": "704",
-            "function": "Illuminated pushbutton \u00b7 1NC",
+            "function": "Illuminated pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "21",
+                "22",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-04-indicator",
-          "model": "704 \u00b7 Indicator",
-          "name": "Series 04 \u00b7 Indicator",
+          "model": "704 · Indicator",
+          "name": "Series 04 · Indicator",
           "symbol": "lamp",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -146,13 +182,29 @@
             "orderPrefix": "704",
             "function": "Indicator",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-04-selector",
-          "model": "704 \u00b7 Selector switch \u00b7 maintained",
-          "name": "Series 04 \u00b7 Selector switch \u00b7 maintained",
+          "model": "704 · Selector switch · maintained",
+          "name": "Series 04 · Selector switch · maintained",
           "symbol": "selector-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -163,15 +215,15 @@
           "attributes": {
             "series": "04",
             "orderPrefix": "704",
-            "function": "Selector switch \u00b7 maintained",
+            "function": "Selector switch · maintained",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-04-keylock",
-          "model": "704 \u00b7 Keylock switch",
-          "name": "Series 04 \u00b7 Keylock switch",
+          "model": "704 · Keylock switch",
+          "name": "Series 04 · Keylock switch",
           "symbol": "key-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -196,8 +248,8 @@
       "products": [
         {
           "id": "series-14-pushbutton-no",
-          "model": "14 \u00b7 Pushbutton \u00b7 1NO",
-          "name": "Series 14 \u00b7 Pushbutton \u00b7 1NO",
+          "model": "14 · Pushbutton · 1NO",
+          "name": "Series 14 · Pushbutton · 1NO",
           "symbol": "pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -208,15 +260,15 @@
           "attributes": {
             "series": "14",
             "orderPrefix": "14",
-            "function": "Pushbutton \u00b7 1NO",
+            "function": "Pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-14-pushbutton-nc",
-          "model": "14 \u00b7 Pushbutton \u00b7 1NC",
-          "name": "Series 14 \u00b7 Pushbutton \u00b7 1NC",
+          "model": "14 · Pushbutton · 1NC",
+          "name": "Series 14 · Pushbutton · 1NC",
           "symbol": "pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -227,15 +279,15 @@
           "attributes": {
             "series": "14",
             "orderPrefix": "14",
-            "function": "Pushbutton \u00b7 1NC",
+            "function": "Pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-14-illuminated-no",
-          "model": "14 \u00b7 Illuminated pushbutton \u00b7 1NO",
-          "name": "Series 14 \u00b7 Illuminated pushbutton \u00b7 1NO",
+          "model": "14 · Illuminated pushbutton · 1NO",
+          "name": "Series 14 · Illuminated pushbutton · 1NO",
           "symbol": "illuminated-pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -248,15 +300,33 @@
           "attributes": {
             "series": "14",
             "orderPrefix": "14",
-            "function": "Illuminated pushbutton \u00b7 1NO",
+            "function": "Illuminated pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "13",
+                "14",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-14-illuminated-nc",
-          "model": "14 \u00b7 Illuminated pushbutton \u00b7 1NC",
-          "name": "Series 14 \u00b7 Illuminated pushbutton \u00b7 1NC",
+          "model": "14 · Illuminated pushbutton · 1NC",
+          "name": "Series 14 · Illuminated pushbutton · 1NC",
           "symbol": "illuminated-pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -269,15 +339,33 @@
           "attributes": {
             "series": "14",
             "orderPrefix": "14",
-            "function": "Illuminated pushbutton \u00b7 1NC",
+            "function": "Illuminated pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "21",
+                "22",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-14-indicator",
-          "model": "14 \u00b7 Indicator",
-          "name": "Series 14 \u00b7 Indicator",
+          "model": "14 · Indicator",
+          "name": "Series 14 · Indicator",
           "symbol": "lamp",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -290,13 +378,29 @@
             "orderPrefix": "14",
             "function": "Indicator",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-14-selector",
-          "model": "14 \u00b7 Selector switch \u00b7 maintained",
-          "name": "Series 14 \u00b7 Selector switch \u00b7 maintained",
+          "model": "14 · Selector switch · maintained",
+          "name": "Series 14 · Selector switch · maintained",
           "symbol": "selector-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -307,15 +411,15 @@
           "attributes": {
             "series": "14",
             "orderPrefix": "14",
-            "function": "Selector switch \u00b7 maintained",
+            "function": "Selector switch · maintained",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-14-keylock",
-          "model": "14 \u00b7 Keylock switch",
-          "name": "Series 14 \u00b7 Keylock switch",
+          "model": "14 · Keylock switch",
+          "name": "Series 14 · Keylock switch",
           "symbol": "key-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -340,8 +444,8 @@
       "products": [
         {
           "id": "series-45-pushbutton-no",
-          "model": "45 \u00b7 Pushbutton \u00b7 1NO",
-          "name": "Series 45 \u00b7 Pushbutton \u00b7 1NO",
+          "model": "45 · Pushbutton · 1NO",
+          "name": "Series 45 · Pushbutton · 1NO",
           "symbol": "pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -352,15 +456,15 @@
           "attributes": {
             "series": "45",
             "orderPrefix": "45",
-            "function": "Pushbutton \u00b7 1NO",
+            "function": "Pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-45-pushbutton-nc",
-          "model": "45 \u00b7 Pushbutton \u00b7 1NC",
-          "name": "Series 45 \u00b7 Pushbutton \u00b7 1NC",
+          "model": "45 · Pushbutton · 1NC",
+          "name": "Series 45 · Pushbutton · 1NC",
           "symbol": "pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -371,15 +475,15 @@
           "attributes": {
             "series": "45",
             "orderPrefix": "45",
-            "function": "Pushbutton \u00b7 1NC",
+            "function": "Pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-45-illuminated-no",
-          "model": "45 \u00b7 Illuminated pushbutton \u00b7 1NO",
-          "name": "Series 45 \u00b7 Illuminated pushbutton \u00b7 1NO",
+          "model": "45 · Illuminated pushbutton · 1NO",
+          "name": "Series 45 · Illuminated pushbutton · 1NO",
           "symbol": "illuminated-pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -392,15 +496,33 @@
           "attributes": {
             "series": "45",
             "orderPrefix": "45",
-            "function": "Illuminated pushbutton \u00b7 1NO",
+            "function": "Illuminated pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "13",
+                "14",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-45-illuminated-nc",
-          "model": "45 \u00b7 Illuminated pushbutton \u00b7 1NC",
-          "name": "Series 45 \u00b7 Illuminated pushbutton \u00b7 1NC",
+          "model": "45 · Illuminated pushbutton · 1NC",
+          "name": "Series 45 · Illuminated pushbutton · 1NC",
           "symbol": "illuminated-pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -413,15 +535,33 @@
           "attributes": {
             "series": "45",
             "orderPrefix": "45",
-            "function": "Illuminated pushbutton \u00b7 1NC",
+            "function": "Illuminated pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "21",
+                "22",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-45-indicator",
-          "model": "45 \u00b7 Indicator",
-          "name": "Series 45 \u00b7 Indicator",
+          "model": "45 · Indicator",
+          "name": "Series 45 · Indicator",
           "symbol": "lamp",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -434,13 +574,29 @@
             "orderPrefix": "45",
             "function": "Indicator",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-45-selector",
-          "model": "45 \u00b7 Selector switch \u00b7 maintained",
-          "name": "Series 45 \u00b7 Selector switch \u00b7 maintained",
+          "model": "45 · Selector switch · maintained",
+          "name": "Series 45 · Selector switch · maintained",
           "symbol": "selector-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -451,15 +607,15 @@
           "attributes": {
             "series": "45",
             "orderPrefix": "45",
-            "function": "Selector switch \u00b7 maintained",
+            "function": "Selector switch · maintained",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-45-keylock",
-          "model": "45 \u00b7 Keylock switch",
-          "name": "Series 45 \u00b7 Keylock switch",
+          "model": "45 · Keylock switch",
+          "name": "Series 45 · Keylock switch",
           "symbol": "key-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -484,8 +640,8 @@
       "products": [
         {
           "id": "series-61-pushbutton-no",
-          "model": "61 \u00b7 Pushbutton \u00b7 1NO",
-          "name": "Series 61 \u00b7 Pushbutton \u00b7 1NO",
+          "model": "61 · Pushbutton · 1NO",
+          "name": "Series 61 · Pushbutton · 1NO",
           "symbol": "pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -496,15 +652,15 @@
           "attributes": {
             "series": "61",
             "orderPrefix": "61",
-            "function": "Pushbutton \u00b7 1NO",
+            "function": "Pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-61-pushbutton-nc",
-          "model": "61 \u00b7 Pushbutton \u00b7 1NC",
-          "name": "Series 61 \u00b7 Pushbutton \u00b7 1NC",
+          "model": "61 · Pushbutton · 1NC",
+          "name": "Series 61 · Pushbutton · 1NC",
           "symbol": "pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -515,15 +671,15 @@
           "attributes": {
             "series": "61",
             "orderPrefix": "61",
-            "function": "Pushbutton \u00b7 1NC",
+            "function": "Pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-61-illuminated-no",
-          "model": "61 \u00b7 Illuminated pushbutton \u00b7 1NO",
-          "name": "Series 61 \u00b7 Illuminated pushbutton \u00b7 1NO",
+          "model": "61 · Illuminated pushbutton · 1NO",
+          "name": "Series 61 · Illuminated pushbutton · 1NO",
           "symbol": "illuminated-pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -536,15 +692,33 @@
           "attributes": {
             "series": "61",
             "orderPrefix": "61",
-            "function": "Illuminated pushbutton \u00b7 1NO",
+            "function": "Illuminated pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "13",
+                "14",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-61-illuminated-nc",
-          "model": "61 \u00b7 Illuminated pushbutton \u00b7 1NC",
-          "name": "Series 61 \u00b7 Illuminated pushbutton \u00b7 1NC",
+          "model": "61 · Illuminated pushbutton · 1NC",
+          "name": "Series 61 · Illuminated pushbutton · 1NC",
           "symbol": "illuminated-pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -557,15 +731,33 @@
           "attributes": {
             "series": "61",
             "orderPrefix": "61",
-            "function": "Illuminated pushbutton \u00b7 1NC",
+            "function": "Illuminated pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "21",
+                "22",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-61-indicator",
-          "model": "61 \u00b7 Indicator",
-          "name": "Series 61 \u00b7 Indicator",
+          "model": "61 · Indicator",
+          "name": "Series 61 · Indicator",
           "symbol": "lamp",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -578,13 +770,29 @@
             "orderPrefix": "61",
             "function": "Indicator",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-61-selector",
-          "model": "61 \u00b7 Selector switch \u00b7 maintained",
-          "name": "Series 61 \u00b7 Selector switch \u00b7 maintained",
+          "model": "61 · Selector switch · maintained",
+          "name": "Series 61 · Selector switch · maintained",
           "symbol": "selector-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -595,15 +803,15 @@
           "attributes": {
             "series": "61",
             "orderPrefix": "61",
-            "function": "Selector switch \u00b7 maintained",
+            "function": "Selector switch · maintained",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-61-keylock",
-          "model": "61 \u00b7 Keylock switch",
-          "name": "Series 61 \u00b7 Keylock switch",
+          "model": "61 · Keylock switch",
+          "name": "Series 61 · Keylock switch",
           "symbol": "key-switch",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -628,8 +836,8 @@
       "products": [
         {
           "id": "series-84-pushbutton-no",
-          "model": "84 \u00b7 Pushbutton \u00b7 1NO",
-          "name": "Series 84 \u00b7 Pushbutton \u00b7 1NO",
+          "model": "84 · Pushbutton · 1NO",
+          "name": "Series 84 · Pushbutton · 1NO",
           "symbol": "pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -640,15 +848,15 @@
           "attributes": {
             "series": "84",
             "orderPrefix": "84",
-            "function": "Pushbutton \u00b7 1NO",
+            "function": "Pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-84-pushbutton-nc",
-          "model": "84 \u00b7 Pushbutton \u00b7 1NC",
-          "name": "Series 84 \u00b7 Pushbutton \u00b7 1NC",
+          "model": "84 · Pushbutton · 1NC",
+          "name": "Series 84 · Pushbutton · 1NC",
           "symbol": "pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -659,15 +867,15 @@
           "attributes": {
             "series": "84",
             "orderPrefix": "84",
-            "function": "Pushbutton \u00b7 1NC",
+            "function": "Pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
             "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
           }
         },
         {
           "id": "series-84-illuminated-no",
-          "model": "84 \u00b7 Illuminated pushbutton \u00b7 1NO",
-          "name": "Series 84 \u00b7 Illuminated pushbutton \u00b7 1NO",
+          "model": "84 · Illuminated pushbutton · 1NO",
+          "name": "Series 84 · Illuminated pushbutton · 1NO",
           "symbol": "illuminated-pushbutton-no",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -680,15 +888,33 @@
           "attributes": {
             "series": "84",
             "orderPrefix": "84",
-            "function": "Illuminated pushbutton \u00b7 1NO",
+            "function": "Illuminated pushbutton · 1NO",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "13",
+                "14",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-84-illuminated-nc",
-          "model": "84 \u00b7 Illuminated pushbutton \u00b7 1NC",
-          "name": "Series 84 \u00b7 Illuminated pushbutton \u00b7 1NC",
+          "model": "84 · Illuminated pushbutton · 1NC",
+          "name": "Series 84 · Illuminated pushbutton · 1NC",
           "symbol": "illuminated-pushbutton-nc",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -701,15 +927,33 @@
           "attributes": {
             "series": "84",
             "orderPrefix": "84",
-            "function": "Illuminated pushbutton \u00b7 1NC",
+            "function": "Illuminated pushbutton · 1NC",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "21",
+                "22",
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  2,
+                  3
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         },
         {
           "id": "series-84-indicator",
-          "model": "84 \u00b7 Indicator",
-          "name": "Series 84 \u00b7 Indicator",
+          "model": "84 · Indicator",
+          "name": "Series 84 · Indicator",
           "symbol": "lamp",
           "manufacturerNumber": "",
           "verification": "not-verified",
@@ -722,7 +966,23 @@
             "orderPrefix": "84",
             "function": "Indicator",
             "configuration": "Schematic family template; contact count, action, lamp voltage and colour must match the selected assembly.",
-            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification."
+            "portMapping": "Logical schematic terminals only. Physical numbering, exact ordering codes, contact blocks, LED modules and accessory compatibility require verification.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "X1",
+                "X2"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           }
         }
       ]

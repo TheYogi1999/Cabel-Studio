@@ -26,6 +26,8 @@ jobs:
       - run: npm run test:cloud
       - run: node tests/electrical-core.cjs
       - run: node tests/electrical-network.cjs
+      - run: node tests/product-loads.cjs
+      - run: node tests/product-loads-smoke.cjs
       - run: node tests/electrical-network-ui-smoke.cjs
       - run: node tests/electrical-ui-smoke.cjs
       - run: node tests/supply-symbol-smoke.cjs
@@ -49,6 +51,7 @@ jobs:
             *-debug.log
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-supply-*
+            /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-network-*
             /tmp/Leitwerk-electrical-*
             /tmp/Leitwerk-navigation-*.png

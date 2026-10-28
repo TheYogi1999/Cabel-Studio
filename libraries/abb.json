@@ -2822,7 +2822,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF09",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2848,7 +2872,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF16",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2874,7 +2922,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF26",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2900,7 +2972,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF38",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2926,7 +3022,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF40",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2952,7 +3072,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF52",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -2978,7 +3122,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF65",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -3004,7 +3172,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "4NO",
             "frame": "AF80",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1L1",
+                "2T1",
+                "3L2",
+                "4T2",
+                "5L3",
+                "6T3",
+                "7L4",
+                "8T4"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -3030,7 +3222,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "2NO2NC",
             "frame": "AF09",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -3056,7 +3272,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "2NO2NC",
             "frame": "AF16",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -3082,7 +3322,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "2NO2NC",
             "frame": "AF26",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",
@@ -3108,7 +3372,31 @@
             "family": "AF four-pole",
             "contactConfiguration": "2NO2NC",
             "frame": "AF38",
-            "coil": "Specify the full coil suffix and voltage before ordering."
+            "coil": "Specify the full coil suffix and voltage before ordering.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "A1",
+                "A2",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {},
+              "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
           },
           "pinNumbers": [
             "A1",

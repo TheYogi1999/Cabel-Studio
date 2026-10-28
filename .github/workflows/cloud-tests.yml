@@ -25,6 +25,8 @@ jobs:
       - run: test -x "$CHROMIUM_PATH"
       - run: npm run test:cloud
       - run: node tests/electrical-core.cjs
+      - run: node tests/electrical-network.cjs
+      - run: node tests/electrical-network-ui-smoke.cjs
       - run: node tests/electrical-ui-smoke.cjs
       - run: node tests/supply-symbol-smoke.cjs
       - run: node tests/cloud-local-smoke.cjs
@@ -47,6 +49,7 @@ jobs:
             *-debug.log
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-supply-*
+            /tmp/Leitwerk-network-*
             /tmp/Leitwerk-electrical-*
             /tmp/Leitwerk-navigation-*.png
             /tmp/Leitwerk-spacemouse-*.png

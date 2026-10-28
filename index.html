@@ -10,7 +10,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.34.3">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.35.0">
+  <link rel="stylesheet" href="styles/electrical.css?v=1.35.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -59,22 +60,24 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.34.3"></script>
-<script src="scripts/symbol-format.js?v=1.34.3"></script>
-<script src="scripts/sheet-numbers.js?v=1.34.3"></script>
-<script src="scripts/red-pen.js?v=1.34.3"></script>
-<script src="scripts/linked-images.js?v=1.34.3"></script>
-<script src="scripts/connection-graph.js?v=1.34.3"></script>
-<script src="scripts/cables.js?v=1.34.3"></script>
-<script src="scripts/table-layout.js?v=1.34.3"></script>
-<script src="scripts/spacemouse.js?v=1.34.3"></script>
-<script src="scripts/workspace-ui.js?v=1.34.3"></script>
-<script src="firebase-config.js?v=1.34.3"></script>
-<script src="scripts/cloud-core.js?v=1.34.3"></script>
-<script src="scripts/cloud-projects.js?v=1.34.3"></script>
+<script src="libraries/catalog.js?v=1.35.0"></script>
+<script src="scripts/symbol-format.js?v=1.35.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.35.0"></script>
+<script src="scripts/red-pen.js?v=1.35.0"></script>
+<script src="scripts/linked-images.js?v=1.35.0"></script>
+<script src="scripts/connection-graph.js?v=1.35.0"></script>
+<script src="scripts/cables.js?v=1.35.0"></script>
+<script src="scripts/table-layout.js?v=1.35.0"></script>
+<script src="scripts/spacemouse.js?v=1.35.0"></script>
+<script src="scripts/workspace-ui.js?v=1.35.0"></script>
+<script src="firebase-config.js?v=1.35.0"></script>
+<script src="scripts/electrical-core.js?v=1.35.0"></script>
+<script src="scripts/electrical-ui.js?v=1.35.0"></script>
+<script src="scripts/cloud-core.js?v=1.35.0"></script>
+<script src="scripts/cloud-projects.js?v=1.35.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.34.3', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.35.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -135,7 +138,7 @@
   function defaultElectricalValue(type){return({resistor:'10 kΩ',capacitor:'100 nF',fuse:'6 A',lamp:'24 V','power-supply':'24 V DC','relay-coil':'24 V DC','rcd-2p':'30 mA','rcd-4p':'30 mA'})[type]||'';}
   function electricalValueOf(p){if(p.type==='terminal-pin')return'';if(p.deviceType!==undefined)return String(p.value||'');if(p.catalog&&p.value===p.catalog.model)return catalogValue(p.catalog);if(p.value===TYPES[p.type]?.value)return defaultElectricalValue(p.type);return String(p.value||'');}
   function splitPins(value){return String(value||'').split(';').map(n=>n.trim().replace(/^:/,''));}
-  let model={title:'New schematic',parts:[],wires:[],cables:[]},selected=null,mode='select',wireStart=null,wirePoints=[],zoom=1,pan={x:0,y:0},drag=null,segmentDrag=null,appClipboard=null,pdfExporting=false,altGrid=false,gridVisible=true,nextId=1,connectionGraph=null,cableSystem=null,imageTools=null;
+  let model={title:'New schematic',parts:[],wires:[],cables:[]},selected=null,mode='select',wireStart=null,wirePoints=[],zoom=1,pan={x:0,y:0},drag=null,segmentDrag=null,appClipboard=null,pdfExporting=false,altGrid=false,gridVisible=true,nextId=1,connectionGraph=null,cableSystem=null,imageTools=null,calculationSystem=null;
   const openEndDrafts=new Map();
   const svg=document.querySelector('#sheet'),scene=document.querySelector('#scene'),partsG=document.querySelector('#parts'),wiresG=document.querySelector('#wires'),preview=document.querySelector('#preview');
   function captureSheetPointer(id){try{svg.setPointerCapture?.(id)}catch{/* Touch Events use a stable virtual pointer instead of Safari pointer capture. */}}
@@ -391,7 +394,7 @@
     const children=new Map();for(const {p}of entries){if(!children.has(p.masterId))children.set(p.masterId,[]);children.get(p.masterId).push(p.id);}
     const deviceChunks=CabelDeviceList.paginate(masters,entry=>{const p=entry.p,queue=[...(children.get(p.id)||[])],seen=new Set([p.id]);let count=0;while(queue.length){const id=queue.pop();if(seen.has(id))continue;seen.add(id);count++;queue.push(...(children.get(id)||[]));}return{values:[aks(p),String(p.label||p.deviceCode||''),deviceTypeOf(p),electricalValueOf(p),p.manufacturerNumber||'—',p.sapNumber||'—',referenceAddress(entry.sheetRef,p)],detail:count?'Master · '+count+' sub-items':''};});
     const deviceCount=deviceChunks.length,terminalCount=terminalChunks.length;
-    const cablePages=cableSystem?.generatedPages(generated)||[];
+    const cablePages=[...(cableSystem?.generatedPages(generated)||[]),...(calculationSystem?.generatedPages(generated)||[])];
     let tocCount=1;while(Math.ceil((1+tocCount+drawings.length+deviceCount+terminalCount+cablePages.length)/22)>tocCount)tocCount++;
     const cover=generated('cover',0,'Cover page'),contents=Array.from({length:tocCount},(_,i)=>generated('toc',i,'Table of contents'));
     const lists=Array.from({length:deviceCount},(_,i)=>generated(DEVICE_LIST_KIND,i,'Device list'));
@@ -635,7 +638,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
        ...(p.type==='text'?[['label','Text',p.label]]:[['deviceCode','Device Designation (-)',p.type==='connector'?terminalStripName(p):p.deviceCode||p.label]]),['value','Value',electricalValueOf(p)],['deviceType','Device Type',deviceTypeOf(p)],['manufacturerNumber','Manufacturer number',p.manufacturerNumber],['sapNumber','SAP number',p.sapNumber],...(p.type==='connector'?[['terminalNumber','Terminal number (e.g. 1)',terminalOrdinal(p)]]:[]),['pinNumbers',p.type==='connector'?'Pin numbers (2–8; semicolon separated)':'Pin numbers (semicolon separated)',partTerminals(p).map((_,i)=>pinNumber(p,i)).join('; ')]]
       .map(([key,label,value])=>'<label>'+label+'<input name="'+key+'" value="'+safe(value)+'"></label>').join('')+
       '<div class="actions"><button type="submit">Apply</button><button type="button" id="componentCancel">Cancel</button></div></form>');
-    const form=document.querySelector('#componentForm'),getTerminalChoice=terminalTypePicker(form,p),oldTerminalType=deviceTypeOf(p);if(p.catalog){const origin=document.createElement('p');origin.className='catalog-origin';origin.textContent=p.catalog.manufacturer+' · '+p.catalog.model+' · '+(p.catalog.verification==='user-specified-reference'?'User-specified article':p.catalog.verification==='optical-interface-documented'?'Optical interface documented; physical pinout unverified':'Unverified catalogue reference');form.prepend(origin);if(p.catalog.attributes?.portMapping){const note=document.createElement('p');note.className='catalog-origin';note.textContent=p.catalog.attributes.portMapping;form.prepend(note)}}
+    const form=document.querySelector('#componentForm'),getTerminalChoice=terminalTypePicker(form,p),oldTerminalType=deviceTypeOf(p),readLoad=calculationSystem?.fields(p,form);if(p.catalog){const origin=document.createElement('p');origin.className='catalog-origin';origin.textContent=p.catalog.manufacturer+' · '+p.catalog.model+' · '+(p.catalog.verification==='user-specified-reference'?'User-specified article':p.catalog.verification==='optical-interface-documented'?'Optical interface documented; physical pinout unverified':'Unverified catalogue reference');form.prepend(origin);if(p.catalog.attributes?.portMapping){const note=document.createElement('p');note.className='catalog-origin';note.textContent=p.catalog.attributes.portMapping;form.prepend(note)}}
 
 
     for(const name of ['deviceType','manufacturerNumber'])form.elements[name].addEventListener('input',()=>{if(form.elements.deviceType.value!==oldTerminalType||form.elements.manufacturerNumber.value!==(p.manufacturerNumber||''))form.elements.sapNumber.value='';});
@@ -660,7 +663,7 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
     }
     form.setAttribute('aria-labelledby','componentHeading');
     form.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();closePanel()}};
-    form.onsubmit=e=>{e.preventDefault();const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=splitPins(values.get('pinNumbers'));if(isPortBlock(p)){if(pinValues.length<1||pinValues.length>64||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 1 to 64 unique port names');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(isPortBlock(p)){const kinds=String(values.get('portKinds')||'').split(';').map(v=>v.trim().toLowerCase());while(kinds.length<pinValues.length)kinds.push('wire');if(kinds.length!==pinValues.length||kinds.some(k=>!['wire','fiber'].includes(k))){toast('Enter one wire or fiber for every port');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&kinds[Number(ref.split(':')[1])]!==(w.kind==='fiber'?'fiber':'wire')))){toast('Disconnect wired ports before changing their medium');return}values.set('portKinds',kinds.join(';'));const sides=String(values.get('portSides')||'').split(';').map(v=>v.trim().toLowerCase());if(sides.length!==pinValues.length||sides.some(side=>!['l','r','left','right'].includes(side))){toast('Enter one L or R for every port');return}}if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}for(const key of ['functionCode','locationCode','deviceCode','label','value','deviceType','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('deviceType')).trim()||'Feed-through terminal';if(isPortBlock(p)){changeComponent(p,()=>{p.pinNumbers=pinValues;p.portKinds=String(values.get('portKinds')).split(';');p.portSides=String(values.get('portSides')).split(';').map(v=>v.trim().toLowerCase().startsWith('l')?'left':'right')})}else if(p.type==='connector')changeComponent(p,()=>{p.pinNumbers=pinValues});else p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=p.deviceCode;}if(p.type==='connector'){const choice=getTerminalChoice();if(choice?.library){const {library,product}=choice;p.manufacturer=library.manufacturer;p.catalog={libraryId:library.id,productId:product.id,manufacturer:library.manufacturer,model:product.model,verification:product.verification||'not-verified',attributes:structuredClone(product.attributes||{}),sourceUrls:(library.sources||[]).map(s=>s.url)};}else if(choice||p.terminalType!==oldTerminalType){delete p.catalog;delete p.manufacturer;}}
+    form.onsubmit=e=>{e.preventDefault();let loadData;try{loadData=readLoad?.();}catch(error){toast(error.message);return;}const values=new FormData(form);const masterId=values.get('masterId')||'';const pinValues=splitPins(values.get('pinNumbers'));if(isPortBlock(p)){if(pinValues.length<1||pinValues.length>64||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 1 to 64 unique port names');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(isPortBlock(p)){const kinds=String(values.get('portKinds')||'').split(';').map(v=>v.trim().toLowerCase());while(kinds.length<pinValues.length)kinds.push('wire');if(kinds.length!==pinValues.length||kinds.some(k=>!['wire','fiber'].includes(k))){toast('Enter one wire or fiber for every port');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&kinds[Number(ref.split(':')[1])]!==(w.kind==='fiber'?'fiber':'wire')))){toast('Disconnect wired ports before changing their medium');return}values.set('portKinds',kinds.join(';'));const sides=String(values.get('portSides')||'').split(';').map(v=>v.trim().toLowerCase());if(sides.length!==pinValues.length||sides.some(side=>!['l','r','left','right'].includes(side))){toast('Enter one L or R for every port');return}}if(p.type==='connector'){if(pinValues.length<2||pinValues.length>8||pinValues.some(n=>!n)||new Set(pinValues).size!==pinValues.length){toast('Enter 2 to 8 unique pin numbers');return}if(deviceEntries().some(e=>e.p.type==='terminal-pin'&&e.p.masterId===p.id&&e.p.pinIndex!==8&&e.p.pinIndex>=pinValues.length)){toast('Remove separately placed pins first');return}const owner=deviceEntries().find(e=>e.p===p)?.sheet;if(owner?.wires.some(w=>[w.a,w.b].some(ref=>ref.split(':')[0]===p.id&&Number(ref.split(':')[1])!==8&&Number(ref.split(':')[1])>=pinValues.length))){toast('Pins to be removed are still wired');return}}if(masterId&&wouldCycle(p.id,masterId)){toast('This master assignment would create a cycle');return}if(readLoad){if(loadData)p.loadCalculation=loadData;else delete p.loadCalculation;}for(const key of ['functionCode','locationCode','deviceCode','label','value','deviceType','manufacturerNumber','sapNumber'])if(values.has(key))p[key]=values.get(key).trim();p.functionCode=p.functionCode.replace(/^=/,'');p.locationCode=p.locationCode.replace(/^\+/,'');p.deviceCode=p.deviceCode.replace(/^[−-]/,'');if(p.type==='connector')p.terminalType=String(values.get('deviceType')).trim()||'Feed-through terminal';if(isPortBlock(p)){changeComponent(p,()=>{p.pinNumbers=pinValues;p.portKinds=String(values.get('portKinds')).split(';');p.portSides=String(values.get('portSides')).split(';').map(v=>v.trim().toLowerCase().startsWith('l')?'left':'right')})}else if(p.type==='connector')changeComponent(p,()=>{p.pinNumbers=pinValues});else p.pinNumbers=pinValues.map((n,i)=>n||String(i+1));if(p.type==='connector'){const oldNumber=terminalOrdinal(p),newNumber=String(values.get('terminalNumber')).trim()||oldNumber;if(p.pinNumbers.every((n,i)=>n===oldNumber+String.fromCharCode(97+i)))p.pinNumbers=p.pinNumbers.map((_,i)=>newNumber+String.fromCharCode(97+i));p.terminalNumber=newNumber;p.stripName=p.deviceCode;}if(p.type==='connector'){const choice=getTerminalChoice();if(choice?.library){const {library,product}=choice;p.manufacturer=library.manufacturer;p.catalog={libraryId:library.id,productId:product.id,manufacturer:library.manufacturer,model:product.model,verification:product.verification||'not-verified',attributes:structuredClone(product.attributes||{}),sourceUrls:(library.sources||[]).map(s=>s.url)};}else if(choice||p.terminalType!==oldTerminalType){delete p.catalog;delete p.manufacturer;}}
       if(p.type!=='connector'&&p.deviceType!==oldTerminalType){delete p.catalog;delete p.manufacturer;}
       if(masterId)p.masterId=masterId;else delete p.masterId;setReferenceTarget(p,values.get('referenceTarget')?JSON.parse(values.get('referenceTarget')):null);p.textVisibility=Object.fromEntries(['label','value','aks','pins','reference','annotation'].map(key=>[key,values.has('show_'+key)]));render();closePanel()};
     document.querySelector('#componentCancel').onclick=closePanel;
@@ -836,8 +839,8 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   render();
 
   function serializableSheet(sheet){return isGenerated(sheet)?{kind:sheet.kind,generatedId:sheet.generatedId,title:sheet.title,parts:[],wires:[]}:sheet}
-  function documentKind(sheet){return {cover:'Cover page',toc:'Table of contents','device-list':'Device list','terminal-list':'Terminal list','cable-list':'Cable list','connection-list':'Connection list'}[sheet?.kind]||'Schematic'}
-  function isGenerated(sheet){return ['cover','toc','device-list','terminal-list','cable-list','connection-list'].includes(sheet?.kind)}
+  function documentKind(sheet){return {cover:'Cover page',toc:'Table of contents','device-list':'Device list','terminal-list':'Terminal list','cable-list':'Cable list','connection-list':'Connection list','calculation-list':'Electrical calculations'}[sheet?.kind]||'Schematic'}
+  function isGenerated(sheet){return ['cover','toc','device-list','terminal-list','cable-list','connection-list','calculation-list'].includes(sheet?.kind)}
   function pinNumber(p,i){if(p.type==='terminal-pin')return p.value||p.label;if(p.type==='connector'&&i===8)return 'BR';return p.pinNumbers?.[i]?String(p.pinNumbers[i]).replace(/^:/,''):p.type==='connector'?terminalOrdinal(p)+String.fromCharCode(97+i):String(i+1)}
   function wireLabelAnchor(w){
     const route=wireRoute(w);if(!route?.segments.length)return{x:0,y:0,angle:0};
@@ -861,7 +864,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     rect.setAttribute('aria-label',label);rect.addEventListener('pointerdown',e=>e.stopPropagation());rect.addEventListener('click',action);rect.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();action()}});return rect;
   }
   function drawGeneratedPage(sheet){
-    if(cableSystem?.drawGenerated(sheet,deviceListGroup))return;
+    if(calculationSystem?.drawGenerated(sheet,deviceListGroup)||cableSystem?.drawGenerated(sheet,deviceListGroup))return;
     if(sheet.kind===DEVICE_LIST_KIND){drawDeviceList(sheet);return}
     deviceListGroup.replaceChildren();const g=deviceListGroup,info=model.projectInfo||{};
     if(sheet.kind==='cover'){
@@ -940,6 +943,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       if(!drawings.length)drawings.push({id:crypto.randomUUID(),title:'Schematic',parts:[],wires:[]});
       for(const sheet of drawings)if(sheet.looseEnds!==undefined&&(!Array.isArray(sheet.looseEnds)||new Set(sheet.looseEnds.map(n=>n?.id)).size!==sheet.looseEnds.length||sheet.looseEnds.some(n=>!n||typeof n.id!=='string'||!n.id||/[~:@]/.test(n.id)||![n.x,n.y].every(Number.isFinite)||!['wire','bridge','fiber'].includes(n.kind)||typeof n.formerLabel!=='string')))throw Error('Invalid open endpoints');
       CabelSheetNumbers.validate(drawings);CabelLinkedImages.validateDocument(drawings);CabelLinkedImages.validateCover(data.projectInfo?.coverImages,drawings);
+      CabelElectricalCore.validateDocument({projectInfo:data.projectInfo,sheets:drawings});
       upgradeLegacyStrips(drawings);
       pages.splice(0,pages.length,...drawings);activeSheet=Math.max(0,drawings.findIndex(s=>s.id===wanted));model.title=data.title||'Opened schematic';model.projectInfo=data.projectInfo||{};model.cables=cables;model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;
       nextId=1+Math.max(0,...[...drawings.flatMap(s=>[...s.parts,...s.wires,...(s.junctions||[])]),...(model.projectInfo.coverImages||[])].map(p=>Number(String(p.id).slice(1))||0));selected=null;drag=null;segmentDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';render();
@@ -1859,6 +1863,12 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     checkpoint:()=>{commitHistory();return{document:historySnapshot(),undo:[...undoStack],redo:[...redoStack],clipboard:appClipboard,selection:{primary:selected,parts:[...selectedParts],wires:[...selectedWires],ends:[...selectedLooseEnds],junctions:[...selectedJunctions],segments:[...selectedSegments].map(([id,indices])=>[id,[...indices]])},mode,fieldDrawing:aksAreaDrawing,wireStart,wirePoints:structuredClone(wirePoints),preview:preview.getAttribute('d')}},
     cancelPointer:(checkpoint,keepTool=false)=>{imageTools?.cancel();connectionGraph.cancel();finishAksFieldDrag(true);cancelAksAreaDrawing();drag=null;segmentDrag=null;wireLabelDrag=null;clearAreaSelection();if(checkpoint&&historySnapshot()!==checkpoint.document){restoreHistory(checkpoint.document);undoStack.splice(0,undoStack.length,...checkpoint.undo);redoStack.splice(0,redoStack.length,...checkpoint.redo);appClipboard=checkpoint.clipboard}if(keepTool&&checkpoint){mode=checkpoint.mode;aksAreaDrawing=checkpoint.fieldDrawing;wireStart=checkpoint.wireStart;wirePoints=checkpoint.wirePoints;preview.setAttribute('d',checkpoint.preview||'');preview.style.display=wireStart?'block':'none'}if(checkpoint?.selection){selected=checkpoint.selection.primary;checkpoint.selection.parts.forEach(id=>selectedParts.add(id));checkpoint.selection.wires.forEach(id=>selectedWires.add(id));checkpoint.selection.ends.forEach(id=>selectedLooseEnds.add(id));checkpoint.selection.junctions.forEach(id=>selectedJunctions.add(id));checkpoint.selection.segments.forEach(([id,indices])=>selectedSegments.set(id,new Set(indices)));}render()},
     status:message=>document.querySelector('#statusText').textContent=message
+  });
+  calculationSystem=CabelElectricalUI.init({
+    info:()=>model.projectInfo||{},setInfo:value=>{model.projectInfo=value},drawings:drawingPages,designation:aks,reference:referenceAddress,readOnly:()=>pdfExporting||Boolean(cloudProjects?.state().readOnly),
+    panel:showPanel,safe,toast,commit:commitHistory,render:()=>render(),download,el,text:generatedText,jump:jumpToDevice,
+    editDevice:id=>{const entry=deviceEntries().find(e=>e.p.id===id);if(entry){setSheet(pages.indexOf(entry.sheet));editComponent(entry.p);}},
+    goReport:id=>{const sheet=pages.find(s=>s.kind==='calculation-list'&&s.calculationCircuit.id===id);if(sheet){closePanel();setSheet(pages.indexOf(sheet));}}
   });
   function updateDocumentNavigation(){
     document.querySelector('#a4Total').textContent=pages.length+' SHEETS';

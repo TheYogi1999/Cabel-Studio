@@ -2,6 +2,7 @@
    its devices and its junctions must never be merged independently. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CabelCloudCore=api;})(globalThis,()=>{
   'use strict';
+  const Electrical=typeof module==='object'&&module.exports?require('./electrical-core.js'):globalThis.CabelElectricalCore;
   function stable(value){if(value===undefined)return 'undefined';if(value===null||typeof value!=='object')return JSON.stringify(value);if(Array.isArray(value))return '['+value.map(stable).join(',')+']';return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+stable(value[k])).join(',')+'}';}
   const equal=(a,b)=>stable(a)===stable(b),copy=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   function documentOf(raw){
@@ -13,7 +14,7 @@
     const numbers=new Set();for(const s of doc.sheets)if(s.number!==undefined){if(!Number.isInteger(s.number)||s.number<1||s.number>9999||numbers.has(s.number))throw Error('Drawing sheet numbers conflict');numbers.add(s.number);}
     const objects=new Set();for(const s of doc.sheets)for(const p of [...s.parts,...s.wires,...(s.junctions||[]),...(s.looseEnds||[])]){if(typeof p.id!=='string'||!p.id||objects.has(p.id))throw Error('Duplicate project object ID');objects.add(p.id);}
     if(doc.projectInfo.coverImages!==undefined){if(!Array.isArray(doc.projectInfo.coverImages))throw Error('Invalid cover images');for(const p of doc.projectInfo.coverImages){if(p?.type!=='image'||typeof p.id!=='string'||!p.id||objects.has(p.id))throw Error('Invalid or duplicate cover image');objects.add(p.id);}}
-    return doc;
+    Electrical.validateDocument(doc);return doc;
   }
   function merge(base,local,remote,choices={}){
     const conflicts=[];
@@ -25,6 +26,13 @@
     // Escalate these cross-sheet changes instead of creating inconsistent cable cores.
     if(!equal(local,remote)&&(!equal(base.cables,local.cables)&&!equal(base.sheets,remote.sheets)||!equal(base.cables,remote.cables)&&!equal(base.sheets,local.sheets))){
       if(!choices.document)conflicts.push({key:'document',label:'Cable definitions and drawing connections changed together'});
+      else return{document:copy(choices.document==='local'?local:remote),conflicts:[]};
+    }
+    // A circuit edit and a concurrent device-load edit can change the same
+    // electrical result across otherwise independent sheets. Review together.
+    const supplies=d=>d.projectInfo?.electricalCalculations,loadAssignments=d=>d.sheets.flatMap(s=>s.parts.filter(p=>p.loadCalculation).map(p=>({id:p.id,load:p.loadCalculation}))).sort((a,b)=>a.id.localeCompare(b.id));
+    if(!equal(local,remote)&&(!equal(supplies(base),supplies(local))&&!equal(loadAssignments(base),loadAssignments(remote))||!equal(supplies(base),supplies(remote))&&!equal(loadAssignments(base),loadAssignments(local)))){
+      if(!choices.document)conflicts.push({key:'document',label:'Electrical supplies and device load assignments changed together'});
       else return{document:copy(choices.document==='local'?local:remote),conflicts:[]};
     }
     try{documentOf(result);}catch(e){if(choices.document)return{document:copy(choices.document==='local'?local:remote),conflicts:[]};conflicts.push({key:'document',label:e.message});}

@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.34.3**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.35.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -20,6 +20,7 @@ The interface and generated document headings are English. The editor runs entir
 - [Terminals, relays and cross-references](#terminals-relays-and-cross-references)
 - [Manufacturer references](#manufacturer-libraries)
 - [Documents and project files](#documents-and-project-files)
+- [Supply and load calculations](#supply-and-load-calculations)
 - [All shortcuts and gestures](#shortcuts)
 - [Project layout](#project-layout)
 - [Cloud projects](#cloud-projects)
@@ -39,10 +40,31 @@ python3 -m http.server 8080 --bind 127.0.0.1
 1. Choose **Generic** or **Products** in the left library. Search or expand a group, then click or drag a component onto a drawing sheet.
 2. Use **Connect** to join ports. It automatically selects wire, bridge or fiber from the starting port. Use **Select** to edit objects and line segments.
 3. Use **Sheets**, **Devices** and **Cables** in the right overview to manage the project. Add drawings with **+** in Sheets; edit titles and numbers with **Page properties**.
-4. Use **Project info** for document metadata, **Lists** for generated tables/CSV, **Save** for editable JSON, and **Export PDF** for the complete document.
+4. Use **Project info** for document metadata, **Lists** for generated tables/CSV, **Calculations** for supply/load and fault scenarios, **Save** for editable JSON, and **Export PDF** for the complete document.
 5. For cloud work, open **Projects**, sign in, then choose **New empty project**, save the current drawing, or open/duplicate an existing project. Sign in with the same account on the other device and open that project. Firebase setup is described under [Cloud projects](#cloud-projects).
 
 On iPad, entries can be dragged with a finger/Pencil or tapped and then placed on the paper. Two fingers pan/zoom in every tool. For an app-style window, launch the site through **Safari → Share → Add to Home Screen**. Detailed touch and fullscreen behaviour is described below.
+
+## Supply and load calculations
+
+Open **Calculations** in the upper toolbar and choose **Add supply**. DC, single-phase AC and three-phase AC start at 24 V, 230 V and 400 V respectively; voltage is editable. Enter a circuit name, continuous available current and reserve percentage. Linking a source device is optional; a manual/external supply is equally valid. Three-phase voltage is **L–L**; single-phase voltage is **L–N**. Current ratings apply per phase.
+
+In **Edit component → Load calculation**, choose a supply circuit and enter known **electrical input power (W)** or **current (A per phase)**, a demand/simultaneity factor from 0 to 1 and, for sinusoidal AC, **cos φ** and lagging/leading behaviour. Three-phase circuits accept balanced three-phase loads and individual **L1–N / L2–N / L3–N** loads. Motor mechanical output power must be converted to electrical input before entry. Device Value text, catalogue data, drawn wires, terminals and bridges do not assign calculation values or circuit membership automatically.
+
+Only explicitly assigned loads are included. Unplaced devices are included and marked. Assigning a master and its slaves separately counts each entered load; avoid entering the same physical consumption twice. A DC power supply can be the source of a DC circuit and a separate load on an upstream AC circuit. Its upstream input, efficiency and conversion losses must be entered explicitly; the editor does not add circuit totals across voltage levels or infer a converter model. A source assigned as a load on its own circuit is flagged for review.
+
+The panel reports installed input, demand input, reactive power and phase currents. For each load, current input converts to apparent power using `S = U × I` (DC/single phase) or `S = √3 × U(L–L) × I` (balanced three phase). Power input uses `S = P / cos φ` and signed `Q = ±√(S² − P²)`. The demand factor multiplies both P and Q. Balanced loads split equally across three phases; phase-to-neutral loads use `U(L–L) / √3`. Phase currents come from the vector sum of that phase's P/Q. The highest phase current determines required supply current. **Reserve is added to demand**, e.g. `required current = demand current × (1 + reserve % / 100)`. An entered rating is compared with required current; no rating means no capacity comparison. The arithmetic installed-VA total and vector demand-VA total are labelled separately. Neutral current, harmonics, motor starting/inrush and thermal calculations are outside this model.
+
+**Short-circuit scenarios** are optional and independent of the operating load total. In **Edit supply / fault data**, choose:
+
+- **Radial impedance model**: enter source and feeder R/X in **mΩ**, including the complete upstream equivalent source. Three-phase inputs are **per phase**, and calculate a balanced three-phase bolted fault with `I = c × U(L–L) / (√3 × |Z|)`. Single-phase inputs cover the **complete outgoing-and-neutral loop**, using `I = c × U(L–N) / |Z(loop)|`. DC uses the complete outgoing-and-return resistance and `I = U / R(loop)`. Source and feeder resistances/reactances are summed separately, then `|Z| = √(R² + X²)`. The AC voltage multiplier c is an explicit scenario input, initially 1; it is not an automatically selected IEC maximum/minimum factor. Enter impedances appropriate to the conductor temperature and source condition of the scenario. Blank inputs remain unknown; justified zero values must be entered explicitly. Zero total impedance produces no result.
+- **DC manufacturer value**: enter the documented sustained short-circuit current **at the supply terminals** for a current-limited electronic supply. The result is labelled **Declared**, not calculated. It is not an inferred downstream fault current. Boost peaks, duration, foldback/hiccup and feeder voltage drop require the supply characteristic. The resistive DC model is intended for an explicitly modelled resistive/Thevenin source, not a regulated electronic supply.
+
+These are explicit engineering estimates for a single radial equivalent source, not a complete IEC 60909 study. Motor/generator/inverter contributions are not discovered automatically. They do not verify earth faults, protective-device breaking capacity, selectivity or disconnection times. Missing/incompatible loads produce a **partial total**, and missing fault data produces an incomplete result rather than a guessed number. Missing supply assignments remain visible for repair. Removing a supply with assigned loads is prevented; undo/redo restores supply and load edits together.
+
+Formula references: Schneider Electric's Electrical Installation Guide describes [installed apparent power and load current](https://www.electrical-installation.org/enwiki/Installed_apparent_power_%28kVA%29), [the radial R/X impedance method](https://www.electrical-installation.org/enwiki/3-phase_short-circuit_current_%28Isc%29_at_any_point_within_a_LV_installation) and the [400 kVA / 420 V / 4% transformer example](https://www.electrical-installation.org/enwiki/Short-circuit_current_at_the_secondary_terminals_of_a_MV/LV_distribution_transformer) used as an independent numerical check.
+
+Each configured supply adds automatically paginated **Electrical calculations** sheets at the end of the document. They include entered inputs, load assignments, results, formulas and model limits. These export as selectable text/vector tables in the regular A4 PDF; device rows link back to placed components. **View report sheet** opens the selected circuit's report. **Export CSV** exports inputs/results/basis for every configured supply. Circuit definitions live in optional `projectInfo.electricalCalculations: { version: 1, circuits: [...] }`; component load inputs live in optional `loadCalculation`. JSON, cloud projects, project copies, released revisions and undo/redo retain them. Concurrent edits to supply definitions and device load assignments trigger review together; edits to independent drawing sheets still merge normally. Cloud viewers can inspect reports and download CSV without editing calculation inputs.
 
 ## Drawing and editing
 
@@ -178,7 +200,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.34.3. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.35.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -229,7 +251,7 @@ Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.34.3** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.35.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -383,6 +405,7 @@ The symbol editor ignores its drawing shortcuts while a form field is focused. U
 | `scripts/linked-images.js` | Validated linked-image loading/cache, URL-only annotations, properties and proportional corner resizing |
 | `scripts/spacemouse.js`, `vendor/3dconnexion-0.8.0.min.js` | Optional 3DconnexionJS driver connection, staged diagnostics and flat camera navigation; the pinned browser client is shipped with the app |
 | `scripts/red-pen.js`, `scripts/sheet-numbers.js` | Annotation layers and drawing-sheet numbering |
+| `scripts/electrical-core.js`, `scripts/electrical-ui.js`, `styles/electrical.css` | Explicit DC/AC supplies, device loads, demand/reserve and radial fault scenarios, reports/CSV |
 | `scripts/table-layout.js` | Shared measured wrapping and variable-height pagination for device, cable and connection lists |
 | `scripts/pdf-entry.js`, `scripts/build-pdf.cjs`, `vendor/pdf.js`, `assets/fonts/` | Local vector PDF renderer, embedded fonts and internal PDF links; rebuild with `npm run build:pdf` |
 | `scripts/cloud-projects.js`, `styles/cloud.css` | Sign-in, cloud project overview, sharing, revisions and responsive cloud UI |
@@ -457,6 +480,8 @@ node tests/linked-images-smoke.cjs
 node tests/device-list-smoke.cjs
 node tests/connection-lists-smoke.cjs
 node tests/document-navigation-smoke.cjs
+node tests/electrical-core.cjs
+node tests/electrical-ui-smoke.cjs
 node tests/cloud-local-smoke.cjs
 node tests/cloud-ui-smoke.cjs
 npm run test:cloud

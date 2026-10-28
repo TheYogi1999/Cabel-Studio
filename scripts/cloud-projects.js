@@ -265,7 +265,7 @@ globalThis.CabelCloudProjects={
         if(event.target.closest?.('input,textarea,select,[contenteditable="true"]')||['Shift','Control','Meta','Alt','Tab','Enter',' ','Escape','PageUp','PageDown','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-'].includes(event.key))return;
         event.preventDefault();event.stopImmediatePropagation();api.toast('Read-only view. Open the working copy with editor access to make changes.');return;
       }
-      if(dialog.contains(event.target)||event.target.closest?.('.zoom-controls,.newnav,#spaceMouseSettings,#cloudProjectsBtn,#cloudStatus,#openBtn,#saveBtn,#exportBtn,#fullscreenBtn,#exitFullscreenBtn,#panTool,[data-overview="sheets"],.sheetItem,#simpleClose'))return;
+      if(dialog.contains(event.target)||event.target.closest?.('.zoom-controls,.newnav,#spaceMouseSettings,#calculationsBtn,#electricalCalculations,#cloudProjectsBtn,#cloudStatus,#openBtn,#saveBtn,#exportBtn,#fullscreenBtn,#exitFullscreenBtn,#panTool,[data-overview="sheets"],.sheetItem,#simpleClose'))return;
       if(event.target.closest?.('#sheet')){if(event.type==='wheel'||event.button===1||$('#panTool')?.getAttribute('aria-pressed')==='true'||event.touches?.length>1)return;}
       else if(!event.target.closest?.('button,form,input,select,textarea,[draggable],#library,#sheetPanel'))return;
       event.preventDefault();event.stopImmediatePropagation();if(event.type==='click'||event.type==='keydown')api.toast('Read-only view. Open the working copy with editor access to make changes.');

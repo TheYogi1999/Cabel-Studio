@@ -27,6 +27,7 @@ jobs:
       - run: node tests/cloud-local-smoke.cjs
       - run: node tests/cloud-ui-smoke.cjs
       - run: node tests/navigation-input-smoke.cjs
+      - run: node tests/spacemouse-driver-smoke.cjs
       - run: node tests/pen-connections-smoke.cjs
       - run: node tests/pin-label-smoke.cjs
       - run: node tests/pdf-export-smoke.cjs
@@ -43,6 +44,7 @@ jobs:
             *-debug.log
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-navigation-*.png
+            /tmp/Leitwerk-spacemouse-*.png
             /tmp/Leitwerk-pen-*.png
             /tmp/Leitwerk-vector-*.pdf
             /tmp/Leitwerk-linked-images-*

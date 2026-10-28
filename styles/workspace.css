@@ -202,3 +202,5 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 
 #spaceMouseBtn[data-state="connected"]{color:var(--accent,#62d6bd);border-color:var(--accent,#62d6bd)}
 #spaceMouseBtn[data-state="error"]{color:#ffc36d}
+
+.space-mouse-link{color:var(--accent,#62d6bd)}

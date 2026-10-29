@@ -3,7 +3,7 @@
 globalThis.CabelPhoneViewer={init(api){
   const $=s=>document.querySelector(s),body=document.body,svg=api.svg,media=matchMedia('(max-width:600px) and (pointer:coarse), (max-width:1000px) and (max-height:600px) and (pointer:coarse)'),storageKey='leitwerk.phone.mode';
   let preference='auto';try{preference=localStorage.getItem(storageKey)||'auto';}catch{}if(!['auto','viewer','editor'].includes(preference))preference='auto';
-  let enabled=false,previousView=null,previousBox=null,frame=null,drawer=false,lastProject=null;
+  let enabled=false,previousView=null,previousBox=null,frame=null,drawer=false,lastProject=null,viewportHeight=null;
   // Keep the initial device size: an on-screen keyboard must not turn a
   // tablet into a phone viewer while the user is editing a form.
   const deviceShortSide=Math.min(screen.width||innerWidth,screen.height||innerHeight),phoneScreen=()=>deviceShortSide<=600;
@@ -23,11 +23,14 @@ globalThis.CabelPhoneViewer={init(api){
   const close=button('phoneCloseSheets','Close sheets',body,()=>showDrawer(false));close.classList.add('phone-view-controls');
   function showDrawer(open){drawer=enabled&&open;if(drawer)api.showSheets();body.classList.toggle('phone-sheets-open',drawer);sheets.setAttribute('aria-expanded',String(drawer));if(drawer)close.focus({preventScroll:true});}
   function choose(value){preference=value;try{localStorage.setItem(storageKey,value);}catch{}setEnabled(value==='viewer');}
-  function viewport(){if(!enabled)return;const r=svg.getBoundingClientRect();if(r.width>0&&r.height>0)svg.setAttribute('viewBox','0 0 1128 '+1128*r.height/r.width);}
-  function fit(zoom=1){if(!enabled)return;viewport();const r=svg.getBoundingClientRect(),top=api.svgPoint({clientX:r.left,clientY:r.top+64}).y;api.setView({zoom,pan:{x:zoom===1?0:564*(zoom-1)+16,y:399*(zoom-1)+top}});}
+  function viewport(preserve=true){
+    if(!enabled)return;const r=svg.getBoundingClientRect();if(r.width<=0||r.height<=0)return;const height=1128*r.height/r.width,old=viewportHeight,view=api.view();viewportHeight=height;svg.setAttribute('viewBox','0 0 1128 '+height);
+    if(preserve&&old!==null&&Math.abs(old-height)>.001){let y=(old/2-399*(1-view.zoom)-view.pan.y)/view.zoom;if(y<0||y>798)y=399;api.setView({zoom:view.zoom,pan:{x:view.pan.x,y:height/2-399*(1-view.zoom)-y*view.zoom}});}
+  }
+  function fit(zoom=1){if(!enabled)return;viewport(false);const r=svg.getBoundingClientRect(),top=api.svgPoint({clientX:r.left,clientY:r.top+64}).y;api.setView({zoom,pan:{x:zoom===1?0:564*(zoom-1)+16,y:399*(zoom-1)+top}});}
   function setEnabled(value){
     if(enabled===value){refresh();return;}api.cancel();api.cancelInput();menu.open=false;showDrawer(false);
-    if(value){previousView=api.view();previousBox=svg.getAttribute('viewBox');}enabled=value;body.classList.toggle('phone-viewer',enabled);toggle.setAttribute('aria-pressed',String(enabled));
+    if(value){previousView=api.view();previousBox=svg.getAttribute('viewBox');}viewportHeight=null;enabled=value;body.classList.toggle('phone-viewer',enabled);toggle.setAttribute('aria-pressed',String(enabled));
     cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{if(enabled)fit();else{svg.setAttribute('viewBox',previousBox||'0 0 1128 798');if(previousView)api.setView(previousView);}api.refresh();});refresh();
   }
   function refresh(){const info=api.info();$('#phoneDocumentTitle').textContent=info.title||'Leitwerk';$('#phoneSheetTitle').textContent=info.number+' · '+(info.sheetTitle||'Schematic');projects.title=$('#cloudStatus')?.textContent||'Cloud projects';bar.hidden=!enabled;read.hidden=!enabled;if(enabled&&lastProject!==info.projectId){lastProject=info.projectId;if(info.projectId)requestAnimationFrame(()=>{if(enabled)fit();});}}

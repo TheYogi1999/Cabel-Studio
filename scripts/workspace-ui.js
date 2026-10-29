@@ -58,7 +58,7 @@ globalThis.CabelWorkspaceUI = {
     for(const[id,label,title,action,icon]of[
       ['rotateBtn','Rotate','Rotate selected object by 90°','rotate'],
       ['mirrorXBtn','Mirror H','Mirror horizontally','flipX','horizontal'],['mirrorYBtn','Mirror V','Mirror vertically','flipY','vertical'],
-      ['copyBtn','Copy','Copy selected object','copy'],['cutBtn','Cut','Cut selected object','cut'],['pasteBtn','Paste','Paste copied object','paste'],
+      ['copyBtn','Copy','Copy selection','copy'],['cutBtn','Cut','Cut selection','cut'],['pasteBtn','Paste','Paste selection','paste'],
       ['deleteBtn','Delete','Remove selection from the drawing','delete'],['textBtn','Text','Insert text annotation','text']
     ])button(id,label,title,editing,()=>api.action(action),icon);
     const cancel=button('cancelActionBtn','Cancel','Cancel placement or drawing tool',editing,()=>{ink.setTool(null);placement=null;hand=false;clearHold();removeGhost();api.cancel();refresh();});
@@ -335,7 +335,8 @@ globalThis.CabelWorkspaceUI = {
       wire.setAttribute('aria-label','Connect; automatically choose wire, fiber optic or terminal bridge');wire.setAttribute('aria-pressed',String(connecting));wire.classList.toggle('active',connecting);wire.dataset.connectionKind=connecting?state.mode:'wire';
       diagonal.hidden=!connecting;diagonal.setAttribute('aria-pressed',String(state.diagonal));
       $('#aksAreaTool').setAttribute('aria-pressed',String(state.fieldDrawing));svg.dataset.hand=String(hand);svg.dataset.placement=String(Boolean(placement));
-      for(const id of['rotateBtn','mirrorXBtn','mirrorYBtn','copyBtn','cutBtn'])$('#'+id).disabled=!state.partSelected||state.exporting;
+      for(const id of['rotateBtn','mirrorXBtn','mirrorYBtn'])$('#'+id).disabled=!state.partSelected||state.exporting;
+      for(const id of['copyBtn','cutBtn'])$('#'+id).disabled=!state.canCopy||state.exporting;
       $('#deleteBtn').disabled=!state.hasSelection||state.exporting;$('#pasteBtn').disabled=!state.canPaste||state.exporting;
       undo.disabled=!state.canUndo||state.exporting;redo.disabled=!state.canRedo||state.exporting;properties.disabled=state.generated&&!state.hasSelection||state.exporting;
       cancel.hidden=!placement&&!state.connecting&&!state.fieldDrawing&&!hand;exitButton.hidden=!focusRequested;

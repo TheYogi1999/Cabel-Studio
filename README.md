@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.40.0**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.41.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -134,6 +134,10 @@ Manufacturer-backed additions include [Phoenix ST 2,5](https://www.phoenixcontac
 
 In **Select**, a single click selects one straight line segment. A selection rectangle includes fully enclosed individual legs even when the rest of that connection lies outside. Ctrl/Command-click adds or removes individual segments, including several legs of the same connection. Drag the selected segments to offset them together while their terminal endpoints remain attached; Escape cancels, and Undo restores the complete gesture. Double-click (double-tap with a finger/Pencil) selects every section of the same logical connection across junctions; other branches remain separate. Selection itself changes no JSON or history and is hidden from PDF export. Whole-connection deletion requires selecting the whole connection. Ctrl+Alt-click a cable route, or Ctrl-click its caption, still reveals the assigned cable.
 
+Copy/paste uses the complete selection made by a box, Ctrl/Command-click or Ctrl/Command+A. **Copy**, **Cut** and **Paste** in the toolbar also work for connection-only selections on a tablet. Internal connections between selected objects are included automatically. Pasted objects, routes, junctions and open ends move by the same grid offset and remain selected as a group; repeated pastes add another offset. A selected part of a line can be copied as a separate open-ended route. Cutting a partial line asks for the entire connection to be selected first (double-click/double-tap). Connections leading outside the copied selection become open ends in the copy. Cutting leaves any connections that remain on the source sheet as open ends. Each paste or cut undoes as one action.
+
+Copies keep properties and route styles, including bridges, fibers and root junctions. Used cables receive independent cable/conductor IDs and unique cable numbers. Copied physical devices receive new IDs/designations; required parent devices are copied as unplaced ancestors so terminal pins and relay slaves do not remain electrically linked to the original device. Internal source/destination references and supply-circuit assignments are remapped to the copies; a lone copied source/destination is left unpaired. A first paste after Cut moves the same device/connection identities and cable assignments. The clipboard is local to the browser session and is not shared through cloud synchronization.
+
 ## Compact library and terminal type selection
 
 The library uses compact rows, consistent group headings with counts, and a manufacturer filter in **Products**. Generic controls and indicators are grouped together. Manufacturer/family expansion is retained while filtering or switching views. Shared wildcard search, import/export and finger/Pencil drag/drop remain available; touch rows retain at least 44 px height.
@@ -226,7 +230,7 @@ Placed separate terminal pins leave the main symbol's terminals available. Recip
 
 ## Manufacturer libraries
 
-**262 reference entries in eight libraries** are bundled with v1.40.0. Each manufacturer or board collection has a separate editable JSON source:
+**262 reference entries in eight libraries** are bundled with v1.41.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -280,7 +284,7 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.40.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.41.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -310,9 +314,9 @@ This list covers the implemented application shortcuts. **Ctrl/⌘** means **Ctr
 | Hold **Alt / Option** | Temporarily use the 2 mm grid instead of 4 mm. Release to restore 4 mm. |
 | Hold **Shift** while connecting | Allow a 45° leg for a wire, fiber or bridge; an axis-aligned remainder can still be needed to reach the exact port. |
 | **Ctrl/⌘+A** | Select placed symbols/text/references, valid connections, junctions and open ends on the current drawing sheet. Fields and Red Pen strokes are not included in this electrical selection. |
-| **Ctrl/⌘+C** | Copy the currently selected symbol/text/reference into the editor clipboard. |
-| **Ctrl/⌘+X** | Cut that object; attached connections remain as open ends. |
-| **Ctrl/⌘+V** | Paste the editor clipboard, including onto another drawing sheet. A copy receives a new identity; a cut retains its identity for its first paste. |
+| **Ctrl/⌘+C** | Copy the entire current selection into the editor clipboard, including multiple symbols/annotations, wires, junctions and open ends. |
+| **Ctrl/⌘+X** | Cut the selection together; connections left outside the selection remain as open ends. Partial line sections must be selected as entire connections before cutting. |
+| **Ctrl/⌘+V** | Paste the complete selection with its relative positions and routes, including onto another drawing sheet. Copies receive new identities; a cut retains identities for its first paste. |
 | **Ctrl/⌘+Z** | Undo a document change or completed gesture. |
 | **Ctrl/⌘+Y** or **Ctrl/⌘+Shift+Z** | Redo. |
 | **Delete** or **Backspace** | Unplace selected electrical devices, or remove selected text/references, Fields, whole connections, junctions or open ends. Deleting a junction/end removes its attached connections; deleting a Field preserves its contents. |
@@ -430,6 +434,7 @@ The symbol editor ignores its drawing shortcuts while a form field is focused. U
 | `index.html` | Main application and inline editor logic; extension order matters |
 | `styles/workspace.css` | Responsive desktop/tablet workspace and library styling |
 | `scripts/workspace-ui.js` | Toolbars, touch/Pencil input, navigation and fullscreen |
+| `scripts/clipboard.js` | Selection snapshots, independent pasted graphs and identity/reference remapping |
 | `scripts/connection-graph.js` | Junctions, branch/root routing and route geometry |
 | `scripts/cables.js` | Cable/conductor data, assignments and generated connection lists |
 | `scripts/linked-images.js` | Validated linked-image loading/cache, URL-only annotations, properties and proportional corner resizing |
@@ -516,6 +521,8 @@ node tests/document-navigation-smoke.cjs
 node tests/product-loads.cjs
 node tests/power-supply-loads.cjs
 node tests/power-supply-loads-smoke.cjs
+node tests/clipboard.cjs
+node tests/clipboard-smoke.cjs
 node tests/power-supply-input.cjs
 node tests/power-supply-input-smoke.cjs
 node tests/product-loads-smoke.cjs
@@ -532,6 +539,7 @@ npm run test:firebase
 
 | Check | Main coverage |
 | --- | --- |
+| `clipboard.cjs` / `clipboard-smoke.cjs` | Mixed selections, independent object/cable IDs, roots, open boundaries, cut identity, line fragments, cross-sheet/desktop/tablet copy-paste, electrical parents/references/circuits, JSON, Undo/Redo and PDF |
 | `power-supply-input.cjs` / `power-supply-input-smoke.cjs` | Converter installed/demand watts, efficiency/fixed loss, retained load factors, independent reserves, phase/PF/current, cascades/cycles, missing inputs, manual overrides, live desktop/iPad preview, actual rewiring, JSON/history/material preservation, cloud parameter races and CSV/linked vector-text PDF |
 | `power-supply-loads.cjs` / `power-supply-loads-smoke.cjs` | Generic/current/legacy product PSU outputs, automatic Beckhoff/lamp consumers, missing consumption, AC/DC separation, output aliases, custom source settings, source conflicts, real rewiring and source re-placement, persisted disable/re-enable, material/JSON/history, cloud model races and linked PDF on desktop/iPad |
 | `component-tabs-smoke.cjs` | Desktop/iPad Device and Calculation tabs, retained drafts, combined Apply/Cancel and history, hidden-field validation, direct calculation entry, supply shortcut, keyboard and narrow layout |

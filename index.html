@@ -10,8 +10,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.40.0">
-  <link rel="stylesheet" href="styles/electrical.css?v=1.40.0">
+  <link rel="stylesheet" href="styles/workspace.css?v=1.41.0">
+  <link rel="stylesheet" href="styles/electrical.css?v=1.41.0">
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -60,27 +60,28 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="libraries/catalog.js?v=1.40.0"></script>
-<script src="scripts/symbol-format.js?v=1.40.0"></script>
-<script src="scripts/sheet-numbers.js?v=1.40.0"></script>
-<script src="scripts/red-pen.js?v=1.40.0"></script>
-<script src="scripts/linked-images.js?v=1.40.0"></script>
-<script src="scripts/connection-graph.js?v=1.40.0"></script>
-<script src="scripts/cables.js?v=1.40.0"></script>
-<script src="scripts/table-layout.js?v=1.40.0"></script>
-<script src="scripts/spacemouse.js?v=1.40.0"></script>
-<script src="scripts/workspace-ui.js?v=1.40.0"></script>
-<script src="firebase-config.js?v=1.40.0"></script>
-<script src="scripts/electrical-network.js?v=1.40.0"></script>
-<script src="scripts/electrical-core.js?v=1.40.0"></script>
-<script src="scripts/electrical-demand.js?v=1.40.0"></script>
-<script src="scripts/electrical-ui.js?v=1.40.0"></script>
-<script src="scripts/component-tabs.js?v=1.40.0"></script>
-<script src="scripts/cloud-core.js?v=1.40.0"></script>
-<script src="scripts/cloud-projects.js?v=1.40.0"></script>
+<script src="libraries/catalog.js?v=1.41.0"></script>
+<script src="scripts/symbol-format.js?v=1.41.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.41.0"></script>
+<script src="scripts/red-pen.js?v=1.41.0"></script>
+<script src="scripts/linked-images.js?v=1.41.0"></script>
+<script src="scripts/connection-graph.js?v=1.41.0"></script>
+<script src="scripts/clipboard.js?v=1.41.0"></script>
+<script src="scripts/cables.js?v=1.41.0"></script>
+<script src="scripts/table-layout.js?v=1.41.0"></script>
+<script src="scripts/spacemouse.js?v=1.41.0"></script>
+<script src="scripts/workspace-ui.js?v=1.41.0"></script>
+<script src="firebase-config.js?v=1.41.0"></script>
+<script src="scripts/electrical-network.js?v=1.41.0"></script>
+<script src="scripts/electrical-core.js?v=1.41.0"></script>
+<script src="scripts/electrical-demand.js?v=1.41.0"></script>
+<script src="scripts/electrical-ui.js?v=1.41.0"></script>
+<script src="scripts/component-tabs.js?v=1.41.0"></script>
+<script src="scripts/cloud-core.js?v=1.41.0"></script>
+<script src="scripts/cloud-projects.js?v=1.41.0"></script>
 <script>
 (() => {
-  const APP_VERSION='1.40.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.41.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -711,22 +712,49 @@ drawPages=function(){drawPagesBeforeDeviceList();document.querySelectorAll('.sim
       dest.targetSheetId=ownSheet.id;dest.targetPartId=p.id;
     }
   }
+  function clipboardStrip(ref){
+    const own=looseEnd(ref)?.strip;if(own)return own;
+    const refs=ref.startsWith('@')?connectionGraph.terminals(pages[activeSheet],ref):[ref];
+    for(const key of refs){const p=model.parts.find(p=>p.id===key.split(':')[0]);if(p&&['connector','terminal-pin'].includes(p.type))return bridgeScope(p);}
+  }
+  function captureClipboard(){
+    const parts=new Set(selectionMembers().map(p=>p.id)),wires=new Set(selectedWires),ends=new Set(selectedLooseEnds),junctions=new Set(selectedJunctions);
+    if(!parts.size&&!wires.size&&!ends.size&&!junctions.size&&!selectedSegments.size){const set={part:parts,wire:wires,'loose-end':ends,junction:junctions}[selected?.kind];set?.add(selected.id);}
+    for(const id of [...parts])for(const p of descendants(id))if(p.type!=='terminal-pin'&&!p.unplaced&&model.parts.includes(p))parts.add(p.id);
+    const ids=new Set([...parts,...[...ends].map(id=>'~'+id)]),enclosed=connectionGraph.enclosed(ids).map(n=>n.id);
+    const settings=model.projectInfo?.electricalCalculations;
+    return CabelClipboard.capture({sheet:pages[activeSheet],parts,wires,ends,junctions,enclosed,segments:selectedSegments,allParts:pages.flatMap(s=>s.parts),cables:model.cables||[],circuits:calculationCircuits(),disabledSources:settings?.disabledSourcePartIds||[],route:routePoints,label:ref=>endPoint(pages[activeSheet],ref),strip:clipboardStrip});
+  }
   function clipboardAction(action){
+    if(pdfExporting||drag||segmentDrag||selectionDrag||areaSelection||wireLabelDrag||imageTools?.busy()||connectionGraph?.busy())return;
+    if(action!=='c'&&cloudProjects?.state().readOnly)return;
     if(action==='v'){
-      if(!appClipboard){toast('Clipboard is empty');return}
-      if(isGenerated(pages[activeSheet])&&!(pages[activeSheet].kind==='cover'&&appClipboard.part.type==='image'))setSheet(pages.indexOf(drawingPages().at(-1)));
-      const p=structuredClone(appClipboard.part),wasCut=appClipboard.cut;
-      if(!wasCut){p.id=objectId('p');if(isReference(p)){delete p.targetSheetId;delete p.targetPartId}if(!['text','reference','destination','image'].includes(p.type)){p.label+=' Copy';p.deviceCode=(p.deviceCode||p.label)+'_K'+nextId}}
-      appClipboard.offset+=1;p.x+=appClipboard.offset*gridSpacing();p.y+=appClipboard.offset*gridSpacing();
-      model.parts.push(p);
-      if(wasCut){for(const sheet of pages)for(const q of sheet.parts)if(q.targetSheetId===appClipboard.sheetId&&q.targetPartId===p.id)q.targetSheetId=pages[activeSheet].id;appClipboard={part:structuredClone(p),sheetId:pages[activeSheet].id,cut:false,offset:0}}
-      selected={kind:'part',id:p.id};mode='select';render();toast('Object pasted');return;
+      if(!appClipboard){toast('Clipboard is empty');return;}
+      commitHistory();
+      const coverImages=appClipboard.parts.length&&appClipboard.parts.every(p=>p.type==='image')&&!appClipboard.wires.length;
+      if(isGenerated(pages[activeSheet])&&!(pages[activeSheet].kind==='cover'&&coverImages))setSheet(pages.indexOf(drawingPages().at(-1)));
+      const sheet=pages[activeSheet],wasCut=appClipboard.cut,offset=(appClipboard.offset+1)*gridSpacing(),all=pages.flatMap(s=>[...s.parts,...s.wires,...(s.junctions||[]),...(s.looseEnds||[])]);
+      const value=CabelClipboard.instantiate(appClipboard,{id:objectId,offset,sheetId:sheet.id||sheet.generatedId,parts:pages.flatMap(s=>s.parts),cables:model.cables||[],circuits:calculationCircuits(),existingIds:new Set([...all,...model.cables,...model.cables.flatMap(c=>c.cores),...calculationCircuits()].map(p=>p.id))});
+      clearAreaSelection();connectionGraph.cancel();wireStart=null;wirePoints=[];preview.style.display='none';
+      model.parts.push(...value.parts);model.wires.push(...value.wires);if(value.junctions.length)(sheet.junctions||=[]).push(...value.junctions);if(value.looseEnds.length)(sheet.looseEnds||=[]).push(...value.looseEnds);model.cables.push(...value.cables);
+      if(value.circuits.length||value.disabledSources.length){const old=model.projectInfo?.electricalCalculations||{version:1,circuits:[]};model.projectInfo={...model.projectInfo,electricalCalculations:{...old,circuits:[...old.circuits,...value.circuits],disabledSourcePartIds:[...new Set([...(old.disabledSourcePartIds||[]),...value.disabledSources])]}};}
+      if(wasCut){
+        const moved=new Set(appClipboard.parts.map(p=>p.id));for(const s of pages)for(const p of s.parts)if(p.targetSheetId===appClipboard.sheetId&&moved.has(p.targetPartId))p.targetSheetId=sheet.id;
+        appClipboard={...appClipboard,parts:structuredClone(value.parts),wires:structuredClone(value.wires),junctions:structuredClone(value.junctions),looseEnds:structuredClone(value.looseEnds),sheetId:sheet.id||sheet.generatedId,cut:false,offset:0};
+      }else appClipboard.offset++;
+      value.selectedParts.forEach(id=>selectedParts.add(id));value.wires.forEach(w=>selectedWires.add(w.id));value.junctions.forEach(n=>selectedJunctions.add(n.id));value.looseEnds.forEach(n=>selectedLooseEnds.add(n.id));selected=firstSelection();mode='select';render();commitHistory();toast('Selection pasted');return;
     }
-    const p=selected?.kind==='part'&&model.parts.find(p=>p.id===selected.id);
-    if(!p){toast('Select an object first');return}
-    appClipboard={part:structuredClone(p),sheetId:pages[activeSheet].id,cut:action==='x',offset:0};
-    if(action==='x'){detachConnections(pages[activeSheet],new Set([p.id]));model.parts=model.parts.filter(q=>q!==p);selected=null;render()}
-    toast(action==='x'?'Object cut':'Object copied');
+    const fragment=captureClipboard();if(!fragment){toast('Select objects or connections first');return;}
+    if(action==='x'&&fragment.partial){toast('Double-click to select entire connections before cutting');return;}
+    fragment.cut=action==='x';appClipboard=fragment;
+    if(action==='x'){
+      commitHistory();const sheet=pages[activeSheet],partIds=new Set(fragment.parts.map(p=>p.id)),wireIds=new Set(fragment.removeWires),nodes=new Map([...fragment.junctions.map(n=>['@'+n.id+':0',n]),...fragment.looseEnds.filter(n=>!n.id.startsWith('!')).map(n=>['~'+n.id+':0',n])]),boundary=new Map();
+      model.wires=sheet.wires=sheet.wires.filter(w=>!wireIds.has(w.id));detachConnections(sheet,partIds);
+      for(const w of model.wires)for(const end of ['a','b']){const ref=w[end],n=nodes.get(ref);if(!n)continue;if(!boundary.has(ref)){const loose={id:objectId('e'),x:n.x,y:n.y,kind:w.kind||'wire',formerLabel:'Open end',...(clipboardStrip(ref)?{strip:clipboardStrip(ref)}:{})};(sheet.looseEnds||=[]).push(loose);boundary.set(ref,'~'+loose.id+':0');}w[end]=boundary.get(ref);}
+      model.parts=sheet.parts=sheet.parts.filter(p=>!partIds.has(p.id));if(sheet.junctions)sheet.junctions=sheet.junctions.filter(n=>!nodes.has('@'+n.id+':0'));if(sheet.looseEnds)sheet.looseEnds=sheet.looseEnds.filter(n=>!nodes.has('~'+n.id+':0'));
+      clearAreaSelection();selected=null;render();commitHistory();
+    }
+    workspaceUI?.refresh();toast(action==='x'?'Selection cut':'Selection copied');
   }
   // Keep geometry and captions independent: text never inherits a reflection.
   const drawBeforeReadableCaptions=drawPart;
@@ -1277,7 +1305,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
       detachConnections(sheet,removedIds);sheet.parts=sheet.parts.filter(q=>!removedIds.has(q.id));
       for(const q of sheet.parts){if(removedIds.has(q.masterId))delete q.masterId;if(removedIds.has(q.targetPartId)){delete q.targetPartId;delete q.targetSheetId}}
     }
-    if(removedIds.has(appClipboard?.part.id))appClipboard=null;if(removedIds.has(treeFocusId))treeFocusId=null;
+    if(appClipboard?.parts.some(q=>removedIds.has(q.id)))appClipboard=null;if(removedIds.has(treeFocusId))treeFocusId=null;
     model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;if(removedIds.has(selected?.id))selected=null;render();toast('Device deleted permanently');
   }
   function isDisconnectTerminal(p){
@@ -1777,7 +1805,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   const renderBeforeHistory=render;render=function(){renderBeforeHistory();if(!historyRestoring)scheduleHistory()};
   function restoreHistory(state){
     connectionGraph?.cancel();imageTools?.cancel();
-    const activeId=pages[activeSheet]?.id||pages[activeSheet]?.generatedId,data=JSON.parse(state);historyRestoring=true;redPen?.reset();finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;selected=null;appClipboard=null;wireStart=null;wirePoints=[];preview.style.display='none';
+    const activeId=pages[activeSheet]?.id||pages[activeSheet]?.generatedId,data=JSON.parse(state);historyRestoring=true;redPen?.reset();finishAksFieldDrag(true);cancelAksAreaDrawing();clearAreaSelection();drag=null;segmentDrag=null;wireLabelDrag=null;selected=null;if(appClipboard?.cut)appClipboard=null;wireStart=null;wirePoints=[];preview.style.display='none';
     pages.splice(0,pages.length,...data.sheets);activeSheet=Math.max(0,pages.findIndex(s=>s.id===activeId));model.parts=pages[activeSheet].parts;model.wires=pages[activeSheet].wires;model.title=data.title;model.projectInfo=data.projectInfo;model.cables=data.cables||[];nextId=data.nextId;render();const target=pages.findIndex(s=>(s.id||s.generatedId)===activeId);if(target>=0)setSheet(target);historyCurrent=historySnapshot();historyRestoring=false;
   }
   function documentHistoryAction(redo){
@@ -1875,7 +1903,7 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
   // Keep responsive controls and pointer navigation separate from document data.
   workspaceUI=CabelWorkspaceUI.init({
     svg,nav,redPen,
-    state:()=>({mode,diagonal:connectionGraph.angle(),generated:isGenerated(pages[activeSheet]),cover:pages[activeSheet].kind==='cover',selected,partSelected:selected?.kind==='part',hasSelection:Boolean(selected||selectedParts.size||selectedWires.size||selectedLooseEnds.size||selectedJunctions.size),canUndo:undoStack.length>0,canRedo:redoStack.length>0,canPaste:Boolean(appClipboard),connecting:Boolean(wireStart),fieldDrawing:aksAreaDrawing,navigationBusy:Boolean(drag||segmentDrag||selectionDrag||wireLabelDrag||aksAreaGesture||aksFieldDrag||middlePan||imageTools?.busy()||connectionGraph?.busy()),modalOpen:modal.style.display==='grid',exporting:pdfExporting}),
+    state:()=>({mode,diagonal:connectionGraph.angle(),generated:isGenerated(pages[activeSheet]),cover:pages[activeSheet].kind==='cover',selected,partSelected:selected?.kind==='part',hasSelection:Boolean(selected||selectedParts.size||selectedWires.size||selectedLooseEnds.size||selectedJunctions.size),canUndo:undoStack.length>0,canRedo:redoStack.length>0,canCopy:Boolean(selectedParts.size||selectedWires.size||selectedLooseEnds.size||selectedJunctions.size||selectedSegments.size||['part','wire','loose-end','junction'].includes(selected?.kind)),canPaste:Boolean(appClipboard),connecting:Boolean(wireStart),fieldDrawing:aksAreaDrawing,navigationBusy:Boolean(drag||segmentDrag||selectionDrag||wireLabelDrag||aksAreaGesture||aksFieldDrag||middlePan||imageTools?.busy()||connectionGraph?.busy()),modalOpen:modal.style.display==='grid',exporting:pdfExporting}),
     world:toWorld,svgPoint,
     preparePlacement:()=>{if(isGenerated(pages[activeSheet]))setSheet(pages.indexOf(drawingPages().at(-1)))},
     confirmFullscreenExit:leave=>{showPanel('<h2>Leave full screen?</h2><p>Keep working to stay in the drawing. On iPad, Safari → Share → Add to Home Screen opens Leitwerk without Safari\'s fullscreen controls.</p><div class="actions"><button id="fullscreenKeep">Keep working</button><button id="fullscreenLeave">Exit full screen</button></div>');document.querySelector('#fullscreenKeep').onclick=closePanel;document.querySelector('#fullscreenLeave').onclick=()=>{closePanel();leave()};document.querySelector('#fullscreenKeep').focus({preventScroll:true})},

@@ -5,7 +5,7 @@
   "coverage": {
     "complete": false,
     "status": "Reference library; current availability and ordering codes require manufacturer verification.",
-    "reason": "Manufacturer sites were blocked by the cloud outbound policy."
+    "reason": "Partial reference library supplemented by manufacturer product pages and the supplied selection guide 1314667. Verified fields are identified per product; physical pinouts and accessories remain unverified."
   },
   "sources": [
     {
@@ -88,6 +88,41 @@
       "url": "https://assets.phoenixcontact.com/file/c25a8041-71b0-4c58-90bf-2e26942357de/media/original?Power_Supplies_and_UPS-Lit52004219-13.pdf=",
       "retrieved": true,
       "scope": "UNO-PS/1AC/24DC/100W article number only; physical pinout, current availability and accessory compatibility unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/dcdc-converters-quint4-ps24dc24dc5pt-2910119",
+      "retrieved": true,
+      "scope": "Article/model reference only; the supplied manufacturer selection guide page 52 documents nominal DC/DC outputs. Physical terminal assignments, accessories, availability and complete product verification are outside this reference."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/dcdc-converters-quint4-ps24dc24dc10pt-2910120",
+      "retrieved": true,
+      "scope": "Article/model reference only; the supplied manufacturer selection guide page 52 documents nominal DC/DC outputs. Physical terminal assignments, accessories, availability and complete product verification are outside this reference."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/dcdc-converters-quint4-ps24dc12dc8pt-2910122",
+      "retrieved": true,
+      "scope": "Article/model reference only; the supplied manufacturer selection guide page 52 documents nominal DC/DC outputs. Physical terminal assignments, accessories, availability and complete product verification are outside this reference."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/pt-pt/produtos/dcdc-converters-quint4-ps24dc48dc5pt-2910123",
+      "retrieved": true,
+      "scope": "Article/model reference only; the supplied manufacturer selection guide page 52 documents nominal DC/DC outputs. Physical terminal assignments, accessories, availability and complete product verification are outside this reference."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/dcdc-converters-quint4-ps48dc24dc5pt-2910125",
+      "retrieved": true,
+      "scope": "Article/model reference only; the supplied manufacturer selection guide page 52 documents nominal DC/DC outputs. Physical terminal assignments, accessories, availability and complete product verification are outside this reference."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/power-supply-trio-ps-2g1ac24dc5-2903148",
+      "retrieved": true,
+      "scope": "Article number and nominal output only; physical terminal assignments, signals, current availability, derating and accessory compatibility are unverified."
+    },
+    {
+      "url": "https://www.phoenixcontact.com/en-us/products/power-supply-trio-ps-2g1ac24dc10-2903149",
+      "retrieved": true,
+      "scope": "Article number and nominal output only; physical terminal assignments, signals, current availability, derating and accessory compatibility are unverified."
     }
   ],
   "families": [
@@ -1328,7 +1363,7 @@
           "model": "TRIO-PS-2G/1AC/24DC/5",
           "name": "TRIO-PS-2G/1AC/24DC/5",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2903148",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1381,7 +1416,16 @@
                 ]
               },
               "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
-            }
+            },
+            "outputCurrentA": 5,
+            "outputPowerW": 120,
+            "documentedFields": [
+              "manufacturerNumber",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/power-supply-trio-ps-2g1ac24dc5-2903148"
           },
           "portSides": [
             "left",
@@ -1400,7 +1444,7 @@
           "model": "TRIO-PS-2G/1AC/24DC/10",
           "name": "TRIO-PS-2G/1AC/24DC/10",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2903149",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1453,7 +1497,16 @@
                 ]
               },
               "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
-            }
+            },
+            "outputCurrentA": 10,
+            "outputPowerW": 240,
+            "documentedFields": [
+              "manufacturerNumber",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "manufacturerNumberSource": "https://www.phoenixcontact.com/en-us/products/power-supply-trio-ps-2g1ac24dc10-2903149"
           },
           "portSides": [
             "left",
@@ -1472,7 +1525,7 @@
           "model": "QUINT4-PS/1AC/24DC/5",
           "name": "QUINT4-PS/1AC/24DC/5",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2904600",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1531,6 +1584,20 @@
                 ]
               },
               "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            },
+            "outputCurrentA": 5,
+            "outputPowerW": 120,
+            "documentedFields": [
+              "manufacturerNumber",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 14,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
             }
           },
           "portSides": [
@@ -1553,7 +1620,7 @@
           "model": "QUINT4-PS/1AC/24DC/10",
           "name": "QUINT4-PS/1AC/24DC/10",
           "symbol": "power-supply",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2904601",
           "verification": "not-verified",
           "pinNumbers": [
             "L",
@@ -1612,6 +1679,20 @@
                 ]
               },
               "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            },
+            "outputCurrentA": 10,
+            "outputPowerW": 240,
+            "documentedFields": [
+              "manufacturerNumber",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 14,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
             }
           },
           "portSides": [
@@ -1669,6 +1750,588 @@
               "groups": [],
               "outputs": {},
               "scope": "Schematic power-port/rail model only; physical pinout, supply compatibility and consumption are not verified."
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "quint-dc-dc",
+      "name": "QUINT POWER · DC/DC converters",
+      "products": [
+        {
+          "id": "quint4-24dc-24dc-5-pt",
+          "model": "QUINT4-PS/24DC/24DC/5/PT",
+          "name": "QUINT4-PS/24DC/24DC/5/PT",
+          "symbol": "power-supply",
+          "value": "24 V DC · 5 A",
+          "manufacturerNumber": "2910119",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 24,
+            "outputVoltageV": 24,
+            "outputCurrentA": 5,
+            "outputPowerW": 120,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-24dc-24dc-10-pt",
+          "model": "QUINT4-PS/24DC/24DC/10/PT",
+          "name": "QUINT4-PS/24DC/24DC/10/PT",
+          "symbol": "power-supply",
+          "value": "24 V DC · 10 A",
+          "manufacturerNumber": "2910120",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 24,
+            "outputVoltageV": 24,
+            "outputCurrentA": 10,
+            "outputPowerW": 240,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-24dc-24dc-20-pt",
+          "model": "QUINT4-PS/24DC/24DC/20/PT",
+          "name": "QUINT4-PS/24DC/24DC/20/PT",
+          "symbol": "power-supply",
+          "value": "24 V DC · 20 A",
+          "manufacturerNumber": "2910121",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 24,
+            "outputVoltageV": 24,
+            "outputCurrentA": 20,
+            "outputPowerW": 480,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-24dc-12dc-8-pt",
+          "model": "QUINT4-PS/24DC/12DC/8/PT",
+          "name": "QUINT4-PS/24DC/12DC/8/PT",
+          "symbol": "power-supply",
+          "value": "12 V DC · 8 A",
+          "manufacturerNumber": "2910122",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 24,
+            "outputVoltageV": 12,
+            "outputCurrentA": 8,
+            "outputPowerW": 96,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-24dc-48dc-5-pt",
+          "model": "QUINT4-PS/24DC/48DC/5/PT",
+          "name": "QUINT4-PS/24DC/48DC/5/PT",
+          "symbol": "power-supply",
+          "value": "48 V DC · 5 A",
+          "manufacturerNumber": "2910123",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 24,
+            "outputVoltageV": 48,
+            "outputCurrentA": 5,
+            "outputPowerW": 240,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-12dc-24dc-5-pt",
+          "model": "QUINT4-PS/12DC/24DC/5/PT",
+          "name": "QUINT4-PS/12DC/24DC/5/PT",
+          "symbol": "power-supply",
+          "value": "24 V DC · 5 A",
+          "manufacturerNumber": "2910124",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 12,
+            "outputVoltageV": 24,
+            "outputCurrentA": 5,
+            "outputPowerW": 120,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-48dc-24dc-5-pt",
+          "model": "QUINT4-PS/48DC/24DC/5/PT",
+          "name": "QUINT4-PS/48DC/24DC/5/PT",
+          "symbol": "power-supply",
+          "value": "24 V DC · 5 A",
+          "manufacturerNumber": "2910125",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 48,
+            "outputVoltageV": 24,
+            "outputCurrentA": 5,
+            "outputPowerW": 120,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
+            }
+          }
+        },
+        {
+          "id": "quint4-48dc-48dc-5-pt",
+          "model": "QUINT4-PS/48DC/48DC/5/PT",
+          "name": "QUINT4-PS/48DC/48DC/5/PT",
+          "symbol": "power-supply",
+          "value": "48 V DC · 5 A",
+          "manufacturerNumber": "2910128",
+          "verification": "not-verified",
+          "pinNumbers": [
+            "IN+",
+            "IN−",
+            "OUT+",
+            "OUT−"
+          ],
+          "portSides": [
+            "left",
+            "left",
+            "right",
+            "right"
+          ],
+          "portKinds": [
+            "wire",
+            "wire",
+            "wire",
+            "wire"
+          ],
+          "attributes": {
+            "conversion": "dc-dc",
+            "inputNominalVoltageV": 48,
+            "outputVoltageV": 48,
+            "outputCurrentA": 5,
+            "outputPowerW": 240,
+            "documentedFields": [
+              "manufacturerNumber",
+              "inputNominalVoltageV",
+              "outputVoltageV",
+              "outputCurrentA",
+              "outputPowerW"
+            ],
+            "sourceDocument": {
+              "fileName": "1314667_DE_SG_Power_Supplies_L.pdf",
+              "documentNumber": "1314667",
+              "page": 52,
+              "sha256": "ea80597fa872df85dd7042dca17ec12130008fed0a067430e09c745cd51e917b"
+            },
+            "portMapping": "Functional IN+/IN− and OUT+/OUT− schematic ports; input and output remain isolated. These labels are not the physical manufacturer terminal designations. Verify actual pinout, signals, grounding, derating and accessory compatibility.",
+            "ratingScope": "Nominal output from the manufacturer selection guide; operating-condition derating and efficiency curves are not modelled.",
+            "loadModel": {
+              "version": 1,
+              "portNames": [
+                "IN+",
+                "IN−",
+                "OUT+",
+                "OUT−"
+              ],
+              "inputs": [
+                [
+                  0,
+                  1
+                ]
+              ],
+              "groups": [],
+              "outputs": {
+                "dc": [
+                  2,
+                  3
+                ]
+              },
+              "scope": "Functional DC/DC input and output roles only; physical terminal designations and accessory compatibility are unverified."
             }
           }
         }

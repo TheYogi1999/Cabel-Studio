@@ -19,7 +19,7 @@ const{chromium,devices}=require('playwright'),ROOT=path.resolve(__dirname,'..');
       await load(fixture);const base=await save();assert.equal(base.projectInfo.electricalCalculations,undefined);
 
       // Existing placements need no source setup and inspection creates no data.
-      await edit('psu');assert.equal(await page.locator('#componentPanel-calculation > fieldset').first().locator('legend').textContent(),'DC output loads');
+      await edit('psu');assert.equal(await page.locator('#componentPanel-supply > fieldset').first().locator(':scope > legend').textContent(),'DC output loads');
       assert.match(await page.locator('.electrical-output-summary').textContent(),/2 detected load\(s\) · 1 calculated/);
       assert.match(await page.locator('[data-output-load=io]').textContent(),/A1.*4\.8 W/);assert.match(await page.locator('[data-output-load=lamp]').textContent(),/H1.*Not entered.*missing/);
       assert.match(await page.locator('#componentPanel-calculation').textContent(),/Input load \(upstream supply\)/);await act('#componentCancel');assert.deepEqual(await save(),base);
@@ -31,7 +31,7 @@ const{chromium,devices}=require('playwright'),ROOT=path.resolve(__dirname,'..');
 
       // The source tab exposes its detected output consumers and a direct view.
       await edit('psu');assert.match(await page.locator('.electrical-output-summary').textContent(),/2 detected load\(s\) · 2 calculated.*16\.8 W/);
-      await page.screenshot({path:'/tmp/Leitwerk-psu-loads-'+(tablet?'tablet':'desktop')+'.png'});await act('.supply-loads');assert.equal(await page.locator('#electricalCircuit').inputValue(),'@psu:psu');assert.match(await metrics(),/16\.8 W/);
+      await page.screenshot({path:'/tmp/Leitwerk-psu-loads-'+(tablet?'tablet':'desktop')+'.png'});await act('#componentTab-supply');await act('.supply-loads');assert.equal(await page.locator('#electricalCircuit').inputValue(),'@psu:psu');assert.match(await metrics(),/16\.8 W/);
       await close();await act('#parts > g[data-id=psu] .part-body');await act('#deleteBtn');await open();await act('#electricalPlaceSupply');
       const autoPoint=await page.locator('#pageContent').evaluate((g,p)=>{const q=new DOMPoint(p.x,p.y).matrixTransform(g.getScreenCTM());return{x:q.x,y:q.y};},{x:psu.x,y:psu.y});if(tablet)await page.touchscreen.tap(autoPoint.x,autoPoint.y);else await page.mouse.click(autoPoint.x,autoPoint.y);
       await open();assert.equal(await page.locator('#electricalCircuit').inputValue(),'@psu:psu');assert.match(await metrics(),/16\.8 W/);
@@ -51,7 +51,7 @@ const{chromium,devices}=require('playwright'),ROOT=path.resolve(__dirname,'..');
 
       // Remove is a durable opt-out, not a source that silently reappears.
       await open();await act('#electricalEditSupply');await act('#electricalRemove');assert.equal(await page.locator('#electricalCircuit').count(),0);await close();const disabled=await save();assert.deepEqual(disabled.projectInfo.electricalCalculations.disabledSourcePartIds,['psu']);await act('#undoBtn');await open();assert.match(await metrics(),/16\.8 W/);await close();await act('#redoBtn');await load(disabled);await open();assert.equal(await page.locator('#electricalCircuit').count(),0);await close();
-      await edit('psu');assert.match(await page.locator('.supply-properties').textContent(),/enable output load detection/);await act('.supply-properties');await act('#electricalCancel');assert.equal(await page.locator('#electricalCircuit option').count(),1);assert.match(await metrics(),/16\.8 W/);await close();const enabled=await save();assert.deepEqual(enabled.projectInfo.electricalCalculations.disabledSourcePartIds,[]);assert.equal(enabled.projectInfo.electricalCalculations.circuits.length,1);
+      await edit('psu');assert.match(await page.locator('.supply-properties').textContent(),/enable output load detection/);await act('#componentTab-supply');await act('.supply-properties');await act('#electricalCancel');assert.equal(await page.locator('#electricalCircuit option').count(),1);assert.match(await metrics(),/16\.8 W/);await close();const enabled=await save();assert.deepEqual(enabled.projectInfo.electricalCalculations.disabledSourcePartIds,[]);assert.equal(enabled.projectInfo.electricalCalculations.circuits.length,1);
       const current=enabled.sheets.find(s=>s.id==='drawing').parts.find(p=>p.id==='psu');assert.equal(current.manufacturerNumber,'KEEP-psu');assert.equal(current.sapNumber,'SAP-psu');assert.equal(current.catalog.attributes.loadModel,undefined);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await context.close();
     }
     assert.deepEqual(errors,[]);console.log('PASS desktop/iPad automatic PSU source and Beckhoff/lamp loads without setup, output-tab summary, unknown consumption, stable/custom circuits, rating, actual rewiring/history, unplace/re-place, persisted opt-out/re-enable, unchanged inspection/material/JSON and linked vector PDF');

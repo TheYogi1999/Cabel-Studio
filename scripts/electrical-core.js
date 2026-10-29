@@ -9,7 +9,7 @@
   function number(v,label,min=0,max=1e12){if(typeof v!=='number'||!Number.isFinite(v)||v<min||v>max)throw Error(label+' must be between '+min+' and '+max);return v;}
   function text(v,label,max=200){if(typeof v!=='string'||!v.trim()||v.length>max)throw Error('Invalid '+label);return v;}
   function validateCircuit(c){
-    if(!c||typeof c!=='object')throw Error('Invalid supply circuit');text(c.id,'circuit ID');if(c.id==='@auto')throw Error('Reserved circuit ID');text(c.name,'circuit name');if(!Object.hasOwn(systems,c.system))throw Error('Unknown supply system');
+    if(!c||typeof c!=='object')throw Error('Invalid supply circuit');text(c.id,'circuit ID');if(c.id==='@auto')throw Error('Reserved circuit ID');if(c.nameMode!==undefined&&!['source','custom'].includes(c.nameMode))throw Error('Invalid circuit naming mode');text(c.name,'circuit name');if(!Object.hasOwn(systems,c.system))throw Error('Unknown supply system');
     number(c.voltage,'Supply voltage',1,c.system==='dc'?1500:1000);number(c.reservePct,'Reserve (%)',0,1000);if(present(c.ratingA))number(c.ratingA,'Supply rating (A)',.000001,1e6);
     if(present(c.sourcePartId))text(c.sourcePartId,'source device ID');
     if(c.sourcePins!==undefined&&(!Array.isArray(c.sourcePins)||c.sourcePins.length!==(c.system==='ac3'?4:2)||new Set(c.sourcePins).size!==c.sourcePins.length||c.sourcePins.some(i=>!Number.isInteger(i)||i<0||i>63)))throw Error('Choose distinct source output terminals');
@@ -43,7 +43,7 @@
     const ids=new Set();for(const c of circuits(doc)){validateCircuit(c);if(ids.has(c.id))throw Error('Duplicate supply circuit ID');ids.add(c.id);}
     for(const sheet of doc.sheets)for(const p of sheet.parts){Network.validatePart(p);validateConversion(p);validateChecks(p);}
     for(const sheet of doc.sheets)for(const p of sheet.parts)if(p.type==='supply'){if(!Object.hasOwn(systems,p.supplySystem)||!Array.isArray(p.pinNumbers)||p.pinNumbers.length!==supplyPins(p.supplySystem).length||p.portKinds?.some(k=>k!=='wire'))throw Error('Invalid Supply symbol or electrical ports');}
-    for(const {p} of entries(doc)){validateLoad(p.loadCalculation,conversionMode(p)==='automatic');if(['text','image','reference','destination','terminal-pin'].includes(p.type))throw Error('Only devices may have load calculations');}
+    for(const {p} of entries(doc)){validateLoad(p.loadCalculation,conversionMode(p)==='automatic');if(['text','image','reference','destination','terminal-pin',...Network.basicTypes].includes(p.type))throw Error('Only devices may have load calculations');}
     return doc;
   }
   function fault(c){

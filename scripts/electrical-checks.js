@@ -11,7 +11,7 @@
     const n=Demand.analyse(doc,lookup),t=n.topology,checks=[],polarities=new Map();
     const at=(e,i)=>t.at(e,i),id=e=>e.p.deviceCode||e.p.label||e.p.id;
     for(const e of n.byId.values()){
-      const p=e.p;if(p.unplaced||['text','image','reference','destination','terminal-pin','terminal-strip','connector','supply'].includes(p.type)||/^mcb-/.test(p.type))continue;
+      const p=e.p;if(p.unplaced||['text','image','reference','destination','terminal-pin','terminal-strip','connector','supply',...Net.basicTypes].includes(p.type)||/^mcb-/.test(p.type))continue;
       if(!Net.candidate(p,lookup)&&!p.dcPolarity)continue;
       const groups=Net.inputGroups(p,lookup),pairs=Net.polarityPairs(p,lookup),related=unique((groups.length?groups.flat():Array.from({length:Net.ports(p)},(_,i)=>i)).flatMap(i=>at(e,i).filter(v=>v.c.system==='dc').map(v=>v.c.id)));
       if(!pairs.length&&!related.length)continue;

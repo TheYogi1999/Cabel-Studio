@@ -10,7 +10,7 @@ function fixture(psu=product('phoenix-contact:uno-24dc-60w','psu')){
 }
 const calc=(n,c=n.circuits[0])=>Core.calculate(c,n.resolved),near=(a,b)=>assert.ok(Math.abs(a-b)<1e-9,a+' != '+b);
 let tested=0;
-for(const[key,{product:p}]of catalog)if(p.symbol==='power-supply')for(const legacy of [false,true]){
+for(const[key,{product:p}]of catalog)if(p.symbol==='power-supply'&&p.attributes?.conversion!=='dc-dc')for(const legacy of [false,true]){
   const d=fixture(product(key,'psu',legacy)),before=structuredClone(d),n=Net.analyse(d,lookup),c=n.circuits[0];
   assert.equal(n.circuits.length,1,key);assert.equal(c.id,'@psu:psu');assert.equal(c.automaticSource,true);assert.equal(c.voltage,24);assert.equal(c.ratingA,undefined);assert.equal(n.states.get('io').circuit.id,c.id);assert.equal(n.states.get('lamp').circuit.id,c.id);assert.deepEqual(c.sourcePins,[3,4]);
   near(calc(n).powerW,16.8);near(calc(n).currentA,.7);near(calc(n).requiredA,.84);assert.equal(n.resolved.length,2);assert.deepEqual(d,before);Core.validateDocument(d);tested++;

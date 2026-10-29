@@ -3,7 +3,7 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CabelClipboard=api;})(globalThis,()=>{
   'use strict';
   const clone=value=>structuredClone(value),owner=ref=>ref.split(':')[0];
-  const annotation=p=>['text','image','reference','destination'].includes(p.type);
+  const annotation=p=>['text','image','reference','destination',...(typeof module==='object'&&module.exports?require('./electrical-network.js').basicTypes:globalThis.CabelElectricalNetwork.basicTypes)].includes(p.type);
   function capture(api){
     const {sheet,parts,ends,junctions,segments}=api,ids=new Set([...parts,...[...ends].map(id=>'~'+id),...[...junctions,...api.enclosed].map(id=>'@'+id)]);
     const chosen=sheet.parts.filter(p=>parts.has(p.id)&&!p.unplaced),sections=[],whole=new Set(),nodesOnly=!parts.size&&!api.wires.size&&!segments.size;let serial=0;
@@ -46,7 +46,7 @@
     const selectedIds=new Set(fragment.parts.map(p=>p.id)),sourceParts=[...fragment.parts,...(cut?[]:fragment.ancestors)],offset=api.offset;
     for(const p of sourceParts)mapped(p.id,'p');for(const w of fragment.wires){mapped(w.id,'w');if(w.runId)mapped(w.runId,'w');}for(const n of fragment.junctions)mapped(n.id,'j');for(const n of fragment.looseEnds)mapped(n.id,'e');
     const circuits=cut?[]:fragment.circuits.map(c=>{const id=fresh('c');circuitIds.set(c.id,id);return{...clone(c),id,name:unique(c.name,circuitNames),sourcePartId:mapped(c.sourcePartId,'p')};});
-    for(const p of sourceParts)circuitIds.set('@psu:'+p.id,'@psu:'+mapped(p.id,'p'));
+    for(const p of sourceParts)if(!circuitIds.has('@psu:'+p.id))circuitIds.set('@psu:'+p.id,'@psu:'+mapped(p.id,'p'));
     const cables=cut?[]:fragment.cables.map(c=>{const id=mapped(c.id,'cable');return{...clone(c),id,number:unique(c.number,cableNames,64,v=>v.toLocaleLowerCase('en')),cores:c.cores.map(core=>({...clone(core),id:mapped(core.id,'core'),masterId:id}))};});
     function ref(value){const prefix=value[0]==='@'||value[0]==='~'?value[0]:'',at=value.indexOf(':');return prefix+(ids.get(value.slice(prefix.length,at))||value.slice(prefix.length,at))+value.slice(at);}
     function strip(value){return typeof value==='string'&&value.startsWith('master:')&&ids.has(value.slice(7))?'master:'+ids.get(value.slice(7)):value;}

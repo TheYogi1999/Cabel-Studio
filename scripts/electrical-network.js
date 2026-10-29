@@ -2,8 +2,9 @@
    connect nets. Internal paths describe the schematic, not verified hardware. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.CabelElectricalNetwork=api;})(globalThis,()=>{
   'use strict';
+  const basicTypes=new Set(['earth-ground','chassis-ground','signal-ground','dummy-pin','dummy-terminal']);
   const AUTO='@auto',two=new Set(['resistor','capacitor','lamp','led','diode','motor','coil','relay-coil','trip-coil','motor-ac-1p','power-supply','io-module','controller-board','contactor-4p','optocoupler']);
-  const defaults={'switch-changeover':3,'optocoupler':4,'contactor-4p':10,'auxiliary-contact':4,busbar:2,'motor-ac-3p':4,'motor-ac-6t':7,supply:3,relay:11,'relay-contact':3,'terminal-pin':1,reference:1,destination:1,connector:2,'power-supply':9,'io-module':10,'controller-board':8,'rcd-2p':4,'rcd-4p':8,'mcb-1p':2,'mcb-2p':4,'mcb-3p':6,'mcb-4p':8,'illuminated-pushbutton-no':4,'illuminated-pushbutton-nc':4};
+  const defaults={'switch-changeover':3,'optocoupler':4,'contactor-4p':10,'auxiliary-contact':4,busbar:2,'motor-ac-3p':4,'motor-ac-6t':7,supply:3,relay:11,'relay-contact':3,'terminal-pin':1,reference:1,destination:1,connector:2,'earth-ground':1,'chassis-ground':1,'signal-ground':1,'dummy-pin':1,'dummy-terminal':2,'power-supply':9,'io-module':10,'controller-board':8,'rcd-2p':4,'rcd-4p':8,'mcb-1p':2,'mcb-2p':4,'mcb-3p':6,'mcb-4p':8,'illuminated-pushbutton-no':4,'illuminated-pushbutton-nc':4};
   function ports(p){return p.type==='custom-symbol'?(p.symbolDefinition?.terminals?.length||0):p.pinNumbers?.length||(p.type==='supply'&&p.supplySystem==='ac3'?5:defaults[p.type]||(two.has(p.type)||['fuse','switch','switch-nc','pushbutton-no','pushbutton-nc','selector-switch','key-switch'].includes(p.type)?2:0));}
   const copper=(p,i)=>Number.isInteger(i)&&i>=0&&(i<ports(p)||p.type==='connector'&&i===8)&&p.portKinds?.[i]!=='fiber'&&p.type!=='fiber-device';
   function validateModel(m){
@@ -39,7 +40,7 @@
       const all=Array.from({length:ports(p)},(_,i)=>i),disconnect=p.catalog?.attributes?.terminalFunction==='disconnect'||/^Disconnect terminal$/i.test(p.terminalType||'')||[p.value,p.terminalType,p.catalog?.model].some(v=>/^ST\s+\d+(?:[,.]\d+)?-MT(?:$|[\s/-])/i.test(String(v||'').trim()));
       const connected=disconnect?[...all.slice(1),8]:[...all,8];pairs=connected.slice(1).map(i=>[connected[0],i]);
     }
-    if(['fuse','switch-nc','pushbutton-nc','illuminated-pushbutton-nc','busbar'].includes(p.type))pairs=[[0,1]];
+    if(['dummy-terminal','fuse','switch-nc','pushbutton-nc','illuminated-pushbutton-nc','busbar'].includes(p.type))pairs=[[0,1]];
     if(/^mcb-[1-4]p$/.test(p.type)||/^rcd-[24]p$/.test(p.type))pairs=Array.from({length:ports(p)/2},(_,i)=>[i*2,i*2+1]);
     return [...pairs,...(productModel(p,lookup)?.groups||[]).flatMap(g=>g.slice(1).map(i=>[g[0],i]))];
   }
@@ -47,10 +48,12 @@
   function powerSupplyCircuit(p,lookup){
     if(p.type!=='power-supply')return null;const pins=sourcePins(p,'dc',lookup);if(!pins||pins.some(i=>!copper(p,i)))return null;
     const voltage=p.catalog?.attributes?.outputVoltageV,known=typeof voltage==='number'&&Number.isFinite(voltage)&&voltage>=1&&voltage<=1500;
-    return{id:'@psu:'+p.id,name:(String(p.deviceCode||p.label||p.id).slice(0,185)+' · DC output'),sourcePartId:p.id,sourcePins:[...pins],system:'dc',voltage:known?voltage:24,reservePct:20,fault:{mode:'off'},automaticSource:true,voltageDefaulted:!known};
+    return{id:'@psu:'+p.id,name:String(p.deviceCode||p.label||p.id).slice(0,200),nameMode:'source',sourcePartId:p.id,sourcePins:[...pins],system:'dc',voltage:known?voltage:24,reservePct:20,fault:{mode:'off'},automaticSource:true,voltageDefaulted:!known};
   }
+  function followsSource(c,p){return c.nameMode==='source'||c.nameMode===undefined&&p&&[p.deviceCode,p.label,(p.deviceCode||p.label)+' · DC output'].includes(c.name);}
+  function circuitName(c,p){return followsSource(c,p)&&p?String(p.deviceCode||p.label||p.id).slice(0,200):c.name;}
   function circuits(doc,lookup){
-    const settings=doc.projectInfo?.electricalCalculations,explicit=settings?.circuits||[],disabled=new Set(settings?.disabledSourcePartIds||[]),sources=new Set(explicit.map(c=>c.sourcePartId)),ids=new Set(explicit.map(c=>c.id));
+    const settings=doc.projectInfo?.electricalCalculations,byId=new Map(doc.sheets.flatMap(s=>s.parts.map(p=>[p.id,p]))),explicit=(settings?.circuits||[]).map(c=>({...c,name:circuitName(c,byId.get(c.sourcePartId))})),disabled=new Set(settings?.disabledSourcePartIds||[]),sources=new Set(explicit.map(c=>c.sourcePartId)),ids=new Set(explicit.map(c=>c.id));
     return[...explicit,...doc.sheets.flatMap(sheet=>sheet.parts.flatMap(p=>{if(sources.has(p.id)||disabled.has(p.id))return[];const c=powerSupplyCircuit(p,lookup);return c&&!ids.has(c.id)?[c]:[];}))];
   }
   function validatePart(p){
@@ -89,10 +92,10 @@
       if(['reference','destination'].includes(p.type)&&!p.unplaced){const target=byId.get(p.targetPartId);if(target&&!target.p.unplaced&&target.sheet.id===p.targetSheetId&&['reference','destination'].includes(target.p.type)&&target.p.type!==p.type)join(partKey(e,0),partKey(target,0));}
     }
     const tags=new Map(),seeds=[];
-    for(const c of supplies){const e=byId.get(c.sourcePartId);if(!e||e.p.unplaced)continue;let pins=c.sourcePins||sourcePins(e.p,c.system,lookup);
+    for(const c of supplies){const e=byId.get(c.sourcePartId);if(!e||e.p.unplaced){if(c.sourcePartId)sourceErrors.get(c.id).push(e?'Source device is unplaced; place it to restore supply detection':'Source device was deleted or is missing');continue;}let pins=c.sourcePins||sourcePins(e.p,c.system,lookup);
       // Unknown source devices need an explicit output mapping. Never join a
       // converter's AC inputs to its DC outputs or infer physical pin numbers.
-      if(!pins)continue;const roles=c.system==='ac3'?['L1','L2','L3','N']:c.system==='dc'?['+','−']:['L','N'];
+      if(!pins){sourceErrors.get(c.id).push('Source output mapping is missing');continue;}const roles=c.system==='ac3'?['L1','L2','L3','N']:c.system==='dc'?['+','−']:['L','N'];
       if(pins.length!==roles.length||pins.some(i=>!copper(e.p,i))){sourceErrors.get(c.id).push('Source output mapping is invalid');continue;}
       if(e.p.type==='supply'&&e.p.supplySystem!==c.system){sourceErrors.get(c.id).push('Source symbol system differs from its circuit');continue;}
       for(let i=0;i<pins.length;i++)seeds.push({c,role:roles[i],root:find(partKey(e,pins[i]))});
@@ -116,7 +119,7 @@
       const groups=inputGroups(p,lookup).filter(g=>g.every(i=>copper(p,i)));let pins=groups[0]||null;
       // The connected-device directory includes transit devices and PE-only
       // connections, while only power-input candidates enter the load total.
-      if((!p.unplaced||representative(p))&&!['text','image','reference','destination','terminal-pin','terminal-strip'].includes(p.type)){
+      if((!p.unplaced||representative(p))&&!['text','image','reference','destination','terminal-pin','terminal-strip',...basicTypes].includes(p.type)){
         const all=[...Array.from({length:ports(p)},(_,i)=>i),...(p.type==='connector'?[8]:[])].filter(i=>copper(p,i)),ids=related(e,all);
         for(const id of ids)if(supplies.find(c=>c.id===id)?.sourcePartId!==p.id)connected.get(id).push({...e,inputs:all.flatMap(i=>at(e,i).filter(t=>t.c.id===id).map(t=>({pin:i,role:t.role}))),transit:!candidate(p,lookup)});
       }
@@ -148,5 +151,5 @@
     for(const e of entries){const master=coilMaster(e.p),state=master&&states.get(master.p.id);if(state&&e.p.id!==master.p.id)states.set(e.p.id,{...state,aliasOf:master.p.id});}
     return{circuits:supplies,states,resolved,issues,connected,sourceErrors,assumptions,byId,topology:{adjacency,key,partKey,at,seeds}};
   }
-  return{AUTO,circuits,powerSupplyCircuit,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,polarityPairs,validatePart,analyse};
+  return{basicTypes,AUTO,circuits,circuitName,followsSource,powerSupplyCircuit,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,polarityPairs,validatePart,analyse};
 });

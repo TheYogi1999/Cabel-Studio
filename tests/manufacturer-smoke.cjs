@@ -93,7 +93,7 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     assert.equal(await page.locator('[data-library-mode="generic"]').getAttribute('aria-pressed'),'true');
     assert.equal(await page.locator('.part[data-type="resistor"]').isVisible(),true);
     assert.equal(await page.locator('#manufacturerLibraries').isVisible(),false);
-    const searchBox=await page.locator('#catalogSearch').boundingBox(),firstFolder=await page.locator('.component-group').first().boundingBox();assert.ok(searchBox.y+searchBox.height<firstFolder.y);
+    const searchBox=await page.locator('#catalogSearch').boundingBox(),firstFolder=await page.locator('.component-group[data-library-scope=generic]').first().boundingBox();assert.ok(searchBox.y+searchBox.height<firstFolder.y);
     await page.locator('.sidebar').evaluate(n=>n.scrollTop=n.scrollHeight);
     const stickySearch=await page.locator('#catalogSearch').boundingBox(),sidebarBox=await page.locator('.sidebar').boundingBox();assert.ok(stickySearch.y>=sidebarBox.y&&stickySearch.y+stickySearch.height<=sidebarBox.y+sidebarBox.height);
     await page.locator('.sidebar').evaluate(n=>n.scrollTop=0);

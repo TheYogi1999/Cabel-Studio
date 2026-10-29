@@ -26,6 +26,10 @@ jobs:
       - run: npm run test:cloud
       - run: node tests/clipboard.cjs
       - run: node tests/clipboard-smoke.cjs
+      - run: node scripts/build-libraries.cjs --check
+      - run: node tests/supply-workflow.cjs
+      - run: node tests/supply-workflow-smoke.cjs
+      - run: node tests/basics-smoke.cjs
       - run: node tests/electrical-checks.cjs
       - run: node tests/electrical-checks-smoke.cjs
       - run: node tests/electrical-core.cjs
@@ -62,6 +66,7 @@ jobs:
             /tmp/Leitwerk-cloud-*.png
             /tmp/Leitwerk-clipboard-*
             /tmp/Leitwerk-supply-*
+            /tmp/Leitwerk-basics*
             /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-psu-loads-*
             /tmp/Leitwerk-psu-input-*

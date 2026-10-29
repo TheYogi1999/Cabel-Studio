@@ -1,0 +1,40 @@
+/* Shared controls for a standalone supply editor and the component's Supply tab. */
+globalThis.CabelSupplyForm={create(api){
+  const {root,c}=api,Core=CabelElectricalCore,Net=CabelElectricalNetwork,esc=api.safe,f=c.fault||{mode:'off'},prefix=api.prefix||'',entries=api.entries;
+  const input=(name,label,value='',extra='')=>'<label>'+label+'<input name="'+name+'" value="'+esc(value??'')+'" '+extra+'></label>',number=(name,label,value,extra='')=>input(name,label,value,'type="number" step="any" '+extra),select=(name,label,options)=>'<label>'+label+'<select name="'+name+'">'+options.map(([value,text])=>'<option value="'+esc(value)+'">'+esc(text)+'</option>').join('')+'</select></label>';
+  root.innerHTML='<div class="electrical-form-grid">'+input('name','Supply circuit',c.name,'required maxlength="200"')+select('system','Supply system',Object.entries(Core.systems))+number('voltage','Voltage (V)',c.voltage,'required min="1" max="1500"')+number('ratingA','Available continuous current per phase (A)',c.ratingA,'min="0.000001" max="1000000"')+number('reservePct','Reserve added to demand (%)',c.reservePct,'required min="0" max="1000"')+select('sourcePartId','Source device (optional)',[['','Manual / external supply'],...entries().filter(e=>!['text','image','reference','destination','terminal-pin'].includes(e.p.type)).map(e=>[e.p.id,api.designation(e.p)])])+'</div><label class="supply-name-follow"><input type="checkbox" name="followSourceName"> Follow Device Designation automatically</label><p data-supply-status></p><fieldset><legend>Source output terminals</legend><div class="source-output-mapping electrical-form-grid"></div><p>Map the output poles only. Converter input and output circuits remain separate.</p></fieldset><fieldset><legend>Short-circuit scenario</legend>'+select('faultMode','Source model',[['off','Not configured'],['impedance','Radial impedance model'],['limited','DC supply: manufacturer’s sustained short-circuit current']])+'<p data-fault-scope></p><div class="electrical-form-grid" data-fault-impedance>'+number('sourceR','Source resistance R (mΩ)',f.sourceR,'min="0" max="1000000000"')+number('sourceX','Source reactance X (mΩ)',f.sourceX,'min="0" max="1000000000"')+number('lineR','Feeder resistance R (mΩ)',f.lineR,'min="0" max="1000000000"')+number('lineX','Feeder reactance X (mΩ)',f.lineX,'min="0" max="1000000000"')+number('factor','Fault voltage multiplier c (scenario input)',f.factor??1,'min="0.1" max="2"')+'</div><div data-fault-limited>'+number('limitA','Sustained short-circuit current at source terminals (A)',f.limitA,'min="0.000001" max="1000000"')+'<p>Enter the documented sustained current at source terminals. Boost/peak current and downstream fault current are different values.</p></div><p>Blank impedances remain unknown. DC impedance calculations use a resistive/Thevenin source; electronic current-limited supplies need their documented characteristic. AC uses a radial L–N or balanced three-phase scenario. Trip times and selectivity are outside this model.</p></fieldset>';
+  const controls=Object.fromEntries([...root.querySelectorAll('[name]')].map(e=>[e.name,e]));let dirty=false;
+  for(const [name,el]of Object.entries(controls))el.name=prefix+name;
+  for(const [data,id]of [['data-fault-impedance','faultImpedance'],['data-fault-limited','faultLimited'],['data-fault-scope','faultScope']])root.querySelector('['+data+']').id=prefix+id;
+  const source=()=>api.part?.()||entries().find(e=>e.p.id===controls.sourcePartId.value)?.p;
+  if(c.sourcePartId&&!entries().some(e=>e.p.id===c.sourcePartId))controls.sourcePartId.add(new Option('Missing device · '+c.sourcePartId,c.sourcePartId));
+  controls.sourcePartId.value=c.sourcePartId||'';controls.system.value=c.system;controls.faultMode.value=f.mode;
+  controls.followSourceName.checked=Boolean(source()&&Net.followsSource(c,source()));controls.sourcePartId.disabled=Boolean(api.part);
+  function name(){const p=source();controls.followSourceName.disabled=!p;if(!p)controls.followSourceName.checked=false;controls.name.readOnly=controls.followSourceName.checked;if(controls.followSourceName.checked)controls.name.value=String(p.deviceCode||p.label||p.id).slice(0,200);}
+  function mapping(){
+    const p=source(),box=root.querySelector('.source-output-mapping');box.replaceChildren();if(!p)return;
+    if(p.type==='supply'){box.textContent='Automatic: '+Core.supplyPins(controls.system.value).join(' / ');return;}
+    const roles=controls.system.value==='ac3'?['L1','L2','L3','N']:controls.system.value==='dc'?['+','−']:['L','N'],defaults=p.id===c.sourcePartId?(c.sourcePins||Net.sourcePins(p,controls.system.value,api.lookup)):Net.sourcePins(p,controls.system.value,api.lookup);
+    roles.forEach((role,i)=>{const label=document.createElement('label'),el=document.createElement('select');label.textContent=role+' output';el.name=prefix+'sourceOutput'+i;el.dataset.sourcePole=i;el.add(new Option('Choose terminal',''));for(const port of api.ports(p).filter(q=>q.kind!=='fiber'))el.add(new Option(port.label,String(port.index)));if(defaults?.[i]!==undefined)el.value=String(defaults[i]);label.append(el);box.append(label);});
+  }
+  function refresh(){
+    name();const sys=controls.system.value,mode=controls.faultMode.value,p=source();controls.system.disabled=Boolean(api.assigned?.length)||p?.type==='power-supply';
+    controls.faultMode.querySelector('[value=limited]').disabled=sys!=='dc';if(sys!=='dc'&&mode==='limited')controls.faultMode.value='off';
+    root.querySelector('[data-fault-impedance]').hidden=controls.faultMode.value!=='impedance';root.querySelector('[data-fault-limited]').hidden=controls.faultMode.value!=='limited';
+    for(const key of ['sourceX','lineX','factor'])controls[key].closest('label').hidden=sys==='dc';
+    root.querySelector('[data-fault-scope]').textContent=sys==='dc'?'DC: complete outgoing-and-return loop resistance.':sys==='ac3'?'Balanced three-phase bolted fault, impedances per phase.':'Single-phase L–N bolted fault, complete loop impedance.';
+    controls.voltage.closest('label').firstChild.textContent=sys==='ac3'?'Voltage L–L (V)':'Voltage (V)';
+    root.querySelector('[data-supply-status]').textContent=p?.unplaced?'Source is unplaced. Place it to restore automatic supply detection.':c.sourcePartId&&!p?'Source device is missing. Choose another source or remove this circuit.':p?'Linked to '+api.designation(p):'Manual / external supply';
+  }
+  controls.sourcePartId.onchange=()=>{if(!c.sourcePartId&&controls.name.value===c.name)controls.followSourceName.checked=true;mapping();refresh();};controls.followSourceName.onchange=name;
+  controls.system.onchange=()=>{controls.voltage.value={dc:24,ac1:230,ac3:400}[controls.system.value];mapping();refresh();};controls.faultMode.onchange=refresh;
+  root.addEventListener('input',()=>dirty=true);root.addEventListener('change',()=>dirty=true);mapping();refresh();
+  function read(){
+    name();const next={id:c.id,name:controls.name.value.trim(),nameMode:controls.followSourceName.checked?'source':'custom',system:controls.system.value,voltage:Number(controls.voltage.value),reservePct:Number(controls.reservePct.value),fault:{mode:controls.faultMode.value}};
+    if(!controls.voltage.value||!controls.reservePct.value)throw Error('Enter supply voltage and reserve');if(controls.ratingA.value!=='')next.ratingA=Number(controls.ratingA.value);if(controls.sourcePartId.value)next.sourcePartId=controls.sourcePartId.value;
+    for(const key of ['sourceR','sourceX','lineR','lineX','factor','limitA'])if(controls[key].value!=='')next.fault[key]=Number(controls[key].value);
+    const outputs=[...root.querySelectorAll('[data-source-pole]')];if(outputs.some(e=>e.value!=='')){if(outputs.some(e=>e.value===''))throw Error('Map every source output pole');next.sourcePins=outputs.map(e=>Number(e.value));}
+    const p=source();if(p&&next.sourcePins?.some(i=>!api.ports(p).some(q=>q.index===i&&q.kind!=='fiber')))throw Error('Source output terminal no longer exists');Core.validateCircuit(next);api.validateSource(next);return next;
+  }
+  return{read,controls,refresh,changed:()=>dirty};
+}};

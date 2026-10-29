@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),{plan}=require('../scripts/multi-connect.js');
+const ports=[0,1].flatMap(y=>[0,1,2].map(x=>({ref:`p${y}${x}:0`,x:100+x*30,y:100+y*40,kind:'wire'}))),selected=ports.map(p=>p.ref),edge=(a,b)=>[a,b].sort().join('|');
+let p=plan({ports,selected});assert.deepEqual(new Set(p.connections.map(w=>edge(w.a,w.b))),new Set(['p00:0|p01:0','p01:0|p02:0','p10:0|p11:0','p11:0|p12:0']));
+p=plan({ports,selected,direction:'vertical'});assert.deepEqual(new Set(p.connections.map(w=>edge(w.a,w.b))),new Set(['p00:0|p10:0','p01:0|p11:0','p02:0|p12:0']));
+const wires=[{a:'p00:0',b:'@j:0'},{a:'@j:0',b:'p01:0'}];p=plan({ports,selected,wires});assert.equal(p.connections.length,3);assert.equal(p.skipped.existing,1);assert.equal(wires.length,2);
+p=plan({ports,selected:['p00:0','p02:0']});assert.equal(p.connections.length,0);assert.equal(p.skipped.unselected,1);
+p=plan({ports,selected:['p00:0','p01:0'],routes:[[{x:110,y:100},{x:120,y:100}]]});assert.equal(p.connections.length,0);assert.equal(p.skipped.overlap,1);
+p=plan({ports,selected:['p00:0','p01:0'],routes:[[{x:115,y:80},{x:115,y:120}]]});assert.equal(p.connections.length,1,'A crossing alone does not make a junction');
+const optical=ports.map(q=>({...q,kind:q.ref==='p01:0'?'fiber':'wire'}));p=plan({ports:optical,selected});assert.equal(p.connections.length,2);assert.equal(p.skipped.media,2);
+const bridges=ports.slice(0,3).map((q,i)=>({...q,kind:'bridge',scope:i===2?'X2':'X1'}));p=plan({ports:bridges,selected});assert.equal(p.connections.length,1);assert.equal(p.connections[0].kind,'bridge');assert.equal(p.skipped.strip,1);
+const duplicates=[...ports,{...ports[0],ref:'duplicate:0'}];p=plan({ports:duplicates,selected:[...selected,'duplicate:0']});assert.equal(p.connections.length,3);assert.equal(p.skipped.coincident,2);
+const rotated=ports.map(q=>({...q,x:q.y,y:q.x}));p=plan({ports:rotated,selected,direction:'vertical'});assert.equal(p.connections.length,4);
+const drift=ports.map((q,i)=>({...q,y:q.y+(i%3)*1e-8}));p=plan({ports:drift,selected});assert.equal(p.connections.length,4);
+p=plan({ports,selected:[],direction:'horizontal'});assert.equal(p.connections.length,0);
+console.log('PASS multi-connect independent row/column edge sets, branching-net deduplication, no implicit joins at crossings/unselected/coincident pins, overlapping routes, medium and strip boundaries, rotated geometry, float tolerance and unchanged inputs');

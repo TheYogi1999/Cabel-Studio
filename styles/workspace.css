@@ -216,3 +216,8 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 #spaceMouseBtn[data-state="error"]{color:#ffc36d}
 
 .space-mouse-link{color:var(--accent,#62d6bd)}
+
+.workspace-toolbar.multi-connect-mode{flex-wrap:wrap}
+.workspace-toolbar.multi-connect-mode #multiConnectControls{flex:1 0 100%;max-width:100%;min-width:0;padding-left:0;border-left:0;overflow-x:auto}
+#multiConnectControls[hidden]{display:none}
+#multiConnectControls output{font-size:11px;color:var(--muted);padding:0 8px;white-space:nowrap}

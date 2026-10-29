@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.43.0**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.44.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -260,7 +260,7 @@ The DC/DC symbols distinguish DC input/output graphically and use isolated **fun
 
 ## Manufacturer libraries
 
-**270 reference entries in eight libraries** are bundled with v1.43.0. Each manufacturer or board collection has a separate editable JSON source:
+**270 reference entries in eight libraries** are bundled with v1.44.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -314,13 +314,23 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.43.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.44.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
 Optional `projectInfo.coverImages` stores title-sheet image placements in the same format as drawing parts with `type: "image"`. The generated cover page itself still has empty serialized `parts`; rebuilding generated pages restores its images from this metadata. Cover image IDs must be unique across the whole project. Projects without cover images need no additional field.
 
 Drawing sheets may also contain `redlines: [{id, points: [{x,y}], layer?}]`, with `layer` set to `red`, `yellow`, `blue` or `green`. Missing layers retain the original red-pen appearance. These freehand points use the same paper coordinates as the schematic, independently of screen zoom. Old projects without `redlines` need no migration. Annotations survive JSON roundtrips, sheet changes and undo/redo, and appear in their layer colours/transparency in PDF exports without selection boxes or handles. They do not add entries to device, terminal or connection lists.
+
+## Connect multiple pins
+
+Choose **Multi-connect** in the drawing toolbar, then **Horizontal** or **Vertical**. Drag a box around the desired component pins; the pink preview connects neighbouring pins in each individual row or column. Rows and columns stay separate. Only numerically aligned pins are grouped; components are not moved or snapped. Tap/click pins to toggle them individually, or hold **Shift/Ctrl/⌘** while drawing another box to add pins. The tool works with a mouse, touch or Pencil. Two-finger pan/zoom cancels only the unfinished selection gesture.
+
+Choose **Connect** or press **Enter** while the drawing has focus to apply the preview as one undo step. **Clear** or **Delete/Backspace** resets the pin selection; **Cancel**, **Escape** or another drawing tool discards the preview. After connecting, the tool stays available for another selection. **V** retains its normal **Select** shortcut.
+
+Connections automatically use wire, fiber optic or terminal bridge according to their endpoints. Bridge pins must belong to the same terminal strip. Existing wire-connected pairs are skipped, including paths through explicit junctions; additional loops are not created. Mixed media, coincident ambiguous pins, lines over existing collinear wires and routes through unselected pins are skipped and counted in the preview. A simple wire crossing stays unconnected. Open ends/junctions remain editable with the regular **Connect** tool; this selection tool targets placed component pins, including bridge pins.
+
+Preview boxes, pin rings and planned lines are temporary view state and never enter JSON, cloud projects or PDFs. Created connections use the existing wire format and participate in normal selection, movement, calculation updates, clipboard, undo/redo, cloud synchronization and export. Generated sheets and read-only/released projects cannot be changed with this tool.
 
 ## Shortcuts
 
@@ -333,6 +343,7 @@ This list covers the implemented application shortcuts. **Ctrl/⌘** means **Ctr
 | Shortcut | Action and scope |
 | --- | --- |
 | **V** | Switch to **Select**; cancel an unfinished connection, placement or drawing tool. |
+| **Enter** | Apply the **Multi-connect** preview when the drawing has focus. |
 | **C** or **W** | Switch to **Connect**. The starting port/connection determines wire, bridge or fiber. |
 | **R** | Rotate the currently selected symbol by 90°. |
 | **X** | Mirror the currently selected symbol horizontally. |
@@ -562,6 +573,8 @@ node tests/electrical-network-ui-smoke.cjs
 node tests/supply-workflow.cjs
 node tests/supply-workflow-smoke.cjs
 node tests/basics-smoke.cjs
+node tests/multi-connect.cjs
+node tests/multi-connect-smoke.cjs
 node tests/electrical-checks.cjs
 node tests/electrical-checks-smoke.cjs
 node tests/electrical-core.cjs

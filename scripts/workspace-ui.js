@@ -42,6 +42,8 @@ globalThis.CabelWorkspaceUI = {
     for(const node of modes.children)node.classList.add('tool-button');
     const diagonal=button('diagonalTool','45°','Draw at 45°; also available while holding Shift',modes,()=>api.action('diagonal'));
     $('#wireTool').after(diagonal);
+    const multiButton=button('multiConnectTool','Multi-connect','Connect multiple pins horizontally or vertically',modes,()=>{const enable=api.state().mode!=='multi-connect';ink.setTool(null);hand=false;placement=null;api.cancel();if(enable)api.multiConnect.start();refresh();});
+    toolbar.append(api.multiConnect.controls);
     $('#bridgeTool').hidden=true;labelButton($('#selectTool'),'Select','select');labelButton($('#aksAreaTool'),'Field');
     const handButton=button('panTool','Pan','Drag to pan with a finger, Pencil or mouse',modes,()=>{ink.setTool(null);hand=!hand;placement=null;api.cancel();refresh();},'pan');
     const redButton=button('redPenTool','Red pen','Freehand annotations: draw, erase or select strokes',modes,()=>{const enable=!ink.active();ink.setTool(null);hand=false;placement=null;api.cancel();ink.setTool(enable?'draw':null);refresh();},'pen');
@@ -171,7 +173,7 @@ globalThis.CabelWorkspaceUI = {
       if(target&&terminalRef(target)!==contact.ref)api.connect(target);
     }
     function makeSession(id,p,target,type,options={}){
-      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
+      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.mode==='multi-connect'?'edit':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
       const s={id,type,kind,target,modifiers:{ctrlKey:options.ctrlKey,metaKey:options.metaKey,altKey:options.altKey,shiftKey:options.shiftKey},start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
       if(kind==='edit')forward('pointerdown',target,p,id,type,options);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
     }
@@ -326,7 +328,8 @@ globalThis.CabelWorkspaceUI = {
     function refresh(){
       spaceMouse.refresh();
       retainTargets();const state=api.state(),connecting=['wire','bridge','fiber'].includes(state.mode);handButton.setAttribute('aria-pressed',String(hand));
-      const marking=ink.active();toolbar.classList.toggle('red-pen-mode',marking);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking;
+      const marking=ink.active(),multi=state.mode==='multi-connect';toolbar.classList.toggle('red-pen-mode',marking);toolbar.classList.toggle('multi-connect-mode',multi);redButton.setAttribute('aria-pressed',String(marking));redButton.disabled=state.generated||state.exporting;redTools.hidden=!marking;editing.hidden=marking||multi;
+      multiButton.setAttribute('aria-pressed',String(multi));multiButton.disabled=state.generated||state.exporting||state.readOnly;api.multiConnect.refresh();
       for(const[id,tool]of[['redPenErase','erase'],['redPenSelect','select']]){$('#'+id).setAttribute('aria-pressed',String(ink.tool()===tool));$('#'+id).disabled=state.generated||state.exporting;}
       for(const n of redTools.querySelectorAll('[data-ink-color]')){n.setAttribute('aria-pressed',String(ink.tool()==='draw'&&ink.brush()===n.dataset.inkColor));n.disabled=state.generated||state.exporting;}for(const n of layerControls.querySelectorAll('input')){n.checked=ink.layerVisible(n.dataset.inkLayer);n.disabled=state.exporting;}
       smaller.disabled=larger.disabled=deleteStrokes.disabled=!ink.hasSelection()||ink.busy()||state.generated||state.exporting;

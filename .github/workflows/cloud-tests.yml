@@ -23,6 +23,7 @@ jobs:
           java-version: 21
       - run: npm ci --no-audit --no-fund
       - run: test -x "$CHROMIUM_PATH"
+      - run: node tests/linked-images-smoke.cjs
       - run: npm run test:cloud
       - run: node tests/clipboard.cjs
       - run: node tests/clipboard-smoke.cjs
@@ -52,7 +53,6 @@ jobs:
       - run: node tests/pen-connections-smoke.cjs
       - run: node tests/pin-label-smoke.cjs
       - run: node tests/pdf-export-smoke.cjs
-      - run: node tests/linked-images-smoke.cjs
       - run: node tests/device-list-smoke.cjs
       - run: node tests/connection-lists-smoke.cjs
       - run: npm run build:firebase && npm run build:pdf && git diff --exit-code -- vendor/

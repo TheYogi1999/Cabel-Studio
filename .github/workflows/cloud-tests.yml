@@ -34,6 +34,9 @@ jobs:
       - run: node tests/basics-smoke.cjs
       - run: node tests/multi-connect.cjs
       - run: node tests/multi-connect-smoke.cjs
+      - run: node tests/wire-batch.cjs
+      - run: node tests/wire-batch-smoke.cjs
+      - run: node tests/phone-viewer-smoke.cjs
       - run: node tests/electrical-checks.cjs
       - run: node tests/electrical-checks-smoke.cjs
       - run: node tests/electrical-core.cjs
@@ -70,6 +73,8 @@ jobs:
             /tmp/Leitwerk-supply-*
             /tmp/Leitwerk-basics*
             /tmp/Leitwerk-multi-connect-*
+            /tmp/Leitwerk-wire-batch-*
+            /tmp/Leitwerk-phone-viewer*
             /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-psu-loads-*
             /tmp/Leitwerk-psu-input-*

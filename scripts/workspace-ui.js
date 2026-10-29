@@ -74,7 +74,7 @@ globalThis.CabelWorkspaceUI = {
     const tools=$('.tools');
     const fullscreenButton=button('fullscreenBtn','Full screen','Enter or restore full screen',tools,enterFullscreen,'fullscreen');
     const exitButton=button('exitFullscreenBtn','Exit…','Leave full screen',tools,()=>api.confirmFullscreenExit(leaveFullscreen));
-    $('#sheetCurrent').onclick=()=>{$('[data-overview="sheets"]')?.click();};
+    $('#sheetCurrent').onclick=()=>{if(api.viewer())api.showViewerSheets();else $('[data-overview="sheets"]')?.click();};
     $('.hint').textContent='Select: drag objects or an empty-paper selection box. Connect: tap ports and route points. Pan: drag the paper. Two fingers pan and zoom in every mode. Scroll to pan; Ctrl/Command+scroll to zoom. SpaceMouse: 3D. Red pen: draw freely, erase whole strokes, or select and resize them. Drag library components sideways onto the paper, or tap then place. Right-click edits properties on desktop.';
     $('#statusText').setAttribute('role','status');$('#statusText').setAttribute('aria-live','polite');
 
@@ -173,7 +173,7 @@ globalThis.CabelWorkspaceUI = {
       if(target&&terminalRef(target)!==contact.ref)api.connect(target);
     }
     function makeSession(id,p,target,type,options={}){
-      const state=api.state(),kind=hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.mode==='multi-connect'?'edit':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
+      const state=api.state(),kind=api.viewer()?'view':hand?'pan':placement?'placement':ink.active()?'redpen':['wire','bridge','fiber'].includes(state.mode)?'connect':state.mode==='multi-connect'?'edit':state.fieldDrawing||(!state.generated||state.cover)&&target.closest('#parts,#wires,.aks-field-handle')?'edit':target.closest('[role="button"],.page-reference,.relay-symbol-link,.terminal-cross-reference,.screen-only')?'link':state.generated&&!state.cover?'handled':'edit';
       const s={id,type,kind,target,modifiers:{ctrlKey:options.ctrlKey,metaKey:options.metaKey,altKey:options.altKey,shiftKey:options.shiftKey},start:{...p},last:{...p},moved:false,checkpoint:kind==='edit'?api.checkpoint():null};
       if(kind==='edit')forward('pointerdown',target,p,id,type,options);else if(kind==='redpen')ink.begin(p,target,{shift:options.shiftKey});return s;
     }
@@ -184,8 +184,8 @@ globalThis.CabelWorkspaceUI = {
       return{x:q.x,y:q.y,distance:points[1]?Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y):0};
     }
     function rebase(session,contacts){const c=center(contacts),v=api.view();session.navigation={zoom:v.zoom,distance:c.distance,anchor:{x:(c.x-v.pan.x-564*(1-v.zoom))/v.zoom,y:(c.y-v.pan.y-399*(1-v.zoom))/v.zoom}};}
-    function navigate(session,contacts){const c=center(contacts),n=session.navigation;if(!n)return;const z=Math.max(.5,Math.min(4,n.zoom*(n.distance&&c.distance?c.distance/n.distance:1)));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-n.anchor.x*z,y:c.y-399*(1-z)-n.anchor.y*z}});}
-    function zoomAt(p,factor){const c=api.svgPoint({clientX:p.x,clientY:p.y}),v=api.view(),w=api.world({clientX:p.x,clientY:p.y}),z=Math.max(.5,Math.min(4,v.zoom*factor));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-w.x*z,y:c.y-399*(1-z)-w.y*z}});}
+    function navigate(session,contacts){const c=center(contacts),n=session.navigation;if(!n)return;const z=Math.max(.5,Math.min(api.viewer()?8:4,n.zoom*(n.distance&&c.distance?c.distance/n.distance:1)));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-n.anchor.x*z,y:c.y-399*(1-z)-n.anchor.y*z}});}
+    function zoomAt(p,factor){const c=api.svgPoint({clientX:p.x,clientY:p.y}),v=api.view(),w=api.world({clientX:p.x,clientY:p.y}),z=Math.max(.5,Math.min(api.viewer()?8:4,v.zoom*factor));api.setView({zoom:z,pan:{x:c.x-564*(1-z)-w.x*z,y:c.y-399*(1-z)-w.y*z}});}
     $('#zoomIn').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt({x:r.left+r.width/2,y:r.top+r.height/2},1.15);};
     $('#zoomOut').onclick=()=>{const r=svg.getBoundingClientRect();zoomAt({x:r.left+r.width/2,y:r.top+r.height/2},1/1.15);};
     function canNavigate(){const s=api.state();return !s.modalOpen&&!s.exporting&&!s.navigationBusy&&!$('#cloudDialog')?.open&&!finger&&!pen&&!placement&&!ink.busy();}
@@ -243,7 +243,7 @@ globalThis.CabelWorkspaceUI = {
       if(Math.hypot(p.x-finger.start.x,p.y-finger.start.y)>6){finger.moved=true;clearHold();}
       if(finger.kind==='edit'){forward('pointermove',svg,p,finger.id);retainTargets();}
       else if(finger.kind==='redpen'){ink.move(p);retainTargets();}
-      else if(finger.kind==='pan'||finger.kind==='pinch')navigate(finger,contacts);
+      else if(finger.kind==='pan'||finger.kind==='pinch'||finger.kind==='view')navigate(finger,contacts);
       else if(finger.kind==='connect')forward('pointermove',svg,p,finger.id);
     },{capture:true,passive:false});
     function finishTouch(e,cancelled){
@@ -258,7 +258,7 @@ globalThis.CabelWorkspaceUI = {
       else if(old.kind==='redpen'){if(cancelled)ink.cancel();else ink.end(old.last);}
       else if(!cancelled&&!old.moved){
         if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}
-        else if(old.kind==='connect')connectAt(old.last,'touch');else if(old.kind==='link')old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,clientX:old.last.x,clientY:old.last.y}));
+        else if(old.kind==='connect')connectAt(old.last,'touch');else if(old.kind==='view'){suppressCanvasClickUntil=performance.now()+700;api.followViewTarget(old.target);}else if(old.kind==='link')old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,clientX:old.last.x,clientY:old.last.y}));
       }
       clearTargets();
     }
@@ -275,7 +275,7 @@ globalThis.CabelWorkspaceUI = {
       const source=e.pointerType==='pen'&&sourceAt(e.target);
       if(source){stop(e);clearHold();pen={kind:'source',id:e.pointerId,type:'pen',source,start:point(e),last:point(e),wasDraggable:source.node.draggable};source.node.draggable=false;capture(e.pointerId);return;}
       if(!inCanvas(e.target)){if(e.pointerType==='pen')armControl(e.pointerId,e.target.closest('button'),point(e));return;}
-      if(e.pointerType==='mouse'&&!hand&&!ink.active()&&!placement)return;
+      if(e.pointerType==='mouse'&&!hand&&!ink.active()&&!placement&&!api.viewer())return;
       stop(e);clearHold();
       if(finger){if(finger.kind==='edit')api.cancelPointer(finger.checkpoint,true);else if(finger.kind==='redpen')ink.cancel();for(const id of finger.contacts?.keys()||[])ignoredTouches.add(id);finger=null;}
       capture(e.pointerId);pen=makeSession(e.pointerId,point(e),e.target,e.pointerType,e);beginPenConnection(pen);rebase(pen,new Map([[pen.id,pen.start]]));startHold(pen);
@@ -288,7 +288,7 @@ globalThis.CabelWorkspaceUI = {
       if(pen.kind==='source'){if(pen.moved)startSourceDrag(pen);moveGhost(pen.last);}
       else if(pen.kind==='edit')forward('pointermove',svg,pen.last,pen.id,pen.type);
       else if(pen.kind==='redpen')ink.move(pen.last,e.getCoalescedEvents?.());
-      else if(pen.kind==='pan')navigate(pen,new Map([[pen.id,pen.last]]));
+      else if(pen.kind==='pan'||pen.kind==='view')navigate(pen,new Map([[pen.id,pen.last]]));
       else if(pen.kind==='connect')forward('pointermove',svg,pen.last,pen.id,pen.type);
     },{capture:true,passive:false});
     function finishPen(e,cancelled){
@@ -299,7 +299,7 @@ globalThis.CabelWorkspaceUI = {
       else if(old.kind==='edit'){if(cancelled)api.cancelPointer(old.checkpoint);else forward('pointerup',svg,old.last,old.id,old.type);}
       else if(old.kind==='redpen'){if(cancelled)ink.cancel();else ink.end(old.last);}
       else if(old.kind==='connect')finishPenConnection(old,cancelled);
-      else if(!cancelled){if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}else if(old.kind==='link'&&!old.moved)old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}
+      else if(!cancelled){if(old.kind==='placement'&&placement&&insideDrawing(old.last)){const source=placement;placement=null;api.place(source.payload,api.world({clientX:old.last.x,clientY:old.last.y}));refresh();}else if(old.kind==='view'&&!old.moved){suppressCanvasClickUntil=performance.now()+700;api.followViewTarget(old.target);}else if(old.kind==='link'&&!old.moved)old.target.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}
       suppressCanvasClickUntil=performance.now()+1000;release(old.id);
     }
     document.addEventListener('pointerup',e=>{const canvas=inCanvas(e.target)||Boolean(pen);finishPen(e,false);if(canvas)setTimeout(refresh,0);},{capture:true,passive:false});

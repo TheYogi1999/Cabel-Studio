@@ -221,3 +221,32 @@ body.workspace-ready{position:fixed;inset:0;height:100%;height:100dvh;overscroll
 .workspace-toolbar.multi-connect-mode #multiConnectControls{flex:1 0 100%;max-width:100%;min-width:0;padding-left:0;border-left:0;overflow-x:auto}
 #multiConnectControls[hidden]{display:none}
 #multiConnectControls output{font-size:11px;color:var(--muted);padding:0 8px;white-space:nowrap}
+
+#phoneViewerBar,#phoneReadBtn[hidden],#phoneSheetBackdrop,#phoneCloseSheets,.workspace-ready .phone-view-toggle{display:none}
+@media(max-width:600px),(max-width:1000px) and (max-height:600px) and (pointer:coarse){.workspace-ready .phone-view-toggle{display:flex}}
+.phone-viewer.workspace-ready .workspace-appbar,.phone-viewer.workspace-ready #workspaceToolbar,.phone-viewer.workspace-ready .sidebar,.phone-viewer.workspace-ready .sheetPanel,.phone-viewer footer{display:none!important}
+.phone-viewer.workspace-ready .app{grid-template-rows:auto minmax(0,1fr)}
+.phone-viewer.workspace-ready main{grid-template-columns:minmax(0,1fr)!important}
+.phone-viewer #phoneViewerBar{display:block;padding:8px 10px;background:var(--panel)}
+.phone-document{display:grid;gap:2px;min-width:0;position:relative;padding-right:100px;margin-bottom:8px}
+.phone-document strong,.phone-document small{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.phone-document strong{font-size:13px}.phone-document small{font-size:11px;color:var(--muted)}
+.phone-document>span{position:absolute;right:0;top:0;font-size:10px;color:var(--accent)}
+.phone-actions{display:flex;gap:5px;align-items:center;justify-content:space-between}
+.phone-actions .tool-button,.phone-actions summary{display:flex;align-items:center;justify-content:center;min-height:44px;height:44px;padding:0 8px;font-size:12px}
+#phoneViewerMenu{position:relative;color:var(--text);font-size:12px}
+#phoneViewerMenu>summary{list-style:none;cursor:pointer;border:1px solid var(--line);border-radius:7px;background:var(--panel2)}
+#phoneViewerMenu>summary::-webkit-details-marker{display:none}
+#phoneViewerMenu>div{position:absolute;z-index:22;top:calc(100% + 6px);right:0;min-width:160px;display:grid;gap:6px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);box-shadow:0 6px 18px #0008}
+.phone-viewer.workspace-ready .zoom-controls{bottom:10px;right:10px}.phone-viewer .zoom-controls button{min-width:44px;min-height:44px;height:44px}
+.phone-viewer #spaceMouseBtn{display:none}.phone-viewer #phoneReadBtn{display:flex}
+.phone-viewer.workspace-ready .newnav{top:8px;max-width:calc(100% - 16px)}
+.phone-viewer.workspace-ready .newnav button{min-height:44px;min-width:44px;height:44px;font-size:12px}
+.phone-viewer.phone-sheets-open #phoneSheetBackdrop{display:block;position:fixed;inset:0;border:0;background:#0008;z-index:18}
+.phone-viewer.phone-sheets-open.workspace-ready .sheetPanel{display:block!important;position:fixed;top:60px;bottom:0;right:0;z-index:20;width:min(90vw,360px);box-shadow:-5px 0 20px #0006;overflow:auto;padding:14px}
+.phone-viewer.phone-sheets-open #phoneCloseSheets{display:flex;position:fixed;top:8px;right:10px;z-index:21;min-height:44px}
+.phone-viewer .sheetPanel .overview-tabs,.phone-viewer .sheetPanel .panelHead button{display:none!important}
+.phone-viewer.workspace-ready .sheetPanel .sheetItem{min-height:48px;padding:10px}
+.phone-view-controls button,.phone-view-controls summary{-webkit-tap-highlight-color:transparent}
+.workspace-ready .simplePanel:has(#wireBatchForm){width:min(94vw,540px)}
+#wireBatchForm{max-width:none}

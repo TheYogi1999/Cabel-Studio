@@ -26,6 +26,8 @@ jobs:
       - run: npm run test:cloud
       - run: node tests/clipboard.cjs
       - run: node tests/clipboard-smoke.cjs
+      - run: node tests/electrical-checks.cjs
+      - run: node tests/electrical-checks-smoke.cjs
       - run: node tests/electrical-core.cjs
       - run: node tests/electrical-network.cjs
       - run: node tests/product-loads.cjs

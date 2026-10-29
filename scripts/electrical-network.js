@@ -58,9 +58,20 @@
     if(p.calculationLinks!==undefined&&(!Array.isArray(p.calculationLinks)||p.calculationLinks.length>64||p.calculationLinks.some(pair=>!Array.isArray(pair)||pair.length!==2||pair[0]===pair[1]||pair.some(i=>!copper(p,i)))))throw Error('Invalid internal conductive paths');
     if(p.loadCalculation?.powerPins!==undefined&&(!Array.isArray(p.loadCalculation.powerPins)||![2,3].includes(p.loadCalculation.powerPins.length)||new Set(p.loadCalculation.powerPins).size!==p.loadCalculation.powerPins.length||p.loadCalculation.powerPins.some(i=>!copper(p,i))))throw Error('Choose two or three distinct copper power inputs');
   }
+  function polarityPairs(p,lookup){
+    const setting=p.dcPolarity;if(setting?.mode==='none')return[];
+    if(setting?.mode==='manual')return[[setting.positivePin,setting.negativePin]];
+    const role=value=>{const name=String(value||'').trim().toUpperCase().replace(/−/g,'-').replace(/^\d+\s+(?=\S)/,'').replace(/\s+/g,'');
+      if(/^(?:GND|AGND|DGND|0V(?:\.\d+)?|-|IN-|L-|V-)$/.test(name))return'-';
+      if(/^(?:\+|\+?\d+(?:[.,]\d+)?V(?:\.\d+)?|\d+V\d+|VCC|VDD|VIN|IN\+|L\+|V\+)$/.test(name))return'+';return null;};
+    const groups=inputGroups(p,lookup),pairs=[];
+    for(const group of groups)if(group.length===2){const a=role(p.pinNumbers?.[group[0]]),b=role(p.pinNumbers?.[group[1]]);if(a==='+'&&b==='-')pairs.push(group);if(a==='-'&&b==='+')pairs.push([group[1],group[0]]);}
+    if(!pairs.length&&p.type==='led'&&!p.catalog)pairs.push([0,1]);return pairs;
+  }
   function analyse(doc,lookup){
     const supplies=circuits(doc,lookup),entries=doc.sheets.flatMap(sheet=>sheet.parts.map(p=>({p,sheet}))),byId=new Map(entries.map(e=>[e.p.id,e])),parent=new Map(),connected=new Map(supplies.map(c=>[c.id,[]])),sourceErrors=new Map(supplies.map(c=>[c.id,[]]));
-    const find=k=>{if(!parent.has(k))parent.set(k,k);let r=k;while(parent.get(r)!==r)r=parent.get(r);while(k!==r){const n=parent.get(k);parent.set(k,r);k=n;}return r;},join=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent.set(a,b);},key=(sheet,ref)=>JSON.stringify([sheet.id,ref]);
+    const adjacency=new Map();
+    const find=k=>{if(!parent.has(k))parent.set(k,k);let r=k;while(parent.get(r)!==r)r=parent.get(r);while(k!==r){const n=parent.get(k);parent.set(k,r);k=n;}return r;},join=(a,b,deviceId=null)=>{if(!adjacency.has(a))adjacency.set(a,[]);if(!adjacency.has(b))adjacency.set(b,[]);adjacency.get(a).push({to:b,deviceId});adjacency.get(b).push({to:a,deviceId});a=find(a);b=find(b);if(a!==b)parent.set(a,b);},key=(sheet,ref)=>JSON.stringify([sheet.id,ref]);
     const partKey=(e,i)=>key(e.sheet,e.p.id+':'+i),valid=(sheet,ref)=>{
       if(typeof ref!=='string')return false;const [id,n]=ref.split(':'),i=Number(n);
       if(id.startsWith('@'))return i===0&&(sheet.junctions||[]).some(p=>'@'+p.id===id&&p.kind!=='fiber');
@@ -71,7 +82,7 @@
     const representative=p=>{if(p.type==='relay')return entries.find(e=>e.p.type==='relay-coil'&&e.p.masterId===p.id&&!e.p.unplaced)||null;let owner=byId.get(p.masterId);if(p.type==='relay-contact'&&owner?.p.type==='relay-coil')owner=byId.get(owner.p.masterId);return ['relay-coil','relay-contact'].includes(p.type)&&owner?.p.type==='relay'&&!owner.p.unplaced?owner:null;};
     const assumptions=[];
     for(const e of entries){const {p,sheet}=e;
-      if(!p.unplaced||p.type==='connector'||representative(p))for(const [a,b] of paths(p,lookup))if(copper(p,a)&&copper(p,b)){join(partKey(e,a),partKey(e,b));assumptions.push({entry:e,a,b,custom:p.calculationLinks!==undefined});}
+      if(!p.unplaced||p.type==='connector'||representative(p))for(const [a,b] of paths(p,lookup))if(copper(p,a)&&copper(p,b)){join(partKey(e,a),partKey(e,b),p.id);assumptions.push({entry:e,a,b,custom:p.calculationLinks!==undefined});}
       if(p.type==='relay-coil'){const owner=byId.get(p.masterId);if(owner?.p.type==='relay')for(const i of [0,1])join(partKey(e,i),partKey(owner,i));}
       if(p.type==='relay-contact'){const coil=byId.get(p.masterId),owner=byId.get(coil?.p.masterId);if(coil?.p.type==='relay-coil'&&owner?.p.type==='relay'&&Number.isInteger(p.relayContact))for(const i of [0,1,2])join(partKey(e,i),partKey(owner,2+3*(p.relayContact-1)+i));}
       if(p.type==='terminal-pin'&&!p.unplaced){const owner=byId.get(p.masterId);if(owner?.p.type==='connector'&&copper(owner.p,p.pinIndex))join(partKey(e,0),partKey(owner,p.pinIndex));}
@@ -135,7 +146,7 @@
       else{const message=state.status==='connected'?'Detected load; electrical input power/current is missing':state.message;issues.push({state,circuitIds:state.circuit?[state.circuit.id]:state.related,message});}
     }
     for(const e of entries){const master=coilMaster(e.p),state=master&&states.get(master.p.id);if(state&&e.p.id!==master.p.id)states.set(e.p.id,{...state,aliasOf:master.p.id});}
-    return{circuits:supplies,states,resolved,issues,connected,sourceErrors,assumptions,byId};
+    return{circuits:supplies,states,resolved,issues,connected,sourceErrors,assumptions,byId,topology:{adjacency,key,partKey,at,seeds}};
   }
-  return{AUTO,circuits,powerSupplyCircuit,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,validatePart,analyse};
+  return{AUTO,circuits,powerSupplyCircuit,ports,copper,powerPins,inputGroups,sourcePins,productModel,validateModel,candidate,paths,polarityPairs,validatePart,analyse};
 });

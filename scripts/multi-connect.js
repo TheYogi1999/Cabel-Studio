@@ -77,7 +77,7 @@
     document.addEventListener('keydown',e=>{if(!active()||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;if(e.key==='Escape'){stop(e);reset();api.exit();api.render();}else if(e.key==='Enter'&&!e.target.closest('button')){stop(e);apply();}else if(['Delete','Backspace'].includes(e.key)){stop(e);reset();refresh();}else if((e.ctrlKey||e.metaKey)&&['z','y','x','v'].includes(e.key.toLowerCase()))reset();},true);
     window.addEventListener('blur',cancelGesture);
     document.addEventListener('click',e=>{if(active()&&e.target.closest('#cloudProjectsBtn,#cloudStatus,#exportBtn,#openBtn'))reset();},true);
-    new MutationObserver(()=>{if(document.body.dataset.cloudReadOnly==='true'){reset();if(active()){api.exit();api.render();}}}).observe(document.body,{attributes:true,attributeFilter:['data-cloud-read-only']});
+    new MutationObserver(()=>{if(document.body.dataset.cloudReadOnly==='true'){reset();if(active()){api.exit();api.render();}}api.refresh();}).observe(document.body,{attributes:true,attributeFilter:['data-cloud-read-only']});
     return{controls,refresh,reset,cancelGesture,busy:()=>Boolean(gesture||refs.size),dragging:()=>Boolean(gesture),start:()=>{reset();api.start();refresh();}};
   }
   return{plan,init};

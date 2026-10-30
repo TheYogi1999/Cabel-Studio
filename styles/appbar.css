@@ -1,0 +1,42 @@
+/* App controls never enter the sheet or its exported SVG/PDF. */
+.appbar-ready.workspace-ready .workspace-appbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px 18px;padding:8px 14px}
+.appbar-ready.workspace-ready .brand{grid-column:1;grid-row:1}
+.appbar-ready.workspace-ready .project-name{grid-column:2;grid-row:1;display:block}
+.appbar-ready.workspace-ready .tools{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;justify-content:flex-start;width:100%;gap:8px 0;margin:0}
+.appbar-ready .appbar-group{display:flex;flex-wrap:wrap;align-items:center;gap:5px;min-width:0;padding-right:12px}
+.appbar-ready .appbar-group+.appbar-group{border-left:1px solid var(--line);padding-left:12px}
+.appbar-ready .appbar-view{margin-left:auto;padding-right:0}
+.appbar-ready.workspace-ready .phone-view-toggle{display:flex}
+.appbar-ready #schematicSearchBtn{color:var(--accent);font-weight:650}
+.workspace-account{grid-column:3;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0;max-width:320px}
+.workspace-account #cloudAccountBtn{max-width:210px;display:block;overflow:hidden;text-overflow:ellipsis}
+#cloudAccountBtn[data-signed-in=true]::before,#phoneAccountBtn[data-signed-in=true]::before{content:'●';color:var(--accent);font-size:9px;margin-right:6px}
+.workspace-ready .workspace-account .tool-button{height:34px;min-width:34px;font-size:11px}
+.project-presence-panel{position:fixed;right:max(12px,env(safe-area-inset-right));z-index:50;width:min(350px,calc(100vw - 24px));padding:14px;overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);box-shadow:0 12px 32px #0005}
+.project-presence-panel[hidden]{display:none}
+.presence-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.presence-heading button{border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--text);font-size:20px;min-width:36px;min-height:36px;touch-action:manipulation}
+#cloudPresenceSummary,.presence-empty{color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.presence-person{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.presence-avatar{display:grid;place-items:center;flex:none;width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;font-size:11px;font-weight:700;color:var(--accent);background:var(--panel2)}
+.presence-person-info{display:grid;gap:3px;min-width:0;overflow-wrap:anywhere;font-size:12px}
+.presence-person-info small{color:var(--muted);font-size:10px}
+.presence-sheet{font-size:11px}
+.phone-session{display:flex;align-items:center;gap:5px;margin-bottom:6px;min-width:0}
+.phone-account-controls{display:flex;align-items:center;gap:5px;min-width:0;flex:1}
+.phone-account-controls button{min-width:0;max-width:150px;overflow:hidden;text-overflow:ellipsis;display:block;font-size:11px}
+.phone-session .tool-button{height:36px;min-height:36px;padding:0 8px;font-size:11px}
+.phone-session #phoneProjectsBtn{margin-left:auto}
+.phone-actions{display:grid;grid-template-columns:1fr 1fr 1.3fr .8fr}
+.phone-actions .tool-button,.phone-actions summary{width:100%;padding:0 6px}
+@media(max-width:1100px){.appbar-ready .appbar-view{margin-left:0}.workspace-account{max-width:250px}.workspace-account #cloudAccountBtn{max-width:150px}}
+@media(max-width:740px){
+ .appbar-ready.workspace-ready .workspace-appbar{gap:7px;padding:7px 9px;grid-template-columns:minmax(0,1fr) auto}
+ .appbar-ready.workspace-ready .brand{grid-column:1}.appbar-ready.workspace-ready .project-name{display:none}
+ .workspace-account{grid-column:2;max-width:230px}.workspace-account #cloudAccountBtn{max-width:125px}
+ .appbar-ready .appbar-group{padding-right:8px;gap:4px}.appbar-ready .appbar-group+.appbar-group{padding-left:8px}
+ .appbar-ready .appbar-view{order:-1;width:100%;border-left:0!important;padding-left:0!important}
+ .appbar-ready.workspace-ready .tools .tool-button{height:36px;min-width:36px;padding:0 7px;font-size:11px}
+}
+@media(any-pointer:coarse){.workspace-ready .workspace-account .tool-button,.phone-session .tool-button,.presence-heading button,.appbar-ready.workspace-ready .tools .tool-button{height:44px;min-height:44px}.phone-account-controls button{max-width:140px}}
+@media(max-width:350px){.phone-account-controls button{max-width:95px}.phone-session .tool-button{padding:0 5px}.phone-document{padding-right:90px}.workspace-account #cloudAccountBtn{max-width:95px}}

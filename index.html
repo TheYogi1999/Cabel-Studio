@@ -10,11 +10,12 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.48.1">
-  <link rel="stylesheet" href="styles/electrical.css?v=1.48.1">
-  <link rel="stylesheet" href="styles/schematic-search.css?v=1.48.1">
-  <link rel="stylesheet" href="styles/settings.css?v=1.48.1">
-  <script src="scripts/settings.js?v=1.48.1"></script>
+  <link rel="stylesheet" href="styles/workspace.css?v=1.49.0">
+  <link rel="stylesheet" href="styles/electrical.css?v=1.49.0">
+  <link rel="stylesheet" href="styles/schematic-search.css?v=1.49.0">
+  <link rel="stylesheet" href="styles/appbar.css?v=1.49.0">
+  <link rel="stylesheet" href="styles/settings.css?v=1.49.0">
+  <script src="scripts/settings.js?v=1.49.0"></script>
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -63,36 +64,38 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="scripts/shortcuts-data.js?v=1.48.1"></script>
-<script src="libraries/catalog.js?v=1.48.1"></script>
-<script src="scripts/symbol-format.js?v=1.48.1"></script>
-<script src="scripts/sheet-numbers.js?v=1.48.1"></script>
-<script src="scripts/red-pen.js?v=1.48.1"></script>
-<script src="scripts/linked-images.js?v=1.48.1"></script>
-<script src="scripts/connection-graph.js?v=1.48.1"></script>
-<script src="scripts/multi-connect.js?v=1.48.1"></script>
-<script src="scripts/wire-batch.js?v=1.48.1"></script>
-<script src="scripts/schematic-search.js?v=1.48.1"></script>
-<script src="scripts/phone-viewer.js?v=1.48.1"></script>
-<script src="scripts/clipboard.js?v=1.48.1"></script>
-<script src="scripts/cables.js?v=1.48.1"></script>
-<script src="scripts/table-layout.js?v=1.48.1"></script>
-<script src="scripts/spacemouse.js?v=1.48.1"></script>
-<script src="scripts/workspace-ui.js?v=1.48.1"></script>
-<script src="firebase-config.js?v=1.48.1"></script>
-<script src="scripts/electrical-network.js?v=1.48.1"></script>
-<script src="scripts/electrical-core.js?v=1.48.1"></script>
-<script src="scripts/electrical-demand.js?v=1.48.1"></script>
-<script src="scripts/electrical-checks.js?v=1.48.1"></script>
-<script src="scripts/electrical-supply-form.js?v=1.48.1"></script>
-<script src="scripts/electrical-ui.js?v=1.48.1"></script>
-<script src="scripts/component-tabs.js?v=1.48.1"></script>
-<script src="scripts/cloud-core.js?v=1.48.1"></script>
-<script src="scripts/cloud-projects.js?v=1.48.1"></script>
+<script src="scripts/shortcuts-data.js?v=1.49.0"></script>
+<script src="libraries/catalog.js?v=1.49.0"></script>
+<script src="scripts/symbol-format.js?v=1.49.0"></script>
+<script src="scripts/sheet-numbers.js?v=1.49.0"></script>
+<script src="scripts/red-pen.js?v=1.49.0"></script>
+<script src="scripts/linked-images.js?v=1.49.0"></script>
+<script src="scripts/connection-graph.js?v=1.49.0"></script>
+<script src="scripts/multi-connect.js?v=1.49.0"></script>
+<script src="scripts/wire-batch.js?v=1.49.0"></script>
+<script src="scripts/schematic-search.js?v=1.49.0"></script>
+<script src="scripts/phone-viewer.js?v=1.49.0"></script>
+<script src="scripts/project-presence.js?v=1.49.0"></script>
+<script src="scripts/appbar.js?v=1.49.0"></script>
+<script src="scripts/clipboard.js?v=1.49.0"></script>
+<script src="scripts/cables.js?v=1.49.0"></script>
+<script src="scripts/table-layout.js?v=1.49.0"></script>
+<script src="scripts/spacemouse.js?v=1.49.0"></script>
+<script src="scripts/workspace-ui.js?v=1.49.0"></script>
+<script src="firebase-config.js?v=1.49.0"></script>
+<script src="scripts/electrical-network.js?v=1.49.0"></script>
+<script src="scripts/electrical-core.js?v=1.49.0"></script>
+<script src="scripts/electrical-demand.js?v=1.49.0"></script>
+<script src="scripts/electrical-checks.js?v=1.49.0"></script>
+<script src="scripts/electrical-supply-form.js?v=1.49.0"></script>
+<script src="scripts/electrical-ui.js?v=1.49.0"></script>
+<script src="scripts/component-tabs.js?v=1.49.0"></script>
+<script src="scripts/cloud-core.js?v=1.49.0"></script>
+<script src="scripts/cloud-projects.js?v=1.49.0"></script>
 <script>
 (() => {
   const BASIC_TYPES=CabelElectricalNetwork.basicTypes;
-  const APP_VERSION='1.48.1', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.49.0', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -2041,13 +2044,14 @@ if(p.type==='terminal-strip'||p.type==='connector'){const manage=document.create
     toast
   });
   phoneViewer=CabelPhoneViewer.init({
-    svg,version:APP_VERSION,view:()=>({zoom,pan:{...pan}}),svgPoint,setView:value=>{if(![value.zoom,value.pan.x,value.pan.y].every(Number.isFinite))return;zoom=Math.max(.5,Math.min(phoneViewer?.active()?8:4,value.zoom));pan={...value.pan};applyView();},
+    svg,version:APP_VERSION,accountControls:cloudProjects.phoneControls,view:()=>({zoom,pan:{...pan}}),svgPoint,setView:value=>{if(![value.zoom,value.pan.x,value.pan.y].every(Number.isFinite))return;zoom=Math.max(.5,Math.min(phoneViewer?.active()?8:4,value.zoom));pan={...value.pan};applyView();},
     info:()=>({title:model.title,number:sheetLabel(pages[activeSheet]),sheetTitle:pages[activeSheet].title,projectId:cloudProjects?.state().projectId}),
     cancel:()=>{document.querySelector('#selectTool').click();multiConnect.reset();redPen.setTool(null);clearAreaSelection();selected=null;drag=null;segmentDrag=null;wireLabelDrag=null;wireStart=null;wirePoints=[];preview.style.display='none';render();},
     cancelInput:()=>workspaceUI.cancelInput(),refresh:()=>{workspaceUI.refresh();phoneViewer?.refresh();},showSheets:()=>document.querySelector('[data-overview="sheets"]').click(),
     followPart:target=>{const id=target.closest('#parts > g[data-id]')?.dataset.id,p=model.parts.find(p=>p.id===id);if(p?.targetSheetId&&['reference','destination'].includes(p.type)){if(zoom<2){zoom=2;applyView();}followPageReference(p);}}
   });
   CabelSettings.init({blocked:()=>pdfExporting});
+  CabelAppbar.init();
   phoneViewer.refresh();
 })();
 </script>

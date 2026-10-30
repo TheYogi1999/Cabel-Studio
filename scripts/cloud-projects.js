@@ -5,6 +5,7 @@ globalThis.CabelCloudProjects={
     const Core=CabelCloudCore,$=s=>document.querySelector(s),sessionId=crypto.randomUUID();
     let F,auth,db,user=null,connected=false,project=null,sync=null,readOnly=false,revisionView=null,head=null,seenSequence=0,status='local',backupFailed=false,initializing=null;
     let indexOff=null,projectOff=[],projectRows=new Map(),projectQuery='',backupLast='',backupPromise=Promise.resolve(),cloudGeneration=0,overviewMode='projects',lastPresence=0,lastError='',lastBackupAt=0;
+    let presenceData=null,presenceAllowed=false,serverOffset=0,lastPresenceSheet='';
     const memberUpdates=new Map(),rowLoads=new Map();
     const button=document.createElement('button');button.id='cloudProjectsBtn';button.className='tool-button';button.textContent='Projects';button.title='Cloud projects, sharing and revision history';$('#saveBtn').before(button);
     const badge=document.createElement('button');badge.id='cloudStatus';badge.className='cloud-status';badge.title='Open cloud projects';$('footer .right').replaceChildren(badge);
@@ -13,10 +14,19 @@ globalThis.CabelCloudProjects={
     const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const date=v=>typeof v==='number'?new Date(v).toLocaleString():'—';
     const icon=name=>'<svg class="cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+({sheet:'M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h5',arrow:'M5 12h14M13 6l6 6-6 6',share:'M9 7V3h12v12h-4M14 10l7-7M3 9h10v12H3z',search:'M16 16l5 5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',plus:'M12 5v14M5 12h14',folder:'M3 7V4h6l3 3h9v13H3z',devices:'M3 4h12v12H3zM6 20h6M9 16v4M18 8h4v13h-4z'}[name]||'')+'"/></svg>';
+    const accountUI=CabelProjectPresence.init({account:()=>action(()=>sync?.conflict?conflictView():overview())});$('.tools').append(accountUI.desktop);
+    function renderHeader(){
+      const now=Date.now()+serverOffset;accountUI.update({user:user?{uid:user.uid,email:user.email,name:user.displayName}:null,project:presenceAllowed?project:null,connected,sessions:presenceData,now});
+      const list=$('#cloudPresence');if(!list||overviewMode!=='details')return;list.replaceChildren();
+      if(!connected){list.textContent='Offline · Live presence is unavailable.';return;}
+      if(presenceData===null){list.textContent='Connecting to live presence…';return;}
+      for(const person of CabelProjectPresence.users(presenceData,project?.members,now))for(const session of person.sessions){const row=document.createElement('p');row.textContent=person.name+(person.uid===user?.uid?' (you)':'')+' · '+session.sheet;list.append(row);}
+      if(!list.children.length)list.textContent='No recent sessions';
+    }
     const allowed=()=>project&&project.role!=='viewer'&&!revisionView;
     const root=path=>F.ref(db,path),path=child=>'projects/'+project.id+'/'+child;
     const labels={local:'Local project',saved:'Cloud · Saved',pending:'Cloud · Changes pending',syncing:'Cloud · Syncing…',offline:'Cloud · Offline', 'offline-pending':'Cloud · Offline · Changes on this device',conflict:'Cloud · Review conflict',error:'Cloud · Sync error',readonly:'Cloud · Read only',revision:'Released / saved revision · Read only'};
-    function state(value){status=value;badge.textContent=labels[value]||value;badge.dataset.state=value;badge.title=(project?project.title+' · '+(revisionView?'Revision '+revisionView.name:project.role)+' · ':'')+badge.textContent;if(backupFailed)badge.textContent+=' · Recovery storage unavailable';}
+    function state(value){status=value;badge.textContent=labels[value]||value;badge.dataset.state=value;badge.title=(project?project.title+' · '+(revisionView?'Revision '+revisionView.name:project.role)+' · ':'')+badge.textContent;if(backupFailed)badge.textContent+=' · Recovery storage unavailable';renderHeader();}
     function message(value,error=false){$('#cloudMessage').textContent=value;$('#cloudMessage').classList.toggle('error',error);if(!error)delete $('#cloudMessage').dataset.errorCode;}
     function fail(error){const value=({'auth/invalid-credential':'The email or password is incorrect. Please try again.','auth/invalid-login-credentials':'The email or password is incorrect. Please try again.','auth/wrong-password':'The email or password is incorrect. Please try again.','auth/user-not-found':'The email or password is incorrect. Please try again.','auth/email-already-in-use':'An account with this email already exists. Sign in or reset your password.','auth/weak-password':'Choose a stronger password with at least 8 characters.','auth/invalid-email':'Enter a valid email address.','auth/too-many-requests':'Too many attempts. Please wait a moment and try again.','auth/network-request-failed':'Could not connect. Check your internet connection and try again.','auth/operation-not-allowed':'Email/password sign-in is unavailable. Please contact the app owner.'}[error?.code])||String(error?.message||error);state('error');if(value!==lastError){lastError=value;api.toast('Cloud: '+value);}if(dialog.open){message(value,true);$('#cloudMessage').dataset.errorCode=error?.code||'';}}
     async function action(fn){try{message('');await fn();}catch(e){fail(e);}}
@@ -53,8 +63,9 @@ globalThis.CabelCloudProjects={
         F=CabelFirebase;const app=F.initializeApp(config);auth=F.getAuth(app);db=F.getDatabase(app);
         const emulators=globalThis.LEITWERK_FIREBASE_EMULATORS;
         if(emulators&&['localhost','127.0.0.1'].includes(location.hostname)){F.connectAuthEmulator(auth,'http://127.0.0.1:'+emulators.auth,{disableWarnings:true});F.connectDatabaseEmulator(db,'127.0.0.1',emulators.database);}
-        F.onValue(root('.info/connected'),snapshot=>{connected=snapshot.val()===true;const indicator=dialog.querySelector('.cloud-connection');if(indicator){indicator.classList.toggle('is-connected',connected);indicator.innerHTML='<i aria-hidden="true"></i>'+(connected?'Connected':'Offline');}if(project&&!revisionView){state(!connected?(sync?.dirty()?'offline-pending':'offline'):readOnly?'readonly':'pending');if(connected)presence();}},fail);
-        F.onAuthStateChanged(auth,async value=>{if(value?.uid!==user?.uid)projectQuery='';if(user&&value?.uid!==user.uid)await detach();user=value;projectRows.clear();indexOff?.();indexOff=null;if(user){indexOff=F.onValue(root('userProjects/'+user.uid),snapshot=>{const previous=projectRows;projectRows=new Map(Object.keys(snapshot.val()||{}).map(id=>[id,previous.get(id)||null]));if(dialog.open&&overviewMode==='projects')renderProjects();loadProjectRows();},fail);}if(dialog.open&&overviewMode!=='setup'&&!(overviewMode==='login'&&!value))overview();});
+        F.onValue(root('.info/connected'),snapshot=>{connected=snapshot.val()===true;const indicator=dialog.querySelector('.cloud-connection');if(indicator){indicator.classList.toggle('is-connected',connected);indicator.innerHTML='<i aria-hidden="true"></i>'+(connected?'Connected':'Offline');}if(project&&!revisionView){state(!connected?(sync?.dirty()?'offline-pending':'offline'):readOnly?'readonly':'pending');if(connected)presence().catch(fail);}renderHeader();},fail);
+        F.onValue(root('.info/serverTimeOffset'),snapshot=>{const n=snapshot.val();serverOffset=Number.isFinite(n)?n:0;renderHeader();},()=>{});
+        F.onAuthStateChanged(auth,async value=>{if(value?.uid!==user?.uid)projectQuery='';if(user&&value?.uid!==user.uid)await detach();user=value;renderHeader();projectRows.clear();indexOff?.();indexOff=null;if(user){indexOff=F.onValue(root('userProjects/'+user.uid),snapshot=>{const previous=projectRows;projectRows=new Map(Object.keys(snapshot.val()||{}).map(id=>[id,previous.get(id)||null]));if(dialog.open&&overviewMode==='projects')renderProjects();loadProjectRows();},fail);}if(dialog.open&&overviewMode!=='setup'&&!(overviewMode==='login'&&!value))overview();});
       })();
       try{await initializing;}finally{initializing=null;}
     }
@@ -147,7 +158,7 @@ globalThis.CabelCloudProjects={
     async function ensureCanSwitch(){if(sync&&(sync.dirty()||sync.sending||sync.pending||sync.conflict)){await backup(true);throw Error('This project has unsynchronized changes. Wait for Saved, resolve its conflict, or download a backup and use Device recovery before switching.');}}
     async function safeDetach(){await ensureCanSwitch();await detach();}
     async function detach(){
-      cloudGeneration++;if(project){await backup(true);if(connected&&user)F.set(root(path('presence/'+user.uid+'/'+sessionId)),null).catch(()=>{});}
+      cloudGeneration++;presenceAllowed=false;presenceData=null;accountUI.close();if(project){await backup(true);if(connected&&user)F.set(root(path('presence/'+user.uid+'/'+sessionId)),null).catch(()=>{});}
       sync?.stop();sync=null;projectOff.forEach(off=>off());projectOff=[];project=null;head=null;revisionView=null;seenSequence=0;backupLast='';api.useCloudIds(false);setReadOnly(false);state('local');
     }
     async function openProject(id){
@@ -155,14 +166,15 @@ globalThis.CabelCloudProjects={
       if(project?.id===id&&!revisionView){details();return;}await safeDetach();
       const generation=cloudGeneration,snap=await F.get(root('projects/'+id)),value=snap.val();if(generation!==cloudGeneration)return;if(!value||!value.members?.[user.uid])throw Error('No access to this project');
       const previous=Core.documentOf(api.capture());if(previous.projectInfo?.coverImages?.length||previous.sheets.some(s=>s.parts.length||s.wires.length||s.redlines?.length))await recovery('readwrite',store=>store.put({key:user.uid+'/local/'+sessionId,uid:user.uid,projectId:'local',sessionId,title:previous.title,document:previous,base:previous,savedAt:Date.now(),synced:false}));
-      const doc=Core.documentOf(JSON.parse(value.head.document));project={id,owner:value.owner,role:value.members[user.uid],title:doc.title,members:value.members};head=value.head;seenSequence=head.sequence;backupLast='';revisionView=null;api.useCloudIds(true);api.apply(doc);setReadOnly(project.role==='viewer');
+      const doc=Core.documentOf(JSON.parse(value.head.document));project={id,owner:value.owner,role:value.members[user.uid],title:doc.title,members:value.members};head=value.head;seenSequence=head.sequence;backupLast='';revisionView=null;presenceData=null;presenceAllowed=true;api.useCloudIds(true);api.apply(doc);setReadOnly(project.role==='viewer');
       startSession(doc);await F.set(root('userProjects/'+user.uid+'/'+id),true);
       projectOff.push(F.onValue(root(path('head')),snapshot=>{if(project?.id!==id)return;const value=snapshot.val();if(value){head=value;if(!revisionView&&!readOnly&&head.sequence!==seenSequence)state('pending');}},accessLost));
-      projectOff.push(F.onValue(root(path('members')),snapshot=>{if(project?.id!==id)return;const previousRole=project.role;project.members=snapshot.val()||{};project.role=project.members[user.uid];if(!project.role){accessLost(Error('Project access removed'));return;}setReadOnly(project.role==='viewer'||Boolean(revisionView));if(readOnly&&!revisionView)state('readonly');else if(previousRole!==project.role&&!revisionView)state(connected?'pending':'offline');if(dialog.open&&overviewMode==='details'){if(previousRole!==project.role)details().catch(fail);else renderProjectMembers();}},accessLost));
+      projectOff.push(F.onValue(root(path('members')),snapshot=>{if(project?.id!==id)return;const previousRole=project.role;project.members=snapshot.val()||{};project.role=project.members[user.uid];if(!project.role){accessLost(Error('Project access removed'));return;}setReadOnly(project.role==='viewer'||Boolean(revisionView));if(readOnly&&!revisionView)state('readonly');else if(previousRole!==project.role&&!revisionView)state(connected?'pending':'offline');renderHeader();if(dialog.open&&overviewMode==='details'){if(previousRole!==project.role)details().catch(fail);else renderProjectMembers();}},accessLost));
+      projectOff.push(F.onValue(root(path('presence')),snapshot=>{if(project?.id!==id||!presenceAllowed)return;presenceData=snapshot.val()||{};renderHeader();},()=>{if(project?.id===id){presenceData=null;renderHeader();}}));
       await presence();details();
       const recoveries=(await recoveryList()).filter(r=>r.projectId===id&&r.sessionId!==sessionId&&!r.synced&&!Core.equal(r.document,doc));if(recoveries.length)message('This device has an unsynchronized recovery copy. Open Device recovery before discarding it.');
     }
-    function accessLost(error){sync?.stop();setReadOnly(true);state('error');backup(true).catch(()=>{});api.toast('Cloud access lost. The document stays on this device; download a JSON backup.');if(dialog.open)message('Project access lost: '+error.message,true);}
+    function accessLost(error){presenceAllowed=false;presenceData=null;accountUI.close();sync?.stop();setReadOnly(true);state('error');backup(true).catch(()=>{});api.toast('Cloud access lost. The document stays on this device; download a JSON backup.');if(dialog.open)message('Project access lost: '+error.message,true);}
     function startSession(initial){
       sync?.stop();seenSequence=head.sequence;
       sync=new Core.Session({initial,capture:api.capture,apply:doc=>{api.apply(doc);project.title=doc.title;},busy:()=>api.busy(),connected:()=>connected,changed:()=>head.sequence!==seenSequence,status:value=>state(readOnly?'readonly':value),error:fail,conflict:()=>{backup(true).catch(fail);api.toast('Cloud edits overlap. Open Projects to review both versions.');if(dialog.open)conflictView();},
@@ -186,8 +198,9 @@ globalThis.CabelCloudProjects={
       for(let i=0;i<3;i++){await sync.tick();if(sync.conflict)throw Error('Resolve the synchronization conflict first');}
       if(sync.dirty()||sync.pending||sync.sending)throw Error('Wait until all changes are saved');await backup(true);
     }
+    const presenceSheet=()=>((revisionView?'Revision '+revisionView.name+' · ':'')+api.sheet()).slice(0,120);
     async function presence(){
-      if(!project||!connected||!user)return;lastPresence=Date.now();const r=root(path('presence/'+user.uid+'/'+sessionId));await F.onDisconnect(r).remove();await F.set(r,{name:(user.email||user.uid).slice(0,120),sheet:api.sheet().slice(0,120),seenAt:F.serverTimestamp()});
+      if(!presenceAllowed||!project||!connected||!user)return;lastPresence=Date.now();const generation=cloudGeneration,r=root(path('presence/'+user.uid+'/'+sessionId));await F.onDisconnect(r).remove();if(generation!==cloudGeneration||!presenceAllowed)return;lastPresenceSheet=presenceSheet();await F.set(r,{name:(user.displayName||user.email||user.uid).slice(0,120),sheet:lastPresenceSheet,seenAt:F.serverTimestamp()});
     }
     function renderProjectMembers(){
       const container=dialog.querySelector('.cloud-members');if(!container||!project||overviewMode!=='details')return;
@@ -227,7 +240,7 @@ globalThis.CabelCloudProjects={
         form.setAttribute('aria-busy','true');submit.disabled=true;
         action(async()=>{try{if(uid===owner)throw Error('The project owner cannot be changed here');await F.set(root('projects/'+projectId+'/members/'+uid),role);await F.set(root('userProjects/'+uid+'/'+projectId),true);if(project?.id===projectId&&dialog.open&&overviewMode==='details'){renderProjectMembers();form.reset();message('Member access saved.');}}finally{form.removeAttribute('aria-busy');submit.disabled=false;}});
       };
-      const snap=await F.get(root(path('presence')));if(overviewMode==='details'&&$('#cloudPresence'))$('#cloudPresence').innerHTML=Object.values(snap.val()||{}).flatMap(sessions=>Object.values(sessions)).filter(s=>Date.now()-s.seenAt<90000).map(s=>'<p>'+esc(s.name)+' · '+esc(s.sheet)+'</p>').join('')||'No other active sessions';
+      renderHeader();
     }
     async function history(){
       overviewMode='history';body('<p>Loading revision history…</p>');const id=project.id,snapshot=await F.get(root(path('revisions')));if(project?.id!==id||overviewMode!=='history')return;
@@ -266,7 +279,7 @@ globalThis.CabelCloudProjects={
         if(event.target.closest?.('input,textarea,select,[contenteditable="true"]')||['Shift','Control','Meta','Alt','Tab','Enter',' ','Escape','PageUp','PageDown','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-'].includes(event.key))return;
         event.preventDefault();event.stopImmediatePropagation();api.toast('Read-only view. Open the working copy with editor access to make changes.');return;
       }
-      if(dialog.contains(event.target)||event.target.closest?.('#schematicSearch,#schematicSearchBtn,#settingsDialog,#settingsBtn,.phone-view-controls,#phoneViewerToggle,.zoom-controls,.newnav,#spaceMouseSettings,#calculationsBtn,#electricalCalculations,#cloudProjectsBtn,#cloudStatus,#openBtn,#saveBtn,#exportBtn,#fullscreenBtn,#exitFullscreenBtn,#panTool,[data-overview="sheets"],.sheetItem,#simpleClose'))return;
+      if(dialog.contains(event.target)||event.target.closest?.('#workspaceAccount,#cloudPresencePanel,#schematicSearch,#schematicSearchBtn,#settingsDialog,#settingsBtn,.phone-view-controls,#phoneViewerToggle,.zoom-controls,.newnav,#spaceMouseSettings,#calculationsBtn,#electricalCalculations,#cloudProjectsBtn,#cloudStatus,#openBtn,#saveBtn,#exportBtn,#fullscreenBtn,#exitFullscreenBtn,#panTool,[data-overview="sheets"],.sheetItem,#simpleClose'))return;
       if(event.target.closest?.('#sheet')){if(api.viewing?.()&&['pointerdown','touchstart','click'].includes(event.type))return;if(event.type==='wheel'||event.button===1||$('#panTool')?.getAttribute('aria-pressed')==='true'||event.touches?.length>1)return;}
       else if(!event.target.closest?.('button,form,input,select,textarea,[draggable],#library,#sheetPanel'))return;
       event.preventDefault();event.stopImmediatePropagation();if(event.type==='click'||event.type==='keydown')api.toast('Read-only view. Open the working copy with editor access to make changes.');
@@ -278,12 +291,12 @@ globalThis.CabelCloudProjects={
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')backup(true).catch(fail);else if(project)presence().catch(fail);});
     // This timer also persists in-flight changes before any network write. Never
     // snapshot partial drags; final pointerup/history commit completes them first.
-    setInterval(()=>{if(!project||api.busy()||revisionView)return;backup().then(()=>sync?.tick()).catch(fail);if(connected&&Date.now()-lastPresence>30000)presence().catch(fail);},1000);
+    setInterval(()=>{if(!project)return;if(connected&&(Date.now()-lastPresence>30000||presenceSheet()!==lastPresenceSheet))presence().catch(fail);renderHeader();if(api.busy()||revisionView)return;backup().then(()=>sync?.tick()).catch(fail);},1000);
     state('local');
     let config=globalThis.LEITWERK_FIREBASE_CONFIG;try{config=JSON.parse(localStorage.getItem('leitwerk.firebase.config')||'null')||config;}catch{/* Setup remains available when browser storage is blocked. */}
     if(config)initialize(config).catch(fail);
     // Expose state, not credentials or a testing backdoor. Useful when reporting
     // a connection problem from an iPad without developer tools.
-    return{changed:()=>{if(sync&&!revisionView&&sync.dirty()){state(connected?'pending':'offline-pending');backup().catch(fail);}},state:()=>({status,projectId:project?.id,role:project?.role,readOnly,connected,lastBackupAt})};
+    return{phoneControls:accountUI.phone,changed:()=>{if(sync&&!revisionView&&sync.dirty()){state(connected?'pending':'offline-pending');backup().catch(fail);}},state:()=>({status,projectId:project?.id,role:project?.role,readOnly,connected,lastBackupAt})};
   }
 };

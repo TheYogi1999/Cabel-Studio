@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101923">
-<title>Leitwerk · Symbol editor · v1.48.1</title>
-<link rel="stylesheet" href="styles/settings.css?v=1.48.1"><link rel="stylesheet" href="styles/symbol-editor.css?v=1.48.1">
-<script src="scripts/settings.js?v=1.48.1"></script>
+<title>Leitwerk · Symbol editor · v1.49.0</title>
+<link rel="stylesheet" href="styles/settings.css?v=1.49.0"><link rel="stylesheet" href="styles/symbol-editor.css?v=1.49.0">
+<script src="scripts/settings.js?v=1.49.0"></script>
 </head>
 <body class="symbol-editor">
-<header class="editor-header"><div class="editor-brand"><span class="editor-brand-mark" aria-hidden="true">L</span><div><h1>Symbol editor <small id="editorVersion">v1.48.1</small></h1><span>Leitwerk · symbol proposals</span></div></div><div class="tools editor-actions"><a class="editor-back" href="index.html">Schematic editor</a><button type="button" id="openProposal">Open JSON</button><button type="button" id="saveProposal">Download JSON</button><button type="button" id="savePreview">Download SVG</button><input id="proposalFile" class="hidden" type="file" accept=".json,application/json"></div></header>
+<header class="editor-header"><div class="editor-brand"><span class="editor-brand-mark" aria-hidden="true">L</span><div><h1>Symbol editor <small id="editorVersion">v1.49.0</small></h1><span>Leitwerk · symbol proposals</span></div></div><div class="tools editor-actions"><a class="editor-back" href="index.html">Schematic editor</a><button type="button" id="openProposal">Open JSON</button><button type="button" id="saveProposal">Download JSON</button><button type="button" id="savePreview">Download SVG</button><input id="proposalFile" class="hidden" type="file" accept=".json,application/json"></div></header>
 <main class="editor-shell">
 <aside class="symbol-info"><details class="editor-panel" id="symbolInfoPanel" open><summary>Symbol properties</summary><div class="editor-panel-body">
 <label>Name<input id="symbolName" value="New symbol" maxlength="120"></label><label>ID<input id="symbolId" value="user-symbol" maxlength="80"></label><label>Group<select id="symbolGroup"></select></label><label>Device prefix<input id="tagPrefix" value="U" maxlength="16"></label><label>Default value<input id="defaultValue" maxlength="200"></label>
@@ -23,5 +23,5 @@
 </section>
 <aside class="symbol-inspector"><details class="editor-panel" id="symbolObjectsPanel" open><summary>Objects <span id="objectCount">0</span></summary><div class="editor-panel-body"><div id="objectList"></div><h2>Selected object</h2><p id="inspectorEmpty">Select a shape or terminal to edit its properties.</p><form id="inspector"></form></div></details></aside>
 </main><footer class="symbol-footer"><span id="symbolDraftStatus">Local browser draft</span><span>Coordinates in mm · terminals on 4 mm grid</span></footer>
-<script src="scripts/shortcuts-data.js?v=1.48.1"></script><script src="scripts/symbol-format.js?v=1.48.1"></script><script src="scripts/symbol-editor.js?v=1.48.1"></script>
+<script src="scripts/shortcuts-data.js?v=1.49.0"></script><script src="scripts/symbol-format.js?v=1.49.0"></script><script src="scripts/symbol-editor.js?v=1.49.0"></script>
 </body></html>

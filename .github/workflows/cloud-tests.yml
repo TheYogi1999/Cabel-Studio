@@ -24,6 +24,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: test -x "$CHROMIUM_PATH"
       - run: node tests/linked-images-smoke.cjs
+      - run: node tests/project-presence.cjs
       - run: npm run test:firebase
       - run: npm run test:cloud
       - run: node tests/clipboard.cjs

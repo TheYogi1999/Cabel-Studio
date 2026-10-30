@@ -7,17 +7,18 @@ globalThis.CabelPhoneViewer={init(api){
   // Keep the initial device size: an on-screen keyboard must not turn a
   // tablet into a phone viewer while the user is editing a form.
   const deviceShortSide=Math.min(screen.width||innerWidth,screen.height||innerHeight),phoneScreen=()=>deviceShortSide<=600;
-  const bar=document.createElement('div');bar.id='phoneViewerBar';bar.className='phone-view-controls';bar.innerHTML='<div class="phone-document"><strong id="phoneDocumentTitle"></strong><small id="phoneSheetTitle"></small><span>Leitwerk v'+api.version+'</span></div><div class="phone-actions"></div>';$('header').append(bar);
-  const actions=bar.querySelector('.phone-actions');
+  const bar=document.createElement('div');bar.id='phoneViewerBar';bar.className='phone-view-controls';bar.innerHTML='<div class="phone-document"><strong id="phoneDocumentTitle"></strong><small id="phoneSheetTitle"></small><span>Leitwerk v'+api.version+'</span></div><div class="phone-session"></div><div class="phone-actions"></div>';$('header').append(bar);
+  const actions=bar.querySelector('.phone-actions'),session=bar.querySelector('.phone-session');if(api.accountControls)session.append(api.accountControls);
   function button(id,label,parent,action){const b=document.createElement('button');b.type='button';b.id=id;b.className='tool-button';b.textContent=label;b.onclick=action;parent.append(b);return b;}
   function proxy(selector){menu.open=false;$(selector)?.click();}
-  const projects=button('phoneProjectsBtn','Projects',actions,()=>proxy('#cloudProjectsBtn'));
-  button('phoneOpenBtn','Open',actions,()=>proxy('#openBtn'));
+  const projects=button('phoneProjectsBtn','Projects',session,()=>proxy('#cloudProjectsBtn'));
+  button('phoneOpenBtn','Open',session,()=>proxy('#openBtn'));
   const sheets=button('phoneSheetsBtn','Sheets',actions,()=>showDrawer(!drawer));sheets.setAttribute('aria-expanded','false');sheets.setAttribute('aria-controls','sheetPanel');
-  button('phoneEditorBtn','Editor',actions,()=>choose('editor'));
+  button('phoneSearchBtn','Search',actions,()=>proxy('#schematicSearchBtn'));
+  button('phoneEditorBtn','Desktop mode',actions,()=>choose('editor'));
   const menu=document.createElement('details');menu.id='phoneViewerMenu';const menuTitle=document.createElement('summary');menuTitle.textContent='More';menuTitle.setAttribute('aria-label','More viewing actions');menu.append(menuTitle);actions.append(menu);const menuItems=document.createElement('div');menu.append(menuItems);
-  button('phoneSearchBtn','Search',menuItems,()=>proxy('#schematicSearchBtn'));button('phoneSaveBtn','Save JSON',menuItems,()=>proxy('#saveBtn'));button('phoneExportBtn','Export PDF',menuItems,()=>proxy('#exportBtn'));button('phoneFullscreenBtn','Full screen',menuItems,()=>proxy('#fullscreenBtn'));button('phoneSettingsBtn','Settings',menuItems,()=>proxy('#settingsBtn'));
-  const toggle=button('phoneViewerToggle','Viewer',$('.tools'),()=>choose('viewer'));toggle.classList.add('phone-view-toggle');toggle.setAttribute('aria-pressed','false');toggle.title='Open the phone viewer; return with Editor';
+  button('phoneSaveBtn','Save JSON',menuItems,()=>proxy('#saveBtn'));button('phoneExportBtn','Export PDF',menuItems,()=>proxy('#exportBtn'));button('phoneFullscreenBtn','Full screen',menuItems,()=>proxy('#fullscreenBtn'));button('phoneSettingsBtn','Settings',menuItems,()=>proxy('#settingsBtn'));
+  const toggle=button('phoneViewerToggle','Smartphone mode',$('.tools'),()=>choose('viewer'));toggle.classList.add('phone-view-toggle');toggle.setAttribute('aria-pressed','false');toggle.title='Switch to smartphone viewing mode; return with Desktop mode';toggle.setAttribute('aria-label','Switch to smartphone mode');$('#phoneEditorBtn').setAttribute('aria-label','Switch to desktop mode');
   const read=button('phoneReadBtn','Read',$('.zoom-controls'),()=>fit(2));read.title='Enlarge the page for reading; drag to pan';
   const backdrop=document.createElement('button');backdrop.id='phoneSheetBackdrop';backdrop.className='phone-view-controls';backdrop.setAttribute('aria-label','Close sheet list');backdrop.onclick=()=>showDrawer(false);body.append(backdrop);
   const close=button('phoneCloseSheets','Close sheets',body,()=>showDrawer(false));close.classList.add('phone-view-controls');

@@ -10,10 +10,10 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <title>Leitwerk — Schematic editor</title>
-  <link rel="stylesheet" href="styles/workspace.css?v=1.46.0">
-  <link rel="stylesheet" href="styles/electrical.css?v=1.46.0">
-  <link rel="stylesheet" href="styles/settings.css?v=1.46.0">
-  <script src="scripts/settings.js?v=1.46.0"></script>
+  <link rel="stylesheet" href="styles/workspace.css?v=1.46.1">
+  <link rel="stylesheet" href="styles/electrical.css?v=1.46.1">
+  <link rel="stylesheet" href="styles/settings.css?v=1.46.1">
+  <script src="scripts/settings.js?v=1.46.1"></script>
   <style>
     :root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2c3c49;--muted:#91a0ac;--text:#e8eef2;--accent:#62d6bd;--selection:#ff78b7;--selection-bg:#392331;--wire:#B62400;--yellow:#f2c66d;--danger:#f08d7f}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;overflow:hidden}
@@ -62,35 +62,35 @@
   <footer><span class="status"><i class="dot"></i><span id="statusText">Ready</span></span><span id="partCount">0 Components</span><span id="wireCount">0 connections</span><span class="right">Local browser app · Your data stays on your device</span></footer>
 </div>
 <div class="toast" id="toast"></div>
-<script src="scripts/shortcuts-data.js?v=1.46.0"></script>
-<script src="libraries/catalog.js?v=1.46.0"></script>
-<script src="scripts/symbol-format.js?v=1.46.0"></script>
-<script src="scripts/sheet-numbers.js?v=1.46.0"></script>
-<script src="scripts/red-pen.js?v=1.46.0"></script>
-<script src="scripts/linked-images.js?v=1.46.0"></script>
-<script src="scripts/connection-graph.js?v=1.46.0"></script>
-<script src="scripts/multi-connect.js?v=1.46.0"></script>
-<script src="scripts/wire-batch.js?v=1.46.0"></script>
-<script src="scripts/phone-viewer.js?v=1.46.0"></script>
-<script src="scripts/clipboard.js?v=1.46.0"></script>
-<script src="scripts/cables.js?v=1.46.0"></script>
-<script src="scripts/table-layout.js?v=1.46.0"></script>
-<script src="scripts/spacemouse.js?v=1.46.0"></script>
-<script src="scripts/workspace-ui.js?v=1.46.0"></script>
-<script src="firebase-config.js?v=1.46.0"></script>
-<script src="scripts/electrical-network.js?v=1.46.0"></script>
-<script src="scripts/electrical-core.js?v=1.46.0"></script>
-<script src="scripts/electrical-demand.js?v=1.46.0"></script>
-<script src="scripts/electrical-checks.js?v=1.46.0"></script>
-<script src="scripts/electrical-supply-form.js?v=1.46.0"></script>
-<script src="scripts/electrical-ui.js?v=1.46.0"></script>
-<script src="scripts/component-tabs.js?v=1.46.0"></script>
-<script src="scripts/cloud-core.js?v=1.46.0"></script>
-<script src="scripts/cloud-projects.js?v=1.46.0"></script>
+<script src="scripts/shortcuts-data.js?v=1.46.1"></script>
+<script src="libraries/catalog.js?v=1.46.1"></script>
+<script src="scripts/symbol-format.js?v=1.46.1"></script>
+<script src="scripts/sheet-numbers.js?v=1.46.1"></script>
+<script src="scripts/red-pen.js?v=1.46.1"></script>
+<script src="scripts/linked-images.js?v=1.46.1"></script>
+<script src="scripts/connection-graph.js?v=1.46.1"></script>
+<script src="scripts/multi-connect.js?v=1.46.1"></script>
+<script src="scripts/wire-batch.js?v=1.46.1"></script>
+<script src="scripts/phone-viewer.js?v=1.46.1"></script>
+<script src="scripts/clipboard.js?v=1.46.1"></script>
+<script src="scripts/cables.js?v=1.46.1"></script>
+<script src="scripts/table-layout.js?v=1.46.1"></script>
+<script src="scripts/spacemouse.js?v=1.46.1"></script>
+<script src="scripts/workspace-ui.js?v=1.46.1"></script>
+<script src="firebase-config.js?v=1.46.1"></script>
+<script src="scripts/electrical-network.js?v=1.46.1"></script>
+<script src="scripts/electrical-core.js?v=1.46.1"></script>
+<script src="scripts/electrical-demand.js?v=1.46.1"></script>
+<script src="scripts/electrical-checks.js?v=1.46.1"></script>
+<script src="scripts/electrical-supply-form.js?v=1.46.1"></script>
+<script src="scripts/electrical-ui.js?v=1.46.1"></script>
+<script src="scripts/component-tabs.js?v=1.46.1"></script>
+<script src="scripts/cloud-core.js?v=1.46.1"></script>
+<script src="scripts/cloud-projects.js?v=1.46.1"></script>
 <script>
 (() => {
   const BASIC_TYPES=CabelElectricalNetwork.basicTypes;
-  const APP_VERSION='1.46.0', SYMBOL_SCALE=(4*1128/297)/48;
+  const APP_VERSION='1.46.1', SYMBOL_SCALE=(4*1128/297)/48;
   document.querySelector('#appVersion').textContent='v'+APP_VERSION;
   document.title+=' · v'+APP_VERSION;
   const NS='http://www.w3.org/2000/svg', GRID=24, TYPES={
@@ -334,7 +334,12 @@
   document.querySelector('#zoomIn').onclick=()=>{zoom=Math.min(4,zoom*1.15);applyView()};document.querySelector('#zoomOut').onclick=()=>{zoom=Math.max(.5,zoom/1.15);applyView()};document.querySelector('#fitBtn').onclick=()=>{zoom=1;pan={x:0,y:0};applyView()};
   document.querySelector('#saveBtn').onclick=()=>{const blob=new Blob([JSON.stringify(model,null,2)],{type:'application/json'});download(blob,(model.title||'schematic').toLowerCase().replace(/[^a-z0-9äöüß-]+/gi,'-')+'.json');toast('Project file saved')};document.querySelector('#openBtn').onclick=()=>document.querySelector('#fileInput').click();
   document.querySelector('#fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.parts)||!Array.isArray(x.wires))throw Error();model={title:x.title||'Opened schematic',parts:x.parts,wires:x.wires};nextId=1+model.parts.length+model.wires.length;selected=null;render();toast('Project loaded')}catch{toast('Could not read the file')}e.target.value=''};
-  function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+  function download(blob,name){
+    const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=name;a.hidden=true;(Array.from(document.querySelectorAll('dialog[open]')).at(-1)||document.body).append(a);
+    // Give the browser time to accept the download before releasing its Blob.
+    // An attached anchor also supports browsers that ignore detached clicks.
+    try{a.click()}finally{setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},60000)}
+  }
   document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select,[contenteditable="true"]')||modal.style.display==='grid'||e.altKey||e.repeat)return;if(e.ctrlKey||e.metaKey){if(['c','x','v'].includes(e.key.toLowerCase())){e.preventDefault();clipboardAction(e.key.toLowerCase())}return};if(e.key==='Escape'){wireStart=null;wirePoints=[];preview.style.display='none';mode='select';render()}if(e.key.toLowerCase()==='v'){mode='select';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(['w','c'].includes(e.key.toLowerCase())){mode='wire';wireStart=null;wirePoints=[];preview.style.display='none';render()}if(e.key.toLowerCase()==='r'){e.preventDefault();transformSelected('rotate')}if(e.key.toLowerCase()==='x'){e.preventDefault();transformSelected('flipX')}if(e.key.toLowerCase()==='y'){e.preventDefault();transformSelected('flipY')}if(e.key.toLowerCase()==='t'){e.preventDefault();insertText()}if(e.key.toLowerCase()==='j'){e.preventDefault();jumpToPage()}if(e.key==='Delete'||e.key==='Backspace'){if(selected?.kind==='part'){const removed=model.parts.find(p=>p.id===selected.id);detachConnections(pages[activeSheet],new Set([selected.id]));if(removed&&!['text','reference','destination','image',...BASIC_TYPES].includes(removed.type))removed.unplaced=true;else model.parts=model.parts.filter(p=>p.id!==selected.id);}else if(selected?.kind==='wire')model.wires=model.wires.filter(w=>w.id!==selected.id);selected=null;render()}});
   let toastTimer;function toast(msg){const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
   render();applyView();

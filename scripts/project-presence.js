@@ -20,7 +20,8 @@
   for(const b of[people,phonePeople]){b.onclick=()=>open(b);b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls',panel.id);b.setAttribute('aria-haspopup','dialog');}
   $('#cloudPresenceClose').onclick=()=>close(true);
   document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&![people,phonePeople].some(b=>b.contains(e.target)))close();},true);
-  window.addEventListener('keydown',e=>{if(!panel.hidden&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close(true);}},true);
+  document.addEventListener('focusin',e=>{if(!panel.hidden&&!panel.contains(e.target)&&![people,phonePeople].some(b=>b.contains(e.target)))close();});
+  window.addEventListener('keydown',e=>{if(panel.hidden)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close(true);}else if(panel.contains(e.target))e.stopImmediatePropagation();},true);
   window.addEventListener('resize',position);
   function update(value){
    const{name,email,uid}=value.user||{},display=name||email||uid||'Sign in',active=value.connected&&value.sessions!==null?users(value.sessions,value.project?.members,value.now):[],ordered=active.sort((a,b)=>(a.uid===uid?-1:b.uid===uid?1:0)||a.name.localeCompare(b.name));

@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.46.1**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.47.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -234,7 +234,9 @@ Page contexts and rectangles retain the optional `aks` and `aksAreas` keys on dr
 
 ## Symbol proposals
 
-Open **Custom symbol proposals → Open symbol editor**, or open [`symbol-editor.html`](symbol-editor.html) directly. This separate local editor supports lines, rectangles, circles, text, named terminals, selection/movement, exact numeric properties, deletion and undo/redo. Geometry uses a selectable 1/2/4 mm drawing grid; terminals always use the 4 mm grid. Canvas dimensions are editable, and a local browser draft is retained.
+Open **Custom symbol proposals → Open symbol editor**, or open [`symbol-editor.html`](symbol-editor.html) directly. This separate local editor supports lines, rectangles, circles, text, named terminals, selection/movement, exact numeric properties, deletion and undo/redo. Geometry uses a selectable 1/2/4 mm drawing grid; terminals always use the 4 mm grid. Canvas dimensions are editable, and a local browser draft is retained. The updated workspace has collapsible property/object panels, touch-sized controls and a canvas-first layout on phones. **Settings** shares Light/Dark with the schematic editor, keeps the drawing canvas white and shows only the symbol editor's shortcut reference.
+
+**Pan (H)** moves the view with a mouse, finger or Pencil; middle-button drag works in every tool. Scroll/trackpad movement pans, **Ctrl/⌘+scroll** zooms around the cursor, and two fingers pan/pinch in every tool. A second finger cancels an unfinished drawing before navigation; finger contacts are ignored while a Pencil stroke is active. **− / + / Fit (F)** control the view, with 25–800% zoom. **Grid (G)** hides/shows the working grid; shape spacing follows the 1/2/4 mm choice and terminal placement always uses 4 mm. Camera and grid state do not enter the proposal or SVG preview. Esc/pointer cancellation restores unfinished gestures without an Undo entry. Narrow layouts keep Symbol properties and Objects in expandable panels below the canvas.
 
 **Download JSON** saves an editable `.cabel-symbol.json` proposal that can be shared for review. **Download SVG** creates a preview; schematic export in the main app remains PDF. **Open JSON** reopens proposals. In the main app, **Import symbol JSON** adds a click/drag-placeable library entry. Placed symbols retain their definition in the project, so reopening does not require reimporting the library. Their terminals support ordinary routing, rotation and reflection; text stays readable. Properties can download a placed symbol's original proposal again.
 
@@ -260,7 +262,7 @@ The DC/DC symbols distinguish DC input/output graphically and use isolated **fun
 
 ## Manufacturer libraries
 
-**270 reference entries in eight libraries** are bundled with v1.46.1. Each manufacturer or board collection has a separate editable JSON source:
+**270 reference entries in eight libraries** are bundled with v1.47.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -305,6 +307,7 @@ node scripts/build-libraries.cjs
 node scripts/build-libraries.cjs --check
 node scripts/build-shortcuts.cjs --check
 node tests/settings-smoke.cjs
+node tests/symbol-editor-ui-smoke.cjs
 ```
 
 Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `sources` and `families`. Each family contains `id`, `name`, optional `scope`, and `products`. Products have stable `id`, `model`, `symbol`, optional `name`, `manufacturerNumber`, `value`, `pinNumbers`, `portSides`, `portKinds`, `attributes` and `verification`. Relay entries may specify `relayContactCount` and `coilValue`; terminal entries may specify `terminalType`. Imports validate IDs, known symbol types and terminal/relay counts. The checked-in `libraries/catalog.js` is generated from the manufacturer JSON source files; do not edit it directly.
@@ -316,7 +319,7 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.46.1** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.47.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -485,6 +488,9 @@ These shortcuts apply only to the separate [symbol editor](symbol-editor.html), 
 | Shortcut | Action |
 | --- | --- |
 | **V** | Select/move a geometry object or terminal. |
+| **H** | Pan with a mouse, finger or Pencil. |
+| **F** | Fit and centre the symbol at 100%. |
+| **G** | Show/hide the working grid. |
 | **L** | Draw a line. |
 | **B** | Draw a rectangle. |
 | **O** | Draw a circle. |
@@ -494,8 +500,12 @@ These shortcuts apply only to the separate [symbol editor](symbol-editor.html), 
 | **Ctrl/⌘+Y** or **Ctrl/⌘+Shift+Z** | Redo. |
 | **Delete / Backspace** | Remove the selected geometry object or terminal. |
 | **Esc** | Cancel an unfinished gesture, clear selection and return to Select. |
+| Mouse wheel / two-axis trackpad scroll | Pan over the symbol canvas; Shift+wheel pans horizontally. |
+| **Ctrl/⌘+scroll** | Zoom around the cursor over the symbol canvas. |
+| Middle-button drag | Pan without changing the drawing tool. |
+| Two-finger drag / pinch | Pan/zoom in every tool; cancel an unfinished finger drawing before navigating. |
 
-The symbol editor ignores its drawing shortcuts while a form field is focused. Use its buttons to open/save proposal JSON and export an SVG preview. Main-editor clipboard, page-navigation and connection shortcuts do not apply here.
+The symbol editor ignores its drawing shortcuts while a form field or Settings is focused. Use its buttons to open/save proposal JSON and export an SVG preview. Main-editor clipboard, page-navigation and connection shortcuts do not apply here.
 
 ## Project layout
 
@@ -640,6 +650,7 @@ npm run test:firebase
 | `cloud-ui-smoke.cjs` | Desktop/iPad/phone sign-in/project layout, password visibility/reset, delayed authentication failures and duplicate submits, escaped card titles, local search/focus, form/metadata races, current project and overflow |
 | `browser-smoke.cjs` | Placement, properties, routing/segment movement, clipboard, transformations, selection, history, devices/slaves, terminals/bridges, references, lists, JSON and PDF |
 | `manufacturer-smoke.cjs` | JSON/bundle agreement, search, imports/downloads, product placement/ports, symbol geometry, metadata, device deletion, lists/pagination, approvals and PDF |
+| `symbol-editor-ui-smoke.cjs` | Desktop/iPad/phone responsive layout, shared themes/scoped shortcuts, native Pencil/touch, pinch/pan/anchored zoom, cancellation/history, exact-property drafts, JSON/SVG isolation and safe reload/import |
 | `symbol-page-smoke.cjs` | Symbol editor/import/export, custom symbols, port upgrades, page/Field AKS, Field movement/resizing, text visibility, cancellation, history and PDF |
 | `tablet-input-smoke.cjs` | Finger/Pencil placement and editing, actual rendered zoom/pan, pinch rollback, persistent panels, connection media, fullscreen, standalone metadata and PDF |
 | `workspace-view-smoke.cjs` | Painted drawing pixels and stable camera/document through fullscreen, viewport changes, browser exit and resume without corrective zoom |

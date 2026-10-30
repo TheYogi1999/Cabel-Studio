@@ -349,6 +349,6 @@ globalThis.CabelWorkspaceUI = {
       else if(marking)api.status(state.generated?'Red pen: open a drawing sheet':ink.tool()==='draw'?'Red pen: draw with a finger, Pencil or mouse · Two fingers: pan/zoom':ink.tool()==='erase'?'Red pen: touch a stroke to erase it completely':'Red pen: tap a stroke or drag a selection box · Drag corners to scale');
       svg.dataset.redPen=marking?ink.tool():'';
     }
-    document.body.classList.add('workspace-ready');refresh();return{refresh,openOverview:()=>{},queuePlacement:(payload,label)=>queueSource({node:null,payload,label}),busy:()=>Boolean(finger||pen||ghost||placement),cancelInput:()=>{clearHold();removeGhost();placement=null;finger=null;pen=null;hand=false;clearTargets();}};
+    document.body.classList.add('workspace-ready');refresh();return{refresh,openOverview:()=>{},queuePlacement:(payload,label)=>queueSource({node:null,payload,label}),busy:()=>Boolean(finger||pen||ghost||placement),interacting:()=>Boolean(finger||pen||ghost),cancelInput:()=>{clearHold();removeGhost();placement=null;finger=null;pen=null;hand=false;clearTargets();}};
   }
 };

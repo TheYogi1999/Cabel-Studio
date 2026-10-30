@@ -32,6 +32,8 @@ jobs:
       - run: node tests/manufacturer-smoke.cjs
       - run: node scripts/build-shortcuts.cjs --check
       - run: node tests/settings-smoke.cjs
+      - run: node tests/schematic-search.cjs
+      - run: node tests/schematic-search-smoke.cjs
       - run: node tests/symbol-editor-ui-smoke.cjs
       - run: node tests/supply-workflow.cjs
       - run: node tests/supply-workflow-smoke.cjs
@@ -80,6 +82,7 @@ jobs:
             /tmp/Leitwerk-wire-batch-*
             /tmp/Leitwerk-phone-viewer*
             /tmp/Leitwerk-settings-*
+            /tmp/Leitwerk-schematic-search*
             /tmp/Leitwerk-symbol-editor-*
             /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-psu-loads-*

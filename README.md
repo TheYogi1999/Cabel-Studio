@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.47.0**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.48.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -262,7 +262,7 @@ The DC/DC symbols distinguish DC input/output graphically and use isolated **fun
 
 ## Manufacturer libraries
 
-**270 reference entries in eight libraries** are bundled with v1.47.0. Each manufacturer or board collection has a separate editable JSON source:
+**270 reference entries in eight libraries** are bundled with v1.48.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -308,6 +308,8 @@ node scripts/build-libraries.cjs --check
 node scripts/build-shortcuts.cjs --check
 node tests/settings-smoke.cjs
 node tests/symbol-editor-ui-smoke.cjs
+node tests/schematic-search.cjs
+node tests/schematic-search-smoke.cjs
 ```
 
 Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `sources` and `families`. Each family contains `id`, `name`, optional `scope`, and `products`. Products have stable `id`, `model`, `symbol`, optional `name`, `manufacturerNumber`, `value`, `pinNumbers`, `portSides`, `portKinds`, `attributes` and `verification`. Relay entries may specify `relayContactCount` and `coilValue`; terminal entries may specify `terminalType`. Imports validate IDs, known symbol types and terminal/relay counts. The checked-in `libraries/catalog.js` is generated from the manufacturer JSON source files; do not edit it directly.
@@ -319,7 +321,7 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.47.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.48.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -351,6 +353,14 @@ Connections automatically use wire, fiber optic or terminal bridge according to 
 
 Preview boxes, pin rings and planned lines are temporary view state and never enter JSON, cloud projects or PDFs. Created connections use the existing wire format and participate in normal selection, movement, calculation updates, clipboard, undo/redo, cloud synchronization and export. Generated sheets and read-only/released projects cannot be changed with this tool.
 
+## Find in project
+
+Press **Ctrl+F** (Windows/Linux) or **⌘+F** (Mac), or choose **Search** in the top bar. In the phone viewer use **More → Search**. Search the current project across all sheets by Device Designation/AKS, type/value, annotation text, pin numbers, manufacturer/SAP numbers, Fields, page title/number, cables and conductors. Linked references and custom-symbol text are searchable too. Generated directory contents are represented by their source objects rather than duplicate entries for every printed occurrence.
+
+Search ignores case, accents and the ASCII/typographic minus difference. Words are combined with AND; `*` matches unknown characters, while other punctuation is literal. **Current sheet only** restricts results to placed objects on that sheet. Results show their kind and page/reference; click/tap to jump and highlight the target. **Enter / Shift+Enter** in the search field, or the arrow buttons, move to the next/previous match. **Esc** closes the search and removes its temporary marker. On narrower drawing areas, choosing a positioned result collapses the list to keep the drawing visible; **Results** expands it again.
+
+Unplaced devices and unassigned cables can be found without placing or changing them. On desktop/iPad they open their overview; phone viewing mode reports that no drawing position exists. The query, index and marker stay on this device, do not enter JSON/cloud/history, and are omitted from vector PDFs. The index follows edits, imports and incoming cloud changes. Search also works for cloud viewers and saved/released revisions. Active property/cloud/settings dialogs retain the browser's native Find command, and drawing gestures must finish before project search opens.
+
 ## Settings and appearance
 
 Open **Settings** in the top bar, or **More → Settings** in the smartphone viewer. **Appearance** switches between **Light** and **Dark** immediately; Dark remains the initial default. The preference is saved in this browser and shared with other tabs on the same origin. It is independent of the project, Firebase roles, revisions and Undo/Redo. If browser storage is unavailable, theme changes still work for the current session.
@@ -369,6 +379,7 @@ This list covers the implemented application shortcuts. **Ctrl/⌘** means **Ctr
 
 | Shortcut | Action and scope |
 | --- | --- |
+| **Ctrl/⌘+F** | Open **Find in project** or focus its query; active dialogs retain browser Find. |
 | **V** | Switch to **Select**; cancel an unfinished connection, placement or drawing tool. |
 | **Enter** | Apply the **Multi-connect** preview when the drawing has focus. |
 | **C** or **W** | Switch to **Connect**. The starting port/connection determines wire, bridge or fiber. |
@@ -448,6 +459,8 @@ Brush colours, layer visibility and **Smaller/Larger** use the Red Pen toolbar. 
 | Input | Action |
 | --- | --- |
 | **Tab / Shift+Tab** | Move between focusable fields, buttons and links using normal browser navigation. |
+| **Enter / Arrow Down** and **Shift+Enter / Arrow Up** in project search | Next / previous matching object, sheet or cable. |
+| **Esc** in project search | Close the search and remove its temporary marker. |
 | **Enter** on a focused form submit button or in a submit-ready single-line form | Submit the form, for example sign-in, project creation or a property change. |
 | **Arrow Up / Arrow Down** in terminal **Device Type** search | Open/browse the matching terminal types. |
 | **Enter** in an open terminal-type result list | Choose the highlighted match; the component form still needs **Apply**. |
@@ -650,6 +663,7 @@ npm run test:firebase
 | `cloud-ui-smoke.cjs` | Desktop/iPad/phone sign-in/project layout, password visibility/reset, delayed authentication failures and duplicate submits, escaped card titles, local search/focus, form/metadata races, current project and overflow |
 | `browser-smoke.cjs` | Placement, properties, routing/segment movement, clipboard, transformations, selection, history, devices/slaves, terminals/bridges, references, lists, JSON and PDF |
 | `manufacturer-smoke.cjs` | JSON/bundle agreement, search, imports/downloads, product placement/ports, symbol geometry, metadata, device deletion, lists/pagination, approvals and PDF |
+| `schematic-search.cjs` / `schematic-search-smoke.cjs` | Local cross-sheet search, literal/wildcard matching, pins/material/Fields/cables, Ctrl/Command+F, viewer navigation, transient highlight, unplaced safety, stale updates and PDF/JSON isolation |
 | `symbol-editor-ui-smoke.cjs` | Desktop/iPad/phone responsive layout, shared themes/scoped shortcuts, native Pencil/touch, pinch/pan/anchored zoom, cancellation/history, exact-property drafts, JSON/SVG isolation and safe reload/import |
 | `symbol-page-smoke.cjs` | Symbol editor/import/export, custom symbols, port upgrades, page/Field AKS, Field movement/resizing, text visibility, cancellation, history and PDF |
 | `tablet-input-smoke.cjs` | Finger/Pencil placement and editing, actual rendered zoom/pan, pinch rollback, persistent panels, connection media, fullscreen, standalone metadata and PDF |

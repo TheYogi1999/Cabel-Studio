@@ -151,9 +151,12 @@ const near = (a, b, tolerance = 1e-6) => assert.ok(Math.abs(a - b) < tolerance, 
     await load({ title: 'Manufacturer placement', parts: [], wires: [] });
     await page.locator('#zoomIn').click();
     const breaker = await placeProduct('abb:s203-c16', 12 * GRID, 12 * GRID);
+    assert.equal(breaker.manufacturerNumber,'2CDS253001R0164');assert.equal(breaker.sapNumber,'');
+    const addedArticles=libraries[0].families.flatMap(f=>f.products).filter(p=>p.attributes?.articleNumberReference);assert.equal(addedArticles.length,36);assert.ok(addedArticles.every(p=>p.verification==='not-verified'&&p.manufacturerNumber&&p.attributes.articleNumberReference.status==='secondary-reference'));
+
     assert.ok(breaker); near(breaker.x, 12 * GRID); near(breaker.y, 12 * GRID);
     assert.equal(breaker.type, 'mcb-3p'); assert.equal(breaker.catalog.attributes.ratedCurrentA, 16);
-    assert.equal(breaker.catalog.attributes.tripCurve, 'C'); assert.equal(breaker.manufacturer, 'ABB'); assert.equal(breaker.manufacturerNumber, '');
+    assert.equal(breaker.catalog.attributes.tripCurve, 'C'); assert.equal(breaker.manufacturer, 'ABB'); assert.equal(breaker.manufacturerNumber, '2CDS253001R0164');
     assert.deepEqual(breaker.pinNumbers, ['1', '2', '3', '4', '5', '6']);
     const contactor = await placeProduct('abb:af09-22-00', 30 * GRID, 13 * GRID);
     assert.equal(contactor.contactConfiguration, '2NO2NC');

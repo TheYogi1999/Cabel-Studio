@@ -29,6 +29,9 @@ jobs:
       - run: node tests/clipboard.cjs
       - run: node tests/clipboard-smoke.cjs
       - run: node scripts/build-libraries.cjs --check
+      - run: node tests/manufacturer-smoke.cjs
+      - run: node scripts/build-shortcuts.cjs --check
+      - run: node tests/settings-smoke.cjs
       - run: node tests/supply-workflow.cjs
       - run: node tests/supply-workflow-smoke.cjs
       - run: node tests/basics-smoke.cjs
@@ -75,6 +78,7 @@ jobs:
             /tmp/Leitwerk-multi-connect-*
             /tmp/Leitwerk-wire-batch-*
             /tmp/Leitwerk-phone-viewer*
+            /tmp/Leitwerk-settings-*
             /tmp/Leitwerk-product-loads-*
             /tmp/Leitwerk-psu-loads-*
             /tmp/Leitwerk-psu-input-*

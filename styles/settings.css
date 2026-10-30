@@ -1,0 +1,96 @@
+/* Theme selectors apply to workspace UI only. SVG paper, symbols, links and
+   conductor colours keep their document colours in the editor and in PDF. */
+:root{color-scheme:dark;--control:#243541;--input:#101923;--canvas:#111b24;--hover:#2a3a46}
+:root[data-theme=light]{color-scheme:light;--bg:#eef3f7;--panel:#fff;--panel2:#f2f6f9;--line:#c5d2dc;--muted:#536977;--text:#1b303f;--accent:#006c59;--selection:#b51e64;--selection-bg:#fce8f2;--yellow:#845800;--danger:#b53226;--control:#e8eff4;--input:#fff;--canvas:#dbe3e9;--hover:#e1ebf1}
+html[data-theme=light] body{background:var(--bg)}
+html[data-theme=light] :is(header,footer){background:var(--bg);color:var(--muted)}
+html[data-theme=light] :is(.project-name,.project-name b,.section-title,.sheetPanel h2){color:var(--text)}
+html[data-theme=light] :is(.workarea,.canvas-wrap){background-color:var(--canvas)}
+html[data-theme=light] :is(.part,.catalog-part,.sheetPanel button,.simplePanel button,.catalog-download,.proposal-library>button,.terminal-type-options,.cable-node button){background:var(--panel2);color:var(--text);border-color:var(--line)}
+html[data-theme=light] :is(.part,.catalog-part,.sheetPanel button,.simplePanel button,.cable-node button):hover{background:var(--hover)}
+html[data-theme=light] :is(.part-desc,.hint,.catalog-note,.catalog-origin,.sheetPanel .panelNote,.sheetPanel .sheetItem small,.simplePanel p,.wire-form label,.wire-form .preview,.terminal-type-options span,.terminal-type-options p){color:var(--muted)}
+html[data-theme=light] .hint kbd{background:var(--control);color:var(--text)}
+html[data-theme=light] .part-icon{background:#e0f2ed;color:var(--accent)}
+html[data-theme=light] :is(.simplePanel,.terminal-type-options,.library-drag-ghost){background:var(--panel);border-color:var(--line);color:var(--text)}
+html[data-theme=light] :is(.wire-form input,.wire-form select,.wire-form textarea,#catalogSearch,#libraryManufacturer,#electricalCalculations select,.simplePanel input,.simplePanel select,.simplePanel textarea){background:var(--input);border-color:var(--line);color:var(--text)}
+html[data-theme=light] :is(.simplePanel th,.simplePanel .page){background:var(--panel2);color:var(--text);border-color:var(--line)}
+html[data-theme=light] :is(.simplePanel td,.simplePanel fieldset,.workspace-toolbar .tool-group+.tool-group,.sheet-number,.cable-node,.catalog-family){border-color:var(--line)}
+html[data-theme=light] .simplePanel .close{background:var(--control)}
+html[data-theme=light] :is(.newnav,.zoom-controls){background:#fffffff2;border-color:var(--line);box-shadow:0 3px 12px #29425320}
+html[data-theme=light] :is(.newnav button,.zoom-controls button){background:var(--panel);color:var(--text);border-color:var(--line)}
+html[data-theme=light] .zoom-label{color:var(--muted)}
+html[data-theme=light] :is(.tool-button,.newnav button,.zoom-controls button):hover{background:var(--hover)}
+html[data-theme=light] :is(.tool-button[aria-pressed=true],.tool-button.active,.newnav button[aria-pressed=true],.sheetPanel .sheetItem.active,.simplePanel .terminal-type-options button[aria-selected=true]){background:var(--selection-bg);border-color:var(--selection);color:var(--selection)}
+html[data-theme=light] #wireTool[data-connection-kind=bridge]{background:#f7ece2;color:#7c4226;border-color:#ad7650}
+html[data-theme=light] .tool-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+html[data-theme=light] #library :is(.part-desc,.catalog-part span,.catalog-note,.library-count){color:var(--muted)!important}
+html[data-theme=light] #library .library-count{background:var(--control)}
+html[data-theme=light] .terminal-type-options strong{color:var(--text)}
+html[data-theme=light] .cable-name{color:#235573}
+html[data-theme=light] .toast{background:var(--panel);border-color:var(--line);color:var(--text)}
+html[data-theme=light] :is(.electrical-metrics>div,.electrical-overview-summary>div){background:var(--panel2);border-color:var(--line)}
+html[data-theme=light] :is(.simplePanel p.electrical-warning,#electricalError,#converterInputResult.electrical-warning,.supply-state.is-warning){background:#fff1d6;color:#7c4f00}
+html[data-theme=light] :is(#converterInputResult.electrical-margin,.supply-state.is-active){background:#dff2e9;color:var(--accent)}
+html[data-theme=light] .electrical-check-row:is([data-check-status=overload],[data-check-status=reversed]) .electrical-check-warning{color:var(--danger)}
+html[data-theme=light] #spaceMouseBtn[data-state=error]{color:var(--yellow)}
+html[data-theme=light] #redPenTool:not([aria-pressed=true]){color:#b63535}
+/* Cloud sign-in, project cards, member controls and revision history. */
+html[data-theme=light] #cloudDialog{background:var(--panel);border-color:var(--line);color-scheme:light}
+html[data-theme=light] .cloud-dialog-bar{background:var(--panel2)}
+html[data-theme=light] #cloudDialog :is(button,input,textarea,select){background:var(--input);border-color:var(--line);color:var(--text)}
+html[data-theme=light] #cloudDialog button:hover{background:var(--hover)}
+html[data-theme=light] #cloudDialog :is(label,p,.cloud-link-button,.cloud-close,.cloud-document-number,.cloud-document-number strong){color:var(--text)}
+html[data-theme=light] #cloudDialog :is(.cloud-connection,.cloud-card-type,.cloud-card-id,.cloud-dashboard-footer,.cloud-auth-footer,.cloud-auth-divider,.cloud-eyebrow,#cloudResultCount){color:var(--muted)}
+html[data-theme=light] #cloudDialog .cloud-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+html[data-theme=light] .cloud-auth-intro{background:radial-gradient(ellipse at 0 0,#d1eee7 0,transparent 70%),#edf6f3}
+html[data-theme=light] .cloud-auth-feature{color:#2c594c}
+html[data-theme=light] .cloud-schematic-art svg{fill:#edf6f3;stroke:var(--accent)}
+html[data-theme=light] .cloud-schematic-art circle{fill:var(--accent)}
+html[data-theme=light] :is(.cloud-card,.cloud-empty){background:var(--panel2);border-color:var(--line)}
+html[data-theme=light] .cloud-project-card:hover{background:var(--hover)}
+html[data-theme=light] :is(.cloud-current-project,.cloud-project-glyph,.cloud-empty-icon,.cloud-avatar,.cloud-pill){background:#dff2e9;color:var(--accent);border-color:#99c6b6}
+html[data-theme=light] .cloud-pill-muted{background:#fff1d6;color:#7c4f00}
+html[data-theme=light] :is(.cloud-project-heading>span,.cloud-role-badge,.cloud-member-save){color:var(--accent)}
+html[data-theme=light] #cloudMessage{background:#e0f4ea;color:#176546!important;border-color:#99c6b6}
+html[data-theme=light] #cloudMessage.error{background:#ffebe6;color:#9b2c1a!important;border-color:#d39b8f}
+/* Settings use native dialog focus containment and a scrollable content area. */
+#settingsDialog{width:min(820px,96vw);max-height:92dvh;max-height:calc(100dvh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);font:14px/1.5 system-ui,sans-serif;box-shadow:0 24px 80px #0006;overscroll-behavior:contain}
+#settingsDialog::backdrop{background:#071017aa;backdrop-filter:blur(3px)}
+#settingsDialog[open]{display:flex;flex-direction:column}
+#settingsDialog [hidden]{display:none!important}
+.settings-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px 14px;flex:none}
+.settings-eyebrow{font-size:10px;font-weight:700;letter-spacing:1.6px;color:var(--accent)}
+#settingsTitle{margin:3px 0;font-size:24px;letter-spacing:-.5px}
+#settingsDialog button{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--control);color:var(--text);padding:8px 13px;touch-action:manipulation}
+#settingsDialog :is(button,input):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.settings-tabs{display:flex;gap:8px;padding:0 24px 14px;border-bottom:1px solid var(--line);flex:none}
+#settingsDialog [role=tab][aria-selected=true]{background:var(--selection-bg);color:var(--selection);border-color:var(--selection)}
+.settings-body{padding:22px 24px 26px;overflow:auto;min-height:0;overscroll-behavior:contain}
+.settings-body h3{margin:0 0 8px;font-size:19px}.settings-body p{color:var(--muted);font-size:12px;margin:0 0 18px}
+.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0;border:0;margin:22px 0}.theme-options legend{font-size:12px;color:var(--muted);margin-bottom:10px}
+.theme-choice{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:12px;cursor:pointer;min-width:0}
+.theme-choice:has(input:checked){border-color:var(--selection);box-shadow:0 0 0 1px var(--selection);background:var(--selection-bg)}
+.theme-choice input{margin:0;width:18px;height:18px;accent-color:var(--selection)}
+.theme-choice>span:last-child{grid-column:1/-1;display:grid;gap:2px}.theme-choice small{color:var(--muted);font-size:11px}
+.theme-preview{display:block;height:70px;border-radius:6px;padding:10px 12px 10px 28px;border:1px solid #78909f55;background:linear-gradient(90deg,#d2dce3 18%,#e9eff4 18%)}
+.theme-preview i{display:block;height:100%;background:#fff;border:1px solid #9aa9b8;border-radius:2px}
+.theme-dark{background:linear-gradient(90deg,#17232e 18%,#101923 18%)}
+.settings-local-note{margin-top:24px!important}.shortcut-search-label{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+#shortcutSearch{width:100%;min-height:44px;background:var(--input);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:16px system-ui,sans-serif}
+#shortcutCount{display:block;color:var(--muted);font-size:11px;margin:9px 0 18px}
+.shortcut-group{margin:0 0 26px}.shortcut-group h4{font-size:13px;color:var(--accent);margin:0 0 8px}.shortcut-group table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.shortcut-group :is(th,td){text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.shortcut-group th{width:35%;font-weight:600;background:var(--panel2)}.shortcut-group .shortcut-note{font-size:11px;margin:12px 0}
+@media(max-width:600px){.settings-heading{padding:16px}.settings-tabs{padding:0 16px 12px}.settings-body{padding:18px 16px}.theme-options{gap:10px}.theme-choice{padding:10px}.shortcut-group :is(th,td){padding:9px 6px}.shortcut-group th{width:38%}}
+html[data-theme=light] .library-modes button{background:var(--panel2);border-color:var(--line);color:var(--text)}
+html[data-theme=light] :is(.library-modes button[aria-pressed=true],.overview-tabs [aria-selected=true]){background:var(--selection-bg);border-color:var(--selection);color:var(--selection)}
+html[data-theme=light] :is(#library summary,.aks-folder>summary,.proposal-library a){color:var(--accent)}
+html[data-theme=light] :is(.device-node small,.catalog-part span){color:var(--muted)}
+
+html[data-theme=light] #catalogImport{background:var(--panel2);border-color:var(--line);color:var(--text)}
+html[data-theme=light] .workspace-ready #library :is(.part,.catalog-part){background:var(--panel2);border-color:var(--line);color:var(--text)}
+html[data-theme=light] .workspace-ready #library :is(.part,.catalog-part):hover{background:var(--hover);border-color:var(--accent)}
+html[data-theme=light] .workspace-ready #library .part-icon{background:#e0f2ed;color:var(--accent)}
+html[data-theme=light] .workspace-ready #library summary{color:var(--text)}
+html[data-theme=light] .workspace-ready #library :is(.component-group,.manufacturer-library)>summary{color:var(--accent);border-color:var(--line)}
+html[data-theme=light] .workspace-ready #library .catalog-family{border-color:var(--line)}

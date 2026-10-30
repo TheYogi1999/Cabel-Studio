@@ -1,6 +1,6 @@
 # Cabel-Studio / Leitwerk
 
-A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.45.1**, shown beside the application name and in the browser title.
+A browser schematic editor with optional Firebase cloud projects for A4 landscape drawings, written in HTML, CSS and JavaScript. The current application version is **1.46.0**, shown beside the application name and in the browser title.
 
 [Open Leitwerk in your browser](https://theyogi1999.github.io/Cabel-Studio/) · [Symbol editor](https://theyogi1999.github.io/Cabel-Studio/symbol-editor.html)
 
@@ -260,7 +260,7 @@ The DC/DC symbols distinguish DC input/output graphically and use isolated **fun
 
 ## Manufacturer libraries
 
-**270 reference entries in eight libraries** are bundled with v1.45.1. Each manufacturer or board collection has a separate editable JSON source:
+**270 reference entries in eight libraries** are bundled with v1.46.0. Each manufacturer or board collection has a separate editable JSON source:
 
 | File | Included reference entries |
 | --- | --- |
@@ -273,7 +273,7 @@ The DC/DC symbols distinguish DC input/output graphically and use isolated **fun
 | [`libraries/finder.json`](libraries/finder.json) | 4: Series 60.11 / 60.12 / 60.13 templates and the supplied **60.13.9.024.0074**, with a 24 V DC coil and three changeover contacts |
 | [`libraries/eao.json`](libraries/eao.json) | 33: Series 04/704, 14, 45, 61 and 84 pushbutton, illuminated pushbutton, indicator and applicable selector/keylock schematic templates |
 
-**These are reference libraries, not verified complete manufacturer catalogues.** Most original references could not be verified when manufacturer websites were blocked by the cloud outbound policy. The EK1501 optical interface was subsequently checked against the linked manufacturer documentation; this does not verify the rest of its physical pinout or the other references. EAO family functions and the 704/Series 04 naming were researched separately; the schematic templates still have unverified physical pinouts and assembly configurations. Source URLs, incomplete coverage and verification status are recorded in the files and shown in the library UI. Variant availability, coil suffixes, ratings, physical pin diagrams and accessory compatibility require manufacturer confirmation. Power-supply entries now include family-specific functional templates: duplicate DC outputs on UNO, DC OK contacts on TRIO, and additional configurable signal IN/OUT ports on QUINT4. These do not claim verified physical terminal designations for every variant. Unknown ordering numbers remain blank. Manufacturer numbers are supplied for the user-specified Finder article, Phoenix ST 2,5 (3031212) and ABB S201-C16 (2CDS251001R0164). The latter two have a narrowly scoped manufacturer-source check recorded in their library data; other specifications and physical pinouts remain unverified. SAP numbers remain project-specific.
+**These are reference libraries, not verified complete manufacturer catalogues.** Most original references could not be verified when manufacturer websites were blocked by the cloud outbound policy. The EK1501 optical interface was subsequently checked against the linked manufacturer documentation; this does not verify the rest of its physical pinout or the other references. EAO family functions and the 704/Series 04 naming were researched separately; the schematic templates still have unverified physical pinouts and assembly configurations. Source URLs, incomplete coverage and verification status are recorded in the files and shown in the library UI. Variant availability, coil suffixes, ratings, physical pin diagrams and accessory compatibility require manufacturer confirmation. Power-supply entries now include family-specific functional templates: duplicate DC outputs on UNO, DC OK contacts on TRIO, and additional configurable signal IN/OUT ports on QUINT4. These do not claim verified physical terminal designations for every variant. Unknown ordering numbers remain blank. An additional **36 ABB article numbers** for exact S200 breaker/accessory models were cross-referenced against a [secondary distributor dataset](https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv); the exact pairs and source limitations are recorded in [`libraries/references/abb-article-numbers.json`](libraries/references/abb-article-numbers.json). These are secondary references, with the overall `not-verified` status retained. Codes are not extrapolated to missing variants. AF contactors without a complete coil suffix and undocumented entries retain blank numbers. Existing placed project devices are preserved; new catalogue placements receive the added numbers. Manufacturer numbers are supplied for the user-specified Finder article, Phoenix ST 2,5 (3031212) and ABB S201-C16 (2CDS251001R0164). The latter two have a narrowly scoped manufacturer-source check recorded in their library data; other specifications and physical pinouts remain unverified. SAP numbers remain project-specific.
 
 Twelve additional Phoenix Contact article numbers are documented in manufacturer sources. Each record includes its `manufacturerNumberSource`, the documented fields and a narrowly scoped source note; physical pinout, current availability and accessory compatibility remain unverified. Family templates without an unambiguous complete ordering code retain blank manufacturer numbers.
 
@@ -303,6 +303,8 @@ To update bundled entries, edit the appropriate JSON source and rebuild the dete
 ```sh
 node scripts/build-libraries.cjs
 node scripts/build-libraries.cjs --check
+node scripts/build-shortcuts.cjs --check
+node tests/settings-smoke.cjs
 ```
 
 Library format: `schemaVersion: 1`, a stable `id`, `manufacturer`, `coverage`, `sources` and `families`. Each family contains `id`, `name`, optional `scope`, and `products`. Products have stable `id`, `model`, `symbol`, optional `name`, `manufacturerNumber`, `value`, `pinNumbers`, `portSides`, `portKinds`, `attributes` and `verification`. Relay entries may specify `relayContactCount` and `coilValue`; terminal entries may specify `terminalType`. Imports validate IDs, known symbol types and terminal/relay counts. The checked-in `libraries/catalog.js` is generated from the manufacturer JSON source files; do not edit it directly.
@@ -314,7 +316,7 @@ Optional `attributes.loadModel` declares a versioned **schematic** calculation m
 
 The document automatically maintains a cover, table of contents, drawing sheets, device lists, terminal lists, cable lists and a connection list. Device lists start directly with the table, without the automatic-directory/generated-master headings. All columns wrap long text, including types, electrical values and unbroken material numbers. Row heights follow their contents; additional pages and marked continuations preserve oversized entries. Compact pages keep up to 22 rows. Cable and connection lists use the same measured wrapping, variable row heights and marked page continuations. Their duplicate large headings and explanatory subtitle are omitted; cable identifiers, properties and material data remain compact above the conductor table. Long endpoint names and cable/conductor identifiers wrap within their columns. The same layouts and clickable references are preserved in vector PDF export. Generated device-directory pages include only top-level masters (including independent devices); their slaves remain in the device overview, detailed **Lists** tables/CSV and terminal lists. A missing parent makes a device an independent entry. Each terminal strip starts a new list page. Page numbers always use four digits and appear separately from the sheet title. New drawings default to **Schematic**; automatic sheet titles do not contain page numbers. Existing user-entered titles stay unchanged. The drawing head has a prominent **Sheet title** cell and four compact approval cells for **Issued**, **Check 1**, **Check 2** and **Release**, each with a name and date on every page. Edit document metadata with **Project info** and sheet titles with **Page properties**. Dates entered in the approval fields use `YYYY-MM-DD`. Issued falls back to the older Drawn by/Date fields when blank. The optional metadata keys are `issuedName`/`issuedDate`, `check1Name`/`check1Date`, `check2Name`/`check2Date`, and `releaseName`/`releaseDate`. **Lists** opens live tables and CSV download. **Export PDF** downloads the complete document as an A4 landscape **vector PDF**, independently of screen zoom/pan. Text stays selectable/searchable with embedded DejaVu Sans fonts; symbols, connections and review strokes remain vector lines. The drawing grid and editing overlays are automatically omitted. Internal links remain clickable: source/destination references, relay and terminal references, contents, directory/list rows and the previous/next sheet numbers. Destinations use the physical PDF page and drawing location, including when sheet numbers have gaps. Missing/unplaced targets have no active link. Export restores the current view, sheet, selection and grid setting afterward. The renderer and fonts are bundled locally; exporting needs no external service or CDN.
 
-The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.45.1** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
+The cover body omits its former standalone **Date** row. Approval names/dates still appear in the shared title block. Printed format/raster captions are removed. **Leitwerk Version 1.46.0** sits beside **Company**. The drawing title block has **two main rows**. At the bottom right, **PREVIOUS**, **CURRENT**, **NEXT** and **TOTAL** each have their own cell, with the heading above its value. Page identifiers remain four digits; **TOTAL** uses the actual document size as plain text, for example **7 SHEETS**. Numbering gaps do not affect this count. PREVIOUS/NEXT follow document order and show `—` at the boundaries. These fields update after generated-page pagination and are included in PDF export.
 
 **Save** saves JSON and **Open** reloads it. Projects retain `appVersion`, metadata, sheets, parts, wire endpoints (`a` / `b`), ordered route `points: [{x,y}]`, labels, transformations, placement state, hierarchy and references. Manufacturer products add a `manufacturer` and `catalog` object to the existing part format; normal `manufacturerNumber`, `sapNumber`, `pinNumbers`, `masterId`, `terminalType` and `value` fields remain editable. Existing projects without these optional fields remain readable. User-entered text is preserved as entered; the application UI, generated headings and default text are English.
 
@@ -345,6 +347,14 @@ Choose **Connect** or press **Enter** while the drawing has focus to apply the p
 Connections automatically use wire, fiber optic or terminal bridge according to their endpoints. Bridge pins must belong to the same terminal strip. Existing wire-connected pairs are skipped, including paths through explicit junctions; additional loops are not created. Mixed media, coincident ambiguous pins, lines over existing collinear wires and routes through unselected pins are skipped and counted in the preview. A simple wire crossing stays unconnected. Open ends/junctions remain editable with the regular **Connect** tool; this selection tool targets placed component pins, including bridge pins.
 
 Preview boxes, pin rings and planned lines are temporary view state and never enter JSON, cloud projects or PDFs. Created connections use the existing wire format and participate in normal selection, movement, calculation updates, clipboard, undo/redo, cloud synchronization and export. Generated sheets and read-only/released projects cannot be changed with this tool.
+
+## Settings and appearance
+
+Open **Settings** in the top bar, or **More → Settings** in the smartphone viewer. **Appearance** switches between **Light** and **Dark** immediately; Dark remains the initial default. The preference is saved in this browser and shared with other tabs on the same origin. It is independent of the project, Firebase roles, revisions and Undo/Redo. If browser storage is unavailable, theme changes still work for the current session.
+
+The drawing paper stays **white** in either theme. Symbol geometry, conductor colours, blue text, linked images and vector PDF output retain their document appearance. Workspace panels, properties, calculation panels, cloud sign-in and project cards follow the selected theme.
+
+The **Shortcuts** tab contains the complete searchable keyboard/pointer/gesture reference below, including the separate symbol editor. Search by keys, action or tool. Arrow Left/Right and Home/End move between settings tabs; Escape closes Settings. Editor shortcuts are suspended while Settings is open. The offline reference is generated from this README with `node scripts/build-shortcuts.cjs`; `--check` verifies it is current.
 
 ## Shortcuts
 
@@ -377,7 +387,7 @@ This list covers the implemented application shortcuts. **Ctrl/⌘** means **Ctr
 | **Delete** or **Backspace** | Unplace selected electrical devices, or remove selected text/references, Fields, whole connections, junctions or open ends. Deleting a junction/end removes its attached connections; deleting a Field preserves its contents. |
 | **Esc** | Cancel an unfinished gesture/connection/placement or close the active property dialog. In the drawing, also clear the selection and return to Select. Cancelling a drag restores its initial geometry. |
 
-**R/X/Y and the clipboard act on the current individual symbol**, not on every object in an area selection. Group movement, common-property editing and deletion use the selection tools. A selection containing only individual line segments cannot delete the whole connection: double-click the connection first. Incoming cloud document changes clear local Undo/Redo so an older local snapshot cannot undo another device's work.
+**R/X/Y act on the current individual symbol**, not on every object in an area selection. The clipboard copies the complete selection. Group movement, common-property editing and deletion use the selection tools. A selection containing only individual line segments cannot delete the whole connection: double-click the connection first. Incoming cloud document changes clear local Undo/Redo so an older local snapshot cannot undo another device's work.
 
 ### Selection and pointer shortcuts
 
@@ -404,6 +414,9 @@ These actions refer to the main schematic editor. A click can be a mouse click o
 | **Shift+mouse wheel** over the drawing | Pan horizontally on a conventional mouse. |
 | **Ctrl/⌘+mouse wheel** over the drawing | Zoom around the cursor. |
 | Middle-button drag | Pan the drawing without moving objects. |
+| Click a pin in **Multi-connect** | Toggle that pin in the preview. |
+| **Ctrl/⌘/Shift+drag** a pin box in **Multi-connect** | Add pins to the existing preview selection. |
+| **Delete / Backspace** in **Multi-connect** | Clear its temporary pin selection; Enter applies the preview, Escape cancels it. |
 
 ### Red Pen shortcuts
 
@@ -438,6 +451,7 @@ Brush colours, layer visibility and **Smaller/Larger** use the Red Pen toolbar. 
 | **Esc** in a component property dialog | Close the dialog and discard unapplied changes, including an open type-result list. |
 | **Enter** on a keyboard-focusable generated-list/reference/relay link | Follow that link; a focused junction editing target opens its properties. |
 | **Left/Right**, **Home/End** on a component settings tab | Switch between **Device**, **Calculation** and (for sources) **Edit supply** without submitting the form. |
+| **Left/Right**, **Home/End** on a **Settings** tab | Switch between Appearance and Shortcuts. Escape closes Settings. |
 
 Use the application buttons for **Save**, **Open**, **Export PDF**, **Grid**, **Pan**, **Field**, **Red pen**, **Full screen** and **Fit/centre**. There are currently no dedicated app mappings for **Ctrl/⌘+S**, **Ctrl/⌘+O**, **Ctrl/⌘+P**, **F11**, **+/-** or arrow-key object movement. The browser/operating system may handle these keys itself. Clipboard operations in the drawing use Leitwerk's object clipboard; they are not a system-clipboard project export.
 
@@ -449,6 +463,7 @@ Use the application buttons for **Save**, **Open**, **Export PDF**, **Grid**, **
 | Drag sideways from the library or overview | Place/move the item; hold briefly before dragging vertically to preserve scrolling. |
 | One-finger/Pencil drag in **Select** | Move an object, connection segment, label or Field handle; empty paper starts a selection box. |
 | One-finger/Pencil drag in **Pan** | Pan, including when starting over an object. |
+| One-finger/Pencil drag in the phone **Viewer** | Pan the sheet, including when starting over a symbol or generated list. |
 | Two-finger drag / pinch in any tool | Pan / zoom around the fingers' midpoint. |
 | Hold an object, or select it and tap **Properties** | Open its properties. |
 | Tap ports/lines and route points in **Connect** | Draw a wire, bridge or fiber chosen from the starting port. |

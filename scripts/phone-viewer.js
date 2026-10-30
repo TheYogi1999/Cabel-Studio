@@ -16,7 +16,7 @@ globalThis.CabelPhoneViewer={init(api){
   const sheets=button('phoneSheetsBtn','Sheets',actions,()=>showDrawer(!drawer));sheets.setAttribute('aria-expanded','false');sheets.setAttribute('aria-controls','sheetPanel');
   button('phoneEditorBtn','Editor',actions,()=>choose('editor'));
   const menu=document.createElement('details');menu.id='phoneViewerMenu';const menuTitle=document.createElement('summary');menuTitle.textContent='More';menuTitle.setAttribute('aria-label','More viewing actions');menu.append(menuTitle);actions.append(menu);const menuItems=document.createElement('div');menu.append(menuItems);
-  button('phoneSaveBtn','Save JSON',menuItems,()=>proxy('#saveBtn'));button('phoneExportBtn','Export PDF',menuItems,()=>proxy('#exportBtn'));button('phoneFullscreenBtn','Full screen',menuItems,()=>proxy('#fullscreenBtn'));
+  button('phoneSaveBtn','Save JSON',menuItems,()=>proxy('#saveBtn'));button('phoneExportBtn','Export PDF',menuItems,()=>proxy('#exportBtn'));button('phoneFullscreenBtn','Full screen',menuItems,()=>proxy('#fullscreenBtn'));button('phoneSettingsBtn','Settings',menuItems,()=>proxy('#settingsBtn'));
   const toggle=button('phoneViewerToggle','Viewer',$('.tools'),()=>choose('viewer'));toggle.classList.add('phone-view-toggle');toggle.setAttribute('aria-pressed','false');toggle.title='Open the phone viewer; return with Editor';
   const read=button('phoneReadBtn','Read',$('.zoom-controls'),()=>fit(2));read.title='Enlarge the page for reading; drag to pan';
   const backdrop=document.createElement('button');backdrop.id='phoneSheetBackdrop';backdrop.className='phone-view-controls';backdrop.setAttribute('aria-label','Close sheet list');backdrop.onclick=()=>showDrawer(false);body.append(backdrop);
@@ -39,7 +39,7 @@ globalThis.CabelPhoneViewer={init(api){
   const linkSelector='.page-reference,.device-list-link,.terminal-list-link,.cable-list-link,.connection-list-link,#deviceListContent [role="button"],#a4Previous,#a4Next';
   function follow(target){const link=target.closest?.(linkSelector);if(link){const view=api.view();if(view.zoom<2)api.setView({...view,zoom:2});link.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));return;}api.followPart(target);}
   function guard(e){
-    if(!enabled)return;const target=e.target;if(!(target instanceof Element))return;
+    if(!enabled||document.querySelector("#settingsDialog")?.contains(e.target))return;const target=e.target;if(!(target instanceof Element))return;
     if(e.type==='keydown'){
       if(target.closest('input,textarea,select,[contenteditable="true"]'))return;
       if(e.key==='Escape'){if(drawer){e.preventDefault();e.stopImmediatePropagation();showDrawer(false);}menu.open=false;return;}

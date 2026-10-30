@@ -5,7 +5,7 @@
   "coverage": {
     "complete": false,
     "status": "Reference library; current availability and ordering codes require manufacturer verification.",
-    "reason": "Manufacturer sites were blocked by the cloud outbound policy."
+    "reason": "Direct manufacturer access remains blocked by the cloud outbound policy. Additional exact article-number pairs were cross-referenced against the linked secondary distributor dataset; ambiguous or undocumented variants remain blank."
   },
   "sources": [
     {
@@ -20,6 +20,13 @@
       "url": "https://library.e.abb.com/public/e1feaf53e4b99c8ac1257e36003719a4/Modular%20DIN%20Comps%20MCB%20RCB%20Meters%20Surge%209AKK106354A1400.pdf",
       "retrieved": true,
       "scope": "S201-C16 article number and rated current only; historical manufacturer catalogue, current availability and physical pinout unverified."
+    },
+    {
+      "url": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+      "retrieved": true,
+      "scope": "Exact model/article-number pairs only; secondary distributor reference (electrissima.dz scrape), not a manufacturer verification. Current availability, physical pinout and accessory compatibility unverified.",
+      "checkedAt": "2026-10-30",
+      "sourceType": "third-party-distributor-scrape"
     }
   ],
   "families": [
@@ -223,14 +230,19 @@
           "model": "S201-C6",
           "name": "S201-C6 · 1P · 6 A",
           "symbol": "mcb-1p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS251001R0064",
           "verification": "not-verified",
           "attributes": {
             "poles": 1,
             "tripCurve": "C",
             "ratedCurrentA": 6,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -242,14 +254,19 @@
           "model": "S201-C10",
           "name": "S201-C10 · 1P · 10 A",
           "symbol": "mcb-1p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS251001R0104",
           "verification": "not-verified",
           "attributes": {
             "poles": 1,
             "tripCurve": "C",
             "ratedCurrentA": 10,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -839,14 +856,19 @@
           "model": "S202-C10",
           "name": "S202-C10 · 2P · 10 A",
           "symbol": "mcb-2p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS252001R0104",
           "verification": "not-verified",
           "attributes": {
             "poles": 2,
             "tripCurve": "C",
             "ratedCurrentA": 10,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1491,14 +1513,19 @@
           "model": "S203-C10",
           "name": "S203-C10 · 3P · 10 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0104",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 10,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1537,14 +1564,19 @@
           "model": "S203-C16",
           "name": "S203-C16 · 3P · 16 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0164",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 16,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1560,14 +1592,19 @@
           "model": "S203-C20",
           "name": "S203-C20 · 3P · 20 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0204",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 20,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1583,14 +1620,19 @@
           "model": "S203-C25",
           "name": "S203-C25 · 3P · 25 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0254",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 25,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1606,14 +1648,19 @@
           "model": "S203-C32",
           "name": "S203-C32 · 3P · 32 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0324",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 32,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1629,14 +1676,19 @@
           "model": "S203-C40",
           "name": "S203-C40 · 3P · 40 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0404",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 40,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1652,14 +1704,19 @@
           "model": "S203-C50",
           "name": "S203-C50 · 3P · 50 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0504",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 50,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1675,14 +1732,19 @@
           "model": "S203-C63",
           "name": "S203-C63 · 3P · 63 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0634",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "C",
             "ratedCurrentA": 63,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1767,14 +1829,19 @@
           "model": "S203-D16",
           "name": "S203-D16 · 3P · 16 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0161",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 16,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1790,14 +1857,19 @@
           "model": "S203-D20",
           "name": "S203-D20 · 3P · 20 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0201",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 20,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1813,14 +1885,19 @@
           "model": "S203-D25",
           "name": "S203-D25 · 3P · 25 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0251",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 25,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1836,14 +1913,19 @@
           "model": "S203-D32",
           "name": "S203-D32 · 3P · 32 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0321",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 32,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1859,14 +1941,19 @@
           "model": "S203-D40",
           "name": "S203-D40 · 3P · 40 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0401",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 40,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1882,14 +1969,19 @@
           "model": "S203-D50",
           "name": "S203-D50 · 3P · 50 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0501",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 50,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -1905,14 +1997,19 @@
           "model": "S203-D63",
           "name": "S203-D63 · 3P · 63 A",
           "symbol": "mcb-3p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS253001R0631",
           "verification": "not-verified",
           "attributes": {
             "poles": 3,
             "tripCurve": "D",
             "ratedCurrentA": 63,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2203,14 +2300,19 @@
           "model": "S204-C10",
           "name": "S204-C10 · 4P · 10 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0104",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 10,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2253,14 +2355,19 @@
           "model": "S204-C16",
           "name": "S204-C16 · 4P · 16 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0164",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 16,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2278,14 +2385,19 @@
           "model": "S204-C20",
           "name": "S204-C20 · 4P · 20 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0204",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 20,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2303,14 +2415,19 @@
           "model": "S204-C25",
           "name": "S204-C25 · 4P · 25 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0254",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 25,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2353,14 +2470,19 @@
           "model": "S204-C40",
           "name": "S204-C40 · 4P · 40 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0404",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 40,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2378,14 +2500,19 @@
           "model": "S204-C50",
           "name": "S204-C50 · 4P · 50 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0504",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 50,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2403,14 +2530,19 @@
           "model": "S204-C63",
           "name": "S204-C63 · 4P · 63 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0634",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "C",
             "ratedCurrentA": 63,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2453,14 +2585,19 @@
           "model": "S204-D10",
           "name": "S204-D10 · 4P · 10 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0101",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 10,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2503,14 +2640,19 @@
           "model": "S204-D16",
           "name": "S204-D16 · 4P · 16 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0161",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 16,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2528,14 +2670,19 @@
           "model": "S204-D20",
           "name": "S204-D20 · 4P · 20 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0201",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 20,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2553,14 +2700,19 @@
           "model": "S204-D25",
           "name": "S204-D25 · 4P · 25 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0251",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 25,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2578,14 +2730,19 @@
           "model": "S204-D32",
           "name": "S204-D32 · 4P · 32 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0321",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 32,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2603,14 +2760,19 @@
           "model": "S204-D40",
           "name": "S204-D40 · 4P · 40 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0401",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 40,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2628,14 +2790,19 @@
           "model": "S204-D50",
           "name": "S204-D50 · 4P · 50 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0501",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 50,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2653,14 +2820,19 @@
           "model": "S204-D63",
           "name": "S204-D63 · 4P · 63 A",
           "symbol": "mcb-4p",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS254001R0631",
           "verification": "not-verified",
           "attributes": {
             "poles": 4,
             "tripCurve": "D",
             "ratedCurrentA": 63,
             "family": "S200",
-            "availability": "Verify the exact variant in the manufacturer catalogue."
+            "availability": "Verify the exact variant in the manufacturer catalogue.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           },
           "pinNumbers": [
             "1",
@@ -2685,11 +2857,16 @@
           "model": "S2C-H6R",
           "name": "S2C-H6R · Auxiliary contact",
           "symbol": "auxiliary-contact",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS200912R0001",
           "verification": "not-verified",
           "attributes": {
             "family": "S200 accessories",
-            "compatibility": "Verify mounting side, device series and control voltage."
+            "compatibility": "Verify mounting side, device series and control voltage.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           }
         },
         {
@@ -2697,11 +2874,16 @@
           "model": "S2C-S/H6R",
           "name": "S2C-S/H6R · Auxiliary / signal contact",
           "symbol": "auxiliary-contact",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS200922R0001",
           "verification": "not-verified",
           "attributes": {
             "family": "S200 accessories",
-            "compatibility": "Verify mounting side, device series and control voltage."
+            "compatibility": "Verify mounting side, device series and control voltage.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           }
         },
         {
@@ -2721,11 +2903,16 @@
           "model": "S2C-A2",
           "name": "S2C-A2 · Shunt release — voltage to specify",
           "symbol": "trip-coil",
-          "manufacturerNumber": "",
+          "manufacturerNumber": "2CDS200909R0002",
           "verification": "not-verified",
           "attributes": {
             "family": "S200 accessories",
-            "compatibility": "Verify mounting side, device series and control voltage."
+            "compatibility": "Verify mounting side, device series and control voltage.",
+            "articleNumberReference": {
+              "source": "https://github.com/AoufNihed/ABB-Web-scraping/blob/8fd0bd7fb7bd86cca449668a6aaa094b1c63005f/dynamic/dynamic/spiders/ABB.csv",
+              "status": "secondary-reference",
+              "checkedAt": "2026-10-30"
+            }
           }
         },
         {
